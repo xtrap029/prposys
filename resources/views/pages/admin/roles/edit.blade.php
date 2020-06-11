@@ -11,11 +11,11 @@
             @method('put')
             <div class="form-group">
                 <label for="">Name</label>
-                <input type="text" class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" name="name" value="{{ $role->name }}">
+                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ $role->name }}" required>
                 @include('errors.inline', ['message' => $errors->first('name')])
             </div>
             <a href="/role">Cancel</a>
-            <input type="submit" class="btn btn-success float-right" value="Save">
+            <input type="submit" class="btn btn-primary float-right" value="Save">
         </form>
     </div>
 @endsection

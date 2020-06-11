@@ -10,26 +10,42 @@
             <thead>
                 <tr>
                     <th colspan="4">List</th>
+                    <th class="text-right"><a href="/user/create">Create</a></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($users as $item)
+                @forelse ($users as $item)
                     <tr>
-                        <td>{{ $item->id }}</td>
-                        <td>{{ $item->name }}</td>
-                        <td>{{ $item->email }}</td>
-                        <td class="text-right">
-                            <form action="/user/{{ $item->id }}" method="post" class="d-inline-block">
-                                @csrf
-                                @method('put')
-                                <select name="role_id" class="form-control {{ $errors->has('role_id') ? 'is-invalid' : '' }}" onchange="this.form.submit()">
-                                    <option value="">Inactive</option>
-                                    @foreach ($roles as $role)
-                                        <option value="{{ $role->id }}" {{ $item->role_id == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>                                        
-                                    @endforeach
-                                </select>
-                                @include('errors.inline', ['message' => $errors->first('role_id')])
-                            </form>
+                        <td><img src="storage/public/images/users/{{ $item->avatar }}" alt="" class="thumb thumb--xs"></td>
+                        <td class="align-middle">{{ $item->name }}</td>
+                        <td class="align-middle">{{ $item->email }}</td>
+                        <td class="align-middle">{{ $item->role_id ? $item->role->name : 'Inactive' }}</td>
+                        <td class="align-middle text-right">
+                            <a href="/user/{{ $item->id }}/edit" class="btn btn-link btn-sm">Edit</a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" class="text-center">{{ __('messages.empty') }}</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+
+        <table class="table mt-5">
+            <thead>
+                <tr>
+                    <th colspan="4">Inactive</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($users_inactive as $item)
+                    <tr>
+                        <td><img src="storage/public/images/users/{{ $item->avatar }}" alt="" class="thumb thumb--xs"></td>
+                        <td class="align-middle">{{ $item->name }}</td>
+                        <td class="align-middle">{{ $item->email }}</td>
+                        <td class="align-middle text-right">
+                            <a href="/user/{{ $item->id }}/edit" class="btn btn-link btn-sm">Edit</a>
                         </td>
                     </tr>
                 @endforeach
