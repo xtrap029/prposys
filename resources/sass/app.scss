@@ -6,11 +6,14 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+@import '~admin-lte/build/scss/AdminLTE';
 
 // Material Icon
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 // Custom
+@import 'body';
 @import 'nav';
 @import 'images';
 @import 'icons';
+@import 'alerts';

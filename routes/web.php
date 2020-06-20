@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('activity-log')->group(function () {
             $url = 'Admin\ActivityLogsController';
 
-            Route::get('/', $url.'@index')->name('activityLog');
+            Route::get('/', $url.'@index')->name('activitylog');
         });
     });
 
@@ -57,5 +57,19 @@ Route::middleware('auth')->group(function () {
         Route::resource('coa-tagging', 'Admin\CoaTaggingController', ['names' => ['index' => 'coatagging', 'create' => 'coatagging', 'edit' => 'coatagging']]);
         Route::resource('expense-type', 'Admin\ExpenseTypesController', ['names' => ['index' => 'expensetype', 'create' => 'expensetype', 'edit' => 'expensetype']]);
         Route::resource('particular', 'Admin\ParticularsController', ['names' => ['index' => 'particular', 'create' => 'particular', 'edit' => 'particular']]);
+    });
+
+    // Access Level 1, 2, and 3
+    Route::middleware('checkRole:1|2|3')->group(function () {
+        Route::prefix('transaction')->group(function () {
+            $url = 'Admin\TransactionsController';
+
+            Route::get('/create/{trans_type}/{trans_company}', $url.'@create')->where('trans_company', '[0-9]+');
+            Route::post('/create', $url.'@store');
+            Route::get('/edit/{transaction}', $url.'@edit')->where('transaction', '[0-9]+');
+            Route::put('/edit/{transaction}', $url.'@update')->where('transaction', '[0-9]+');
+            Route::get('/view/{transaction}', $url.'@show')->where('transaction', '[0-9]+');
+            Route::get('/{trans_page}/{trans_company?}', $url.'@index')->where('trans_company', '[0-9]+');
+        });
     });
 });

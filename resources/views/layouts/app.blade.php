@@ -19,101 +19,161 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
-<body>
-    <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    <img src="/images/logo.png" alt="" class="thumb--xxs mr-1">
-                    {{ config('app.name', 'Sequencing') }}
-                </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+<body class="@guest @else sidebar-mini @endguest">
+        <div class="wrapper">
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav mr-auto"></ul>
-
-                    <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ml-auto">
-                        <!-- Authentication Links -->
-                        @guest
-                            <li class="nav-item d-none">
-                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                            </li>
-                            @if (Route::has('register'))
-                                <li class="nav-item d-none">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
-                            @endif
-                        @else
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    <img src="/storage/public/images/users/{{ Auth::user()->avatar }}" alt="" class="thumb--xxs rounded">
-                                    <span class="caret"></span>
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <div class="dropdown-item">{{ Auth::user()->name }}</div>
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
-
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                        @csrf
-                                    </form>
-                                </div>
-                            </li>
-                        @endguest
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-        <main class="py-3 container">
-            @include('flashmessage')
-
-            <div class="row">
-                @guest  
-                    <div class="col-md-12">
-                        @yield('content')
-                    </div>
+            <!-- Navbar -->
+            <nav class="@guest @else main-header @endguest navbar navbar-expand navbar-light border-bottom-0 text-sm">
+                @guest
+                    <!-- Brand Logo -->
+                    <a href="/" class="brand-link">
+                        <img src="/images/logo.png" alt="" class="brand-image" style="opacity: .8">
+                        @guest @else <span class="brand-text font-weight-light">{{ config('app.name', 'Sequencing') }}</span> @endguest
+                    </a>
                 @else
-                    <div class="col-md-3 mb-5">
-                        <div class="list-group mb-4">
-                            <a class="list-group-item list-group-item-action {{ Route::currentRouteName() == 'dashboard' ? 'active' : '' }}" href="/"><i class="material-icons icon--list">dashboard</i> Dashboard</a>
-                            
-                            @if (Auth::user()->role_id == 1)
-                            <a class="list-group-item list-group-item-action {{ Route::currentRouteName() == 'user' ? 'active' : '' }}" href="/user"><i class="material-icons icon--list">face</i> User</a>
-                            <a class="list-group-item list-group-item-action {{ Route::currentRouteName() == 'role' ? 'active' : '' }}" href="/role"><i class="material-icons icon--list">lock</i> Role</a>
-                            <a class="list-group-item list-group-item-action {{ Route::currentRouteName() == 'company' ? 'active' : '' }}" href="/company"><i class="material-icons icon--list">business</i> Company</a>                                  
-                            @endif                        
-                        </div>
+                    <!-- Left navbar links -->
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" data-widget="pushmenu" href="#"><i class="material-icons icon--list">menu</i></a>
+                        </li>
+                    </ul>
+                    <!-- Right navbar links -->
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" href="{{ route('logout') }}"
+                                onclick="event.preventDefault();
+                                document.getElementById('logout-form').submit();">
+                                {{ __('Logout') }}
+                                <i class="nav-icon material-icons icon--list ml-1">exit_to_app</i>
+                            </a>
 
-                        @if (in_array(Auth::user()->role_id, [1, 2]))
-                        <div class="list-group mb-4">
-                            <a class="list-group-item list-group-item-action {{ Route::currentRouteName() == 'coatagging' ? 'active' : '' }}" href="/coa-tagging"><i class="material-icons icon--list">account_balance</i> COA Tagging</a>
-                            <a class="list-group-item list-group-item-action {{ Route::currentRouteName() == 'expensetype' ? 'active' : '' }}" href="/expense-type"><i class="material-icons icon--list">payments</i> Expense Type</a>
-                            <a class="list-group-item list-group-item-action {{ Route::currentRouteName() == 'particular' ? 'active' : '' }}" href="/particular"><i class="material-icons icon--list">description</i> Particulars</a>
-                        </div>
-                        @endif
-
-                        @if (Auth::user()->role_id == 1)
-                        <div class="list-group">
-                            <a class="list-group-item list-group-item-action {{ Route::currentRouteName() == 'settings' ? 'active' : '' }}" href="/settings"><i class="material-icons icon--list">settings</i> Settings</a>
-                            <a class="list-group-item list-group-item-action {{ Route::currentRouteName() == 'activiyLog' ? 'active' : '' }}" href="/activity-log"><i class="material-icons icon--list">history</i> Activity Log</a>
-                        </div>
-                        @endif
-                    </div>
-                    <div class="col-md-9">
-                        @yield('content')
-                    </div>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                        </li>
+                    </ul>
                 @endguest
+            </nav>
+            <!-- /.navbar -->
+          
+            @guest  
+            @else
+                <!-- Main Sidebar Container -->
+                <aside class="main-sidebar elevation-4 sidebar-light-maroon">
+                    <!-- Brand Logo -->
+                    <a href="/" class="brand-link navbar-white">
+                        <img src="/images/logo.png" alt="" class="brand-image" style="opacity: .8">
+                        <span class="brand-text font-weight-light">{{ config('app.name', 'Sequencing') }}</span>
+                    </a>
+            
+                    <!-- Sidebar -->
+                    <div class="sidebar os-host os-theme-light os-host-resize-disabled os-host-transition os-host-scrollbar-horizontal-hidden os-host-scrollbar-vertical-hidden">
+                        <div class="os-padding">
+                            <div class="os-viewport os-viewport-native-scrollbars-invisible">
+                                <div class="os-content">
+                                    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                                        @guest
+                                        @else
+                                            <div class="image">
+                                                <img src="/storage/public/images/users/{{ Auth::user()->avatar }}" class="img-circle" alt="User Image">
+                                            </div>
+                                            <div class="info">
+                                                <a href="#" class="d-block">{{ Auth::user()->name }}</a>
+                                            </div>
+                                        @endguest
+                                    </div>
+            
+                                    <!-- Sidebar Menu -->
+                                    <nav class="mt-2">
+                                        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                                            <li class="nav-item">
+                                                <a href="/" class="nav-link {{ Route::currentRouteName() == 'dashboard' ? 'active' : '' }}">
+                                                    <i class="nav-icon material-icons icon--list">dashboard</i><p>Dashboard</p>
+                                                </a>
+                                            </li>
+                                            
+                                            @if (in_array(Auth::user()->role_id, [1, 2, 3]))
+                                                <li class="nav-header">TRANSACTIONS</li>
+                                                <li class="nav-item">
+                                                    <a href="/transaction/prpo" class="nav-link {{ isset($trans_page) ? $trans_page == 'prpo' ? 'active' : '' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">shopping_cart</i><p> PRPO</p>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/coa-tagging" class="nav-link {{ isset($trans_page) ? $trans_page == 'pc' ? 'active' : '' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">toll</i><p> Petty Cash</p>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/coa-tagging" class="nav-link {{ Route::currentRouteName() == 'forms' ? 'active' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">receipt_long</i><p> Forms</p>
+                                                    </a>
+                                                </li>
+
+                                            @endif
+
+                                            @if (in_array(Auth::user()->role_id, [1, 2]))
+                                                <li class="nav-header">ACCOUNTING</li>
+                                                <li class="nav-item">
+                                                    <a href="/coa-tagging" class="nav-link {{ Route::currentRouteName() == 'coatagging' ? 'active' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">account_balance</i><p> COA Tagging</p>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/expense-type" class="nav-link {{ Route::currentRouteName() == 'expensetype' ? 'active' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">payments</i><p>Expense Type</p>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/particular" class="nav-link {{ Route::currentRouteName() == 'particular' ? 'active' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">description</i><p>Particulars</p>
+                                                    </a>
+                                                </li>
+                                            @endif
+                                            
+                                            @if (Auth::user()->role_id == 1)
+                                                <li class="nav-header">ADMINISTRATOR</li>
+                                                <li class="nav-item">
+                                                    <a href="/user" class="nav-link {{ Route::currentRouteName() == 'user' ? 'active' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">face</i><p>User</p>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/role" class="nav-link {{ Route::currentRouteName() == 'role' ? 'active' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">lock</i><p>Role</p>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/company" class="nav-link {{ Route::currentRouteName() == 'company' ? 'active' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">business</i><p>Company</p>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/settings" class="nav-link {{ Route::currentRouteName() == 'settings' ? 'active' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">settings</i><p>Settings</p>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/activity-log" class="nav-link {{ Route::currentRouteName() == 'activitylog' ? 'active' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">history</i><p>Activity Log</p>
+                                                    </a>
+                                                </li>
+                                            @endif
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            @endguest
+
+            <!-- Content Wrapper. Contains page content -->
+            <div class="@guest @else content-wrapper @endguest">
+                @include('flashmessage')                
+                @yield('content')
             </div>
-        </main>
+        </div>
     </div>
 </body>
 </html>

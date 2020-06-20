@@ -1,8 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h4 class="mb-4">Dashboard</h4>
-    You are logged in!
-</div>
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Dashboard</h1>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        You are logged in!
+    </div>
+</section>
 @endsection
