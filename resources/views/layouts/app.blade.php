@@ -93,23 +93,48 @@
                                             </li>
                                             
                                             @if (in_array(Auth::user()->role_id, [1, 2, 3]))
-                                                <li class="nav-header">TRANSACTIONS</li>
-                                                <li class="nav-item">
-                                                    <a href="/transaction/prpo" class="nav-link {{ isset($trans_page) ? $trans_page == 'prpo' ? 'active' : '' : '' }}">
-                                                        <i class="nav-icon material-icons icon--list">shopping_cart</i><p> PRPO</p>
+                                                <li class="nav-header">TRANSACTION</li>
+                                                <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc']) ? 'menu-open' : '' : '' }}">
+                                                    <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc']) ? 'active' : '' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">add_box</i>
+                                                        <p>GENERATE</p>
                                                     </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="/coa-tagging" class="nav-link {{ isset($trans_page) ? $trans_page == 'pc' ? 'active' : '' : '' }}">
-                                                        <i class="nav-icon material-icons icon--list">toll</i><p> Petty Cash</p>
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="/coa-tagging" class="nav-link {{ Route::currentRouteName() == 'forms' ? 'active' : '' }}">
-                                                        <i class="nav-icon material-icons icon--list">receipt_long</i><p> Forms</p>
-                                                    </a>
+                                                    <ul class="nav nav-treeview">
+                                                        <li class="nav-item">
+                                                            <a href="/transaction/prpo" class="nav-link {{ isset($trans_page) ? $trans_page == 'prpo' ? 'active' : '' : '' }}">
+                                                                <i class="nav-icon material-icons icon--list">more_vert</i>
+                                                                <p>PRPO</p>
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a href="/transaction/pc" class="nav-link {{ isset($trans_page) ? $trans_page == 'pc' ? 'active' : '' : '' }}">
+                                                                <i class="nav-icon material-icons icon--list">more_vert</i>
+                                                                <p>Petty Cash</p>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
                                                 </li>
 
+                                                <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo-form', 'pc-form']) ? 'menu-open' : '' : '' }}">
+                                                    <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo-form', 'pc-form']) ? 'active' : '' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">library_books</i>
+                                                        <p>FORMS</p>
+                                                    </a>
+                                                    <ul class="nav nav-treeview">
+                                                        <li class="nav-item">
+                                                            <a href="/transaction-form/prpo" class="nav-link {{ isset($trans_page) ? $trans_page == 'prpo-form' ? 'active' : '' : '' }}">
+                                                                <i class="nav-icon material-icons icon--list">more_vert</i>
+                                                                <p>PRPO</p>
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a href="/transaction-form/pc" class="nav-link {{ isset($trans_page) ? $trans_page == 'pc-form' ? 'active' : '' : '' }}">
+                                                                <i class="nav-icon material-icons icon--list">more_vert</i>
+                                                                <p>Petty Cash</p>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </li>
                                             @endif
 
                                             @if (in_array(Auth::user()->role_id, [1, 2]))

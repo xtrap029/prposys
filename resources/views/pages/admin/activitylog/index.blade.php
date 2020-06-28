@@ -47,7 +47,7 @@
                                                     @case('created')
                                                     @case('deleted')
                                                         <table class="table table-sm table-bordered">
-                                                            <thead>
+                                                            <thead class="bg-gradient-gray">
                                                                 <tr>
                                                                     <th></th>
                                                                     <th>Value</th>
@@ -65,7 +65,7 @@
                                                         @break
                                                     @case('updated')
                                                         <table class="table table-sm table-bordered">
-                                                            <thead>
+                                                            <thead class="bg-gradient-gray">
                                                                 <tr>
                                                                     <th></th>
                                                                     <th>From</th>

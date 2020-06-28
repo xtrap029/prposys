@@ -1,0 +1,13 @@
+.td-status {
+    border-right: 8px solid black;
+
+    &--success {
+        border-right-color: $green;
+    }
+    &--danger {
+        border-right-color: $red;
+    }
+    &--info {
+        border-right-color: $blue;
+    }
+}

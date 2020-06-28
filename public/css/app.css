@@ -43595,3 +43595,36 @@ label:not(.form-check-label):not(.custom-file-label) {
   border-radius: 0px;
 }
 
+.td-status {
+  border-right: 8px solid black;
+}
+
+.td-status--success {
+  border-right-color: #38c172;
+}
+
+.td-status--danger {
+  border-right-color: #e3342f;
+}
+
+.td-status--info {
+  border-right-color: #3490dc;
+}
+
+.vlign--baseline-middle {
+  vertical-align: -webkit-baseline-middle;
+}
+
+@media print {
+  .no-print,
+  .main-sidebar,
+  .main-header,
+  .content-header,
+  .no-print *,
+  .main-sidebar *,
+  .main-header *,
+  .content-header * {
+    display: none !important;
+  }
+}
+

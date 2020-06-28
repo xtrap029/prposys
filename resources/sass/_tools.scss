@@ -1,0 +1,9 @@
+.vlign--baseline-middle {
+    vertical-align: -webkit-baseline-middle;
+}
+
+@media print {    
+    .no-print, .no-print * {
+        display: none !important;
+    }
+}

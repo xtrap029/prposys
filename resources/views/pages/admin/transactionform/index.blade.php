@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Transaction - Generate')
+@section('title', 'Transaction - Form')
 
 @section('content')
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Generate {{ $page_label }}</h1>
+                    <h1>{{ $page_label }} Form</h1>
                 </div>
                 <div class="col-sm-6 text-right">
                     <div class="dropdown">
@@ -16,7 +16,7 @@
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             @foreach ($companies as $item)
-                                <a class="dropdown-item" href="/transaction/{{ $trans_page }}/{{ $item->id }}">{{ $item->name }}</a>
+                                <a class="dropdown-item" href="/transaction-form/{{ $trans_page_url }}/{{ $item->id }}">{{ $item->name }}</a>
                             @endforeach
                         </div>
                     </div>
@@ -34,17 +34,37 @@
                                 <img src="/storage/public/images/companies/{{ $company->logo }}" alt="" class="thumb thumb--xxs mr-2 vlign--baseline-middle">
                                 <span class="mr-3 vlign--baseline-middle">{{ $company->name }}</span>
                                 
-                                @if ($trans_page == 'prpo')
-                                    <a href="/transaction/create/pr/{{ $company->id }}" class="mx-3 vlign--baseline-middle">Generate PR</a>
-                                    <a href="/transaction/create/po/{{ $company->id }}" class="mx-3 vlign--baseline-middle">Generate PO</a>
+                                @if ($trans_page_url == 'prpo')
+                                    <a data-toggle="modal" data-target="#modal-make-pr" href="#_" class="mx-3 vlign--baseline-middle">Make PR/PO</a>
+                                    <div class="modal fade" id="modal-make-pr" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-md" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header border-0">
+                                                    <h5 class="modal-title">Select PR/PO to make</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <form action="/transaction-form/create" method="get">
+                                                        <input type="text" name="key" class="form-control" placeholder="PR/PO-XXXX-XXXXX" required>
+                                                        <input type="submit" class="btn btn-primary mt-2" value="Check">
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- choose seq
+                                    choose tax type --}}
                                 @else
-                                    <a href="/transaction/create/pc/{{ $company->id }}" class="mx-3 vlign--baseline-middle">Generate PC</a>
+                                    <a href="/transaction-form/create/pc/{{ $company->id }}" class="mx-3 vlign--baseline-middle">Make Cash Request</a>
                                 @endif
                                 @if (in_array(Auth::user()->role_id, [1, 2]))
-                                    <a href="/transaction/report?type={{ $trans_types[0] }}&company={{ $company->id }}&status=1" class="mx-3 vlign--baseline-middle">Reports</a>
+                                    <a href="/transaction-form/report?type={{ $trans_types[0] }}&company={{ $company->id }}&status=1" class="mx-3 vlign--baseline-middle">Reports</a>
                                 @endif
 
-                                <form action="/transaction/{{ $trans_page }}/{{ $company->id }}" method="GET" class="input-group w-25 float-right">
+                                <form action="/transaction-form/{{ $trans_page_url }}/{{ $company->id }}" method="GET" class="input-group w-25 float-right">
                                     <input type="text" class="form-control" name="s" placeholder="Transaction Code" value="{{ app('request')->input('s') }}">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary py-0 px-2" type="submit">
@@ -73,7 +93,7 @@
                                 <td>{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</td>
                                 <td>{{ $item->payee }}</td>
                                 <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
-                                <td>{{ $trans_page == 'prpo' ? $item->particulars->name : $item->particulars_custom }}</td>
+                                <td>{{ $trans_page_url == 'prpo' ? $item->particulars->name : $item->particulars_custom }}</td>
                                 <td>{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
                                 <td>{{ $item->control_no }}</td>
                                 <td>{{ $item->released_at }}</td>
@@ -133,7 +153,7 @@
                                                             <div class="form-row mb-3">
                                                                 <div class="col-md-5">
                                                                     <label for="">Issue Type</label>
-                                                                    @if ($trans_page == 'prpo')
+                                                                    @if ($trans_page_url == 'prpo')
                                                                         <select name="control_type" class="form-control">
                                                                             <option value="CN">Check Number</option>
                                                                             <option value="PC">Petty Cash</option>
@@ -146,7 +166,7 @@
                                                                 </div>
                                                                 <div class="col-md-7">
                                                                     <label for="">Issue No.</label>
-                                                                    @if ($trans_page == 'prpo')
+                                                                    @if ($trans_page_url == 'prpo')
                                                                         <input type="text" name="control_no" class="form-control @error('control_no') is-invalid @enderror" required>
                                                                         @include('errors.inline', ['message' => $errors->first('control_no')])
                                                                     @else

@@ -3,26 +3,29 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Transaction;
 use App\Company;
-use App\Particulars;
 use App\CompanyProject;
-use App\User;
+use App\Particulars;
 use App\Settings;
+use App\Transaction;
+use App\TransactionStatus;
+use App\User;
 use Spatie\Activitylog\Models\Activity;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use \DB;
 
 class TransactionsController extends Controller {
 
     public function index($trans_page, $trans_company = '') {
-
         switch ($trans_page) {
             case 'prpo':
                 $page_label_index = "Payment Release / Purchase Order";
-                break;  
+                $trans_types = ['pr', 'po'];
+            break;  
             case 'pc':
                 $page_label_index = "Petty Cash";
+                $trans_types = ['pc'];
                 break;            
             default:
                 abort(404);
@@ -31,27 +34,43 @@ class TransactionsController extends Controller {
 
         $companies = Company::orderBy('name', 'asc')->get();
         $company = Company::where('id', $trans_company)->first();
-        $transactions = Transaction::whereIn('trans_type', ['pr', 'po'])
+        
+        if (!empty($_GET['s'])) {
+            $transactions = Transaction::whereIn('trans_type', $trans_types)
+                                    ->whereIn('status_id', config('global.page_generated'))
                                     ->whereHas('project', function($query) use($trans_company) {
                                         $query->where('company_id', $trans_company);
                                     })
-                                    ->orderBy('id', 'desc')
-                                    ->paginate(10);
+                                    ->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$_GET['s']."%")
+                                    ->orderBy('id', 'desc')->paginate(10);
+            $transactions->appends(['s' => $_GET['s']]);
+        } else {
+            $transactions = Transaction::whereIn('trans_type', $trans_types)
+                                    ->whereIn('status_id', config('global.page_generated'))
+                                    ->whereHas('project', function($query) use($trans_company) {
+                                        $query->where('company_id', $trans_company);
+                                    })->orderBy('id', 'desc')->paginate(10);
+        }
+
 
         foreach ($transactions as $key => $value) {
             $transactions[$key]->can_edit = $this->check_can_edit($value->id);
+            $transactions[$key]->can_cancel = $this->check_can_cancel($value->id);
+            $transactions[$key]->can_reset = $this->check_can_reset($value->id);
+            // $transactions[$key]->can_issue = $this->check_can_issue($value->id);
         }
 
-        $edit_pr_limit[2] = Settings::where('type', 'LIMIT_EDIT_GENPR_USER_2')->first()->value;
-        $edit_pr_limit[3] = Settings::where('type', 'LIMIT_EDIT_GENPR_USER_3')->first()->value;
+        // $edit_pr_limit[2] = Settings::where('type', 'LIMIT_EDIT_GENPR_USER_2')->first()->value;
+        // $edit_pr_limit[3] = Settings::where('type', 'LIMIT_EDIT_GENPR_USER_3')->first()->value;
         
         return view('pages.admin.transaction.index')->with([
             'trans_page' => $trans_page,
+            'trans_types' => $trans_types,
             'page_label' => $page_label_index,
             'companies' => $companies,
             'company' => $company,
             'transactions' => $transactions,
-            'edit_pr_limit' => $edit_pr_limit
+            // 'edit_pr_limit' => $edit_pr_limit
         ]);
     }
 
@@ -87,12 +106,11 @@ class TransactionsController extends Controller {
 
     public function store(Request $request) {
         // validation
-        if (in_array($request->trans_type, ['pr', 'po'])) {
+        if (in_array($request->trans_type, ['pr', 'po', 'pc'])) {
             $trans_type = $request->trans_type;
 
-            $data = $request->validate([
-                'trans_type' => ['required', 'in:pr,po'],
-                'particulars_id' => ['required', 'exists:particulars,id'],
+            $validation = [
+                'trans_type' => ['required', 'in:pr,po,pc'],
                 'currency' => ['required', 'in:PHP'],
                 'amount' => ['required', 'min:0'],
                 'purpose' => ['required'],
@@ -100,7 +118,15 @@ class TransactionsController extends Controller {
                 'payee' => ['required'],
                 'due_at' => ['required', 'date'],
                 'requested_id' => ['required', 'exists:users,id']
-            ]);
+            ];
+
+            if ($trans_type == 'pc') {
+                $validation['particulars_custom'] = ['required'];
+            } else {
+                $validation['particulars_id'] = ['required', 'exists:particulars,id'];
+            }
+
+            $data = $request->validate($validation);
 
             $trans_company = CompanyProject::where('id', $data['project_id'])->first()->company_id;
 
@@ -179,13 +205,20 @@ class TransactionsController extends Controller {
         }
 
         // validate input
-        $data = $request->validate([
-            'particulars_id' => ['required', 'exists:particulars,id'],
+        $validation = [
             'amount' => ['required', 'min:0'],
             'purpose' => ['required'],
             'project_id' => ['required', 'exists:company_projects,id'],
             'payee' => ['required']
-        ]);
+        ];
+
+        if ($transaction->trans_type == 'pc') {
+            $validation['particulars_custom'] = ['required'];
+        } else {
+            $validation['particulars_id'] = ['required', 'exists:particulars,id'];
+        }
+
+        $data = $request->validate($validation);
 
         // if not pr, not admin, amount does exceed limit
         if ($transaction->trans_type == 'pr' 
@@ -202,7 +235,7 @@ class TransactionsController extends Controller {
             $data['edit_count'] = $transaction->edit_count + 1;
         }
 
-        $data['status_id'] = 2;
+        // $data['status_id'] = 2;
         $data['updated_id'] = auth()->id();
 
         $transaction->update($data);
@@ -214,10 +247,125 @@ class TransactionsController extends Controller {
         $logs = Activity::where('subject_id', $transaction->id)
                 ->where('subject_type', 'App\Transaction')
                 ->orderBy('id', 'desc')->get();
+        $perms['can_edit'] = $this->check_can_edit($transaction->id);
+        $perms['can_cancel'] = $this->check_can_cancel($transaction->id);
+        $perms['can_reset'] = $this->check_can_reset($transaction->id);
+        // $perms['can_issue'] = $this->check_can_issue($transaction->id);
+
+        switch ($transaction->trans_type) {
+            case 'pr':
+            case 'po':
+                $trans_page = "prpo";
+                break;  
+            case 'pc':
+                $trans_page = "pc";
+                break;            
+            default:
+                abort(404);
+                break;
+        }
 
         return view('pages.admin.transaction.show')->with([
             'transaction' => $transaction,
-            'logs' => $logs
+            'perms' => $perms,
+            'logs' => $logs,
+            'trans_page' => $trans_page
+        ]);
+    }
+
+    public function reset(Transaction $transaction) {
+        $user = User::where('id', auth()->id())->first();
+
+        if ($user->role_id == 1) {
+            $transaction->update(['edit_count' => 0]);
+            return back()->with('success', 'Transaction'.__('messages.reset_success'));
+        } else {
+            return back()->with('error', __('messages.cant_edit'));
+        }
+    }
+    
+    public function cancel(Request $request, Transaction $transaction) {
+        if ($this->check_can_cancel($transaction->id)) {
+            $data = $request->validate([
+                'cancellation_reason' => ['required']
+            ]);
+
+            $data['status_id'] = 3;
+            $data['updated_id'] = auth()->id();
+            $transaction->update($data);
+            return back()->with('success', 'Transaction'.__('messages.cancel_success'));
+        } else {
+            return back()->with('error', __('messages.cant_edit'));
+        }
+    }
+
+    // public function issue(Request $request, Transaction $transaction) {
+    //     if ($this->check_can_issue($transaction->id)) {
+    //         $data = $request->validate([
+    //             'control_type' => ['required', 'in:CN,PC'],
+    //             'control_no' => ['required'],
+    //             'released_at' => ['required', 'date'],
+    //             'amount_issued' => ['required', 'min:0']
+    //         ]);
+            
+    //         $data['status_id'] = 4;
+    //         $data['updated_id'] = auth()->id();
+    //         $transaction->update($data);
+
+    //         return back()->with('success', 'Transaction'.__('messages.issue_success'));
+    //     } else {
+    //         return back()->with('error', __('messages.cant_issue'));
+    //     }
+    // }
+
+    public function report() {
+        switch ($_GET['type']) {
+            case 'pr':
+            case 'po':
+                $trans_page = "prpo";
+            break;  
+            case 'pc':
+                $trans_page = "pc";
+                break;            
+            default:
+                abort(404);
+                break;
+        }
+
+        $transactions = Transaction::where('trans_type', $_GET['type'])->whereIn('status_id', config('global.page_generated'));
+        
+        if (!empty($_GET['company'])) {
+            $req_company = $_GET['company'];
+            $transactions = $transactions->whereHas('project', function($query) use($req_company) {
+                $query->where('company_id', $req_company);
+            });
+        }
+
+        if (!empty($_GET['status'])) {
+            $transactions = $transactions->where('status_id', $_GET['status']);
+            $status_sel = TransactionStatus::where('id', $_GET['status'])->first()->name;
+        } else {
+            abort(404);
+        }
+
+        if (!empty($_GET['from'])) {
+            $transactions = $transactions->whereDate('created_at', '>=', $_GET['from']);
+        }
+        if (!empty($_GET['to'])) {
+            $transactions = $transactions->whereDate('created_at', '<=', $_GET['to']);
+        }
+
+        $transactions = $transactions->orderBy('id', 'desc')->get();
+
+        $companies = Company::orderBy('name', 'asc')->get();
+        $status = TransactionStatus::whereIn('id', config('global.page_generated'))->orderBy('id', 'asc')->get();
+
+        return view('pages.admin.transaction.report')->with([
+            'trans_page' => $trans_page,
+            'companies' => $companies,
+            'status' => $status,
+            'status_sel' => $status_sel,
+            'transactions' => $transactions
         ]);
     }
 
@@ -256,11 +404,10 @@ class TransactionsController extends Controller {
         }
         $user = User::where('id', $user)->first();
 
-
         $transaction = Transaction::where('id', $transaction)->first();
 
         // check if unliquidated
-        if (in_array($transaction->status_id, config('global.unliquidated'))) {
+        if (in_array($transaction->status_id, config('global.generated'))) {
             // check if not admin
             if ($user->role_id != 1) {
                 // check if owned
@@ -291,4 +438,65 @@ class TransactionsController extends Controller {
 
         return $can_edit;
     }
+
+    private function check_can_cancel($transaction, $user = '') {
+        $can_cancel = true;
+
+        if (!$user) {
+            $user = auth()->id();
+        }
+        $user = User::where('id', $user)->first();
+
+        $transaction = Transaction::where('id', $transaction)->first();
+
+        // check if unliquidated
+        if (in_array($transaction->status_id, config('global.generated'))) {
+            // check if not admin and not the owner
+            if ($user->role_id != 1 && $user->id != $transaction->owner_id) {
+                $can_cancel = false;
+            }
+        } else {
+            $can_cancel = false;
+        }
+
+        return $can_cancel;
+    }
+
+    private function check_can_reset($transaction, $user = '') {
+        $can_reset = true;
+
+        if (!$user) {
+            $user = auth()->id();
+        }
+        $user = User::where('id', $user)->first();
+
+        $transaction = Transaction::where('id', $transaction)->first();
+
+        // check if reset
+        if (!in_array($transaction->status_id, config('global.generated')) || $user->role_id != 1 || in_array($transaction->trans_type, ['po', 'pc'])) {
+            $can_reset = false;
+        }
+
+        return $can_reset;
+    }
+
+    // private function check_can_issue($transaction, $user = '') {
+    //     $can_issue = true;
+
+    //     if (!$user) {
+    //         $user = auth()->id();
+    //     }
+    //     $user = User::where('id', $user)->first();
+
+    //     $transaction = Transaction::where('id', $transaction)->first();
+
+    //     // check if not unliquidated and not admin/accounting
+    //     if (!in_array($transaction->status_id, config('global.unliquidated')) || !in_array($user->role_id, [1, 2])) {
+    //         $can_issue = false;
+    //     }
+
+    //     // remove this if done with adjustments
+    //     $can_issue = false;
+    //     return $can_issue;
+    // }
 }

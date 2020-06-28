@@ -27,12 +27,17 @@
                 <div class="form-row mb-3">
                     <div class="col-md-6">
                         <label for="">Particulars</label>
-                        <select name="particulars_id" class="form-control @error('particulars_id') is-invalid @enderror">
-                            @foreach ($particulars as $item)
-                                <option value="{{ $item->id }}" {{ $item->id == $transaction->particulars_id ? 'selected' : '' }}>{{ $item->name }}</option>                                        
-                            @endforeach
-                        </select>
-                        @include('errors.inline', ['message' => $errors->first('particulars_id')])
+                        @if ($trans_page == 'prpo')
+                            <select name="particulars_id" class="form-control @error('particulars_id') is-invalid @enderror">
+                                @foreach ($particulars as $item)
+                                    <option value="{{ $item->id }}" {{ $item->id == $transaction->particulars_id ? 'selected' : '' }}>{{ $item->name }}</option>                                        
+                                @endforeach
+                            </select>
+                            @include('errors.inline', ['message' => $errors->first('particulars_id')])
+                        @else
+                            <input type="text" class="form-control @error('particulars_custom') is-invalid @enderror" name="particulars_custom" value="{{ $transaction->particulars_custom }}" required>
+                            @include('errors.inline', ['message' => $errors->first('particulars_custom')])
+                        @endif
                     </div>
                     <div class="col-md-2">
                         <label for="">Currency</label>
@@ -40,7 +45,7 @@
                     </div>
                     <div class="col-md-4">
                         <label for="">Amount</label>
-                        <input type="number" class="form-control @error('amount') is-invalid @enderror" name="amount" value="{{ $transaction->amount }}" required>
+                        <input type="number" class="form-control @error('amount') is-invalid @enderror" step="0.01" name="amount" value="{{ $transaction->amount }}" required>
                         @include('errors.inline', ['message' => $errors->first('amount')])
                     </div>
                 </div>
