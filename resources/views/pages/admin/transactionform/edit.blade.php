@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Make '.strtoupper($transaction->trans_type))
+@section('title', 'Edit Make '.strtoupper($transaction->trans_type))
 
 @section('content')
     <section class="content-header">
@@ -42,13 +42,13 @@
             </table>
             <form action="" method="post">
                 @csrf
-                <input type="hidden" name="key" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}">
+                @method('put')
                 <div class="form-row mb-3">
                     <div class="col-md-5">
                         <label for="">COA Tagging</label>
                         <select name="coa_tagging_id" class="form-control @error('coa_tagging_id') is-invalid @enderror" required>
                             @foreach ($coa_taggings as $item)
-                                <option value="{{ $item->id }}" {{ $item->id == old('coa_tagging_id') ? 'selected' : '' }}>{{ $item->name }}</option>
+                                <option value="{{ $item->id }}" {{ $item->id == $transaction->coa_tagging_id ? 'selected' : '' }}>{{ $item->name }}</option>
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('coa_tagging_id')])
@@ -57,7 +57,7 @@
                         <label for="">Expense Type / Description</label>
                         <select name="expense_type_id" class="form-control @error('expense_type_id') is-invalid @enderror" required>
                             @foreach ($expense_types as $item)
-                                <option value="{{ $item->id }}" {{ $item->id == old('expense_type_id') ? 'selected' : '' }}>{{ $item->name }}</option>
+                                <option value="{{ $item->id }}" {{ $item->id == $transaction->expense_type_id ? 'selected' : '' }}>{{ $item->name }}</option>
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('expense_type_id')])
@@ -66,7 +66,7 @@
                         <label for="">VAT Type</label>
                         <select name="vat_type_id" class="form-control">
                             @foreach ($vat_types as $item)
-                            <option value="{{ $item->id }}" {{ $item->id == old('vat_type_id') ? 'selected' : '' }}>{{ $item->name }}</option>
+                            <option value="{{ $item->id }}" {{ $item->id == $transaction->vat_type_id ? 'selected' : '' }}>{{ $item->name }}</option>
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('vat_type_id')])

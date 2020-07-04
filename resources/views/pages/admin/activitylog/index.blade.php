@@ -98,6 +98,7 @@
                                                         @case('App\Settings')           <?php $view_url = '/settings'; ?> @break
                                                         @case('App\Transaction')        <?php $view_url = '/transaction/view/'.$item->subject_id; ?> @break
                                                         @case('App\User')               <?php $view_url = '/user/'.$item->subject_id.'/edit'; ?> @break
+                                                        @case('App\VatType')            <?php $view_url = '/vat-type/'.$item->subject_id.'/edit'; ?> @break
                                                         @default                                                        
                                                     @endswitch
                                                 <a href="{{ !empty($view_url) ? $view_url : '#' }}" class="btn btn-primary" target="_blank">View Item</a>

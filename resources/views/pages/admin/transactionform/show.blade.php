@@ -5,15 +5,18 @@
 @section('content')
     <section class="content-header">
         <div class="container-fluid">
-            <div class="row"> 
+            <div class="form-row"> 
                 <div class="col-md-6 mb-4">
-                    <a href="/transaction/{{ $trans_page }}/{{ $transaction->project->company_id }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
-                    <a href="/transaction/reset/{{ $transaction->id }}" class="btn btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
+                    <a href="/transaction-form/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
+                    <a href="/transaction-form/reset/{{ $transaction->id }}" class="btn btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                 </div>
                 <div class="col-md-6 text-right mb-4">
-                    <a href="/transaction/edit/{{ $transaction->id }}" class="btn btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
+                    <a href="/transaction-form/edit/{{ $transaction->id }}" class="btn btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
+                    <a href="#_" class="btn btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-approval"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a>
                     <a href="#_" class="btn btn-danger {{ $perms['can_cancel'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-cancel"><i class="align-middle font-weight-bolder material-icons text-md">delete</i> Cancel</a>
-                    {{-- <a href="#" class="btn btn-success {{ $perms['can_issue'] ? '' : 'd-none' }} px-5" data-toggle="modal" data-target="#modal-issue"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Issued</a> --}}
+                    
+                    <a href="#_" class="btn btn-danger {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print</a>
+                    <a href="#" class="btn btn-success {{ $perms['can_issue'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-issue"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Issue</a>
                 </div>
                 
                 @if ($perms['can_cancel'])
@@ -27,7 +30,7 @@
                                     </button>
                                 </div>
                                 <div class="modal-body text-center">
-                                    <form action="/transaction/cancel/{{ $transaction->id }}" method="post">
+                                    <form action="/transaction-form/cancel/{{ $transaction->id }}" method="post">
                                         @csrf
                                         @method('put')
                                         <textarea name="cancellation_reason" class="form-control @error('cancellation_reason') is-invalid @enderror" rows="3" placeholder="Cancellation Reason" required></textarea>
@@ -40,7 +43,36 @@
                     </div>
                 @endif
 
-                {{-- @if ($perms['can_issue'])
+                @if ($perms['can_approval'])
+                    <div class="modal fade" id="modal-approval" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-md" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title">{{ __('messages.approval_prompt') }}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <form action="/transaction-form/approval/{{ $transaction->id }}" method="post">
+                                        @csrf
+                                        @method('put')
+                                        <div class="text-left"><label for="">Select Authorized Approver</label></div>
+                                        <select name="form_approver_id" class="form-control @error('form_approver_id') is-invalid @enderror" required>
+                                            @foreach ($approvers as $item)
+                                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @include('errors.inline', ['message' => $errors->first('form_approver_id')])
+                                        <input type="submit" class="btn btn-success mt-2" value="Confirm">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                @if ($perms['can_issue'])
                     <div class="modal fade" id="modal-issue" tabindex="-1" role="dialog" aria-hidden="true">
                         <div class="modal-dialog modal-md" role="document">
                             <div class="modal-content">
@@ -51,13 +83,13 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="/transaction/issue/{{ $transaction->id }}" method="post">
+                                    <form action="/transaction-form/issue/{{ $transaction->id }}" method="post">
                                         @csrf
                                         @method('put')
                                         <div class="row mb-3">
                                             <div class="col-md-5">
                                                 <label for="">Issue Type</label>
-                                                @if ($trans_page == 'prpo')
+                                                @if ($trans_page_url == 'prpo')
                                                     <select name="control_type" class="form-control">
                                                         <option value="CN">Check Number</option>
                                                         <option value="PC">Petty Cash</option>
@@ -70,7 +102,7 @@
                                             </div>
                                             <div class="col-md-7">
                                                 <label for="">Issue No.</label>
-                                                @if ($trans_page == 'prpo')
+                                                @if ($trans_page_url == 'prpo')
                                                     <input type="text" name="control_no" class="form-control @error('control_no') is-invalid @enderror" required>
                                                     @include('errors.inline', ['message' => $errors->first('control_no')])
                                                 @else
@@ -99,7 +131,7 @@
                             </div>
                         </div>
                     </div>
-                @endif --}}
+                @endif
             </div>
         </div>
     </section>
@@ -116,48 +148,114 @@
                     </div>
                     <div>
                         <div class="row mb-3">
-                            <div class="col-md-9">
-                                <label for="">Particulars</label>
-                                <h5>{{ $trans_page == 'prpo' ? $transaction->particulars->name : $transaction->particulars_custom }}</h5>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="">Amount</label>
-                            <h5>{{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}</h5>
-                            </div>
-                        </div>
-                        <div class="row mb-3">    
-                            <div class="col-md-9">
-                                <label for="">Payee Name</label>
-                                <h5>{{ $transaction->payee }}</h5>
-                            </div>                
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <label for="">Project</label>
                                 <h5>{{ $transaction->project->project }}</h5>
-                            </div>         
-                        </div>
-                        <div class="row mb-3">                
-                            <div class="col-md-11">
-                                <label for="">Purpose</label>
-                                <h6>{{ $transaction->purpose }}</h6>
-                            </div>   
+                            </div>
+                            <div class="col-md-6">
+                                <label for="">Particulars</label>
+                                <h5>{{ $trans_page_url == 'prpo' ? $transaction->particulars->name : $transaction->particulars_custom }}</h5>
+                            </div>                            
                         </div>
                         <div class="row mb-3">
-                            <div class="col-md-3">
-                                <label for="">Requested by</label>
-                                <h5>{{ $transaction->requested->name }}</h5>
+                            <div class="col-md-6">
+                                <label for="">COA Tagging</label>
+                                <h5>{{ $transaction->coatagging->name }}</h5>
                             </div>
-                            <div class="col-md-3">
-                                <label for="">Prepared by</label>
-                                <h5>{{ $transaction->owner->name }}</h5>
-                            </div>                        
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <label for="">Due Date</label>
                                 <h5>{{ $transaction->due_at }}</h5>
                             </div>
-                            <div class="col-md-3">
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="">Vendor / Payee</label>
+                                <h5>{{ $transaction->payee }}</h5>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="">VAT Type</label>
+                                <h5>{{ $transaction->form_vat_name ? $transaction->form_vat_name : $transaction->vattype->name }}</h5>
+                            </div>
+                        </div>
+                        <div class="row mb-3">                            
+                            <div class="col-md-6">
+                                <label for="">Prepared By</label>
+                                <h5>{{ $transaction->owner->name }}</h5>
+                            </div>
+                            <div class="col-md-6">
                                 <label for="">Status</label>
                                 <h5>{{ $transaction->status->name }}</h5>
-                            </div>              
+                            </div>
+                            <div class="col-md-6 mt-3 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
+                                <label for="">Authorized Approver</label>
+                                <h5>{{ $transaction->form_approver_id ? $transaction->formapprover->name : '' }}</h5>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-11">
+                                <label for="">Purpose</label>
+                                <h6>{{ $transaction->purpose }}</h6>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Qty</th>
+                                        <th>Description</th>
+                                        <th class="text-right">Unit Price</th>
+                                        <th class="text-right">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-bottom-2">
+                                        <td>1</td>
+                                        <td>{{ $transaction->expensetype->name }}</td>
+                                        <td class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_unit ? $transaction->form_amount_unit : $transaction->amount, 2, '.', ',') }}</td>
+                                        <td class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_unit ? $transaction->form_amount_unit : $transaction->amount, 2, '.', ',') }}</td>
+                                    </tr>
+                                    <tr class="font-weight-bold">
+                                        <td colspan="2" class="text-right">
+                                            {{ $transaction->form_amount_vat ? $transaction->form_amount_vat : $transaction->vattype->vat 
+                                                + $transaction->form_amount_wht ? $transaction->form_amount_wht : $transaction->vattype->wht == 0 ? 'Total' : 'Subtotal' }}
+                                        </td>
+                                        <td></td>
+                                        <td class="text-right">
+                                            {{ number_format($transaction->form_amount_subtotal ? $transaction->form_amount_subtotal : $transaction->custom_subtotal, 2, '.', ',') }}
+                                        </td>
+                                    </tr>
+                                    @if ($transaction->custom_vat > 0 || $transaction->form_amount_vat)
+                                    <tr>
+                                        <td colspan="2" class="text-right">VAT</td>
+                                        <td></td>
+                                        <td class="text-right">{{ number_format($transaction->form_amount_vat ? $transaction->form_amount_vat : $transaction->custom_vat, 2, '.', ',') }}</td>
+                                    </tr>
+                                    @endif
+                                    @if ($transaction->custom_wht > 0 || $transaction->form_vat_wht)
+                                    <tr>
+                                        <td></td>
+                                        <td class="text-right">Less Withholding Tax</td>
+                                        <td class="text-right">{{ $transaction->form_vat_wht ? $transaction->form_vat_name." (".$transaction->form_vat_wht."%)" : $transaction->vattype->name." (".$transaction->vattype->wht."%)" }}</td>
+                                        <td class="text-right">({{ number_format($transaction->form_amount_wht ? $transaction->form_amount_wht : $transaction->custom_wht, 2, '.', ',') }})</td>
+                                    </tr>
+                                    @endif
+                                    @if ($transaction->custom_vat > 0 || $transaction->form_amount_payable)
+                                    <tr class="font-weight-bold">
+                                        <td colspan="2" class="text-right">Total Payable</td>
+                                        <td></td>
+                                        <td class="text-right">{{ number_format($transaction->form_amount_payable ? $transaction->form_amount_payable : $transaction->custom_total_payable, 2, '.', ',') }}</td>
+                                    </tr>
+                                    @endif
+                                    <tr class="font-weight-bold border-top-2">
+                                        <td colspan="2" class="text-right">Amount</td>
+                                        <td></td>
+                                        <td class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_payable ? $transaction->form_amount_payable : $transaction->custom_total_payable, 2, '.', ',') }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row mb-3">
+
                         </div>
                     </div>
                     @if ($transaction->status_id == 3)
@@ -165,32 +263,33 @@
                             <h3 class="d-inline-block mr-3">Cancellation Reason</h3>
                         </div>
                         <div>{{ $transaction->cancellation_reason }}</div>
+                    @elseif ($transaction->status_id == 4)
+                        <div class="pb-2 mt-3 mb-4 border-bottom">
+                            <h3 class="d-inline-block mr-3">Issuing Details</h3>
+                        </div>
+                        <div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="">Issue Type</label>
+                                    <h5>{{ $transaction->control_type == 'CN' ? 'Check Number' : 'Petty Cash' }}</h5>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="">Issue No.</label>
+                                    <h5>{{ $transaction->control_no }}</h5>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="">Released Date</label>
+                                    <h5>{{ $transaction->released_at }}</h5>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="">Amount</label>
+                                    <h5>{{ $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</h5>
+                                </div>
+                            </div>
+                        </div>
                     @endif
-                    {{-- <div class="pb-2 mt-5 mb-4 border-bottom {{ $transaction->status_id != 4 ? 'd-none' : '' }}">
-                        <h1 class="d-inline-block mr-3">Issuing Details</h1>
-                    </div>
-                    <div class="{{ $transaction->status_id != 4 ? 'd-none' : '' }}">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="">Issue Type</label>
-                                <h5>{{ $transaction->control_type == 'CN' ? 'Check Number' : 'Petty Cash' }}</h5>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="">Issue No.</label>
-                                <h5>{{ $transaction->control_no }}</h5>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="">Released Date</label>
-                                <h5>{{ $transaction->released_at }}</h5>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="">Amount</label>
-                                <h5>{{ $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</h5>
-                            </div>
-                        </div>
-                    </div> --}}
                 </div>
                 <div class="col-sm-4">
                     <div class="pb-2 text-right"><h1>History</h1></div>

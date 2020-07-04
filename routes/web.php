@@ -57,6 +57,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('coa-tagging', 'Admin\CoaTaggingController', ['names' => ['index' => 'coatagging', 'create' => 'coatagging', 'edit' => 'coatagging']]);
         Route::resource('expense-type', 'Admin\ExpenseTypesController', ['names' => ['index' => 'expensetype', 'create' => 'expensetype', 'edit' => 'expensetype']]);
         Route::resource('particular', 'Admin\ParticularsController', ['names' => ['index' => 'particular', 'create' => 'particular', 'edit' => 'particular']]);
+        Route::resource('vat-type', 'Admin\VatTypesController', ['names' => ['index' => 'vattype', 'create' => 'vattype', 'edit' => 'vattype']]);
     });
 
     // Access Level 1, 2, and 3
@@ -71,7 +72,6 @@ Route::middleware('auth')->group(function () {
             Route::get('/view/{transaction}', $url.'@show')->where('transaction', '[0-9]+');
             Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
             Route::put('/cancel/{transaction}', $url.'@cancel')->where('transaction', '[0-9]+');
-            // Route::put('/issue/{transaction}', $url.'@issue')->where('transaction', '[0-9]+');
             Route::get('/report/', $url.'@report')->middleware('checkRole:1|2');
 
             Route::get('/{trans_page}/{trans_company?}', $url.'@index')->where('trans_company', '[0-9]+');
@@ -81,14 +81,16 @@ Route::middleware('auth')->group(function () {
             $url = 'Admin\TransactionsFormsController';
             
             Route::get('/create', $url.'@create');
-            // Route::post('/create', $url.'@store');
-            // Route::get('/edit/{transaction}', $url.'@edit')->where('transaction', '[0-9]+');
-            // Route::put('/edit/{transaction}', $url.'@update')->where('transaction', '[0-9]+');
-            // Route::get('/view/{transaction}', $url.'@show')->where('transaction', '[0-9]+');
-            // Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
-            // Route::put('/cancel/{transaction}', $url.'@cancel')->where('transaction', '[0-9]+');
-            // Route::put('/issue/{transaction}', $url.'@issue')->where('transaction', '[0-9]+');
-            // Route::get('/report/', $url.'@report')->middleware('checkRole:1|2');
+            Route::post('/create', $url.'@store');
+            Route::get('/view/{transaction}', $url.'@show')->where('transaction', '[0-9]+');
+            Route::get('/edit/{transaction}', $url.'@edit')->where('transaction', '[0-9]+');
+            Route::put('/edit/{transaction}', $url.'@update')->where('transaction', '[0-9]+');
+            Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
+            Route::put('/cancel/{transaction}', $url.'@cancel')->where('transaction', '[0-9]+');
+            Route::put('/approval/{transaction}', $url.'@approval')->where('transaction', '[0-9]+');
+            Route::get('/print/{transaction}', $url.'@print')->where('transaction', '[0-9]+');
+            Route::put('/issue/{transaction}', $url.'@issue')->where('transaction', '[0-9]+');
+            Route::get('/report/', $url.'@report')->middleware('checkRole:1|2');
 
             Route::get('/{trans_page}/{trans_company?}', $url.'@index')->where('trans_company', '[0-9]+');
         });

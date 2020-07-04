@@ -41,7 +41,7 @@
                                     <a href="/transaction/create/pc/{{ $company->id }}" class="mx-3 vlign--baseline-middle">Generate PC</a>
                                 @endif
                                 @if (in_array(Auth::user()->role_id, [1, 2]))
-                                    <a href="/transaction/report?type={{ $trans_types[0] }}&company={{ $company->id }}&status=1" class="mx-3 vlign--baseline-middle">Reports</a>
+                                    <a href="/transaction/report?type={{ $trans_types[0] }}&company={{ $company->id }}&status={{ config('global.generated')[0] }}" class="mx-3 vlign--baseline-middle">Reports</a>
                                 @endif
 
                                 <form action="/transaction/{{ $trans_page }}/{{ $company->id }}" method="GET" class="input-group w-25 float-right">
@@ -61,7 +61,7 @@
                             <th>Particulars</th>
                             <th>Date Gen.</th>
                             <th>Check Number</th>
-                            <th>Date Rel.</th>
+                            <th>Date Req.</th>
                             <th>Req. By</th>
                             <th>Status</th>
                             <th></th>
@@ -76,7 +76,7 @@
                                 <td>{{ $trans_page == 'prpo' ? $item->particulars->name : $item->particulars_custom }}</td>
                                 <td>{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
                                 <td>{{ $item->control_no }}</td>
-                                <td>{{ $item->released_at }}</td>
+                                <td>{{ $item->created_at->toDateString() }}</td>
                                 <td>{{ $item->requested->name }}</td>
                                 <td>{{ $item->status->name }}</td>
                                 <td>

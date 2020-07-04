@@ -57,11 +57,7 @@ class TransactionsController extends Controller {
             $transactions[$key]->can_edit = $this->check_can_edit($value->id);
             $transactions[$key]->can_cancel = $this->check_can_cancel($value->id);
             $transactions[$key]->can_reset = $this->check_can_reset($value->id);
-            // $transactions[$key]->can_issue = $this->check_can_issue($value->id);
         }
-
-        // $edit_pr_limit[2] = Settings::where('type', 'LIMIT_EDIT_GENPR_USER_2')->first()->value;
-        // $edit_pr_limit[3] = Settings::where('type', 'LIMIT_EDIT_GENPR_USER_3')->first()->value;
         
         return view('pages.admin.transaction.index')->with([
             'trans_page' => $trans_page,
@@ -69,8 +65,7 @@ class TransactionsController extends Controller {
             'page_label' => $page_label_index,
             'companies' => $companies,
             'company' => $company,
-            'transactions' => $transactions,
-            // 'edit_pr_limit' => $edit_pr_limit
+            'transactions' => $transactions
         ]);
     }
 
@@ -299,25 +294,6 @@ class TransactionsController extends Controller {
         }
     }
 
-    // public function issue(Request $request, Transaction $transaction) {
-    //     if ($this->check_can_issue($transaction->id)) {
-    //         $data = $request->validate([
-    //             'control_type' => ['required', 'in:CN,PC'],
-    //             'control_no' => ['required'],
-    //             'released_at' => ['required', 'date'],
-    //             'amount_issued' => ['required', 'min:0']
-    //         ]);
-            
-    //         $data['status_id'] = 4;
-    //         $data['updated_id'] = auth()->id();
-    //         $transaction->update($data);
-
-    //         return back()->with('success', 'Transaction'.__('messages.issue_success'));
-    //     } else {
-    //         return back()->with('error', __('messages.cant_issue'));
-    //     }
-    // }
-
     public function report() {
         switch ($_GET['type']) {
             case 'pr':
@@ -479,24 +455,4 @@ class TransactionsController extends Controller {
 
         return $can_reset;
     }
-
-    // private function check_can_issue($transaction, $user = '') {
-    //     $can_issue = true;
-
-    //     if (!$user) {
-    //         $user = auth()->id();
-    //     }
-    //     $user = User::where('id', $user)->first();
-
-    //     $transaction = Transaction::where('id', $transaction)->first();
-
-    //     // check if not unliquidated and not admin/accounting
-    //     if (!in_array($transaction->status_id, config('global.unliquidated')) || !in_array($user->role_id, [1, 2])) {
-    //         $can_issue = false;
-    //     }
-
-    //     // remove this if done with adjustments
-    //     $can_issue = false;
-    //     return $can_issue;
-    // }
 }

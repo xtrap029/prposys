@@ -43628,3 +43628,11 @@ label:not(.form-check-label):not(.custom-file-label) {
   }
 }
 
+.border-bottom-2 {
+  border-bottom: 2px solid gray;
+}
+
+.border-top-2 {
+  border-top: 2px solid gray;
+}
+

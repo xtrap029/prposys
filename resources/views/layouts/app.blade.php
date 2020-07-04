@@ -75,10 +75,11 @@
                                         @guest
                                         @else
                                             <div class="image">
-                                                <img src="/storage/public/images/users/{{ Auth::user()->avatar }}" class="img-circle" alt="User Image">
+                                                <img src="/storage/public/images/users/{{ Auth::user()->avatar }}" class="img-circle mt-2" alt="User Image">
                                             </div>
                                             <div class="info">
                                                 <a href="#" class="d-block">{{ Auth::user()->name }}</a>
+                                                <span class="small text-danger font-weight-bold">{{ Auth::user()->role->name }}</span>
                                             </div>
                                         @endguest
                                     </div>
@@ -152,6 +153,11 @@
                                                 <li class="nav-item">
                                                     <a href="/particular" class="nav-link {{ Route::currentRouteName() == 'particular' ? 'active' : '' }}">
                                                         <i class="nav-icon material-icons icon--list">description</i><p>Particulars</p>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/vat-type" class="nav-link {{ Route::currentRouteName() == 'vattype' ? 'active' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">receipt</i><p>VAT Type</p>
                                                     </a>
                                                 </li>
                                             @endif

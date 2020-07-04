@@ -26,11 +26,24 @@ class Transaction extends Model {
                                         'edit_count',
                                         'requested.name',
                                         'owner.name',
+                                        'coatagging.name',
+                                        'expensetype.name',
+                                        'vattype.name',
                                         'control_type',
                                         'control_no',
                                         'released_at',
                                         'amount_issued',
                                         'cancellation_reason',
+                                        'form_vat_code',
+                                        'form_vat_name',
+                                        'form_vat_vat',
+                                        'form_vat_wht',
+                                        'form_amount_unit',
+                                        'form_amount_subtotal',
+                                        'form_amount_vat',
+                                        'form_amount_wht',
+                                        'form_amount_payable',
+                                        'formapprover.name',
                                         'updatedby.name',
                                         'status.name'
                                         ];
@@ -45,6 +58,18 @@ class Transaction extends Model {
         return $this->belongsTo(CompanyProject::class);
     }
 
+    public function coatagging() {
+        return $this->belongsTo(CoaTagging::class, 'coa_tagging_id');
+    }
+
+    public function expensetype() {
+        return $this->belongsTo(ExpenseType::class, 'expense_type_id');
+    }
+
+    public function vattype() {
+        return $this->belongsTo(VatType::class, 'vat_type_id');
+    }
+
     public function requested() {
         return $this->belongsTo(User::class);
     }
@@ -55,6 +80,10 @@ class Transaction extends Model {
 
     public function updatedby() {
         return $this->belongsTo(User::class, 'updated_id');
+    }
+
+    public function formapprover() {
+        return $this->belongsTo(User::class, 'form_approver_id');
     }
 
     public function status() {

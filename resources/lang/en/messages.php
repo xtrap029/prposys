@@ -8,13 +8,17 @@ return [
     'reset_success' => ' successfully reset!',
     'cancel_success' => ' successfully cancelled!',
     'issue_success' => ' successfully issued!',
+    'approval_success' => ' successfully sent for approval!',
     'leave_blank' => 'Leave blank to use default setting.',
     'invalid_access' => 'Invalid access!',
+    'cant_create' => 'You are not allowed to create the item right now.',
     'cant_edit' => 'You are not allowed to edit the item right now.',
+    'cant_print' => 'You are not allowed to print the item right now.',
     'cant_issue' => 'You are not allowed to issue the item right now.',
     'exceed_amount_unliq' => 'Unliquidated amount limit exceeded.',
     'exceed_count_unliq' => 'Unliquidated transactions limit exceeded.',
     'cancel_prompt' => 'Are you sure you want to cancel?',
     'issue_prompt' => 'Issue Payment',
+    'approval_prompt' => 'Send for approval',
     'make_not_allowed' => 'Transaction Code not available.'
 ];

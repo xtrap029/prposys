@@ -7,3 +7,12 @@
         display: none !important;
     }
 }
+
+.border {
+    &-bottom-2 {
+        border-bottom: 2px solid gray;
+    }
+    &-top-2 {
+        border-top: 2px solid gray;
+    }
+}
