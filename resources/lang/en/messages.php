@@ -9,6 +9,7 @@ return [
     'cancel_success' => ' successfully cancelled!',
     'issue_success' => ' successfully issued!',
     'approval_success' => ' successfully sent for approval!',
+    'clear_success' => ' successfully cleared!',
     'leave_blank' => 'Leave blank to use default setting.',
     'invalid_access' => 'Invalid access!',
     'cant_create' => 'You are not allowed to create the item right now.',
@@ -20,5 +21,6 @@ return [
     'cancel_prompt' => 'Are you sure you want to cancel?',
     'issue_prompt' => 'Issue Payment',
     'approval_prompt' => 'Send for approval',
+    'clear_prompt' => 'Deposit Information',
     'make_not_allowed' => 'Transaction Code not available.'
 ];

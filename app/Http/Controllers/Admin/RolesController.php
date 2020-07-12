@@ -54,6 +54,6 @@ class RolesController extends Controller {
         $role->save();
         $role->delete();
 
-        return redirect('/role')->with('success', 'Settings'.__('messages.delete_success'));
+        return redirect('/role')->with('success', 'Role'.__('messages.delete_success'));
     }
 }

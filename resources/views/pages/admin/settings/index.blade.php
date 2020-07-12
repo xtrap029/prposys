@@ -118,7 +118,7 @@
                             </div>
                             @break
                             @case('LIMIT_EDIT_DEPOSIT_USER_2')
-                            <div class="form-row mb-3">
+                            <div class="form-row mb-3 d-none">
                                 <div class="col-md-6">
                                     <label for="">Deposit edit limit</label>
                                 </div>

@@ -44,6 +44,12 @@ class Transaction extends Model {
                                         'form_amount_wht',
                                         'form_amount_payable',
                                         'formapprover.name',
+                                        'liquidationapprover.name',
+                                        'depo_type',
+                                        'bank.name',
+                                        'depo_ref',
+                                        'depo_date',
+                                        'depo_slip',
                                         'updatedby.name',
                                         'status.name'
                                         ];
@@ -86,7 +92,23 @@ class Transaction extends Model {
         return $this->belongsTo(User::class, 'form_approver_id');
     }
 
+    public function liquidationapprover() {
+        return $this->belongsTo(User::class, 'liquidation_approver_id');
+    }
+
     public function status() {
         return $this->belongsTo(TransactionStatus::class);
+    }
+
+    public function liquidation() {
+        return $this->hasMany(TransactionsLiquidation::class);
+    }
+    
+    public function attachments() {
+        return $this->hasMany(TransactionsAttachment::class);
+    }
+    
+    public function bank() {
+        return $this->belongsTo(Bank::class, 'depo_bank_id');
     }
 }

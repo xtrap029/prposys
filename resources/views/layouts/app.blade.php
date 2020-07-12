@@ -97,7 +97,7 @@
                                                 <li class="nav-header">TRANSACTION</li>
                                                 <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc']) ? 'menu-open' : '' : '' }}">
                                                     <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc']) ? 'active' : '' : '' }}">
-                                                        <i class="nav-icon material-icons icon--list">add_box</i>
+                                                        <i class="nav-icon material-icons icon--list">drag_indicator</i>
                                                         <p>GENERATE</p>
                                                     </a>
                                                     <ul class="nav nav-treeview">
@@ -118,7 +118,7 @@
 
                                                 <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo-form', 'pc-form']) ? 'menu-open' : '' : '' }}">
                                                     <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo-form', 'pc-form']) ? 'active' : '' : '' }}">
-                                                        <i class="nav-icon material-icons icon--list">library_books</i>
+                                                        <i class="nav-icon material-icons icon--list">drag_indicator</i>
                                                         <p>FORMS</p>
                                                     </a>
                                                     <ul class="nav nav-treeview">
@@ -136,13 +136,39 @@
                                                         </li>
                                                     </ul>
                                                 </li>
+
+                                                <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo-liquidation', 'pc-liquidation']) ? 'menu-open' : '' : '' }}">
+                                                    <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo-liquidation', 'pc-liquidation']) ? 'active' : '' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">drag_indicator</i>
+                                                        <p>LIQUIDATION</p>
+                                                    </a>
+                                                    <ul class="nav nav-treeview">
+                                                        <li class="nav-item">
+                                                            <a href="/transaction-liquidation/prpo" class="nav-link {{ isset($trans_page) ? $trans_page == 'prpo-liquidation' ? 'active' : '' : '' }}">
+                                                                <i class="nav-icon material-icons icon--list">more_vert</i>
+                                                                <p>PRPO</p>
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a href="/transaction-liquidation/pc" class="nav-link {{ isset($trans_page) ? $trans_page == 'pc-liquidation' ? 'active' : '' : '' }}">
+                                                                <i class="nav-icon material-icons icon--list">more_vert</i>
+                                                                <p>Petty Cash</p>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </li>
                                             @endif
 
                                             @if (in_array(Auth::user()->role_id, [1, 2]))
                                                 <li class="nav-header">ACCOUNTING</li>
                                                 <li class="nav-item">
+                                                    <a href="/bank" class="nav-link {{ Route::currentRouteName() == 'bank' ? 'active' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">account_balance</i><p> Bank</p>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
                                                     <a href="/coa-tagging" class="nav-link {{ Route::currentRouteName() == 'coatagging' ? 'active' : '' }}">
-                                                        <i class="nav-icon material-icons icon--list">account_balance</i><p> COA Tagging</p>
+                                                        <i class="nav-icon material-icons icon--list">poll</i><p> COA Tagging</p>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
@@ -206,5 +232,8 @@
             </div>
         </div>
     </div>
+    <div id="app"></div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    @yield('script')
 </body>
 </html>

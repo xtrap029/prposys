@@ -1,0 +1,468 @@
+@extends('layouts.app')
+
+@section('title', 'View '.strtoupper($transaction->trans_type))
+
+@section('content')
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="form-row"> 
+                <div class="col-md-6 mb-4">
+                    <a href="/transaction-liquidation/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
+                    <a href="/transaction-liquidation/reset/{{ $transaction->id }}" class="btn btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
+                </div>
+                <div class="col-md-6 text-right mb-4">
+                    <a href="/transaction-liquidation/edit/{{ $transaction->id }}" class="btn btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
+                    <a href="#_" class="btn btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-approval"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a>
+                    <a href="#_" class="btn btn-danger {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-liquidation/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print</a>
+                    <a href="#_" class="btn btn-success {{ $perms['can_clear'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear"><i class="align-middle font-weight-bolder material-icons text-md">payments</i> Deposit</a>
+                    <a href="#_" class="btn btn-primary {{ $perms['can_edit_cleared'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear-edit"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit Deposit Info</a>
+                </div>
+                
+                @if ($perms['can_approval'])
+                    <div class="modal fade" id="modal-approval" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-md" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title">{{ __('messages.approval_prompt') }}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <form action="/transaction-liquidation/approval/{{ $transaction->id }}" method="post">
+                                        @csrf
+                                        @method('put')
+                                        <div class="text-left"><label for="">Select Authorized Approver</label></div>
+                                        <select name="liquidation_approver_id" class="form-control @error('liquidation_approver_id') is-invalid @enderror" required>
+                                            @foreach ($approvers as $item)
+                                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @include('errors.inline', ['message' => $errors->first('liquidation_approver_id')])
+                                        <input type="submit" class="btn btn-success mt-2" value="Confirm">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                @if ($perms['can_clear'])
+                    <div class="modal fade" id="modal-clear" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title">{{ __('messages.clear_prompt') }}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="/transaction-liquidation/clear/{{ $transaction->id }}" method="post"  enctype="multipart/form-data">
+                                        @csrf
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">Amount Used</th>
+                                                    <th class="text-center">Total Advanced</th>
+                                                    <th class="text-center">Bal. to be {{ $transaction->liq_balance >= 0 ? 'paid' : 'returned' }}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center">
+                                                        {{ $transaction->currency }}
+                                                        {{ number_format($transaction->liq_subtotal, 2, '.', ',') }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {{ $transaction->currency }}
+                                                        {{ number_format($transaction->amount_issued, 2, '.', ',') }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {{ $transaction->currency }}
+                                                        {{ number_format($transaction->liq_balance >= 0 ? $transaction->liq_balance : $transaction->liq_balance*-1, 2, '.', ',') }}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <div class="row mt-5">                                            
+                                            <div class="col-md-2">
+                                                <label for="" class="font-weight-bold">Type</label>
+                                                <select name="depo_type" class="form-control @error('depo_type') is-invalid @enderror" required>
+                                                    @foreach (config('global.deposit_type') as $item)
+                                                        <option value="{{ $item }}">{{ $item }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @include('errors.inline', ['message' => $errors->first('depo_type')])
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="" class="font-weight-bold">Bank</label>
+                                                <select name="depo_bank_id" class="form-control @error('depo_bank_id') is-invalid @enderror" required>
+                                                    @foreach ($banks as $item)
+                                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @include('errors.inline', ['message' => $errors->first('depo_bank_id')])
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="" class="font-weight-bold">Reference Code</label>
+                                                <input type="text" name="depo_ref" class="form-control @error('depo_ref') is-invalid @enderror" required>
+                                                @include('errors.inline', ['message' => $errors->first('depo_ref')])
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3 mb-5">
+                                            <div class="col-md-4">
+                                                <label for="" class="font-weight-bold">Date Deposited</label>
+                                                <input type="date" name="depo_date" class="form-control @error('depo_date') is-invalid @enderror" required>
+                                                @include('errors.inline', ['message' => $errors->first('depo_date')])
+                                            </div>
+                                            <div class="col-md-8">
+                                                <label for="" class="font-weight-bold">Slip Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than 5mb. )</small></label>
+                                                <input type="file" name="depo_slip" class="form-control @error('depo_slip') is-invalid @enderror" required>
+                                                @include('errors.inline', ['message' => $errors->first('depo_slip')])
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-2">
+                                            <input type="submit" class="btn btn-success" value="Clear Now">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                @if ($perms['can_edit_cleared'])
+                    <div class="modal fade" id="modal-clear-edit" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title">{{ __('messages.clear_prompt') }}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="/transaction-liquidation/clear/{{ $transaction->id }}" method="post"  enctype="multipart/form-data">
+                                        @csrf
+                                        @method('put')
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">Amount Used</th>
+                                                    <th class="text-center">Total Advanced</th>
+                                                    <th class="text-center">Bal. to be {{ $transaction->liq_balance >= 0 ? 'paid' : 'returned' }}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center">
+                                                        {{ $transaction->currency }}
+                                                        {{ number_format($transaction->liq_subtotal, 2, '.', ',') }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {{ $transaction->currency }}
+                                                        {{ number_format($transaction->amount_issued, 2, '.', ',') }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {{ $transaction->currency }}
+                                                        {{ number_format($transaction->liq_balance >= 0 ? $transaction->liq_balance : $transaction->liq_balance*-1, 2, '.', ',') }}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <div class="row mt-5">                                            
+                                            <div class="col-md-2">
+                                                <label for="" class="font-weight-bold">Type</label>
+                                                <select name="depo_type" class="form-control @error('depo_type') is-invalid @enderror" required>
+                                                    @foreach (config('global.deposit_type') as $item)
+                                                        <option value="{{ $item }}" {{ $transaction->depo_type == $item ? 'selected' : '' }}>{{ $item }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @include('errors.inline', ['message' => $errors->first('depo_type')])
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="" class="font-weight-bold">Bank</label>
+                                                <select name="depo_bank_id" class="form-control @error('depo_bank_id') is-invalid @enderror" required>
+                                                    @foreach ($banks as $item)
+                                                        <option value="{{ $item->id }}" {{ $transaction->depo_bank_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @include('errors.inline', ['message' => $errors->first('depo_bank_id')])
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="" class="font-weight-bold">Reference Code</label>
+                                                <input type="text" name="depo_ref" class="form-control @error('depo_ref') is-invalid @enderror" value="{{ $transaction->depo_ref }}" required>
+                                                @include('errors.inline', ['message' => $errors->first('depo_ref')])
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3 mb-5">
+                                            <div class="col-md-4">
+                                                <label for="" class="font-weight-bold">Date Deposited</label>
+                                                <input type="date" name="depo_date" class="form-control @error('depo_date') is-invalid @enderror" value="{{ $transaction->depo_date }}" required>
+                                                @include('errors.inline', ['message' => $errors->first('depo_date')])
+                                            </div>
+                                            <div class="col-md-8">
+                                                <label for="" class="font-weight-bold">Replace Slip Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than 5mb. )</small></label>
+                                                <input type="file" name="depo_slip" class="form-control @error('depo_slip') is-invalid @enderror">
+                                                @include('errors.inline', ['message' => $errors->first('depo_slip')])
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-2">
+                                            <input type="submit" class="btn btn-success" value="Clear Now">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </section>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-8">
+                    <div class="pb-2 border-bottom">
+                        <h1 class="d-inline-block mr-3">{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</h1>
+                        <h6 class="d-inline-block">
+                            <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--xxs mr-1">
+                            {{ $transaction->project->company->name }}
+                        </h6>
+                    </div>
+                    <div class="row mb-3">
+                        <table class="table col-12">
+                            <tr>
+                                <td class="font-weight-bold w-25">Status</td>
+                                <td>{{ $transaction->status->name }}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold w-25">Requested by</td>
+                                <td>{{ $transaction->requested->name }}</td>
+                            </tr>
+                            @if ($transaction->liquidation_approver_id)
+                                <tr>
+                                    <td class="font-weight-bold w-25">Authorized Approver</td>
+                                    <td>{{ $transaction->liquidationapprover->name }}</td>
+                                </tr>
+                            @endif
+                            <tr>
+                                <td class="font-weight-bold w-25">Project</td>
+                                <td>{{ $transaction->project->project }}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold w-25">COA Tagging</td>
+                                <td>{{ $transaction->coatagging->name }}</td>
+                            </tr>
+                            <tr>
+                                <td><span class="font-weight-bold w-25">Attachments</span></td>
+                                <td>
+                                    <a data-toggle="modal" data-target="#modal-attachments" href="#_">View All</a>
+                                    <div class="modal fade" id="modal-attachments" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header border-0">
+                                                    <h5 class="modal-title">Attachments</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body pt-0">
+                                                    @foreach ($transaction->attachments as $item)
+                                                        <p class="border-top pt-3">
+                                                            <a href="/storage/public/attachments/liquidation/{{ $item->file }}" target="_blank"><i class="material-icons mr-2 align-bottom">attachment</i></a>
+                                                            {{ $item->description }}
+                                                        </p>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <span class="font-weight-bold w-25">Purpose</span>
+                                    <p>{{ $transaction->purpose }}</p>
+                                </td>
+                            </tr>
+                        </table> 
+                    </div>
+                    <div class="row mb-3">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th>Location/Route</th>
+                                    <th class="text-center">Receipt</th>
+                                    <th class="text-right">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($transaction->liquidation as $item)
+                                    <tr>
+                                        <td>{{ $item->date }}</td>
+                                        <td>{{ $item->expensetype->name }}</td>
+                                        <td>{{ $item->description }}</td>
+                                        <td>{{ $item->location }}</td>
+                                        <td class="text-center">{{ $item->receipt ? 'Y' : 'N' }}</td>
+                                        <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
+                                    </tr>
+                                @endforeach
+                                <tr>
+                                    <td colspan="4" class="font-weight-bold small text-right">Before VAT</td>
+                                    <td colspan="2" class="bg-white text-right">
+                                        <span class="float-left">{{ $transaction->currency }}</span>
+                                        {{ number_format($transaction->liq_before_vat, 2, '.', ',') }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="font-weight-bold small text-right">VAT (12%)</td>
+                                    <td colspan="2" class="bg-white text-right font-italic">
+                                        <span class="float-left">{{ $transaction->currency }}</span>
+                                        {{ number_format($transaction->liq_vat, 2, '.', ',') }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="font-weight-bold small text-right">Subtotal</td>
+                                    <td colspan="2" class="bg-white text-right font-weight-bold">
+                                        <span class="float-left">{{ $transaction->currency }}</span>
+                                        {{ number_format($transaction->liq_subtotal, 2, '.', ',') }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="font-weight-bold small text-right">Less: Deposit/Payment</td>
+                                    <td colspan="2" class="bg-white text-right text-danger">
+                                        <span class="float-left">{{ $transaction->currency }}</span>
+                                        {{ number_format($transaction->amount_issued, 2, '.', ',') }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="small font-weight-bold text-right">Balance</td>
+                                    <td colspan="2" class="bg-white text-right font-weight-bold">
+                                        <span class="float-left">{{ $transaction->currency }}</span>
+                                        {{ number_format($transaction->liq_balance, 2, '.', ',') }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6" class="small text-right">
+                                        <span>(+) For Reimbursement / (-) Return Money</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        @if (in_array($transaction->status_id, config('global.liquidation_cleared')))
+                            <div class="pb-2 mt-3 mb-2">
+                                <h3 class="d-inline-block mr-3">Clearing Information</h3>
+                            </div>
+                            <table class="table">
+                                <tr>
+                                    <td>Amount {{ $transaction->liq_balance >= 0 ? 'Reimbursed' : 'Returned' }}</td>
+                                    <td class="font-weight-bold">
+                                        {{ $transaction->currency }}
+                                        {{ number_format($transaction->liq_balance >= 0 ? $transaction->liq_balance : $transaction->liq_balance*-1, 2, '.', ',') }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Type</td>
+                                    <td class="font-weight-bold">{{ $transaction->depo_type }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Bank</td>
+                                    <td class="font-weight-bold">{{ $transaction->bank->name }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Rereference Code</td>
+                                    <td class="font-weight-bold">{{ $transaction->depo_ref }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Date Deposited</td>
+                                    <td class="font-weight-bold">{{ $transaction->depo_date }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Slip Attachment</td>
+                                    <td class="font-weight-bold"><a href="/storage/public/attachments/deposit_slip/{{ $transaction->depo_slip }}" target="_blank"><i class="material-icons mr-2 align-bottom">attachment</i></a></td>
+                                </tr>
+                            </table>
+                        @endif
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="pb-2 text-right"><h1>History</h1></div>
+                    <table class="table table-striped table-bordered table-sm small">
+                        <tbody>
+                            @foreach ($logs as $item)
+                                <tr>
+                                    <td>
+                                        <a href="#_" data-toggle="modal" data-target="#modal-{{ $item->id }}">{{ strtoupper($item->description) }}</a>
+                                        <div class="modal fade" id="modal-{{ $item->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header border-0">
+                                                        <h5 class="modal-title">{{ ucfirst($item->description) }} {{ Carbon::parse($item->created_at)->diffForHumans() }}</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        @switch($item->description)
+                                                            @case('created')
+                                                                <table class="table table-sm table-bordered">
+                                                                    <thead class="bg-gradient-gray">
+                                                                        <tr>
+                                                                            <th></th>
+                                                                            <th>Value</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @foreach ($item->changes['attributes'] as $key => $attribute)
+                                                                            <tr>
+                                                                                <td class="font-weight-bold">{{ ucwords($key) }}</td>
+                                                                                <td>{{ $attribute }}</td>
+                                                                            </tr>
+                                                                        @endforeach
+                                                                    </tbody>
+                                                                </table>
+                                                                @break
+                                                            @case('updated')
+                                                                    <table class="table table-sm table-bordered">
+                                                                        <thead class="bg-gradient-gray">
+                                                                            <tr>
+                                                                                <th></th>
+                                                                                <th>From</th>
+                                                                                <th>To</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            @foreach ($item->changes['old'] as $key => $attribute)
+                                                                                <tr>
+                                                                                    <td class="font-weight-bold">{{ ucwords($key) }}</td>
+                                                                                    <td>{{ $attribute }}</td>
+                                                                                    <td>{{ $item->changes['attributes'][$key] }}</td>
+                                                                                </tr>
+                                                                            @endforeach
+                                                                        </tbody>
+                                                                    </table>
+                                                                @break
+                                                            @default                                                    
+                                                        @endswitch
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ $item->causer->name }}</td>
+                                    <td class="text-right">{{ Carbon::parse($item->created_at)->diffForHumans() }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>        
+        </div>
+    </section>
+@endsection

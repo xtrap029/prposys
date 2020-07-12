@@ -239,7 +239,10 @@ class TransactionsFormsController extends Controller {
             'vat_type_id' => ['required', 'exists:vat_types,id'],
         ]);
 
-        $data['edit_count'] = $transaction->edit_count + 1;
+        if (User::where('id', auth()->id())->first()->role_id != 1) {
+            $data['edit_count'] = $transaction->edit_count + 1;
+        }
+        
         $data['updated_id'] = auth()->id();
 
         $transaction->update($data);

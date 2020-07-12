@@ -89,16 +89,19 @@
                                             <div class="modal-footer border-0">
                                                 @if (in_array($item->description, ['created', 'updated']))
                                                     @switch($item->subject_type)
-                                                        @case('App\CoaTagging')         <?php $view_url = '/coa-tagging/'.$item->subject_id.'/edit'; ?> @break
-                                                        @case('App\Company')            <?php $view_url = '/company/'.$item->subject_id.'/edit'; ?> @break
-                                                        @case('App\CompanyProject')     <?php $view_url = '/company-project/edit/'.$item->subject_id; ?> @break
-                                                        @case('App\ExpenseType')        <?php $view_url = '/expense-type/'.$item->subject_id.'/edit'; ?> @break
-                                                        @case('App\Particular')         <?php $view_url = '/particular/'.$item->subject_id.'/edit'; ?> @break
-                                                        @case('App\Role')               <?php $view_url = '/role/'.$item->subject_id.'/edit'; ?> @break
-                                                        @case('App\Settings')           <?php $view_url = '/settings'; ?> @break
-                                                        @case('App\Transaction')        <?php $view_url = '/transaction/view/'.$item->subject_id; ?> @break
-                                                        @case('App\User')               <?php $view_url = '/user/'.$item->subject_id.'/edit'; ?> @break
-                                                        @case('App\VatType')            <?php $view_url = '/vat-type/'.$item->subject_id.'/edit'; ?> @break
+                                                        @case('App\Bank')                           <?php $view_url = '/bank/'.$item->subject_id.'/edit'; ?> @break
+                                                        @case('App\CoaTagging')                     <?php $view_url = '/coa-tagging/'.$item->subject_id.'/edit'; ?> @break
+                                                        @case('App\Company')                        <?php $view_url = '/company/'.$item->subject_id.'/edit'; ?> @break
+                                                        @case('App\CompanyProject')                 <?php $view_url = '/company-project/edit/'.$item->subject_id; ?> @break
+                                                        @case('App\ExpenseType')                    <?php $view_url = '/expense-type/'.$item->subject_id.'/edit'; ?> @break
+                                                        @case('App\Particular')                     <?php $view_url = '/particular/'.$item->subject_id.'/edit'; ?> @break
+                                                        @case('App\Role')                           <?php $view_url = '/role/'.$item->subject_id.'/edit'; ?> @break
+                                                        @case('App\Settings')                       <?php $view_url = '/settings'; ?> @break
+                                                        @case('App\Transaction')                    <?php $view_url = '/transaction/view/'.$item->subject_id; ?> @break
+                                                        @case('App\TransactionsAttachment')         <?php $view_url = '/transaction-liquidation/view/'.$item->subject_id; ?> @break
+                                                        @case('App\TransactionsLiquidation')        <?php $view_url = '/transaction-liquidation/view/'.$item->subject_id; ?> @break
+                                                        @case('App\User')                           <?php $view_url = '/user/'.$item->subject_id.'/edit'; ?> @break
+                                                        @case('App\VatType')                        <?php $view_url = '/vat-type/'.$item->subject_id.'/edit'; ?> @break
                                                         @default                                                        
                                                     @endswitch
                                                 <a href="{{ !empty($view_url) ? $view_url : '#' }}" class="btn btn-primary" target="_blank">View Item</a>

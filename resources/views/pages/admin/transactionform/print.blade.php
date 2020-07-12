@@ -6,7 +6,7 @@
     <section class="content">
         <div class="container-fluid">
             <div class="float-right">Date Generated: <b>{{ Carbon\Carbon::now() }}</b></div>
-            <h1>{{ $trans_page }}</h1>
+            <h1>{{ $trans_page }} - Form</h1>
             <div class="text-center mt-3 mb-5">
                 <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--sm">
                 <h2 class="mt-2">{{ $transaction->project->company->name }}</h2>
