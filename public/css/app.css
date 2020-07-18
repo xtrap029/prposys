@@ -43611,6 +43611,10 @@ label:not(.form-check-label):not(.custom-file-label) {
   border-right-color: #3490dc;
 }
 
+.vlign--middle {
+  vertical-align: middle;
+}
+
 .vlign--baseline-middle {
   vertical-align: -webkit-baseline-middle;
 }

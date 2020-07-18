@@ -59,17 +59,27 @@ class UsersController extends Controller {
     }
 
     public function update(Request $request, User $user) {
-        $data = $request->validate([
+        $validation_rules = [
             'role_id' => ['nullable', 'exists:roles,id'],
             'name' => ['required', 'string', 'max:255'],
             'avatar' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'LIMIT_UNLIQUIDATEDPR_AMOUNT' => ['nullable', 'integer'],
             'LIMIT_UNLIQUIDATEDPR_COUNT' => ['nullable', 'integer'],
-        ]);
+        ];
 
-        if($request->file('avatar')) {
+        if ($request->password) {
+            $validation_rules['password'] = ['required', 'string', 'min:8', 'confirmed'];
+        }
+
+        $data = $request->validate($validation_rules);
+
+        if ($request->file('avatar')) {
             Storage::delete('public/images/companies/' . $user->avatar);
             $data['avatar'] = basename($request->file('avatar')->store('public/images/users'));
+        }
+        
+        if ($request->password) {
+            $data['password'] = Hash::make($data['password']);
         }
 
         $user->update($data);

@@ -110,6 +110,9 @@ Route::middleware('auth')->group(function () {
             Route::post('/clear/{transaction}', $url.'@clear')->where('transaction', '[0-9]+');
             Route::put('/clear/{transaction}', $url.'@clear_edit')->where('transaction', '[0-9]+');
             Route::get('/report/', $url.'@report')->middleware('checkRole:1|2');
+            
+            Route::get('/finder-liquidation/{transaction}', $url.'@finder_liquidation')->where('transaction', '[0-9]+');
+            Route::get('/finder-attachment/{transaction}', $url.'@finder_attachment')->where('transaction', '[0-9]+');
 
             Route::get('/{trans_page}/{trans_company?}', $url.'@index')->where('trans_company', '[0-9]+');
         });

@@ -21,10 +21,10 @@
                         @case('LIMIT_UNLIQUIDATEDPR_AMOUNT')
                             <div class="mb-3"><b>Unliquidated Limit</b></div>
                             <div class="form-row mb-3">
-                                <div class="col-md-6">
+                                <div class="col-md-9">
                                     <label for="">Default unliquidated PR amount limit</label>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <input type="number" class="form-control @error('LIMIT_UNLIQUIDATEDPR_AMOUNT') is-invalid @enderror" name="LIMIT_UNLIQUIDATEDPR_AMOUNT" value="{{ $item->value }}">
                                     @include('errors.inline', ['message' => $errors->first('LIMIT_UNLIQUIDATEDPR_AMOUNT')])
                                 </div>
@@ -32,10 +32,10 @@
                             @break
                             @case('LIMIT_UNLIQUIDATEDPR_COUNT')
                             <div class="form-row mb-5">
-                                <div class="col-md-6">
+                                <div class="col-md-9">
                                     <label for="">Default unliquidated PR transactions limit</label>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <input type="number" class="form-control @error('LIMIT_UNLIQUIDATEDPR_COUNT') is-invalid @enderror" name="LIMIT_UNLIQUIDATEDPR_COUNT" value="{{ $item->value }}">
                                     @include('errors.inline', ['message' => $errors->first('LIMIT_UNLIQUIDATEDPR_COUNT')])
                                 </div>

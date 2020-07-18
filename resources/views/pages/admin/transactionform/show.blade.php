@@ -11,6 +11,7 @@
                     <a href="/transaction-form/reset/{{ $transaction->id }}" class="btn btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                 </div>
                 <div class="col-md-6 text-right mb-4">
+                    <a data-toggle="modal" data-target="#modal-make" href="#_" class="btn btn-success"><i class="align-middle font-weight-bolder material-icons text-md">add</i> {{ $transaction->trans_type == 'pc' ? 'Make Cash Request' : 'Make PR/PO' }}</a>                
                     <a href="/transaction-form/edit/{{ $transaction->id }}" class="btn btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
                     <a href="#_" class="btn btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-approval"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a>
                     <a href="#_" class="btn btn-danger {{ $perms['can_cancel'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-cancel"><i class="align-middle font-weight-bolder material-icons text-md">delete</i> Cancel</a>
@@ -18,7 +19,26 @@
                     <a href="#_" class="btn btn-danger {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print</a>
                     <a href="#" class="btn btn-success {{ $perms['can_issue'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-issue"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Issue</a>
                 </div>
-                
+
+                <div class="modal fade" id="modal-make" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-md" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title">Select {{ $transaction->trans_type == 'pc' ? 'PC' : 'PR/PO' }} to make</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <form action="/transaction-form/create" method="get">
+                                    <input type="text" name="key" class="form-control" placeholder="{{ $transaction->trans_type == 'pc' ? 'PC' : 'PR/PO' }}-XXXX-XXXXX" required>
+                                    <input type="submit" class="btn btn-primary mt-2" value="Check">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 @if ($perms['can_cancel'])
                     <div class="modal fade" id="modal-cancel" tabindex="-1" role="dialog" aria-hidden="true">
                         <div class="modal-dialog modal-md" role="document">
@@ -361,6 +381,11 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <div class="text-center">
+                        <div class="d-inline-block">
+                            {{ $logs->links() }}
+                        </div>
+                    </div>
                 </div>
             </div>        
         </div>

@@ -78,7 +78,7 @@
                                                 <img src="/storage/public/images/users/{{ Auth::user()->avatar }}" class="img-circle mt-2" alt="User Image">
                                             </div>
                                             <div class="info">
-                                                <a href="#" class="d-block">{{ Auth::user()->name }}</a>
+                                                <a href="/" class="d-block">{{ Auth::user()->name }}</a>
                                                 <span class="small text-danger font-weight-bold">{{ Auth::user()->role->name }}</span>
                                             </div>
                                         @endguest

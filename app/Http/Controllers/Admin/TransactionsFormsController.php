@@ -146,7 +146,7 @@ class TransactionsFormsController extends Controller {
     public function show(Transaction $transaction) {
         $logs = Activity::where('subject_id', $transaction->id)
                 ->where('subject_type', 'App\Transaction')
-                ->orderBy('id', 'desc')->get();
+                ->orderBy('id', 'desc')->paginate(15)->onEachSide(1);
         $perms['can_edit'] = $this->check_can_edit($transaction->id);
         $perms['can_cancel'] = $this->check_can_cancel($transaction->id);
         $perms['can_reset'] = $this->check_can_reset($transaction->id);

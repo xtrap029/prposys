@@ -11,6 +11,7 @@
                     <a href="/transaction/reset/{{ $transaction->id }}" class="btn btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                 </div>
                 <div class="col-md-6 text-right mb-4">
+                    <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}" class="btn btn-success"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Create</a>
                     <a href="/transaction/edit/{{ $transaction->id }}" class="btn btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
                     <a href="#_" class="btn btn-danger {{ $perms['can_cancel'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-cancel"><i class="align-middle font-weight-bolder material-icons text-md">delete</i> Cancel</a>
                     {{-- <a href="#" class="btn btn-success {{ $perms['can_issue'] ? '' : 'd-none' }} px-5" data-toggle="modal" data-target="#modal-issue"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Issued</a> --}}
@@ -262,6 +263,11 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <div class="text-center">
+                        <div class="d-inline-block">
+                            {{ $logs->links() }}
+                        </div>
+                    </div>
                 </div>
             </div>        
         </div>

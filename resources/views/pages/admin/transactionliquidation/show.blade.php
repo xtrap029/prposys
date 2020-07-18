@@ -11,6 +11,26 @@
                     <a href="/transaction-liquidation/reset/{{ $transaction->id }}" class="btn btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                 </div>
                 <div class="col-md-6 text-right mb-4">
+                    <a data-toggle="modal" data-target="#modal-liquidate" href="#_" class="btn btn-success"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Liquidate {{ $transaction->trans_type == 'pc' ? 'PC' : 'PR/PO' }}</a>
+                    <div class="modal fade" id="modal-liquidate" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-md" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title">Select {{ $transaction->trans_type == 'pc' ? 'PC' : 'PR/PO' }} to Liquidate</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <form action="/transaction-liquidation/create" method="get">
+                                        <input type="text" name="key" class="form-control" placeholder="{{ $transaction->trans_type == 'pc' ? 'PC' : 'PR/PO' }}-XXXX-XXXXX" required>
+                                        <input type="submit" class="btn btn-primary mt-2" value="Check">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <a href="/transaction-liquidation/edit/{{ $transaction->id }}" class="btn btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
                     <a href="#_" class="btn btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-approval"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a>
                     <a href="#_" class="btn btn-danger {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-liquidation/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print</a>
@@ -271,7 +291,13 @@
                                                 <div class="modal-body pt-0">
                                                     @foreach ($transaction->attachments as $item)
                                                         <p class="border-top pt-3">
-                                                            <a href="/storage/public/attachments/liquidation/{{ $item->file }}" target="_blank"><i class="material-icons mr-2 align-bottom">attachment</i></a>
+                                                            <a href="/storage/public/attachments/liquidation/{{ $item->file }}" target="_blank" style="vertical-align: sub">
+                                                                @if (pathinfo($item->file, PATHINFO_EXTENSION) == 'pdf')
+                                                                    <i class="material-icons mr-2 align-bottom" style="font-size: 40px">picture_as_pdf</i>
+                                                                @else
+                                                                    <i class="material-icons mr-2 align-bottom" style="font-size: 40px">insert_photo</i>    
+                                                                @endif
+                                                            </a>
                                                             {{ $item->description }}
                                                         </p>
                                                     @endforeach
@@ -455,12 +481,18 @@
                                             </div>
                                         </div>
                                     </td>
+                                    <td>{{ $item->log_name }}</td>
                                     <td>{{ $item->causer->name }}</td>
                                     <td class="text-right">{{ Carbon::parse($item->created_at)->diffForHumans() }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
+                    <div class="text-center">
+                        <div class="d-inline-block">
+                            {{ $logs->links() }}
+                        </div>
+                    </div>
                 </div>
             </div>        
         </div>

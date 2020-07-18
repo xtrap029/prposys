@@ -10,6 +10,7 @@ use App\Settings;
 use App\Transaction;
 use App\TransactionStatus;
 use App\User;
+use App\Helpers\TransactionHelper;
 use Spatie\Activitylog\Models\Activity;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -127,7 +128,7 @@ class TransactionsController extends Controller {
 
             // if non admin requestor, validate limit applicable for pr only
             if (User::where('id', $data['requested_id'])->first()->role_id != 1 && $trans_type == 'pr') {
-                $trans_bal = $this->check_unliquidated_balance($data['requested_id']);
+                $trans_bal = TransactionHelper::check_unliquidated_balance($data['requested_id']);
 
                 $validator = \Validator::make(request()->all(), []);
 
@@ -218,7 +219,7 @@ class TransactionsController extends Controller {
         // if not pr, not admin, amount does exceed limit
         if ($transaction->trans_type == 'pr' 
             && $transaction->requested->role_id != 1
-            && $data['amount'] - $transaction->amount > $this->check_unliquidated_balance($transaction->requested_id)['amount']) {
+            && $data['amount'] - $transaction->amount > TransactionHelper::check_unliquidated_balance($transaction->requested_id)['amount']) {
 
             $validator = \Validator::make(request()->all(), []);    
             $validator->errors()->add('amount', __('messages.exceed_amount_unliq'));
@@ -241,7 +242,7 @@ class TransactionsController extends Controller {
     public function show(Transaction $transaction) {
         $logs = Activity::where('subject_id', $transaction->id)
                 ->where('subject_type', 'App\Transaction')
-                ->orderBy('id', 'desc')->get();
+                ->orderBy('id', 'desc')->paginate(15)->onEachSide(1);
         $perms['can_edit'] = $this->check_can_edit($transaction->id);
         $perms['can_cancel'] = $this->check_can_cancel($transaction->id);
         $perms['can_reset'] = $this->check_can_reset($transaction->id);
@@ -343,33 +344,6 @@ class TransactionsController extends Controller {
             'status_sel' => $status_sel,
             'transactions' => $transactions
         ]);
-    }
-
-    private function check_unliquidated_balance($user) {
-        $user = User::where('id', $user)->first();
-
-        if ($user->LIMIT_UNLIQUIDATEDPR_AMOUNT) {
-            $trans_amount_limit = $user->LIMIT_UNLIQUIDATEDPR_AMOUNT;
-        } else {
-            $trans_amount_limit = Settings::where('type', 'LIMIT_UNLIQUIDATEDPR_AMOUNT')->first()->value;
-        }
-        
-        if ($user->LIMIT_UNLIQUIDATEDPR_COUNT) {
-            $trans_count_limit = $user->LIMIT_UNLIQUIDATEDPR_COUNT;
-        } else {
-            $trans_count_limit = Settings::where('type', 'LIMIT_UNLIQUIDATEDPR_COUNT')->first()->value;
-        }
-
-        $transactions = Transaction::where('requested_id', $user->id)
-                        ->where('trans_type', 'pr')
-                        ->whereIn('status_id', config('global.unliquidated'));
-        $trans_amount = $transactions->sum('amount');
-        $trans_count = $transactions->count();
-
-        $trans_bal['amount'] = $trans_amount_limit - $trans_amount;
-        $trans_bal['count'] = $trans_count_limit - $trans_count;
-
-        return $trans_bal;
     }
 
     private function check_can_edit($transaction, $user = '') {

@@ -124,7 +124,7 @@
                 </div>
                 <div class="jsReplicate mt-5 pt-5">
                     <h4 class="text-center">Attachments</h4>
-                    <div class="text-center mb-3">Accepts .jpg, .png and .pdf file types, not more than 5mb each.</div>
+                    <div class="text-center mb-3">Attach receipts and documents here. Accepts .jpg, .png and .pdf file types, not more than 5mb each.</div>
                     <table class="table bg-white">
                         <thead>
                             <tr>

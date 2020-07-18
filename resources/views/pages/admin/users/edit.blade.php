@@ -33,6 +33,15 @@
                     @include('errors.inline', ['message' => $errors->first('role_id')])
                 </div>
                 <div class="form-group">
+                    <label for="">Change Password</label>
+                    <input type="password" class="form-control @error('password') is-invalid @enderror" name="password">
+                    @include('errors.inline', ['message' => $errors->first('password')])
+                </div>
+                <div class="form-group">
+                    <label for="">Confirm Change Password</label>
+                    <input type="password" class="form-control" name="password_confirmation">
+                </div>
+                <div class="form-group">
                     <label for="avatar" class="d-block">Avatar</label>
                     <img src="/storage/public/images/users/{{ $user->avatar }}" alt="" class="thumb thumb--sm img-thumbnail">
                     <input type="file" name="avatar" class="form-control-file @error('avatar') is-invalid @enderror d-inline-block w-auto ml-3">

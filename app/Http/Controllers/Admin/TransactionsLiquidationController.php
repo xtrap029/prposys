@@ -10,6 +10,7 @@ use App\Transaction;
 use App\TransactionsAttachment;
 use App\TransactionsLiquidation;
 use App\TransactionStatus;
+use App\Settings;
 use App\User;
 use Spatie\Activitylog\Models\Activity;
 use Illuminate\Http\Request;
@@ -165,11 +166,23 @@ class TransactionsLiquidationController extends Controller {
     }
 
     public function show(Transaction $transaction) {
-        $logs = Activity::where('subject_id', $transaction->id)
-                ->where('subject_type', 'App\Transaction')
-                ->orWhere('subject_type', 'App\TransactionsAttachment')
-                ->orWhere('subject_type', 'App\TransactionsLiquidation')
-                ->orderBy('id', 'desc')->get();
+        $transaction_liquidations = TransactionsLiquidation::where('transaction_id', $transaction->id)->pluck('id')->toArray();
+        $transaction_attachments = TransactionsAttachment::where('transaction_id', $transaction->id)->pluck('id')->toArray();
+        $transaction_id = $transaction->id;
+
+        $logs = Activity::where(function($query) use ($transaction_id){
+                            $query->where('subject_id', $transaction_id);
+                            $query->where('subject_type', 'App\Transaction');
+                        })
+                        ->orWhere(function($query) use ($transaction_liquidations){
+                            $query->whereIn('subject_id', $transaction_liquidations);
+                            $query->where('subject_type', 'App\TransactionsLiquidation');
+                        })
+                        ->orWhere(function($query) use ($transaction_attachments){
+                            $query->whereIn('subject_id', $transaction_attachments);
+                            $query->where('subject_type', 'App\TransactionsAttachment');
+                        })
+                        ->orderBy('id', 'desc')->paginate(15)->onEachSide(1);
 
         $perms['can_edit'] = $this->check_can_edit($transaction->id);
         $perms['can_reset'] = $this->check_can_reset($transaction->id);
@@ -455,6 +468,14 @@ class TransactionsLiquidationController extends Controller {
             'transactions' => $transactions
         ]);
     }
+
+    public function finder_liquidation(TransactionsLiquidation $transaction) {
+        return redirect('/transaction-liquidation/view/'.$transaction->transaction_id);
+    } 
+
+    public function finder_attachment(TransactionsAttachment $transaction) {
+        return redirect('/transaction-liquidation/view/'.$transaction->transaction_id);
+    } 
 
     public function clear_edit(Request $request, Transaction $transaction) {
         if (User::where('id', auth()->id())->first()->role_id == 1) {
