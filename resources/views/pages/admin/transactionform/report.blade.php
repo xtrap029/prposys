@@ -109,6 +109,7 @@
                         <td>Vendor/Payee</td>
                         <td>VAT Type</td>
                         <td>Amount</td>
+                        <td>Check No.</td>
                         <td>Date Due</td>
                         <td>Prep. By</td>
                     </tr>
@@ -120,6 +121,7 @@
                             <td>{{ $item->payee }}</td>
                             <td>{{ $item->vattype->name }}</td>
                             <td>{{ number_format($item->amount, 2, '.', ',') }}</td>
+                            <td>{{ $item->control_no ? $item->control_no : '-' }}</td>
                             <td>{{ $item->due_at }}</td>
                             <td>{{ $item->owner->name }}</td>
                         </tr>

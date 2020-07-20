@@ -96,6 +96,7 @@
                             <th>Vendor/Payee</th>
                             <th>VAT Type</th>
                             <th class="text-right">Amount (PHP)</th>
+                            <th>Check No.</th>
                             <th>Date Due</th>
                             <th>Prep. By</th>
                             <th>Status</th>
@@ -111,6 +112,7 @@
                                 <td>{{ $item->payee }}</td>
                                 <td>{{ $item->vattype->name }}</td>
                                 <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
+                                <td>{{ $item->control_no ? $item->control_no : '-' }}</td>
                                 <td>{{ Carbon::parse($item->due_at)->format('Y-m-d') }}</td>
                                 <td>{{ $item->owner->name }}</td>
                                 <td>{{ $item->status->name }}</td>
