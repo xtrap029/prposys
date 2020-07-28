@@ -119,19 +119,77 @@
                     </table>
                 </div>
 
-                <div class="col-3 text-center mt-5">
+                <div class="col-6">
+                    <table class="table table-sm">
+                        <tr>
+                            <td>Entered into Quickbooks</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Entered By</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Date Entered</td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="col-6">
+                    <table class="table table-sm">
+                        <tr>
+                            <td>Released By</td>
+                            <td>{{ $transaction->form_approver_id ? $transaction->formapprover->name : '' }}</td>
+                        </tr>
+                        <tr>
+                            <td>Bank/Check#</td>
+                            <td>{{ $transaction->control_no }}</td>
+                        </tr>
+                        <tr>
+                            <td>Date Released</td>
+                            <td>{{ $transaction->released_at }}</td>
+                        </tr>
+                        <tr>
+                            <td>For Liquidation</td>
+                            <td>
+                                <span class="mx-5">Yes</span>
+                                <span>No</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>OR Required</td>
+                            <td>
+                                <span class="mx-5">Yes</span>
+                                <span>No</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="col-2 small text-center my-5">
                     <div>{{ $transaction->owner->name }}</div>
                     <div class="mt-2 pt-2 border-top font-weight-bold">Prepared By</div>
                 </div>
-                <div class="col-3 text-center mt-5">
+                <div class="col-2 small text-center my-5">
                     <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
                     <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
                 </div>
-                <div class="col-3 text-center mt-5">
-                    <div>{{ $transaction->formapprover->name }}</div>
+                
+                <div class="col-2 small text-center my-5 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
+                    <div>{{ $transaction->form_approver_id ? $transaction->formapprover->name : '' }}</div>
                     <div class="mt-2 pt-2 border-top font-weight-bold">Authorized By</div>
                 </div>
-                <div class="col-3 text-center mt-5">
+                <div class="col-2 small text-center my-5 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
+                    <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
+                    <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
+                </div>
+
+                <div class="col-2 small text-center my-5">
+                    <div>{{ $final_approver }}</div>
+                    <div class="mt-2 pt-2 border-top font-weight-bold">Final Approver</div>
+                </div>
+                <div class="col-2 small text-center my-5">
                     <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
                     <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
                 </div>

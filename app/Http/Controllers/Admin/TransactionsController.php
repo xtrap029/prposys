@@ -346,6 +346,73 @@ class TransactionsController extends Controller {
         ]);
     }
 
+    public function report_all() {
+        $trans_page = '';
+        $status_sel = '';
+        $trans_type = '';
+        $trans_company = '';
+        $trans_from = '';
+        $trans_to = '';
+
+        $transactions = Transaction::orderBy('id', 'desc');
+        
+        if (!empty($_GET['type'])) {
+            $trans_type = $_GET['type'];
+            switch ($_GET['type']) {
+                case 'pr':
+                    $trans_page = "prpo";
+                case 'po':
+                    $trans_page = "prpo";
+                break;  
+                case 'pc':
+                    $trans_page = "pc";
+                    break;            
+                default:
+                    abort(404);
+                    break;
+            }
+
+            $transactions = $transactions->where('trans_type', $trans_type);
+        }
+
+        if (!empty($_GET['company'])) {
+            $trans_company = $_GET['company'];
+            $transactions = $transactions->whereHas('project', function($query) use($trans_company) {
+                $query->where('company_id', $trans_company);
+            });
+        }
+        
+        if (!empty($_GET['status'])) {
+            $transactions = $transactions->where('status_id', $_GET['status']);
+            $status_sel = TransactionStatus::where('id', $_GET['status'])->first()->name;
+        }
+
+        if (!empty($_GET['from'])) {
+            $transactions = $transactions->whereDate('created_at', '>=', $_GET['from']);
+            $trans_from = $_GET['from'];
+        }
+        if (!empty($_GET['to'])) {
+            $transactions = $transactions->whereDate('created_at', '<=', $_GET['to']);
+            $trans_to = $_GET['to'];
+        }
+
+        $transactions = $transactions->get();
+
+        $companies = Company::orderBy('name', 'asc')->get();
+        $status = TransactionStatus::whereIn('id', config('global.status'))->orderBy('id', 'asc')->get();
+
+        return view('pages.admin.transaction.reportall')->with([
+            'companies' => $companies,
+            'status' => $status,
+            'status_sel' => $status_sel,
+            'transactions' => $transactions,
+            'trans_type' => $trans_type,
+            'trans_company' => $trans_company,
+            'trans_from' => $trans_from,
+            'trans_to' => $trans_to,
+        ]);
+    }
+
     private function check_can_edit($transaction, $user = '') {
         $can_edit = true;
 

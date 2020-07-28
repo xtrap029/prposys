@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\User;
+use App\Company;
 use App\Role;
+use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -22,7 +23,11 @@ class UsersController extends Controller {
     }
 
     public function create() {
-        return view('pages.admin.users.create');
+        $companies = Company::orderBy('name', 'asc')->get();
+
+        return view('pages.admin.users.create')->with([
+            'companies' => $companies
+        ]);
     }
 
     public function store(Request $request) {
@@ -31,6 +36,7 @@ class UsersController extends Controller {
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'avatar' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'company_id' =>  ['required', 'exists:companies,id'],
             'LIMIT_UNLIQUIDATEDPR_AMOUNT' => ['nullable', 'integer'],
             'LIMIT_UNLIQUIDATEDPR_COUNT' => ['nullable', 'integer'],
         ]);
@@ -42,6 +48,7 @@ class UsersController extends Controller {
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'company_id' => $data['company_id'],
             'LIMIT_UNLIQUIDATEDPR_AMOUNT' => $data['LIMIT_UNLIQUIDATEDPR_AMOUNT'],
             'LIMIT_UNLIQUIDATEDPR_COUNT' => $data['LIMIT_UNLIQUIDATEDPR_COUNT'],
         ]);
@@ -51,16 +58,19 @@ class UsersController extends Controller {
 
     public function edit(User $user) {
         $roles = Role::orderBy('id', 'desc')->get();
+        $companies = Company::orderBy('name', 'asc')->get();
 
         return view('pages.admin.users.edit')->with([
             'user' => $user,
-            'roles' => $roles
+            'roles' => $roles,
+            'companies' => $companies
         ]);
     }
 
     public function update(Request $request, User $user) {
         $validation_rules = [
             'role_id' => ['nullable', 'exists:roles,id'],
+            'company_id' =>  ['required', 'exists:companies,id'],
             'name' => ['required', 'string', 'max:255'],
             'avatar' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'LIMIT_UNLIQUIDATEDPR_AMOUNT' => ['nullable', 'integer'],

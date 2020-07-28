@@ -98,6 +98,34 @@
                         </table>
                     </div>
                 </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Cleared Transactions</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="material-icons">minimize</i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-striped small m-0">
+                            <thead>
+                                <tr>
+                                    <th>Transaction</th>
+                                    <th class="text-right">Balance</th>
+                                    <th>Last Update</th>
+                                </tr>
+                            </thead>
+                            @foreach ($cleared as $item)
+                                <tr class="{{ number_format($item->liquidation->sum('amount') - $item->amount_issued, 2, '.', ',') > 0 ? 'bg-success' : '' }}">
+                                    <td>{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</td>
+                                    <td class="text-right">{{ number_format($item->liquidation->sum('amount') - $item->amount_issued, 2, '.', ',') }}</td>
+                                    <td>{{ Carbon::parse($item->updated_at)->diffForHumans() }}</td>
+                                </tr>
+                            @endforeach
+                        </table>
+                    </div>
+                </div>
             </div>
             <div class="col-md-8">
                 <div class="row">

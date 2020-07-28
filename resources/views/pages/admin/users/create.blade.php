@@ -27,6 +27,15 @@
                     @include('errors.inline', ['message' => $errors->first('email')])
                 </div>
                 <div class="form-group">
+                    <label for="">Default Company</label>
+                    <select name="company_id" class="form-control @error('company_id') is-invalid @enderror" required>
+                        @foreach ($companies as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        @endforeach
+                    </select>
+                    @include('errors.inline', ['message' => $errors->first('company_id')])
+                </div>
+                <div class="form-group">
                     <label for="">Password</label>
                     <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" required>
                     @include('errors.inline', ['message' => $errors->first('password')])

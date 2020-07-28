@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "admin-lte": "^3.0.5",
+        "chart.js": "^2.9.3",
         "material-components-web": "^6.0.0"
     }
 }

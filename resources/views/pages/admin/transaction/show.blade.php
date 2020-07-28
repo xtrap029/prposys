@@ -8,10 +8,10 @@
             <div class="row"> 
                 <div class="col-md-6 mb-4">
                     <a href="/transaction/{{ $trans_page }}/{{ $transaction->project->company_id }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
+                    <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>
                     <a href="/transaction/reset/{{ $transaction->id }}" class="btn btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                 </div>
                 <div class="col-md-6 text-right mb-4">
-                    <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}" class="btn btn-success"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Create</a>
                     <a href="/transaction/edit/{{ $transaction->id }}" class="btn btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
                     <a href="#_" class="btn btn-danger {{ $perms['can_cancel'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-cancel"><i class="align-middle font-weight-bolder material-icons text-md">delete</i> Cancel</a>
                     {{-- <a href="#" class="btn btn-success {{ $perms['can_issue'] ? '' : 'd-none' }} px-5" data-toggle="modal" data-target="#modal-issue"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Issued</a> --}}
@@ -200,7 +200,13 @@
                             @foreach ($logs as $item)
                                 <tr>
                                     <td>
-                                        <a href="#_" data-toggle="modal" data-target="#modal-{{ $item->id }}">{{ strtoupper($item->description) }}</a>
+                                        <a href="#_" data-toggle="modal" data-target="#modal-{{ $item->id }}">
+                                            @if ($item->description == 'created')
+                                                <i class="align-middle font-weight-bolder material-icons text-md">add</i>
+                                            @else
+                                                <i class="align-middle font-weight-bolder material-icons text-md">edit</i>
+                                            @endif
+                                        </a>
                                         <div class="modal fade" id="modal-{{ $item->id }}" tabindex="-1" role="dialog" aria-hidden="true">
                                             <div class="modal-dialog modal-lg" role="document">
                                                 <div class="modal-content">

@@ -87,7 +87,7 @@
                                 <td class="border-0">{{ $status_sel }}</td>
                             </tr>
                         </table>
-                    </div>
+                    </div>                    
                     <div class="float-right">
                         <table class="table table-sm mb-0">
                             <tr>
@@ -101,6 +101,13 @@
                         </table>
                     </div>
                 </div>
+                @if ($_GET['company'] != "" && count($transactions) > 0)
+                    <div class="mb-3 text-center">
+                        <img src="/storage/public/images/companies/{{ $transactions[0]->project->company->logo }}" alt="" class="thumb thumb--xs mr-2 vlign--baseline-middle">
+                        <span class="mr-3 vlign--baseline-middle">{{ $transactions[0]->project->company->name }}</span>
+                    </div>
+                @endif
+
                 <table class="table mb-0 small table-striped">
                     <tr class="bg-gray font-weight-bold">
                         <td>Transaction</td>

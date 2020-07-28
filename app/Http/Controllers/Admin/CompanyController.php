@@ -26,7 +26,7 @@ class CompanyController extends Controller {
         $data = $request->validate([
             'code' => ['required', 'string', 'max:10', Rule::unique('companies')->whereNull('deleted_at')],
             'name' => ['required', 'string', 'max:150'],
-            'logo' => ['sometimes', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'logo' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ]);
 
         $data['logo'] = basename($request->file('logo')->store('public/images/companies'));

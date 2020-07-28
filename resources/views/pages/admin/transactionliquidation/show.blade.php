@@ -8,10 +8,10 @@
             <div class="form-row"> 
                 <div class="col-md-6 mb-4">
                     <a href="/transaction-liquidation/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
+                    <a data-toggle="modal" data-target="#modal-liquidate" href="#_" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>
                     <a href="/transaction-liquidation/reset/{{ $transaction->id }}" class="btn btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                 </div>
                 <div class="col-md-6 text-right mb-4">
-                    <a data-toggle="modal" data-target="#modal-liquidate" href="#_" class="btn btn-success"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Liquidate {{ $transaction->trans_type == 'pc' ? 'PC' : 'PR/PO' }}</a>
                     <div class="modal fade" id="modal-liquidate" tabindex="-1" role="dialog" aria-hidden="true">
                         <div class="modal-dialog modal-md" role="document">
                             <div class="modal-content">
@@ -32,7 +32,8 @@
                     </div>
 
                     <a href="/transaction-liquidation/edit/{{ $transaction->id }}" class="btn btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
-                    <a href="#_" class="btn btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-approval"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a>
+                    {{-- <a href="#_" class="btn btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-approval"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a> --}}
+                    <a href="/transaction-liquidation/approval/{{ $transaction->id }}" class="btn btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a>
                     <a href="#_" class="btn btn-danger {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-liquidation/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print</a>
                     <a href="#_" class="btn btn-success {{ $perms['can_clear'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear"><i class="align-middle font-weight-bolder material-icons text-md">payments</i> Deposit</a>
                     <a href="#_" class="btn btn-primary {{ $perms['can_edit_cleared'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear-edit"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit Deposit Info</a>
@@ -272,9 +273,42 @@
                                 <td>{{ $transaction->project->project }}</td>
                             </tr>
                             <tr>
+                                <td class="font-weight-bold w-25">Particulars</td>
+                                <td>{{ $trans_page_url == 'prpo' ? $transaction->particulars->name : $transaction->particulars_custom }}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold w-25">Due Date</td>
+                                <td>{{ $transaction->due_at }}</td>
+                            </tr>
+                            <tr>
                                 <td class="font-weight-bold w-25">COA Tagging</td>
                                 <td>{{ $transaction->coatagging->name }}</td>
                             </tr>
+                            <tr>
+                                <td class="font-weight-bold w-25">Vendor / Payee</td>
+                                <td>{{ $transaction->payee }}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold w-25">VAT Type</td>
+                                <td>{{ $transaction->form_vat_name ? $transaction->form_vat_name : $transaction->vattype->name }}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold w-25">Issue Type</td>
+                                <td>{{ $transaction->control_type == 'CN' ? 'Check Number' : 'Petty Cash' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold w-25">Issue No.</td>
+                                <td>{{ $transaction->control_no }}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold w-25">Released Date</td>
+                                <td>{{ $transaction->released_at }}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold w-25">Released Amount</td>
+                                <td>{{ $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
+                            </tr>
+
                             <tr>
                                 <td><span class="font-weight-bold w-25">Attachments</span></td>
                                 <td>
@@ -313,7 +347,65 @@
                                     <p>{{ $transaction->purpose }}</p>
                                 </td>
                             </tr>
+
                         </table> 
+                    </div>
+                    <div class="row mb-3">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Qty</th>
+                                    <th>Description</th>
+                                    <th class="text-right">Unit Price</th>
+                                    <th class="text-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-bottom-2">
+                                    <td>1</td>
+                                    <td>{{ $transaction->expensetype->name }}</td>
+                                    <td class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_unit ? $transaction->form_amount_unit : $transaction->amount, 2, '.', ',') }}</td>
+                                    <td class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_unit ? $transaction->form_amount_unit : $transaction->amount, 2, '.', ',') }}</td>
+                                </tr>
+                                <tr class="font-weight-bold">
+                                    <td colspan="2" class="text-right">
+                                        {{ $transaction->form_amount_vat ? $transaction->form_amount_vat : $transaction->vattype->vat 
+                                            + $transaction->form_amount_wht ? $transaction->form_amount_wht : $transaction->vattype->wht == 0 ? 'Total' : 'Subtotal' }}
+                                    </td>
+                                    <td></td>
+                                    <td class="text-right">
+                                        {{ number_format($transaction->form_amount_subtotal ? $transaction->form_amount_subtotal : $transaction->custom_subtotal, 2, '.', ',') }}
+                                    </td>
+                                </tr>
+                                @if ($transaction->custom_vat > 0 || $transaction->form_amount_vat)
+                                <tr>
+                                    <td colspan="2" class="text-right">VAT</td>
+                                    <td></td>
+                                    <td class="text-right">{{ number_format($transaction->form_amount_vat ? $transaction->form_amount_vat : $transaction->custom_vat, 2, '.', ',') }}</td>
+                                </tr>
+                                @endif
+                                @if ($transaction->custom_wht > 0 || $transaction->form_vat_wht)
+                                <tr>
+                                    <td></td>
+                                    <td class="text-right">Less Withholding Tax</td>
+                                    <td class="text-right">{{ $transaction->form_vat_wht ? $transaction->form_vat_name." (".$transaction->form_vat_wht."%)" : $transaction->vattype->name." (".$transaction->vattype->wht."%)" }}</td>
+                                    <td class="text-right">({{ number_format($transaction->form_amount_wht ? $transaction->form_amount_wht : $transaction->custom_wht, 2, '.', ',') }})</td>
+                                </tr>
+                                @endif
+                                @if ($transaction->custom_vat > 0 || $transaction->form_amount_payable)
+                                <tr class="font-weight-bold">
+                                    <td colspan="2" class="text-right">Total Payable</td>
+                                    <td></td>
+                                    <td class="text-right">{{ number_format($transaction->form_amount_payable ? $transaction->form_amount_payable : $transaction->custom_total_payable, 2, '.', ',') }}</td>
+                                </tr>
+                                @endif
+                                <tr class="font-weight-bold border-top-2">
+                                    <td colspan="2" class="text-right">Amount</td>
+                                    <td></td>
+                                    <td class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_payable ? $transaction->form_amount_payable : $transaction->custom_total_payable, 2, '.', ',') }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                     <div class="row mb-3">
                         <table class="table table-bordered">
@@ -338,6 +430,21 @@
                                         <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
                                     </tr>
                                 @endforeach
+                                <tr>
+                                    <td colspan="6" class="py-4"></td>
+                                </tr>
+                                @foreach ($transaction_summary as $item)
+                                    <tr>
+                                        <td></td>
+                                        <td class="bg-white" colspan="5">
+                                            {{ $item->name }}
+                                            <span class="float-right">{{ number_format($item->amount, 2, '.', ',') }}</span>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                <tr>
+                                    <td colspan="6" class="py-4"></td>
+                                </tr>
                                 <tr>
                                     <td colspan="4" class="font-weight-bold small text-right">Before VAT</td>
                                     <td colspan="2" class="bg-white text-right">
@@ -424,12 +531,20 @@
                             @foreach ($logs as $item)
                                 <tr>
                                     <td>
-                                        <a href="#_" data-toggle="modal" data-target="#modal-{{ $item->id }}">{{ strtoupper($item->description) }}</a>
+                                        <a href="#_" data-toggle="modal" data-target="#modal-{{ $item->id }}">
+                                            @if ($item->description == 'created')
+                                                <i class="align-middle font-weight-bolder material-icons text-md">add</i>
+                                            @else
+                                                <i class="align-middle font-weight-bolder material-icons text-md">edit</i>
+                                            @endif
+                                        </a>
                                         <div class="modal fade" id="modal-{{ $item->id }}" tabindex="-1" role="dialog" aria-hidden="true">
                                             <div class="modal-dialog modal-lg" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header border-0">
-                                                        <h5 class="modal-title">{{ ucfirst($item->description) }} {{ Carbon::parse($item->created_at)->diffForHumans() }}</h5>
+                                                        <h5 class="modal-title">
+                                                            {{ ucfirst($item->description) }} {{ Carbon::parse($item->created_at)->diffForHumans() }}
+                                                        </h5>
                                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Make '.strtoupper($transaction->trans_type))
+@section('title', 'Edit Form')
 
 @section('content')
     <section class="content-header">
@@ -13,7 +13,7 @@
                     </h1>
                 </div>
                 <div class="col-sm-6 text-right">
-                    <h1>Make {{ strtoupper($transaction->trans_type) }}</h1>
+                    <h1>Edit Form</h1>
                 </div>
             </div>
         </div>

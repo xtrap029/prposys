@@ -17,5 +17,8 @@
         'approver_form' => [1, 2],
         'approver_liquidation' => [1, 2],
         'unliquidated' => [1, 5, 6, 4, 7, 8],
-        'deposit_type' => ['BANK', 'CHECK']
+        'deposit_type' => ['BANK', 'CHECK'],
+        'issued_cleared' => [4, 9],
+        'status' => [1, 3, 4, 5, 6, 7, 8, 9],
+        'trans_types' => ['pr', 'po', 'pc']
     ];

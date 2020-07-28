@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Settings;
 use App\Role;
+use App\Settings;
+use App\User;
 use Illuminate\Http\Request;
 
 class SettingsController extends Controller {
@@ -13,7 +14,8 @@ class SettingsController extends Controller {
         return view('pages.admin.settings.index')->with([
             'settings' => Settings::get(),
             'role_2' => Role::where('id', 2)->first(),
-            'role_3' => Role::where('id', 3)->first()
+            'role_3' => Role::where('id', 3)->first(),
+            'users' => User::whereNotNull('role_id')->orderBy('name', 'asc')->get()
         ]);
     }
 
@@ -28,6 +30,7 @@ class SettingsController extends Controller {
             'LIMIT_EDIT_LIQFORM_USER_2' => ['required', 'integer'],
             'LIMIT_EDIT_LIQFORM_USER_3' => ['required', 'integer'],
             'LIMIT_EDIT_DEPOSIT_USER_2' => ['required', 'integer'],
+            'AUTHORIZED_BY' => ['required', 'exists:users,id'],
         ]);
 
         foreach ($data as $key => $value) {

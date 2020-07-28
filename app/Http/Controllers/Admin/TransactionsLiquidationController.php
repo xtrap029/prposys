@@ -170,6 +170,13 @@ class TransactionsLiquidationController extends Controller {
         $transaction_attachments = TransactionsAttachment::where('transaction_id', $transaction->id)->pluck('id')->toArray();
         $transaction_id = $transaction->id;
 
+        $transaction_summary = TransactionsLiquidation::select(DB::raw('sum(amount) as amount'), 'expense_types.name as name')
+            ->join('expense_types', 'transactions_liquidation.expense_type_id', '=', 'expense_types.id')
+            ->where('transaction_id', $transaction->id)
+            ->groupBy('expense_types.name')
+            ->orderBy('expense_types.name', 'asc')
+            ->get();
+
         $logs = Activity::where(function($query) use ($transaction_id){
                             $query->where('subject_id', $transaction_id);
                             $query->where('subject_type', 'App\Transaction');
@@ -216,6 +223,7 @@ class TransactionsLiquidationController extends Controller {
 
         return view('pages.admin.transactionliquidation.show')->with([
             'transaction' => $transaction,
+            'transaction_summary' => $transaction_summary,
             'perms' => $perms,
             'logs' => $logs,
             'trans_page_url' => $trans_page_url,
@@ -349,11 +357,12 @@ class TransactionsLiquidationController extends Controller {
         }
     }
 
-    public function approval(Request $request, Transaction $transaction) {
+    // public function approval(Request $request, Transaction $transaction) {
+    public function approval(Transaction $transaction) {
         if ($this->check_can_approval($transaction->id)) {
-            $data = $request->validate([
-                'liquidation_approver_id' => ['required', 'exists:users,id']
-            ]);
+            // $data = $request->validate([
+            //     'liquidation_approver_id' => ['required', 'exists:users,id']
+            // ]);
 
             $data['status_id'] = 8;
             $data['updated_id'] = auth()->id();
@@ -384,14 +393,28 @@ class TransactionsLiquidationController extends Controller {
                 break;
         }
 
+        $transaction_summary = TransactionsLiquidation::select(DB::raw('sum(amount) as amount'), 'expense_types.name as name')
+            ->join('expense_types', 'transactions_liquidation.expense_type_id', '=', 'expense_types.id')
+            ->where('transaction_id', $transaction->id)
+            ->groupBy('expense_types.name')
+            ->orderBy('expense_types.name', 'asc')
+            ->get();
+
         $transaction->liq_subtotal = $transaction->liquidation->sum('amount');
         $transaction->liq_before_vat = $transaction->liq_subtotal * 0.12;
         $transaction->liq_vat = $transaction->liq_subtotal - $transaction->liq_before_vat;
-        $transaction->liq_balance = $transaction->liq_subtotal - $transaction->amount_issued;          
+        $transaction->liq_balance = $transaction->liq_subtotal - $transaction->amount_issued;         
+        
+        $final_approver = User::where(
+            'id', Settings::where('type', 'AUTHORIZED_BY')
+                ->select('value')->first()->value
+        )->first()->name;
 
         return view('pages.admin.transactionliquidation.print')->with([
             'transaction' => $transaction,
-            'trans_page' => $trans_page
+            'transaction_summary' => $transaction_summary,
+            'trans_page' => $trans_page,
+            'final_approver' => $final_approver
         ]);
     }
 
@@ -407,6 +430,7 @@ class TransactionsLiquidationController extends Controller {
 
             $data['depo_slip'] = basename($request->file('depo_slip')->store('public/attachments/deposit_slip'));
             $data['status_id'] = 9;
+            $data['liquidation_approver_id'] = auth()->id();
             $data['updated_id'] = auth()->id();
             $transaction->update($data);
             return back()->with('success', 'Transaction Liquidation'.__('messages.clear_success'));
@@ -466,6 +490,72 @@ class TransactionsLiquidationController extends Controller {
             'status' => $status,
             'status_sel' => $status_sel,
             'transactions' => $transactions
+        ]);
+    }
+
+    public function print_cleared() {
+        $trans_company = '';
+        $trans_from = '';
+        $trans_to = '';
+
+        $transactions = Transaction::whereIn('status_id', config('global.liquidation_cleared'))->orderBy('id', 'desc');
+
+        if (!empty($_GET['type'])) {
+            if (!in_array($_GET['type'], config('global.trans_types'))) {
+                $transactions = $transactions->where('trans_type', $_GET['type']);
+            } else {
+                abort(404);
+            }
+        }
+
+        if (!empty($_GET['company'])) {
+            $trans_company = $_GET['company'];
+            $transactions = $transactions->whereHas('project', function($query) use($trans_company) {
+                $query->where('company_id', $trans_company);
+            });
+        }
+
+        if (!empty($_GET['from'])) {
+            $transactions = $transactions->whereDate('created_at', '>=', $_GET['from']);
+            $trans_from = $_GET['from'];
+        }
+        if (!empty($_GET['to'])) {
+            $transactions = $transactions->whereDate('created_at', '<=', $_GET['to']);
+            $trans_to = $_GET['to'];
+        }
+
+        $transactions = $transactions->get();
+
+        $transaction_loop = [];
+        $transaction_summary_loop = [];
+        foreach ($transactions as $key => $item) {
+            $transaction_summary_loop[$key] = TransactionsLiquidation::select(DB::raw('sum(amount) as amount'), 'expense_types.name as name')
+                ->join('expense_types', 'transactions_liquidation.expense_type_id', '=', 'expense_types.id')
+                ->where('transaction_id', $item->id)
+                ->groupBy('expense_types.name')
+                ->orderBy('expense_types.name', 'asc')
+                ->get();
+
+            $item->liq_subtotal = $item->liquidation->sum('amount');
+            $item->liq_before_vat = $item->liq_subtotal * 0.12;
+            $item->liq_vat = $item->liq_subtotal - $item->liq_before_vat;
+            $item->liq_balance = $item->liq_subtotal - $item->amount_issued;         
+            $transaction_loop[$key] = $item;
+
+        }
+
+        $transactions = $transaction_loop;
+        $transactions_summary = $transaction_summary_loop;
+
+        $final_approver = User::where(
+            'id', Settings::where('type', 'AUTHORIZED_BY')
+                ->select('value')->first()->value
+        )->first()->name;
+
+        return view('pages.admin.transactionliquidation.printcleared')->with([
+            'transactions' => $transactions,
+            'transactions_summary' => $transactions_summary,
+            'final_approver' => $final_approver
         ]);
     }
 
@@ -626,7 +716,8 @@ class TransactionsLiquidationController extends Controller {
         $transaction = Transaction::where('id', $transaction)->first();
 
         // check if not for approval and not designated approver
-        if (!in_array($transaction->status_id, config('global.liquidation_approval')) || $user->id != $transaction->liquidation_approver_id) {
+        // if (!in_array($transaction->status_id, config('global.liquidation_approval')) || $user->id != $transaction->liquidation_approver_id) {
+        if (!in_array($transaction->status_id, config('global.liquidation_approval')) || !in_array($user->id, config('global.approver_form'))) {
             $can_clear = false;
         }
         

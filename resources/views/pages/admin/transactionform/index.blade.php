@@ -35,7 +35,7 @@
                                 <span class="mr-3 vlign--baseline-middle">{{ $company->name }}</span>
                                 
                                 @if ($trans_page_url == 'prpo')
-                                    <a data-toggle="modal" data-target="#modal-make-pr" href="#_" class="mx-3 vlign--baseline-middle">Make PR/PO</a>
+                                    <a data-toggle="modal" data-target="#modal-make-pr" href="#_" class="mx-3 vlign--baseline-middle">Make Form</a>
                                     <div class="modal fade" id="modal-make-pr" tabindex="-1" role="dialog" aria-hidden="true">
                                         <div class="modal-dialog modal-md" role="document">
                                             <div class="modal-content">
@@ -55,7 +55,7 @@
                                         </div>
                                     </div>
                                 @else
-                                    <a data-toggle="modal" data-target="#modal-make-pc" href="#_" class="mx-3 vlign--baseline-middle">Make Cash Request</a>
+                                    <a data-toggle="modal" data-target="#modal-make-pc" href="#_" class="mx-3 vlign--baseline-middle">Make Form</a>
                                     <div class="modal fade" id="modal-make-pc" tabindex="-1" role="dialog" aria-hidden="true">
                                         <div class="modal-dialog modal-md" role="document">
                                             <div class="modal-content">
@@ -125,7 +125,8 @@
                                             <a class="dropdown-item" href="/transaction-form/view/{{ $item->id }}">View</a>  
                                             <a class="dropdown-item {{ $item->can_edit ? '' : 'd-none' }}" href="/transaction-form/edit/{{ $item->id }}">Edit</a>  
                                             <a class="dropdown-item {{ $item->can_cancel ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-cancel-{{ $item->id }}" href="#_">Cancel</a>  
-                                            <a class="dropdown-item {{ $item->can_approval ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-approval-{{ $item->id }}" href="#_">For Approval</a>  
+                                            {{-- <a class="dropdown-item {{ $item->can_approval ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-approval-{{ $item->id }}" href="#_">For Approval</a>   --}}
+                                            <a class="dropdown-item {{ $item->can_approval ? '' : 'd-none' }}" href="/transaction-form/approval/{{ $item->id }}" onclick="return confirm('Are you sure?')">For Approval</a>
                                             <a class="dropdown-item {{ $item->can_issue ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-issued-{{ $item->id }}" href="#_">Issue</a>
                                             <a class="dropdown-item {{ $item->can_print ? '' : 'd-none' }}" href="#_" onclick="window.open('/transaction-form/print/{{ $item->id }}','name','width=800,height=800')">Print</a>
                                             <div class="dropdown-divider {{ $item->can_reset ? '' : 'd-none' }}"></div>

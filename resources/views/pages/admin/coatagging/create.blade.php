@@ -1,20 +1,20 @@
 @extends('layouts.app')
 
-@section('title', 'Create Expense Type')
+@section('title', 'Create COA Tagging')
 
 @section('content')
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Create Expense Type</h1>
+                    <h1>Create COA Tagging</h1>
                 </div>
             </div>
         </div>
     </section>
     <section class="content">
         <div class="container-fluid">
-            <form action="/expense-type" method="post">
+            <form action="/coa-tagging" method="post">
                 @csrf
                 <div class="form-group">
                     <label for="">Name</label>

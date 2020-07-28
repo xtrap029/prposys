@@ -33,6 +33,14 @@
                     @include('errors.inline', ['message' => $errors->first('role_id')])
                 </div>
                 <div class="form-group">
+                    <label for="">Default Company</label>
+                    <select name="company_id" class="form-control">
+                        @foreach ($companies as $item)
+                            <option value="{{ $item->id }}" {{ $user->company_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
                     <label for="">Change Password</label>
                     <input type="password" class="form-control @error('password') is-invalid @enderror" name="password">
                     @include('errors.inline', ['message' => $errors->first('password')])

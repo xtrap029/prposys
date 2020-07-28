@@ -18,7 +18,7 @@
                 @csrf
                 @foreach ($settings as $item)
                     @switch($item->type)
-                        @case('LIMIT_UNLIQUIDATEDPR_AMOUNT')
+                            @case('LIMIT_UNLIQUIDATEDPR_AMOUNT')
                             <div class="mb-3"><b>Unliquidated Limit</b></div>
                             <div class="form-row mb-3">
                                 <div class="col-md-9">
@@ -128,6 +128,22 @@
                                 <div class="col-md-3">
                                     <input type="number" class="form-control @error('LIMIT_EDIT_DEPOSIT_USER_2') is-invalid @enderror" name="LIMIT_EDIT_DEPOSIT_USER_2" value="{{ $item->value }}">
                                     @include('errors.inline', ['message' => $errors->first('LIMIT_EDIT_DEPOSIT_USER_2')])
+                                </div>
+                            </div>
+                            @break
+                            @case('AUTHORIZED_BY')
+                            <div class="mb-3"><b>Main</b></div>
+                            <div class="form-row mb-3">
+                                <div class="col-md-9">
+                                    <label for="">Labeled Final Approver</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <select name="AUTHORIZED_BY" class="form-control @error('AUTHORIZED_BY') is-invalid @enderror">
+                                        @foreach ($users as $user)
+                                            <option value="{{ $user->id }}" {{ $user->id == $item->value ? 'selected' : '' }}>{{ $user->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @include('errors.inline', ['message' => $errors->first('AUTHORIZED_BY')])
                                 </div>
                             </div>
                             @break

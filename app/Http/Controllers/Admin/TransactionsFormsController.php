@@ -276,11 +276,12 @@ class TransactionsFormsController extends Controller {
         }
     }
 
-    public function approval(Request $request, Transaction $transaction) {
+    // public function approval(Request $request, Transaction $transaction) {
+    public function approval(Transaction $transaction) {
         if ($this->check_can_approval($transaction->id)) {
-            $data = $request->validate([
-                'form_approver_id' => ['required', 'exists:users,id']
-            ]);
+            // $data = $request->validate([
+            //     'form_approver_id' => ['required', 'exists:users,id']
+            // ]);
 
             $custom_vat = $transaction->amount * (abs($transaction->vattype->vat) * 0.01);
             $custom_wht = $transaction->amount * ($transaction->vattype->wht * 0.01);
@@ -293,6 +294,7 @@ class TransactionsFormsController extends Controller {
                 $custom_total_payable = $custom_total_payable + $custom_vat;
             }
             
+            $data = [];
             $data['form_vat_code'] = $transaction->vattype->code;
             $data['form_vat_name'] = $transaction->vattype->name;
             $data['form_vat_vat'] = $transaction->vattype->vat;
@@ -332,9 +334,59 @@ class TransactionsFormsController extends Controller {
                 break;
         }
 
+        $final_approver = User::where(
+            'id', Settings::where('type', 'AUTHORIZED_BY')
+                ->select('value')->first()->value
+        )->first()->name;
+
         return view('pages.admin.transactionform.print')->with([
             'transaction' => $transaction,
-            'trans_page' => $trans_page
+            'trans_page' => $trans_page,
+            'final_approver' => $final_approver
+        ]);
+    }
+
+    public function print_issued () {
+        $trans_company = '';
+        $trans_from = '';
+        $trans_to = '';
+
+        $transactions = Transaction::whereIn('status_id', config('global.form_issued'))->orderBy('id', 'desc');
+
+        if (!empty($_GET['type'])) {
+            if (!in_array($_GET['type'], config('global.trans_types'))) {
+                $transactions = $transactions->where('trans_type', $_GET['type']);
+            } else {
+                abort(404);
+            }
+        }
+
+        if (!empty($_GET['company'])) {
+            $trans_company = $_GET['company'];
+            $transactions = $transactions->whereHas('project', function($query) use($trans_company) {
+                $query->where('company_id', $trans_company);
+            });
+        }
+
+        if (!empty($_GET['from'])) {
+            $transactions = $transactions->whereDate('created_at', '>=', $_GET['from']);
+            $trans_from = $_GET['from'];
+        }
+        if (!empty($_GET['to'])) {
+            $transactions = $transactions->whereDate('created_at', '<=', $_GET['to']);
+            $trans_to = $_GET['to'];
+        }
+
+        $transactions = $transactions->get();
+
+        $final_approver = User::where(
+            'id', Settings::where('type', 'AUTHORIZED_BY')
+                ->select('value')->first()->value
+        )->first()->name;
+
+        return view('pages.admin.transactionform.printissued')->with([
+            'transactions' => $transactions,
+            'final_approver' => $final_approver
         ]);
     }
 
@@ -348,6 +400,7 @@ class TransactionsFormsController extends Controller {
             ]);
             
             $data['status_id'] = 4;
+            $data['form_approver_id'] = auth()->id();
             $transaction->update($data);
 
             return back()->with('success', 'Transaction'.__('messages.issue_success'));
@@ -446,26 +499,27 @@ class TransactionsFormsController extends Controller {
     }
 
     private function check_can_cancel($transaction, $user = '') {
-        $can_cancel = true;
+        // $can_cancel = true;
 
-        if (!$user) {
-            $user = auth()->id();
-        }
-        $user = User::where('id', $user)->first();
+        // if (!$user) {
+        //     $user = auth()->id();
+        // }
+        // $user = User::where('id', $user)->first();
 
-        $transaction = Transaction::where('id', $transaction)->first();
+        // $transaction = Transaction::where('id', $transaction)->first();
 
-        // check if unliquidated
-        if (in_array($transaction->status_id, config('global.generated_form'))) {
-            // check if not admin and not the owner
-            if ($user->role_id != 1 && $user->id != $transaction->owner_id) {
-                $can_cancel = false;
-            }
-        } else {
-            $can_cancel = false;
-        }
+        // // check if unliquidated
+        // if (in_array($transaction->status_id, config('global.generated_form'))) {
+        //     // check if not admin and not the owner
+        //     if ($user->role_id != 1 && $user->id != $transaction->owner_id) {
+        //         $can_cancel = false;
+        //     }
+        // } else {
+        //     $can_cancel = false;
+        // }
 
-        return $can_cancel;
+        // return $can_cancel;
+        return false;
     }
 
     private function check_can_edit($transaction, $user = '') {
@@ -558,7 +612,8 @@ class TransactionsFormsController extends Controller {
         $transaction = Transaction::where('id', $transaction)->first();
 
         // check if not unliquidated and not designated approver
-        if (!in_array($transaction->status_id, config('global.form_approval')) || $user->id != $transaction->form_approver_id) {
+        // if (!in_array($transaction->status_id, config('global.form_approval')) || $user->id != $transaction->form_approver_id) {
+        if (!in_array($transaction->status_id, config('global.form_approval')) || !in_array($user->id, config('global.approver_form'))) {
             $can_issue = false;
         }
         

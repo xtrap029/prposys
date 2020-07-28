@@ -28,7 +28,7 @@
                 </div>
                 <div class="form-group">
                     <label for="">Logo</label>
-                    <input type="file" name="logo" class="form-control-file @error('logo') is-invalid @enderror">
+                    <input type="file" name="logo" class="form-control-file @error('logo') is-invalid @enderror" required>
                     @include('errors.inline', ['message' => $errors->first('logo')])
                 </div>
                 <a href="/company">Cancel</a>

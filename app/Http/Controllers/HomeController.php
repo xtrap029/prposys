@@ -25,6 +25,9 @@ class HomeController extends Controller {
         $prepared = Transaction::where('owner_id', auth()->id())
                      ->orderBy('id', 'desc')
                      ->limit(5)->get();
+        $cleared = Transaction::where('requested_id', auth()->id())
+                     ->whereIn('status_id', config('global.liquidation_cleared'))
+                     ->limit(10)->get();
 
         $stats['cancelled'] = Transaction::whereIn('status_id', config('global.cancelled'))->where('requested_id', auth()->id())->count();
         $stats['generated'] = Transaction::whereIn('status_id', config('global.generated'))->where('requested_id', auth()->id())->count();
@@ -40,6 +43,7 @@ class HomeController extends Controller {
             'logs' => $logs,
             'requested' => $requested,
             'prepared' => $prepared,
+            'cleared' => $cleared,
             'stats' => $stats
         ]);
     }

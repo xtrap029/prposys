@@ -12,6 +12,7 @@ try {
 
     require('bootstrap');
     require('admin-lte');
+    require('chart.js');
 } catch (e) {}
 
 /**

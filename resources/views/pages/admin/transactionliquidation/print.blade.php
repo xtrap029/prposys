@@ -36,7 +36,7 @@
                 </div>          
                 
                 <div class="col-12 my-5">
-                    <table class="table">
+                    <table class="table table-sm">
                         <tr class="font-weight-bold">
                             <td>Pos.</td>
                             <td>Date</td>
@@ -57,6 +57,21 @@
                                 <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
                             </tr>
                         @endforeach
+                        <tr>
+                            <td colspan="7" class="py-4"></td>
+                        </tr>
+                        @foreach ($transaction_summary as $item)
+                            <tr>
+                                <td colspan="2"></td>
+                                <td colspan="5">
+                                    {{ $item->name }}
+                                    <span class="float-right">{{ number_format($item->amount, 2, '.', ',') }}</span>
+                                </td>
+                            </tr>
+                        @endforeach
+                        <tr>
+                            <td colspan="7" class="py-4"></td>
+                        </tr>
                         <tr>
                             <td colspan="4" class="font-weight-bold small text-right">Before VAT</td>
                             <td></td>
@@ -105,7 +120,7 @@
                     </table>
                 </div>
 
-                <div class="col-12">
+                <div class="col-6">
                     <table class="table table-sm">
                         <tr>
                             <td>Amount {{ $transaction->liq_balance >= 0 ? 'Reimbursed' : 'Returned' }}</td>
@@ -134,19 +149,46 @@
                     </table>
                 </div>
 
-                <div class="col-3 text-center mt-5">
+                <div class="col-6">
+                    <table class="table table-sm">
+                        <tr>
+                            <td>Entered into Quickbooks</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Entered By</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Date Entered</td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="col-2 text-center my-5 small">
                     <div>{{ $transaction->requested->name }}</div>
                     <div class="mt-2 pt-2 border-top font-weight-bold">Requested By</div>
                 </div>
-                <div class="col-3 text-center mt-5">
+                <div class="col-2 text-center my-5 small">
                     <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
                     <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
                 </div>
-                <div class="col-3 text-center mt-5">
-                    <div>{{ $transaction->liquidationapprover->name }}</div>
+
+                <div class="col-2 text-center my-5 small {{ $transaction->liquidation_approver_id ? '' : 'd-none' }}">
+                    <div>{{ $transaction->liquidation_approver_id ? $transaction->liquidationapprover->name : '' }}</div>
                     <div class="mt-2 pt-2 border-top font-weight-bold">Authorized By</div>
                 </div>
-                <div class="col-3 text-center mt-5">
+                <div class="col-2 text-center my-5 small {{ $transaction->liquidation_approver_id ? '' : 'd-none' }}">
+                    <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
+                    <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
+                </div>
+
+                <div class="col-2 text-center my-5 small">
+                    <div>{{ $final_approver }}</div>
+                    <div class="mt-2 pt-2 border-top font-weight-bold">Final Approver</div>
+                </div>
+                <div class="col-2 text-center my-5 small">
                     <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
                     <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
                 </div>
