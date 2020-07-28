@@ -20,5 +20,6 @@
         'deposit_type' => ['BANK', 'CHECK'],
         'issued_cleared' => [4, 9],
         'status' => [1, 3, 4, 5, 6, 7, 8, 9],
-        'trans_types' => ['pr', 'po', 'pc']
+        'trans_types' => ['pr', 'po', 'pc'],
+        'site_icon' => '/images/logo.png',
     ];

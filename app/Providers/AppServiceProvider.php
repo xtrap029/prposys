@@ -25,5 +25,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
+        config(['global.site_icon' => '/storage/public/images/site settings/'.\App\Settings::where('type', 'SITE_LOGO')->first()->value]);
     }
 }

@@ -27,7 +27,7 @@
                 @guest
                     <!-- Brand Logo -->
                     <a href="/" class="brand-link">
-                        <img src="/images/logo.png" alt="" class="brand-image" style="opacity: .8">
+                        <img src="{{ config('global.site_icon') }}" alt="" class="brand-image" style="opacity: .8">
                         @guest @else <span class="brand-text font-weight-light">{{ config('app.name', 'Sequencing') }}</span> @endguest
                     </a>
                 @else
@@ -62,7 +62,7 @@
                 <aside class="main-sidebar elevation-4 sidebar-light-maroon">
                     <!-- Brand Logo -->
                     <a href="/" class="brand-link navbar-white">
-                        <img src="/images/logo.png" alt="" class="brand-image" style="opacity: .8">
+                        <img src="{{ config('global.site_icon') }}" alt="" class="brand-image" style="opacity: .8">
                         <span class="brand-text font-weight-light">{{ config('app.name', 'Sequencing') }}</span>
                     </a>
             

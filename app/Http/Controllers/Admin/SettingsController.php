@@ -7,6 +7,7 @@ use App\Role;
 use App\Settings;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class SettingsController extends Controller {
 
@@ -31,7 +32,14 @@ class SettingsController extends Controller {
             'LIMIT_EDIT_LIQFORM_USER_3' => ['required', 'integer'],
             'LIMIT_EDIT_DEPOSIT_USER_2' => ['required', 'integer'],
             'AUTHORIZED_BY' => ['required', 'exists:users,id'],
+            'SESSION_LIFETIME' => ['required', 'integer'],
+            'SITE_LOGO' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:548'],
         ]);
+
+        if ($request->file('SITE_LOGO')) {
+            Storage::delete('public/images/site settings/' . Settings::where('type', 'SITE_LOGO')->first()->value);
+            $data['SITE_LOGO'] = basename($request->file('SITE_LOGO')->store('public/images/site settings'));
+        }
 
         foreach ($data as $key => $value) {
             $settings = Settings::where('type', $key)->first();

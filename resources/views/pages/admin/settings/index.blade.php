@@ -14,7 +14,7 @@
     </section>
     <section class="content">
         <div class="container-fluid">
-            <form action="/settings" method="post">
+            <form action="/settings" method="post" enctype="multipart/form-data">
                 @csrf
                 @foreach ($settings as $item)
                     @switch($item->type)
@@ -131,21 +131,53 @@
                                 </div>
                             </div>
                             @break
-                            @case('AUTHORIZED_BY')
+                            @case('SESSION_LIFETIME')
                             <div class="mb-3"><b>Main</b></div>
+
                             <div class="form-row mb-3">
-                                <div class="col-md-9">
-                                    <label for="">Labeled Final Approver</label>
+                                <div class="col-md-6">
+                                    <label for="">Auto Logout if Inactive</label>
+                                </div>
+                                <div class="col-md-3 text-right pr-md-5 align-self-end">
+                                    <label for="">Minutes</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="number" class="form-control @error('SESSION_LIFETIME') is-invalid @enderror" name="SESSION_LIFETIME" value="{{ $item->value }}">
+                                    @include('errors.inline', ['message' => $errors->first('SESSION_LIFETIME')])
+                                </div>
+                            </div>
+                            @break
+                            @case('AUTHORIZED_BY')
+                            <div class="form-row mb-3">
+                                <div class="col-md-6">
+                                    <label for="">Final Approver</label>
+                                </div>
+                                <div class="col-md-3 text-right pr-md-5 align-self-end">
+                                    <label for="">Label</label>
                                 </div>
                                 <div class="col-md-3">
                                     <select name="AUTHORIZED_BY" class="form-control @error('AUTHORIZED_BY') is-invalid @enderror">
                                         @foreach ($users as $user)
-                                            <option value="{{ $user->id }}" {{ $user->id == $item->value ? 'selected' : '' }}>{{ $user->name }}</option>
+                                        <option value="{{ $user->id }}" {{ $user->id == $item->value ? 'selected' : '' }}>{{ $user->name }}</option>
                                         @endforeach
                                     </select>
                                     @include('errors.inline', ['message' => $errors->first('AUTHORIZED_BY')])
                                 </div>
                             </div>
+                            @break
+                            @case('SITE_LOGO')
+                                <div class="form-row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="">Site Logo</label>
+                                    </div>
+                                    <div class="col-md-3 text-right pr-md-5 align-self-end">
+                                        Image with 500kb max size
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="file" name="SITE_LOGO" class="form-control-file @error('SITE_LOGO') is-invalid @enderror d-inline-block w-auto mt-2">
+                                        @include('errors.inline', ['message' => $errors->first('SITE_LOGO')])
+                                    </div>
+                                </div>
                             @break
                             @default
                     @endswitch            
