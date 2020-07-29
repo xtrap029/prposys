@@ -95,6 +95,7 @@
                                                         @case('App\CompanyProject')                 <?php $view_url = '/company-project/edit/'.$item->subject_id; ?> @break
                                                         @case('App\ExpenseType')                    <?php $view_url = '/expense-type/'.$item->subject_id.'/edit'; ?> @break
                                                         @case('App\Particular')                     <?php $view_url = '/particular/'.$item->subject_id.'/edit'; ?> @break
+                                                        @case('App\ReleasedBy')                     <?php $view_url = '/released-by/'.$item->subject_id.'/edit'; ?> @break
                                                         @case('App\Role')                           <?php $view_url = '/role/'.$item->subject_id.'/edit'; ?> @break
                                                         @case('App\Settings')                       <?php $view_url = '/settings'; ?> @break
                                                         @case('App\Transaction')                    <?php $view_url = '/transaction/view/'.$item->subject_id; ?> @break

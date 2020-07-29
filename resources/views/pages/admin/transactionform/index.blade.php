@@ -11,7 +11,7 @@
                 </div>
                 <div class="col-sm-6 text-right">
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-secondary dropdown-toggle d-none" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Select Company
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -30,7 +30,7 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th colspan="10" class="border-0">
+                            <th colspan="11" class="border-0">
                                 <img src="/storage/public/images/companies/{{ $company->logo }}" alt="" class="thumb thumb--xxs mr-2 vlign--baseline-middle">
                                 <span class="mr-3 vlign--baseline-middle">{{ $company->name }}</span>
                                 
@@ -172,7 +172,7 @@
                                                             @method('put')
                                                             <div class="form-row mb-3">
                                                                 <div class="col-md-5">
-                                                                    <label for="">Issue Type</label>
+                                                                    <label for="">Type</label>
                                                                     @if ($trans_page_url == 'prpo')
                                                                         <select name="control_type" class="form-control">
                                                                             <option value="CN">Check Number</option>
@@ -185,7 +185,7 @@
                                                                     @endif
                                                                 </div>
                                                                 <div class="col-md-7">
-                                                                    <label for="">Issue No.</label>
+                                                                    <label for="">No.</label>
                                                                     @if ($trans_page_url == 'prpo')
                                                                         <input type="text" name="control_no" class="form-control @error('control_no') is-invalid @enderror" required>
                                                                         @include('errors.inline', ['message' => $errors->first('control_no')])
@@ -206,6 +206,17 @@
                                                                     <label for="">Amount</label>
                                                                     <input type="number" class="form-control @error('amount_issued') is-invalid @enderror" name="amount_issued" step="0.01" value="{{ $item->amount }}" required>
                                                                     @include('errors.inline', ['message' => $errors->first('amount_issued')])
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-row mb-3">
+                                                                <div class="col-md-12">
+                                                                    <label for="">Released By</label>
+                                                                    <select name="released_by_id" class="form-control @error('released_by_id') is-invalid @enderror" required>
+                                                                        @foreach ($released_by as $item)
+                                                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    @include('errors.inline', ['message' => $errors->first('released_by_id')])
                                                                 </div>
                                                             </div>
                                                             <div class="text-center mt-2">
@@ -249,7 +260,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="10" class="text-center">{{ __('messages.empty') }}</td>
+                                <td colspan="11" class="text-center">{{ __('messages.empty') }}</td>
                             </tr>
                         @endforelse
                     </tbody>

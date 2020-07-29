@@ -152,16 +152,13 @@
                 <div class="col-6">
                     <table class="table table-sm">
                         <tr>
-                            <td>Entered into Quickbooks</td>
-                            <td></td>
+                            <td><span class="mr-5">Entered into Quickbooks</span> <input type="checkbox" class="ml-5"></td>
                         </tr>
                         <tr>
                             <td>Entered By</td>
-                            <td></td>
                         </tr>
                         <tr>
                             <td>Date Entered</td>
-                            <td></td>
                         </tr>
                     </table>
                 </div>
@@ -175,20 +172,20 @@
                     <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
                 </div>
 
-                <div class="col-2 text-center my-5 small {{ $transaction->liquidation_approver_id ? '' : 'd-none' }}">
-                    <div>{{ $transaction->liquidation_approver_id ? $transaction->liquidationapprover->name : '' }}</div>
+                <div class="col-2 text-center my-5 small">
+                    <div>{{ $final_approver }}</div>
                     <div class="mt-2 pt-2 border-top font-weight-bold">Authorized By</div>
                 </div>
-                <div class="col-2 text-center my-5 small {{ $transaction->liquidation_approver_id ? '' : 'd-none' }}">
+                <div class="col-2 text-center my-5 small">
                     <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
                     <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
                 </div>
-
-                <div class="col-2 text-center my-5 small">
-                    <div>{{ $final_approver }}</div>
-                    <div class="mt-2 pt-2 border-top font-weight-bold">Final Approver</div>
+                
+                <div class="col-2 text-center my-5 small {{ $transaction->liquidation_approver_id ? '' : 'd-none' }}">
+                    <div>{{ $transaction->liquidation_approver_id ? $transaction->liquidationapprover->name : '' }}</div>
+                    <div class="mt-2 pt-2 border-top font-weight-bold">Approver</div>
                 </div>
-                <div class="col-2 text-center my-5 small">
+                <div class="col-2 text-center my-5 small {{ $transaction->liquidation_approver_id ? '' : 'd-none' }}">
                     <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
                     <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
                 </div>

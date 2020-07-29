@@ -109,7 +109,7 @@
                                         @method('put')
                                         <div class="row mb-3">
                                             <div class="col-md-5">
-                                                <label for="">Issue Type</label>
+                                                <label for="">Type</label>
                                                 @if ($trans_page_url == 'prpo')
                                                     <select name="control_type" class="form-control">
                                                         <option value="CN">Check Number</option>
@@ -122,7 +122,7 @@
                                                 @endif
                                             </div>
                                             <div class="col-md-7">
-                                                <label for="">Issue No.</label>
+                                                <label for="">No.</label>
                                                 @if ($trans_page_url == 'prpo')
                                                     <input type="text" name="control_no" class="form-control @error('control_no') is-invalid @enderror" required>
                                                     @include('errors.inline', ['message' => $errors->first('control_no')])
@@ -142,6 +142,17 @@
                                                 <label for="">Amount</label>
                                                 <input type="number" class="form-control @error('amount_issued') is-invalid @enderror" name="amount_issued" step="0.01" value="{{ $transaction->amount }}" required>
                                                 @include('errors.inline', ['message' => $errors->first('amount_issued')])
+                                            </div>
+                                        </div>
+                                        <div class="form-row mb-3">
+                                            <div class="col-md-12">
+                                                <label for="">Released By</label>
+                                                <select name="released_by_id" class="form-control @error('released_by_id') is-invalid @enderror" required>
+                                                    @foreach ($released_by as $item)
+                                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @include('errors.inline', ['message' => $errors->first('released_by_id')])
                                             </div>
                                         </div>
                                         <div class="text-center mt-2">
@@ -231,7 +242,8 @@
                                 <tbody>
                                     <tr class="border-bottom-2">
                                         <td>1</td>
-                                        <td>{{ $transaction->expensetype->name }}</td>
+                                        {{-- <td>{{ $transaction->expensetype->name }}</td> --}}
+                                        <td>{{ $transaction->expense_type_description }}</td>
                                         <td class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_unit ? $transaction->form_amount_unit : $transaction->amount, 2, '.', ',') }}</td>
                                         <td class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_unit ? $transaction->form_amount_unit : $transaction->amount, 2, '.', ',') }}</td>
                                     </tr>
@@ -291,11 +303,11 @@
                         <div>
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label for="">Issue Type</label>
+                                    <label for="">Type</label>
                                     <h5>{{ $transaction->control_type == 'CN' ? 'Check Number' : 'Petty Cash' }}</h5>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="">Issue No.</label>
+                                    <label for="">No.</label>
                                     <h5>{{ $transaction->control_no }}</h5>
                                 </div>
                             </div>
@@ -307,6 +319,12 @@
                                 <div class="col-md-6">
                                     <label for="">Amount</label>
                                     <h5>{{ $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</h5>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label for="">Released By</label>
+                                    <h5>{{ $transaction->releasedby->name }}</h5>
                                 </div>
                             </div>
                         </div>

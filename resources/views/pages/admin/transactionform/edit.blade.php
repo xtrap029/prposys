@@ -53,7 +53,7 @@
                         </select>
                         @include('errors.inline', ['message' => $errors->first('coa_tagging_id')])
                     </div>
-                    <div class="col-md-5">
+                    {{-- <div class="col-md-5">
                         <label for="">Expense Type / Description</label>
                         <select name="expense_type_id" class="form-control @error('expense_type_id') is-invalid @enderror" required>
                             @foreach ($expense_types as $item)
@@ -61,6 +61,11 @@
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('expense_type_id')])
+                    </div> --}}
+                    <div class="col-md-5">
+                        <label for="">Expense Type / Description</label>
+                        <input type="text" name="expense_type_description" value="{{ $transaction->expense_type_description }}" class="form-control @error('expense_type_description') is-invalid @enderror" required>
+                        @include('errors.inline', ['message' => $errors->first('expense_type_description')])
                     </div>
                     <div class="col-md-2">
                         <label for="">VAT Type</label>

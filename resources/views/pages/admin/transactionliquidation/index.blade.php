@@ -11,7 +11,7 @@
                 </div>
                 <div class="col-sm-6 text-right">
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-secondary dropdown-toggle d-none" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Select Company
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -30,7 +30,7 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th colspan="10" class="border-0">
+                            <th colspan="11" class="border-0">
                                 <img src="/storage/public/images/companies/{{ $company->logo }}" alt="" class="thumb thumb--xxs mr-2 vlign--baseline-middle">
                                 <span class="mr-3 vlign--baseline-middle">{{ $company->name }}</span>
                                 
@@ -159,7 +159,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="10" class="text-center">{{ __('messages.empty') }}</td>
+                                <td colspan="11" class="text-center">{{ __('messages.empty') }}</td>
                             </tr>
                         @endforelse
                     </tbody>

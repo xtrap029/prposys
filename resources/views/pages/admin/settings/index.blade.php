@@ -150,7 +150,7 @@
                             @case('AUTHORIZED_BY')
                             <div class="form-row mb-3">
                                 <div class="col-md-6">
-                                    <label for="">Final Approver</label>
+                                    <label for="">Final Authorized</label>
                                 </div>
                                 <div class="col-md-3 text-right pr-md-5 align-self-end">
                                     <label for="">Label</label>

@@ -59,6 +59,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('particular', 'Admin\ParticularsController', ['names' => ['index' => 'particular', 'create' => 'particular', 'edit' => 'particular']]);
         Route::resource('bank', 'Admin\BanksController', ['names' => ['index' => 'bank', 'create' => 'bank', 'edit' => 'bank']]);
         Route::resource('vat-type', 'Admin\VatTypesController', ['names' => ['index' => 'vattype', 'create' => 'vattype', 'edit' => 'vattype']]);
+        Route::resource('released-by', 'Admin\ReleasedByController', ['names' => ['index' => 'releasedby', 'create' => 'releasedby', 'edit' => 'releasedby']]);
     });
 
     // Access Level 1, 2, and 3

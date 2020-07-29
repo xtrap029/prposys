@@ -8,6 +8,7 @@ use App\Company;
 use App\CompanyProject;
 use App\ExpenseType;
 use App\Particulars;
+use App\ReleasedBy;
 use App\Settings;
 use App\Transaction;
 use App\TransactionStatus;
@@ -41,6 +42,8 @@ class TransactionsFormsController extends Controller {
 
         $companies = Company::orderBy('name', 'asc')->get();
         $company = Company::where('id', $trans_company)->first();
+
+        $released_by = ReleasedBy::orderBy('name', 'asc')->get();
         
         if (!empty($_GET['s'])) {
             $transactions = Transaction::whereIn('trans_type', $trans_types)
@@ -79,7 +82,8 @@ class TransactionsFormsController extends Controller {
             'companies' => $companies,
             'company' => $company,
             'transactions' => $transactions,
-            'approvers' => $approvers
+            'approvers' => $approvers,
+            'released_by' => $released_by
         ]);
     }
 
@@ -106,7 +110,7 @@ class TransactionsFormsController extends Controller {
         }
 
         $coa_taggings = CoaTagging::orderBy('name', 'asc')->get();
-        $expense_types = ExpenseType::orderBy('name', 'asc')->get();
+        // $expense_types = ExpenseType::orderBy('name', 'asc')->get();
         $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('id', 'asc')->get();
 
         return view('pages.admin.transactionform.create')->with([
@@ -114,7 +118,7 @@ class TransactionsFormsController extends Controller {
             'trans_page' => $trans_page,
             'transaction' => $transaction,
             'coa_taggings' => $coa_taggings,
-            'expense_types' => $expense_types,
+            // 'expense_types' => $expense_types,
             'vat_types' => $vat_types
         ]);
     }
@@ -130,7 +134,8 @@ class TransactionsFormsController extends Controller {
         // validate input
         $data = $request->validate([
             'coa_tagging_id' => ['required', 'exists:coa_taggings,id'],
-            'expense_type_id' => ['required', 'exists:expense_types,id'],
+            // 'expense_type_id' => ['required', 'exists:expense_types,id'],
+            'expense_type_description' => ['required'],
             'vat_type_id' => ['required', 'exists:vat_types,id'],
         ]);
 
@@ -153,6 +158,8 @@ class TransactionsFormsController extends Controller {
         $perms['can_approval'] = $this->check_can_approval($transaction->id);
         $perms['can_print'] = $this->check_can_print($transaction->id);
         $perms['can_issue'] = $this->check_can_issue($transaction->id);
+
+        $released_by = ReleasedBy::orderBy('name', 'asc')->get();
 
         switch ($transaction->trans_type) {
             case 'pr':
@@ -188,7 +195,8 @@ class TransactionsFormsController extends Controller {
             'logs' => $logs,
             'trans_page_url' => $trans_page_url,
             'trans_page' => $trans_page,
-            'approvers' => $approvers
+            'approvers' => $approvers,
+            'released_by' => $released_by
         ]);
     }
 
@@ -213,7 +221,7 @@ class TransactionsFormsController extends Controller {
         }
 
         $coa_taggings = CoaTagging::orderBy('name', 'asc')->get();
-        $expense_types = ExpenseType::orderBy('name', 'asc')->get();
+        // $expense_types = ExpenseType::orderBy('name', 'asc')->get();
         $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('id', 'asc')->get();
         
         return view('pages.admin.transactionform.edit')->with([
@@ -221,7 +229,7 @@ class TransactionsFormsController extends Controller {
             'trans_page_url' => $trans_page_url,
             'trans_page' => $trans_page,
             'coa_taggings' => $coa_taggings,
-            'expense_types' => $expense_types,
+            // 'expense_types' => $expense_types,
             'vat_types' => $vat_types
         ]);
     }
@@ -235,7 +243,8 @@ class TransactionsFormsController extends Controller {
         // validate input
         $data = $request->validate([
             'coa_tagging_id' => ['required', 'exists:coa_taggings,id'],
-            'expense_type_id' => ['required', 'exists:expense_types,id'],
+            // 'expense_type_id' => ['required', 'exists:expense_types,id'],
+            'expense_type_description' => ['required'],
             'vat_type_id' => ['required', 'exists:vat_types,id'],
         ]);
 
@@ -396,7 +405,8 @@ class TransactionsFormsController extends Controller {
                 'control_type' => ['required', 'in:CN,PC'],
                 'control_no' => ['required'],
                 'released_at' => ['required', 'date'],
-                'amount_issued' => ['required', 'min:0']
+                'amount_issued' => ['required', 'min:0'],
+                'released_by_id' => ['required', 'exists:released_by,id']
             ]);
             
             $data['status_id'] = 4;
@@ -613,7 +623,7 @@ class TransactionsFormsController extends Controller {
 
         // check if not unliquidated and not designated approver
         // if (!in_array($transaction->status_id, config('global.form_approval')) || $user->id != $transaction->form_approver_id) {
-        if (!in_array($transaction->status_id, config('global.form_approval')) || !in_array($user->id, config('global.approver_form'))) {
+        if (!in_array($transaction->status_id, config('global.form_approval')) || !in_array($user->role_id, config('global.approver_form'))) {
             $can_issue = false;
         }
         

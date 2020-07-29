@@ -160,7 +160,7 @@
 
                                                 <li class="nav-item">
                                                     <a href="/transaction/report-all" class="nav-link {{ Route::currentRouteName() == 'transactionreport' ? 'active' : '' }}">
-                                                        <i class="nav-icon material-icons icon--list">assessment</i><p> Reports</p>
+                                                        <i class="nav-icon material-icons icon--list">assessment</i><p> REPORTS</p>
                                                     </a>
                                                 </li>
                                             @endif
@@ -185,6 +185,11 @@
                                                 <li class="nav-item">
                                                     <a href="/particular" class="nav-link {{ Route::currentRouteName() == 'particular' ? 'active' : '' }}">
                                                         <i class="nav-icon material-icons icon--list">description</i><p>Particulars</p>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="/released-by" class="nav-link {{ Route::currentRouteName() == 'releasedby' ? 'active' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">person_pin</i><p>Released By</p>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">

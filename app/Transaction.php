@@ -27,10 +27,12 @@ class Transaction extends Model {
                                         'requested.name',
                                         'owner.name',
                                         'coatagging.name',
-                                        'expensetype.name',
+                                        'expense_type_description',
+                                        // 'expensetype.name',
                                         'vattype.name',
                                         'control_type',
                                         'control_no',
+                                        'releasedby.name',
                                         'released_at',
                                         'amount_issued',
                                         'cancellation_reason',
@@ -78,6 +80,10 @@ class Transaction extends Model {
 
     public function requested() {
         return $this->belongsTo(User::class);
+    }
+
+    public function releasedby() {
+        return $this->belongsTo(ReleasedBy::class, 'released_by_id');
     }
 
     public function owner() {

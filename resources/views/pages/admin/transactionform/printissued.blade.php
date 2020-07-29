@@ -48,11 +48,13 @@
                         <table class="table">
                             <tr>
                                 <td class="font-weight-bold">Due Date</td>
-                                <td>{{ $transaction->due_at }}</td>
-                                <td class="font-weight-bold">Vendor</td>
-                                <td class="font-weight-bold">{{ $transaction->payee }}</td>
+                                <td colspan="2">{{ $transaction->due_at }}</td>
                                 <td class="font-weight-bold">Request No.</td>
-                                <td class="font-weight-bold">{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</td>
+                                <td colspan="2" class="font-weight-bold">{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold">Vendor</td>
+                                <td colspan="5" class="font-weight-bold">{{ $transaction->payee }}</td>
                             </tr>
                             <tr>
                                 <td colspan="6" class="my-5 py-5"></td>
@@ -67,7 +69,7 @@
                             <tr>
                                 <td></td>
                                 <td class="text-center">1</td>
-                                <td>{{ $transaction->expensetype->name }}</td>
+                                <td>{{ $transaction->expense_type_description }}</td>
                                 <td colspan="2">{{ $transaction->trans_type != 'pc' ? $transaction->particulars->name : $transaction->particulars_custom }}</td>
                                 <td class="text-right">
                                     <span class="float-left">{{ $transaction->currency }}</span>
@@ -123,16 +125,13 @@
                     <div class="col-6">
                         <table class="table table-sm">
                             <tr>
-                                <td>Entered into Quickbooks</td>
-                                <td></td>
+                                <td><span class="mr-5">Entered into Quickbooks</span> <input type="checkbox" class="ml-5"></td>
                             </tr>
                             <tr>
                                 <td>Entered By</td>
-                                <td></td>
                             </tr>
                             <tr>
                                 <td>Date Entered</td>
-                                <td></td>
                             </tr>
                         </table>
                     </div>
@@ -141,7 +140,7 @@
                         <table class="table table-sm">
                             <tr>
                                 <td>Released By</td>
-                                <td>{{ $transaction->form_approver_id ? $transaction->formapprover->name : '' }}</td>
+                                <td>{{ $transaction->released_by_id ? $transaction->releasedby->name : '' }}</td>
                             </tr>
                             <tr>
                                 <td>Bank/Check#</td>
@@ -177,20 +176,20 @@
                         <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
                     </div>
                     
-                    <div class="col-2 small text-center my-5 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
-                        <div>{{ $transaction->form_approver_id ? $transaction->formapprover->name : '' }}</div>
+                    <div class="col-2 small text-center my-5">
+                        <div>{{ $final_approver }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Authorized By</div>
                     </div>
-                    <div class="col-2 small text-center my-5 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
+                    <div class="col-2 small text-center my-5">
                         <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
                     </div>
-
-                    <div class="col-2 small text-center my-5">
-                        <div>{{ $final_approver }}</div>
-                        <div class="mt-2 pt-2 border-top font-weight-bold">Final Approver</div>
+    
+                    <div class="col-2 small text-center my-5 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
+                        <div>{{ $transaction->form_approver_id ? $transaction->formapprover->name : '' }}</div>
+                        <div class="mt-2 pt-2 border-top font-weight-bold">Approver</div>
                     </div>
-                    <div class="col-2 small text-center my-5">
+                    <div class="col-2 small text-center my-5 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
                         <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
                     </div>
