@@ -164,29 +164,29 @@
                         </table>
                     </div>
 
-                    <div class="col-2 text-center my-5 small">
+                    <div class="col-3 text-center my-5 small">
                         <div>{{ $transaction->requested->name }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Requested By</div>
                     </div>
-                    <div class="col-2 text-center my-5 small">
+                    {{-- <div class="col-2 text-center my-5 small">
                         <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
-                    </div>
-
-                    <div class="col-2 text-center my-5 small">
-                        <div>{{ $final_approver }}</div>
-                        <div class="mt-2 pt-2 border-top font-weight-bold">Authorized By</div>
-                    </div>
-                    <div class="col-2 text-center my-5 small">
-                        <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
-                        <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
-                    </div>
+                    </div> --}}
                     
-                    <div class="col-2 text-center my-5 small {{ $transaction->liquidation_approver_id ? '' : 'd-none' }}">
+                    <div class="col-3 text-center my-5 small {{ $transaction->liquidation_approver_id ? '' : 'd-none' }}">
                         <div>{{ $transaction->liquidation_approver_id ? $transaction->liquidationapprover->name : '' }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Approver</div>
                     </div>
-                    <div class="col-2 text-center my-5 small {{ $transaction->liquidation_approver_id ? '' : 'd-none' }}">
+                    {{-- <div class="col-2 text-center my-5 small {{ $transaction->liquidation_approver_id ? '' : 'd-none' }}">
+                        <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
+                        <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
+                    </div> --}}
+    
+                    <div class="col-3 text-center my-5 small">
+                        <div>{{ $final_approver }}</div>
+                        <div class="mt-2 pt-2 border-top font-weight-bold">Authorized By</div>
+                    </div>
+                    <div class="col-3 text-center my-5 small">
                         <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
                     </div>

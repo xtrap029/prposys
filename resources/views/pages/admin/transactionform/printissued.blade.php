@@ -67,7 +67,7 @@
                                 <td class="text-right">Total</td>
                             </tr>
                             <tr>
-                                <td></td>
+                                <td>1</td>
                                 <td class="text-center">1</td>
                                 <td>{{ $transaction->expense_type_description }}</td>
                                 <td colspan="2">{{ $transaction->trans_type != 'pc' ? $transaction->particulars->name : $transaction->particulars_custom }}</td>
@@ -152,17 +152,11 @@
                             </tr>
                             <tr>
                                 <td>For Liquidation</td>
-                                <td>
-                                    <span class="mx-5">Yes</span>
-                                    <span>No</span>
-                                </td>
+                                <td>Yes</td>
                             </tr>
                             <tr>
                                 <td>OR Required</td>
-                                <td>
-                                    <span class="mx-5">Yes</span>
-                                    <span>No</span>
-                                </td>
+                                <td>Yes</td>
                             </tr>
                         </table>
                     </div>
@@ -171,25 +165,34 @@
                         <div>{{ $transaction->owner->name }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Prepared By</div>
                     </div>
-                    <div class="col-2 small text-center my-5">
+                    {{-- <div class="col-2 small text-center my-5">
                         <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
-                    </div>
-                    
+                    </div> --}}
+    
                     <div class="col-2 small text-center my-5">
-                        <div>{{ $final_approver }}</div>
-                        <div class="mt-2 pt-2 border-top font-weight-bold">Authorized By</div>
+                        <div>{{ $transaction->requested->name }}</div>
+                        <div class="mt-2 pt-2 border-top font-weight-bold">Requested By</div>
                     </div>
-                    <div class="col-2 small text-center my-5">
+                    {{-- <div class="col-2 small text-center my-5">
                         <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
-                    </div>
+                    </div> --}}
     
                     <div class="col-2 small text-center my-5 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
                         <div>{{ $transaction->form_approver_id ? $transaction->formapprover->name : '' }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Approver</div>
                     </div>
-                    <div class="col-2 small text-center my-5 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
+                    {{-- <div class="col-2 small text-center my-5 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
+                        <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
+                        <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
+                    </div> --}}
+    
+                    <div class="col-2 small text-center my-5">
+                        <div>{{ $final_approver }}</div>
+                        <div class="mt-2 pt-2 border-top font-weight-bold">Authorized By</div>
+                    </div>
+                    <div class="col-2 small text-center my-5">
                         <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
                     </div>

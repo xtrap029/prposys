@@ -157,15 +157,15 @@
                                                         </li>
                                                     </ul>
                                                 </li>
-
+                                                @endif
+                                                
+                                                @if (in_array(Auth::user()->role_id, [1, 2]))
                                                 <li class="nav-item">
                                                     <a href="/transaction/report-all" class="nav-link {{ Route::currentRouteName() == 'transactionreport' ? 'active' : '' }}">
                                                         <i class="nav-icon material-icons icon--list">assessment</i><p> REPORTS</p>
                                                     </a>
                                                 </li>
-                                            @endif
 
-                                            @if (in_array(Auth::user()->role_id, [1, 2]))
                                                 <li class="nav-header">ACCOUNTING</li>
                                                 <li class="nav-item">
                                                     <a href="/bank" class="nav-link {{ Route::currentRouteName() == 'bank' ? 'active' : '' }}">
