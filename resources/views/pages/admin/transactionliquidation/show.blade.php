@@ -363,7 +363,8 @@
                             <tbody>
                                 <tr class="border-bottom-2">
                                     <td>1</td>
-                                    <td>{{ $transaction->expensetype->name }}</td>
+                                    {{-- <td>{{ $transaction->expensetype->name }}</td> --}}
+                                    <td>{{ $transaction->expense_type_description }}</td>
                                     <td class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_unit ? $transaction->form_amount_unit : $transaction->amount, 2, '.', ',') }}</td>
                                     <td class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_unit ? $transaction->form_amount_unit : $transaction->amount, 2, '.', ',') }}</td>
                                 </tr>

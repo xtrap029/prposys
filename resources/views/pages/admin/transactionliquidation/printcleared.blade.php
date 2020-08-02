@@ -8,11 +8,13 @@
             <div class="container-fluid">
                 <div class="float-right">Date Generated: <b>{{ Carbon\Carbon::now() }}</b></div>
                 <h1>{{ strtoupper($transaction->trans_type) }} Liquidation</h1>
-                <div class="text-center mt-3 mb-5">
-                    <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--sm">
-                    <h2 class="mt-2">{{ $transaction->project->company->name }}</h2>
-                </div>
-                <div class="row">
+                <div class="row my-3">
+                    <div class="col-6">
+                        <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--sm">
+                    </div>
+                    <div class="col-6">
+                        <h2 class="text-right mt-3">{{ $transaction->project->company->name }}</h2>
+                    </div>
                     <div class="col-12">
                         <table class="table">
                             <thead>
@@ -34,8 +36,9 @@
                                 </tr>
                             </tbody>
                         </table>
-                    </div>          
-                    
+                    </div>  
+                </div>
+                <div class="row row--print">
                     <div class="col-12 my-5">
                         <table class="table table-sm">
                             <tr class="font-weight-bold">
@@ -58,69 +61,71 @@
                                     <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
                                 </tr>
                             @endforeach
-                            <tr>
-                                <td colspan="7" class="py-4"></td>
-                            </tr>
-                            @foreach ($transactions_summary[$key2] as $item)
-                                <tr>
-                                    <td colspan="2"></td>
-                                    <td colspan="5">
-                                        {{ $item->name }}
-                                        <span class="float-right">{{ number_format($item->amount, 2, '.', ',') }}</span>
-                                    </td>
-                                </tr>
-                            @endforeach
-                            <tr>
-                                <td colspan="7" class="py-4"></td>
-                            </tr>
-                            <tr>
-                                <td colspan="4" class="font-weight-bold small text-right">Before VAT</td>
-                                <td></td>
-                                <td colspan="2" class="bg-white text-right">
-                                    <span class="float-left">{{ $transaction->currency }}</span>
-                                    {{ number_format($transaction->liq_before_vat, 2, '.', ',') }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="4" class="font-weight-bold small text-right">VAT (12%)</td>
-                                <td></td>
-                                <td colspan="2" class="bg-white text-right font-italic">
-                                    <span class="float-left">{{ $transaction->currency }}</span>
-                                    {{ number_format($transaction->liq_vat, 2, '.', ',') }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="4" class="font-weight-bold small text-right">Subtotal</td>
-                                <td></td>
-                                <td colspan="2" class="bg-white text-right font-weight-bold">
-                                    <span class="float-left">{{ $transaction->currency }}</span>
-                                    {{ number_format($transaction->liq_subtotal, 2, '.', ',') }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="4" class="font-weight-bold small text-right">Less: Deposit/Payment</td>
-                                <td></td>
-                                <td colspan="2" class="bg-white text-right text-danger">
-                                    <span class="float-left">{{ $transaction->currency }}</span>
-                                    {{ number_format($transaction->amount_issued, 2, '.', ',') }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="4" class="small font-weight-bold text-right">Balance</td>
-                                <td></td>
-                                <td colspan="2" class="bg-white text-right font-weight-bold">
-                                    <span class="float-left">{{ $transaction->currency }}</span>
-                                    {{ number_format($transaction->liq_balance, 2, '.', ',') }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="7" class="small text-right">
-                                    <span>(+) For Reimbursement / (-) Return Money</span>
-                                </td>
-                            </tr>
                         </table>
                     </div>
-
+                </div>
+                <div class="row row--print">
+                    <table class="table table-sm">
+                        @foreach ($transactions_summary[$key2] as $item)
+                            <tr>
+                                <td colspan="2"></td>
+                                <td colspan="5">
+                                    {{ $item->name }}
+                                    <span class="float-right">{{ number_format($item->amount, 2, '.', ',') }}</span>
+                                </td>
+                            </tr>
+                        @endforeach
+                        <tr>
+                            <td colspan="7" class="py-4"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="font-weight-bold small text-right">Before VAT</td>
+                            <td></td>
+                            <td colspan="2" class="bg-white text-right">
+                                <span class="float-left">{{ $transaction->currency }}</span>
+                                {{ number_format($transaction->liq_before_vat, 2, '.', ',') }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="font-weight-bold small text-right">VAT (12%)</td>
+                            <td></td>
+                            <td colspan="2" class="bg-white text-right font-italic">
+                                <span class="float-left">{{ $transaction->currency }}</span>
+                                {{ number_format($transaction->liq_vat, 2, '.', ',') }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="font-weight-bold small text-right">Subtotal</td>
+                            <td></td>
+                            <td colspan="2" class="bg-white text-right font-weight-bold">
+                                <span class="float-left">{{ $transaction->currency }}</span>
+                                {{ number_format($transaction->liq_subtotal, 2, '.', ',') }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="font-weight-bold small text-right">Less: Deposit/Payment</td>
+                            <td></td>
+                            <td colspan="2" class="bg-white text-right text-danger">
+                                <span class="float-left">{{ $transaction->currency }}</span>
+                                {{ number_format($transaction->amount_issued, 2, '.', ',') }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="small font-weight-bold text-right">Balance</td>
+                            <td></td>
+                            <td colspan="2" class="bg-white text-right font-weight-bold">
+                                <span class="float-left">{{ $transaction->currency }}</span>
+                                {{ number_format($transaction->liq_balance, 2, '.', ',') }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="7" class="small text-right">
+                                <span>(+) For Reimbursement / (-) Return Money</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="row row--print">
                     <div class="col-6">
                         <table class="table table-sm">
                             <tr>
@@ -164,29 +169,19 @@
                         </table>
                     </div>
 
-                    <div class="col-3 text-center my-5 small">
+                    <div class="col-4 text-center my-4 small">
                         <div>{{ $transaction->requested->name }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Requested By</div>
-                    </div>
-                    {{-- <div class="col-2 text-center my-5 small">
-                        <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
-                        <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
-                    </div> --}}
-                    
-                    <div class="col-3 text-center my-5 small {{ $transaction->liquidation_approver_id ? '' : 'd-none' }}">
+                    </div>                
+                    <div class="col-4 text-center my-4 small {{ $transaction->liquidation_approver_id ? '' : 'd-none' }}">
                         <div>{{ $transaction->liquidation_approver_id ? $transaction->liquidationapprover->name : '' }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Approver</div>
                     </div>
-                    {{-- <div class="col-2 text-center my-5 small {{ $transaction->liquidation_approver_id ? '' : 'd-none' }}">
-                        <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
-                        <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
-                    </div> --}}
-    
-                    <div class="col-3 text-center my-5 small">
+                    <div class="col-4 text-center my-4 small">
                         <div>{{ $final_approver }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Authorized By</div>
                     </div>
-                    <div class="col-3 text-center my-5 small">
+                    <div class="col-4 text-center my-4 small">
                         <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
                     </div>

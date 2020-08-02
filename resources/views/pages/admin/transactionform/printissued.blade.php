@@ -7,10 +7,13 @@
         <section class="content" style="page-break-before: always">
             <div class="container-fluid">
                 <div class="float-right">Date Generated: <b>{{ Carbon\Carbon::now() }}</b></div>
-                <h1>{{ $transaction->trans_type }} - Form</h1>
-                <div class="text-center mt-3 mb-5">
-                    <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--sm">
-                    <h2 class="mt-2">{{ $transaction->project->company->name }}</h2>
+                <div class="row my-3">
+                    <div class="col-6">
+                        <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--sm">
+                    </div>
+                    <div class="col-6">
+                        <h2 class="text-right mt-3">{{ $transaction->project->company->name }}</h2>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-4">
@@ -161,38 +164,24 @@
                         </table>
                     </div>
 
-                    <div class="col-2 small text-center my-5">
+                    <div class="col-4 small text-center my-4">
                         <div>{{ $transaction->owner->name }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Prepared By</div>
                     </div>
-                    {{-- <div class="col-2 small text-center my-5">
-                        <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
-                        <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
-                    </div> --}}
-    
-                    <div class="col-2 small text-center my-5">
+                    <div class="col-4 small text-center my-4">
                         <div>{{ $transaction->requested->name }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Requested By</div>
                     </div>
-                    {{-- <div class="col-2 small text-center my-5">
-                        <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
-                        <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
-                    </div> --}}
-    
-                    <div class="col-2 small text-center my-5 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
+                    <div class="col-4 small text-center my-4 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
                         <div>{{ $transaction->form_approver_id ? $transaction->formapprover->name : '' }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Approver</div>
                     </div>
-                    {{-- <div class="col-2 small text-center my-5 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
-                        <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
-                        <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
-                    </div> --}}
-    
-                    <div class="col-2 small text-center my-5">
+                    <div class="col-4 small text-center my-4">
                         <div>{{ $final_approver }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Authorized By</div>
                     </div>
-                    <div class="col-2 small text-center my-5">
+    
+                    <div class="col-4 small text-center my-4">
                         <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
                     </div>

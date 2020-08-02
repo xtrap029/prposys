@@ -717,7 +717,7 @@ class TransactionsLiquidationController extends Controller {
 
         // check if not for approval and not designated approver
         // if (!in_array($transaction->status_id, config('global.liquidation_approval')) || $user->id != $transaction->liquidation_approver_id) {
-        if (!in_array($transaction->status_id, config('global.liquidation_approval')) || !in_array($user->id, config('global.approver_form'))) {
+        if (!in_array($transaction->status_id, config('global.liquidation_approval')) || !in_array($user->role_id, config('global.approver_form'))) {
             $can_clear = false;
         }
         

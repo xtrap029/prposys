@@ -43640,3 +43640,9 @@ label:not(.form-check-label):not(.custom-file-label) {
   border-top: 2px solid gray;
 }
 
+@media print {
+  .row--print {
+    page-break-inside: avoid;
+  }
+}
+
