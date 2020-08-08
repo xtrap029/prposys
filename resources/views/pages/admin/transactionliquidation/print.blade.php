@@ -27,7 +27,7 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</td>
+                                <td class="font-weight-bold">{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</td>
                                 <td>{{ Carbon::parse($transaction->created_at)->format('Y-m-d') }}</td>
                                 <td>{{ $transaction->requested->name }}</td>
                                 <td>{{ $transaction->project->project }}</td>
@@ -96,7 +96,7 @@
                         </tr>
                         <tr>
                             <td colspan="4" class="font-weight-bold small text-right">Subtotal</td>
-                            <td></td>
+                            <td class="pb-3"><div class="pb-5"></div></td>
                             <td colspan="2" class="bg-white text-right font-weight-bold">
                                 <span class="float-left">{{ $transaction->currency }}</span>
                                 {{ number_format($transaction->liq_subtotal, 2, '.', ',') }}

@@ -148,6 +148,7 @@
                         <td>Company</td>
                         <td>Project</td>
                         <td>Check / Issue No.</td>
+                        <td>Date Issued</td>
                         <td>Requested by</td>
                         <td>Date Created</td>
                         <td>Status</td>
@@ -158,6 +159,7 @@
                             <td>{{ $item->project->company->name }}</td>
                             <td>{{ $item->project->project }}</td>
                             <td>{{ $item->control_no }}</td>
+                            <td>{{ $item->released_at }}</td>
                             <td>{{ $item->requested->name }}</td>
                             <td>{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
                             <td>{{ $item->status->name }}</td>

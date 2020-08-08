@@ -63,7 +63,7 @@
                         @include('errors.inline', ['message' => $errors->first('expense_type_id')])
                     </div> --}}
                     <div class="col-md-5">
-                        <label for="">Expense Type / Description</label>
+                        <label for="">Description</label>
                         <input type="text" name="expense_type_description" value="{{ old('expense_type_description') }}" class="form-control @error('expense_type_description') is-invalid @enderror" required>
                         @include('errors.inline', ['message' => $errors->first('expense_type_description')])
                     </div>

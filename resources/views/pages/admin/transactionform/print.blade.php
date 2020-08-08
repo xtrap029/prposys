@@ -8,11 +8,11 @@
             <div class="float-right">Date Generated: <b>{{ Carbon\Carbon::now() }}</b></div>
             <h1>{{ $trans_page }} - Form</h1>
             <div class="row my-3">
-                <div class="col-6">
-                    <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--sm">
+                <div class="col-10">
+                    <h2 class="mt-4">{{ $transaction->project->company->name }}</h2>
                 </div>
-                <div class="col-6">
-                    <h2 class="text-right mt-3">{{ $transaction->project->company->name }}</h2>
+                <div class="col-2 text-right">
+                    <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--sm">
                 </div>
             </div>
             <div class="row">

@@ -116,6 +116,7 @@
                         <td class="text-right">Subtotal</td>
                         <td class="text-right">Deposit/Payment</td>
                         <td class="text-right">Balance</td>
+                        <td class="text-center">Status</td>
                         <td>Req. By</td>
                     </tr>
                     @foreach ($transactions as $item)
@@ -126,6 +127,7 @@
                             <td class="text-right">{{ number_format($item->liquidation->sum('amount'), 2, '.', ',') }}</td>
                             <td class="text-right">{{ number_format($item->amount_issued, 2, '.', ',') }}</td>
                             <td class="text-right">{{ number_format($item->liquidation->sum('amount') - $item->amount_issued, 2, '.', ',') }}</td>
+                            <td class="text-center">{{ $item->status->name }}</td>
                             <td>{{ $item->requested->name }}</td>
                         </tr>
                     @endforeach
