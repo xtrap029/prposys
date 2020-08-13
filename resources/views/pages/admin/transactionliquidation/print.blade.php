@@ -8,12 +8,14 @@
             <div class="float-right">Date Generated: <b>{{ Carbon\Carbon::now() }}</b></div>
             <h1>{{ strtoupper($transaction->trans_type) }} Liquidation</h1>
             <div class="row my-3">
-                <div class="col-6">
+                <div class="col-10">
+                    <h2 class="mt-4">{{ $transaction->project->company->name }}</h2>
+                </div>
+                <div class="col-2 text-right">
                     <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--sm">
                 </div>
-                <div class="col-6">
-                    <h2 class="text-right mt-3">{{ $transaction->project->company->name }}</h2>
-                </div>
+            </div>
+            <div class="row">
                 <div class="col-12">
                     <table class="table">
                         <thead>

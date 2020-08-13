@@ -78,7 +78,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
             Route::put('/cancel/{transaction}', $url.'@cancel')->where('transaction', '[0-9]+');
             Route::get('/report/', $url.'@report')->middleware('checkRole:1|2');
-            Route::get('/report-all/', $url.'@report_all')->middleware('checkRole:1|2');
+            Route::get('/report-all/', $url.'@report_all');
 
             Route::get('/{trans_page}/{trans_company?}', $url.'@index')->where('trans_company', '[0-9]+');
         });
