@@ -8,7 +8,8 @@
             <div class="form-row"> 
                 <div class="col-md-6 mb-4">
                     <a href="/transaction-form/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
-                    <a data-toggle="modal" data-target="#modal-make" href="#_" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>                
+                    <a data-toggle="modal" data-target="#modal-make" href="#_" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">add</i></a>                
+                    <a href="#_" class="btn btn-default jsCopy" data-toggle="tooltip" data-placement="top" title="Copy to clipboard"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i></a>
                     <a href="/transaction-form/reset/{{ $transaction->id }}" class="btn btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                 </div>
                 <div class="col-md-6 text-right mb-4">
@@ -112,13 +113,14 @@
                                                 <label for="">Type</label>
                                                 @if ($trans_page_url == 'prpo')
                                                     <select name="control_type" class="form-control">
-                                                        <option value="CN">Check Number</option>
-                                                        <option value="PC">Petty Cash</option>
+                                                        @foreach (config('global.control_types') as $control_type)
+                                                            <option value="{{ $control_type }}">{{ $control_type }}</option>
+                                                        @endforeach
                                                     </select>
                                                     @include('errors.inline', ['message' => $errors->first('control_type')])
                                                 @else
                                                     <h5>Petty Cash</h5>
-                                                    <input type="hidden" name="control_type" value="PC">
+                                                    <input type="hidden" name="control_type" value="{{ config('global.control_types_pc') }}">
                                                 @endif
                                             </div>
                                             <div class="col-md-7">
@@ -172,7 +174,9 @@
             <div class="row mb-2">
                 <div class="col-sm-8">
                     <div class="pb-2 mb-4 border-bottom">
-                        <h1 class="d-inline-block mr-3">{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</h1>
+                        <h1 class="d-inline-block mr-3">
+                            <input type="text" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}" class="input--label" readonly>
+                        </h1>
                         <h6 class="d-inline-block">
                             <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--xxs mr-1">
                             {{ $transaction->project->company->name }}
@@ -205,7 +209,7 @@
                                 <h5>{{ $transaction->payee }}</h5>
                             </div>
                             <div class="col-md-6">
-                                <label for="">VAT Type</label>
+                                <label for="">Tax Type</label>
                                 <h5>{{ $transaction->form_vat_name ? $transaction->form_vat_name : $transaction->vattype->name }}</h5>
                             </div>
                         </div>
@@ -304,7 +308,7 @@
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label for="">Type</label>
-                                    <h5>{{ $transaction->control_type == 'CN' ? 'Check Number' : 'Petty Cash' }}</h5>
+                                    <h5>{{ $transaction->control_type }}</h5>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="">No.</label>
@@ -415,4 +419,26 @@
             </div>        
         </div>
     </section>
+@endsection
+
+@section('script')
+    <script type="text/javascript">
+        $(function() {
+            $('[data-toggle="tooltip"]').tooltip()
+
+            $('.jsCopy').click(function() {
+                var copyText = $('.input--label')
+                copyText.select()
+                document.execCommand("copy")
+                document.getSelection().removeAllRanges()
+
+                $(this).attr('data-original-title', "Copied")
+                    .tooltip('show')
+            })
+
+            $('.jsCopy').mouseleave(function() {
+                $(this).attr("data-original-title","Copy to clipboard")
+            })
+        })
+    </script>
 @endsection

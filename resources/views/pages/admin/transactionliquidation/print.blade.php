@@ -29,7 +29,11 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="font-weight-bold">{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</td>
+                                <td>
+                                    <h3 class="font-weight-bold pb-0 mb-0">
+                                        {{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}
+                                    </h3>
+                                </td>
                                 <td>{{ Carbon::parse($transaction->created_at)->format('Y-m-d') }}</td>
                                 <td>{{ $transaction->requested->name }}</td>
                                 <td>{{ $transaction->project->project }}</td>

@@ -53,7 +53,9 @@
                             <td class="font-weight-bold">Due Date</td>
                             <td colspan="2">{{ $transaction->due_at }}</td>
                             <td class="font-weight-bold">Request No.</td>
-                            <td colspan="2" class="font-weight-bold">{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</td>
+                            <td colspan="2">
+                                <h3 class="font-weight-bold pb-0 mb-0">{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</h3>
+                            </td>
                         </tr>
                         <tr>
                             <td class="font-weight-bold">Vendor</td>

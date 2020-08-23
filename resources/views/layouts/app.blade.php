@@ -193,7 +193,7 @@
                                                 </li>
                                                 <li class="nav-item">
                                                     <a href="/vat-type" class="nav-link {{ Route::currentRouteName() == 'vattype' ? 'active' : '' }}">
-                                                        <i class="nav-icon material-icons icon--list">receipt</i><p>VAT Type</p>
+                                                        <i class="nav-icon material-icons icon--list">receipt</i><p>Tax Type</p>
                                                     </a>
                                                 </li>
                                             @endif

@@ -26,8 +26,8 @@ class CreateTransactionsTable extends Migration
             $table->unsignedBigInteger('project_id');
             $table->date('due_at');
             $table->unsignedBigInteger('requested_id');
-
-            $table->enum('control_type', ['CN', 'PC'])->nullable();
+            
+            $table->string('control_type');
             $table->string('control_no')->nullable();
             $table->date('released_at')->nullable();
             $table->decimal('amount_issued', 10, 2)->nullable();

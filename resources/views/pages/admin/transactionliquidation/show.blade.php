@@ -8,7 +8,8 @@
             <div class="form-row"> 
                 <div class="col-md-6 mb-4">
                     <a href="/transaction-liquidation/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
-                    <a data-toggle="modal" data-target="#modal-liquidate" href="#_" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>
+                    <a data-toggle="modal" data-target="#modal-liquidate" href="#_" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">add</i></a>
+                    <a href="#_" class="btn btn-default jsCopy" data-toggle="tooltip" data-placement="top" title="Copy to clipboard"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i></a>
                     <a href="/transaction-liquidation/reset/{{ $transaction->id }}" class="btn btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                 </div>
                 <div class="col-md-6 text-right mb-4">
@@ -246,7 +247,9 @@
             <div class="row mb-2">
                 <div class="col-sm-8">
                     <div class="pb-2 border-bottom">
-                        <h1 class="d-inline-block mr-3">{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</h1>
+                        <h1 class="d-inline-block mr-3">
+                            <input type="text" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}" class="input--label" readonly>
+                        </h1>
                         <h6 class="d-inline-block">
                             <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--xxs mr-1">
                             {{ $transaction->project->company->name }}
@@ -289,12 +292,12 @@
                                 <td>{{ $transaction->payee }}</td>
                             </tr>
                             <tr>
-                                <td class="font-weight-bold w-25">VAT Type</td>
+                                <td class="font-weight-bold w-25">Tax Type</td>
                                 <td>{{ $transaction->form_vat_name ? $transaction->form_vat_name : $transaction->vattype->name }}</td>
                             </tr>
                             <tr>
                                 <td class="font-weight-bold w-25">Issue Type</td>
-                                <td>{{ $transaction->control_type == 'CN' ? 'Check Number' : 'Petty Cash' }}</td>
+                                <td>{{ $transaction->control_type }}</td>
                             </tr>
                             <tr>
                                 <td class="font-weight-bold w-25">Issue No.</td>
@@ -613,4 +616,26 @@
             </div>        
         </div>
     </section>
+@endsection
+
+@section('script')
+    <script type="text/javascript">
+        $(function() {
+            $('[data-toggle="tooltip"]').tooltip()
+
+            $('.jsCopy').click(function() {
+                var copyText = $('.input--label')
+                copyText.select()
+                document.execCommand("copy")
+                document.getSelection().removeAllRanges()
+
+                $(this).attr('data-original-title', "Copied")
+                    .tooltip('show')
+            })
+
+            $('.jsCopy').mouseleave(function() {
+                $(this).attr("data-original-title","Copy to clipboard")
+            })
+        })
+    </script>
 @endsection

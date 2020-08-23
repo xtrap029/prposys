@@ -43587,6 +43587,14 @@ label:not(.form-check-label):not(.custom-file-label) {
   max-height: 250px;
 }
 
+.input--label {
+  background: none;
+  border: none;
+  padding: 0px;
+  width: 280px;
+  outline: none;
+}
+
 .icon--list {
   vertical-align: bottom;
 }

@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Edit VAT Type')
+@section('title', 'Edit Tax Type')
 
 @section('content')
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Edit VAT Type</h1>
+                    <h1>Edit Tax Type</h1>
                 </div>
             </div>
         </div>

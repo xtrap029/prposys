@@ -109,7 +109,7 @@ class TransactionsFormsController extends Controller {
                 break;
         }
 
-        $coa_taggings = CoaTagging::orderBy('name', 'asc')->get();
+        $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orderBy('name', 'asc')->get();
         // $expense_types = ExpenseType::orderBy('name', 'asc')->get();
         $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('id', 'asc')->get();
 
@@ -220,7 +220,7 @@ class TransactionsFormsController extends Controller {
                 break;
         }
 
-        $coa_taggings = CoaTagging::orderBy('name', 'asc')->get();
+        $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orderBy('name', 'asc')->get();
         // $expense_types = ExpenseType::orderBy('name', 'asc')->get();
         $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('id', 'asc')->get();
         
@@ -402,7 +402,7 @@ class TransactionsFormsController extends Controller {
     public function issue(Request $request, Transaction $transaction) {
         if ($this->check_can_issue($transaction->id)) {
             $data = $request->validate([
-                'control_type' => ['required', 'in:CN,PC'],
+                'control_type' => ['required'],
                 'control_no' => ['required'],
                 'released_at' => ['required', 'date'],
                 'amount_issued' => ['required', 'min:0'],

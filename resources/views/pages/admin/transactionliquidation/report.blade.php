@@ -121,7 +121,7 @@
                     </tr>
                     @foreach ($transactions as $item)
                         <tr>
-                            <td>{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</td>
+                            <td><h6 class="font-weight-bold">{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</h6></td>
                             <td>{{ $item->project->project }}</td>
                             <td>{{ $item->coatagging->name }}</td>
                             <td class="text-right">{{ number_format($item->liquidation->sum('amount'), 2, '.', ',') }}</td>

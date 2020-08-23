@@ -8,7 +8,8 @@
             <div class="row"> 
                 <div class="col-md-6 mb-4">
                     <a href="/transaction/{{ $trans_page }}/{{ $transaction->project->company_id }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
-                    <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>
+                    <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">add</i></a>
+                    <a href="#_" class="btn btn-default jsCopy" data-toggle="tooltip" data-placement="top" title="Copy to clipboard"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i></a>
                     <a href="/transaction/reset/{{ $transaction->id }}" class="btn btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                 </div>
                 <div class="col-md-6 text-right mb-4">
@@ -40,67 +41,6 @@
                         </div>
                     </div>
                 @endif
-
-                {{-- @if ($perms['can_issue'])
-                    <div class="modal fade" id="modal-issue" tabindex="-1" role="dialog" aria-hidden="true">
-                        <div class="modal-dialog modal-md" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header border-0">
-                                    <h5 class="modal-title">{{ __('messages.issue_prompt') }}</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <form action="/transaction/issue/{{ $transaction->id }}" method="post">
-                                        @csrf
-                                        @method('put')
-                                        <div class="row mb-3">
-                                            <div class="col-md-5">
-                                                <label for="">Issue Type</label>
-                                                @if ($trans_page == 'prpo')
-                                                    <select name="control_type" class="form-control">
-                                                        <option value="CN">Check Number</option>
-                                                        <option value="PC">Petty Cash</option>
-                                                    </select>
-                                                    @include('errors.inline', ['message' => $errors->first('control_type')])
-                                                @else
-                                                    <h5>Petty Cash</h5>
-                                                    <input type="hidden" name="control_type" value="PC">
-                                                @endif
-                                            </div>
-                                            <div class="col-md-7">
-                                                <label for="">Issue No.</label>
-                                                @if ($trans_page == 'prpo')
-                                                    <input type="text" name="control_no" class="form-control @error('control_no') is-invalid @enderror" required>
-                                                    @include('errors.inline', ['message' => $errors->first('control_no')])
-                                                @else
-                                                    <h5>{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</h5>
-                                                    <input type="hidden" name="control_no" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}">
-                                                @endif                                                
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-5">
-                                                <label for="">Release Date</label>
-                                                <input type="date" class="form-control @error('released_at') is-invalid @enderror" name="released_at" required>
-                                                @include('errors.inline', ['message' => $errors->first('released_at')])
-                                            </div>
-                                            <div class="col-md-7">
-                                                <label for="">Amount</label>
-                                                <input type="number" class="form-control @error('amount_issued') is-invalid @enderror" name="amount_issued" step="0.01" value="{{ $transaction->amount }}" required>
-                                                @include('errors.inline', ['message' => $errors->first('amount_issued')])
-                                            </div>
-                                        </div>
-                                        <div class="text-center mt-2">
-                                            <input type="submit" class="btn btn-success" value="Issue Now">
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endif --}}
             </div>
         </div>
     </section>
@@ -109,7 +49,9 @@
             <div class="row mb-2">
                 <div class="col-sm-8">
                     <div class="pb-2 mb-4 border-bottom">
-                        <h1 class="d-inline-block mr-3">{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</h1>
+                        <h1 class="d-inline-block mr-3">
+                            <input type="text" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}" class="input--label" readonly>
+                        </h1>
                         <h6 class="d-inline-block">
                             <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--xxs mr-1">
                             {{ $transaction->project->company->name }}
@@ -167,31 +109,6 @@
                         </div>
                         <div>{{ $transaction->cancellation_reason }}</div>
                     @endif
-                    {{-- <div class="pb-2 mt-5 mb-4 border-bottom {{ $transaction->status_id != 4 ? 'd-none' : '' }}">
-                        <h1 class="d-inline-block mr-3">Issuing Details</h1>
-                    </div>
-                    <div class="{{ $transaction->status_id != 4 ? 'd-none' : '' }}">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="">Issue Type</label>
-                                <h5>{{ $transaction->control_type == 'CN' ? 'Check Number' : 'Petty Cash' }}</h5>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="">Issue No.</label>
-                                <h5>{{ $transaction->control_no }}</h5>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="">Released Date</label>
-                                <h5>{{ $transaction->released_at }}</h5>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="">Amount</label>
-                                <h5>{{ $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</h5>
-                            </div>
-                        </div>
-                    </div> --}}
                 </div>
                 <div class="col-sm-4">
                     <div class="pb-2 text-right"><h1>History</h1></div>
@@ -278,4 +195,26 @@
             </div>        
         </div>
     </section>
+@endsection
+
+@section('script')
+    <script type="text/javascript">
+        $(function() {
+            $('[data-toggle="tooltip"]').tooltip()
+
+            $('.jsCopy').click(function() {
+                var copyText = $('.input--label')
+                copyText.select()
+                document.execCommand("copy")
+                document.getSelection().removeAllRanges()
+
+                $(this).attr('data-original-title', "Copied")
+                    .tooltip('show')
+            })
+
+            $('.jsCopy').mouseleave(function() {
+                $(this).attr("data-original-title","Copy to clipboard")
+            })
+        })
+    </script>
 @endsection

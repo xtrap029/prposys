@@ -114,7 +114,7 @@
                         <td>Project</td>
                         <td>COA Tagging</td>
                         <td>Vendor/Payee</td>
-                        <td>VAT Type</td>
+                        <td>Tax Type</td>
                         <td>Amount</td>
                         <td>Check No.</td>
                         <td>Date Due</td>
@@ -122,7 +122,7 @@
                     </tr>
                     @foreach ($transactions as $item)
                         <tr>
-                            <td>{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</td>
+                            <td><h6 class="font-weight-bold">{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</h6></td>
                             <td>{{ $item->project->project }}</td>
                             <td>{{ $item->coatagging->name }}</td>
                             <td>{{ $item->payee }}</td>

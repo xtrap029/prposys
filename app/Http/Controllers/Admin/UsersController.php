@@ -24,15 +24,18 @@ class UsersController extends Controller {
 
     public function create() {
         $companies = Company::orderBy('name', 'asc')->get();
+        $roles = Role::orderBy('id', 'desc')->get();
 
         return view('pages.admin.users.create')->with([
-            'companies' => $companies
+            'companies' => $companies,
+            'roles' => $roles
         ]);
     }
 
     public function store(Request $request) {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'role_id' => ['nullable', 'exists:roles,id'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'avatar' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
@@ -46,6 +49,7 @@ class UsersController extends Controller {
         User::create([
             'avatar' => $data['avatar'],
             'name' => $data['name'],
+            'role_id' => $data['role_id'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'company_id' => $data['company_id'],

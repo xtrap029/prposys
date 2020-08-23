@@ -22,4 +22,6 @@
         'status' => [1, 3, 4, 5, 6, 7, 8, 9],
         'trans_types' => ['pr', 'po', 'pc'],
         'site_icon' => '/images/logo.png',
+        'control_types' => ['Deposit Cash', 'Petty Cash', 'Online', 'Deposit Check'],
+        'control_types_pc' => 'Petty Cash',
     ];

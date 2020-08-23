@@ -114,67 +114,6 @@
                                             </div>
                                         </div>
                                     @endif
-                                    {{-- @if ($item->can_issue)
-                                        <div class="modal fade" id="modal-issued-{{ $item->id }}" tabindex="-1" role="dialog" aria-hidden="true">
-                                            <div class="modal-dialog modal-md" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header border-0">
-                                                        <h5 class="modal-title">{{ __('messages.issue_prompt') }}</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <form action="/transaction/issue/{{ $item->id }}" method="post">
-                                                            @csrf
-                                                            @method('put')
-                                                            <div class="form-row mb-3">
-                                                                <div class="col-md-5">
-                                                                    <label for="">Issue Type</label>
-                                                                    @if ($trans_page == 'prpo')
-                                                                        <select name="control_type" class="form-control">
-                                                                            <option value="CN">Check Number</option>
-                                                                            <option value="PC">Petty Cash</option>
-                                                                        </select>
-                                                                        @include('errors.inline', ['message' => $errors->first('control_type')])
-                                                                    @else
-                                                                        <h5>Petty Cash</h5>
-                                                                        <input type="hidden" name="control_type" value="PC">
-                                                                    @endif
-                                                                </div>
-                                                                <div class="col-md-7">
-                                                                    <label for="">Issue No.</label>
-                                                                    @if ($trans_page == 'prpo')
-                                                                        <input type="text" name="control_no" class="form-control @error('control_no') is-invalid @enderror" required>
-                                                                        @include('errors.inline', ['message' => $errors->first('control_no')])
-                                                                    @else
-                                                                        <h5>{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</h5>
-                                                                        <input type="hidden" name="control_no" value="{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}">
-                                                                    @endif                                                
-                                                                </div>
-
-                                                            </div>
-                                                            <div class="form-row mb-3">
-                                                                <div class="col-md-5">
-                                                                    <label for="">Release Date</label>
-                                                                    <input type="date" class="form-control @error('released_at') is-invalid @enderror" name="released_at" required>
-                                                                    @include('errors.inline', ['message' => $errors->first('released_at')])
-                                                                </div>
-                                                                <div class="col-md-7">
-                                                                    <label for="">Amount</label>
-                                                                    <input type="number" class="form-control @error('amount_issued') is-invalid @enderror" name="amount_issued" step="0.01" value="{{ $item->amount }}" required>
-                                                                    @include('errors.inline', ['message' => $errors->first('amount_issued')])
-                                                                </div>
-                                                            </div>
-                                                            <div class="text-center mt-2">
-                                                                <input type="submit" class="btn btn-success" value="Issue Now">
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif --}}
                                 </td>
                             </tr>
                         @empty

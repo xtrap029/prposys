@@ -22,6 +22,16 @@
                     @include('errors.inline', ['message' => $errors->first('name')])
                 </div>
                 <div class="form-group">
+                    <label for="">Role</label>
+                    <select name="role_id" class="form-control @error('role_id') is-invalid @enderror">
+                        <option value="">Inactive</option>
+                        @foreach ($roles as $role)
+                            <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>                                        
+                        @endforeach
+                    </select>
+                    @include('errors.inline', ['message' => $errors->first('role_id')])
+                </div>
+                <div class="form-group">
                     <label for="">Email Address</label>
                     <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required>
                     @include('errors.inline', ['message' => $errors->first('email')])

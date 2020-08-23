@@ -122,7 +122,7 @@
                     </tr>
                     @foreach ($transactions as $item)
                         <tr>
-                            <td>{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</td>
+                            <td><h6 class="font-weight-bold">{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</h6></td>
                             <td>{{ $_GET['type'] == 'pc' ? $item->particulars_custom : $item->particulars->name }}</td>
                             <td>{{ $item->payee }}</td>
                             <td>{{ $item->project->project }}</td>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\CoaTagging;
+use App\Company;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -16,12 +17,17 @@ class CoaTaggingController extends Controller {
     }
 
     public function create() {
-        return view('pages.admin.coatagging.create');
+        $companies = Company::orderBy('name', 'desc')->get();
+        
+        return view('pages.admin.coatagging.create')->with([
+            'companies' => $companies
+        ]);
     }
 
     public function store(Request $request) {
         $data = $request->validate([
-            'name' => ['required', Rule::unique('coa_taggings')->whereNull('deleted_at')]
+            'name' => ['required', Rule::unique('coa_taggings')->whereNull('deleted_at')],
+            'company_id' => ['required', 'exists:companies,id']
         ]);
         $data['owner_id'] = auth()->id();
         $data['updated_id'] = auth()->id();
@@ -32,14 +38,18 @@ class CoaTaggingController extends Controller {
     }
 
     public function edit(CoaTagging $coaTagging) {
+        $companies = Company::orderBy('name', 'desc')->get();
+
         return view('pages.admin.coatagging.edit')->with([
-            'coa_tagging' => $coaTagging
+            'coa_tagging' => $coaTagging,
+            'companies' => $companies
         ]);
     }
 
     public function update(Request $request, CoaTagging $coaTagging) {
         $data = $request->validate([
-            'name' => ['required', Rule::unique('coa_taggings')->ignore($coaTagging->id)->whereNull('deleted_at')]
+            'name' => ['required', Rule::unique('coa_taggings')->ignore($coaTagging->id)->whereNull('deleted_at')],
+            'company_id' => ['required', 'exists:companies,id']
         ]);
         $data['updated_id'] = auth()->id();
 

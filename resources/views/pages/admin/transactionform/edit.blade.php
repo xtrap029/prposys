@@ -68,7 +68,7 @@
                         @include('errors.inline', ['message' => $errors->first('expense_type_description')])
                     </div>
                     <div class="col-md-2">
-                        <label for="">VAT Type</label>
+                        <label for="">Tax Type</label>
                         <select name="vat_type_id" class="form-control">
                             @foreach ($vat_types as $item)
                             <option value="{{ $item->id }}" {{ $item->id == $transaction->vat_type_id ? 'selected' : '' }}>{{ $item->name }}</option>

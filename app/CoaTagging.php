@@ -12,7 +12,11 @@ class CoaTagging extends Model {
     protected $guarded = [];
     
     use LogsActivity;
-    protected static $logAttributes = ['name'];
+    protected static $logAttributes = ['name', 'company.name'];
     protected static $logName = 'COA Tagging';
     protected static $logOnlyDirty = true;
+
+    public function company() {
+        return $this->belongsTo(Company::class);
+    }
 }

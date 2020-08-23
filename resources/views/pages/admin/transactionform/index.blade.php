@@ -94,7 +94,7 @@
                             <th>Project</th>
                             <th>COA Tagging</th>
                             <th>Vendor/Payee</th>
-                            <th>VAT Type</th>
+                            <th>Tax Type</th>
                             <th class="text-right">Amount (PHP)</th>
                             <th>Check No.</th>
                             <th>Date Due</th>
@@ -154,7 +154,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    @endif
+                                    @endif                                    
                                     @if ($item->can_issue)
                                         <div class="modal fade" id="modal-issued-{{ $item->id }}" tabindex="-1" role="dialog" aria-hidden="true">
                                             <div class="modal-dialog modal-md" role="document">
@@ -171,16 +171,17 @@
                                                             @method('put')
                                                             <div class="form-row mb-3">
                                                                 <div class="col-md-5">
-                                                                    <label for="">Type</label>
+                                                                    <label for="">Type</label>                                                                    
                                                                     @if ($trans_page_url == 'prpo')
                                                                         <select name="control_type" class="form-control">
-                                                                            <option value="CN">Check Number</option>
-                                                                            <option value="PC">Petty Cash</option>
+                                                                            @foreach (config('global.control_types') as $control_type)
+                                                                                <option value="{{ $control_type }}">{{ $control_type }}</option>
+                                                                            @endforeach
                                                                         </select>
                                                                         @include('errors.inline', ['message' => $errors->first('control_type')])
                                                                     @else
                                                                         <h5>Petty Cash</h5>
-                                                                        <input type="hidden" name="control_type" value="PC">
+                                                                        <input type="hidden" name="control_type" value="{{ config('global.control_types_pc') }}">
                                                                     @endif
                                                                 </div>
                                                                 <div class="col-md-7">
@@ -193,7 +194,6 @@
                                                                         <input type="hidden" name="control_no" value="{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}">
                                                                     @endif                                                
                                                                 </div>
-
                                                             </div>
                                                             <div class="form-row mb-3">
                                                                 <div class="col-md-5">
