@@ -54,7 +54,7 @@
                                 </form>
                             </th>
                         </tr>
-                        <tr class="small">
+                        <tr>
                             <th>Transaction</th>
                             <th>Payee</th>
                             <th class="text-right">Amount (PHP)</th>
@@ -66,7 +66,7 @@
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody class="small">
+                    <tbody>
                         @forelse ($transactions as $item)
                             <tr>
                                 <td>{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</td>
