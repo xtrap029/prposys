@@ -26,7 +26,7 @@ class CoaTaggingController extends Controller {
 
     public function store(Request $request) {
         $data = $request->validate([
-            'name' => ['required', Rule::unique('coa_taggings')->whereNull('deleted_at')],
+            'name' => ['required'],
             'company_id' => ['required', 'exists:companies,id']
         ]);
         $data['owner_id'] = auth()->id();
@@ -48,7 +48,7 @@ class CoaTaggingController extends Controller {
 
     public function update(Request $request, CoaTagging $coaTagging) {
         $data = $request->validate([
-            'name' => ['required', Rule::unique('coa_taggings')->ignore($coaTagging->id)->whereNull('deleted_at')],
+            'name' => ['required'],
             'company_id' => ['required', 'exists:companies,id']
         ]);
         $data['updated_id'] = auth()->id();

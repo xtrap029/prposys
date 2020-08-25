@@ -8,8 +8,7 @@
             <div class="form-row"> 
                 <div class="col-md-6 mb-4">
                     <a href="/transaction-form/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
-                    <a data-toggle="modal" data-target="#modal-make" href="#_" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">add</i></a>                
-                    <a href="#_" class="btn btn-default jsCopy" data-toggle="tooltip" data-placement="top" title="Copy to clipboard"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i></a>
+                    <a data-toggle="modal" data-target="#modal-make" href="#_" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>                
                     <a href="/transaction-form/reset/{{ $transaction->id }}" class="btn btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                 </div>
                 <div class="col-md-6 text-right mb-4">
@@ -176,6 +175,7 @@
                     <div class="pb-2 mb-4 border-bottom">
                         <h1 class="d-inline-block mr-3">
                             <input type="text" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}" class="input--label" readonly>
+                            <a href="#_" class="btn btn-default vlign--top jsCopy" data-toggle="tooltip" data-placement="top" title="Copy to clipboard"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i></a>
                         </h1>
                         <h6 class="d-inline-block">
                             <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--xxs mr-1">

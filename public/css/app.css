@@ -43623,6 +43623,10 @@ label:not(.form-check-label):not(.custom-file-label) {
   vertical-align: middle;
 }
 
+.vlign--top {
+  vertical-align: top;
+}
+
 .vlign--baseline-middle {
   vertical-align: -webkit-baseline-middle;
 }

@@ -13,12 +13,13 @@ use Illuminate\Support\Facades\Storage;
 class UsersController extends Controller {
 
     public function index() {
-        $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
-        $users_inactive = User::whereNull('role_id')->orderBy('name', 'asc')->get();
+        $users = User::orderBy('name', 'asc')->get();
+        // $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
+        // $users_inactive = User::whereNull('role_id')->orderBy('name', 'asc')->get();
         
         return view('pages.admin.users.index')->with([
             'users' => $users,
-            'users_inactive' => $users_inactive
+            // 'users_inactive' => $users_inactive
         ]);
     }
 

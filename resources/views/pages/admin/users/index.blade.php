@@ -38,7 +38,7 @@
                         </tr>
                     @endforelse
                 </tbody>
-                <thead>
+                {{-- <thead>
                     <tr>
                         <th colspan="5">Inactive</th>
                     </tr>
@@ -55,7 +55,7 @@
                             </td>
                         </tr>
                     @endforeach
-                </tbody>
+                </tbody> --}}
             </table>
         </div>
     </section>
