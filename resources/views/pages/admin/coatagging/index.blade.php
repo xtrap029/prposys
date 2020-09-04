@@ -17,27 +17,36 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th colspan="2">List</th>
+                        <th>List</th>
                         <th class="text-right"><a href="/coa-tagging/create">Create</a></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($coa_taggings as $item)
+                    @forelse ($companies as $item)
                         <tr>
-                            <td>{{ $item->name }}</td>
-                            <td>{{ $item->company->name }}</td>
-                            <td class="text-right">
-                                <a href="/coa-tagging/{{ $item->id }}/edit" class="btn btn-link btn-sm">Edit</a>
-                                <form action="/coa-tagging/{{ $item->id }}" method="post" class="d-inline-block">
-                                    @csrf
-                                    @method('delete')
-                                    <input type="submit" class="btn btn-link btn-sm" value="Delete" onclick="return confirm('Are you sure?')">
-                                </form>
+                            <td colspan="2">
+                                <p class="font-weight-bold">{{ $item->name }}</p>
+                                @forelse ($item->coataggings as $coatagging)
+                                    <div class="pl-5 py-1">
+                                        {{ $coatagging->name }}
+                                        
+                                        <div class="d-inline-block float-right">
+                                            <a href="/coa-tagging/{{ $coatagging->id }}/edit" class="btn btn-link btn-sm">Edit</a>
+                                            <form action="/coa-tagging/{{ $coatagging->id }}" method="post" class="d-inline-block">
+                                                @csrf
+                                                @method('delete')
+                                                <input type="submit" class="btn btn-link btn-sm" value="Delete" onclick="return confirm('Are you sure?')">
+                                            </form>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="pl-5 py-1">{{ __('messages.empty') }}</div>
+                                @endforelse
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="text-center">{{ __('messages.empty') }}</td>
+                            <td colspan="2" class="text-center">{{ __('messages.empty') }}</td>
                         </tr>
                     @endforelse
                 </tbody>

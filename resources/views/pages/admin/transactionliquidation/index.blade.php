@@ -122,7 +122,8 @@
                                             <a class="dropdown-item {{ $item->can_edit ? '' : 'd-none' }}" href="/transaction-liquidation/edit/{{ $item->id }}">Edit</a>  
                                             {{-- <a class="dropdown-item {{ $item->can_approval ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-approval-{{ $item->id }}" href="#_">For Approval</a>   --}}
                                             <a class="dropdown-item {{ $item->can_approval ? '' : 'd-none' }}" href="/transaction-liquidation/approval/{{ $item->id }}" onclick="return confirm('Are you sure?')">For Approval</a>
-                                            <a class="dropdown-item {{ $item->can_print ? '' : 'd-none' }}" href="#_" onclick="window.open('/transaction-liquidation/print/{{ $item->id }}','name','width=800,height=800')">Print</a>
+                                            <a class="dropdown-item" href="#_" onclick="window.open('/transaction-form/print/{{ $item->id }}','name','width=800,height=800')">Print Generated {{ strtoupper($item->trans_type) }} Form</a>
+                                            <a class="dropdown-item {{ $item->can_print ? '' : 'd-none' }}" href="#_" onclick="window.open('/transaction-liquidation/print/{{ $item->id }}','name','width=800,height=800')">Print Liquidation</a>
                                             <div class="dropdown-divider {{ $item->can_reset ? '' : 'd-none' }}"></div>
                                             <a class="dropdown-item {{ $item->can_reset ? '' : 'd-none' }}" href="/transaction-liquidation/reset/{{ $item->id }}" onclick="return confirm('Are you sure?')">Renew Edit Limit</a>
                                         </div>

@@ -604,7 +604,7 @@ class TransactionsFormsController extends Controller {
         $transaction = Transaction::where('id', $transaction)->first();
 
         //  check if for approval
-        if (!in_array($transaction->status_id, config('global.form_approval_printing'))) {
+        if (!in_array($transaction->status_id, config('global.form_approval_printing')) && !in_array($transaction->status_id, config('global.page_liquidation'))) {
             $can_print = false;
         }
 

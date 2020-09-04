@@ -15,4 +15,8 @@ class Company extends Model {
     protected static $logAttributes = ['code', 'name', 'logo'];
     protected static $logName = 'Company';
     protected static $logOnlyDirty = true;
+
+    public function coataggings() {
+        return $this->hasMany(CoaTagging::class)->orderBy('name');
+    }
 }

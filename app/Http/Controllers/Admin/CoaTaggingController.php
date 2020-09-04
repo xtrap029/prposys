@@ -12,7 +12,7 @@ class CoaTaggingController extends Controller {
 
     public function index() {
         return view('pages.admin.coatagging.index')->with([
-            'coa_taggings' => CoaTagging::orderBy('name', 'asc')->get()
+            'companies' => Company::orderBy('name', 'asc')->get()
         ]);
     }
 
