@@ -94,11 +94,11 @@
                                             </li>
                                             
                                             @if (in_array(Auth::user()->role_id, [1, 2, 3]))
-                                                <li class="nav-header">TRANSACTION</li>
+                                                <li class="nav-header d-none">TRANSACTION</li>
                                                 <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc']) ? 'menu-open' : '' : '' }}">
                                                     <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc']) ? 'active' : '' : '' }}">
                                                         <i class="nav-icon material-icons icon--list">list_alt</i>
-                                                        <p>GENERATE</p>
+                                                        <p>TRANSACTIONS</p>
                                                     </a>
                                                     <ul class="nav nav-treeview">
                                                         <li class="nav-item">
@@ -116,7 +116,7 @@
                                                     </ul>
                                                 </li>
 
-                                                <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo-form', 'pc-form']) ? 'menu-open' : '' : '' }}">
+                                                <li class="nav-item has-treeview d-none {{ isset($trans_page) ? in_array($trans_page, ['prpo-form', 'pc-form']) ? 'menu-open' : '' : '' }}">
                                                     <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo-form', 'pc-form']) ? 'active' : '' : '' }}">
                                                         <i class="nav-icon material-icons icon--list">list_alt</i>
                                                         <p>FORMS</p>
@@ -137,7 +137,7 @@
                                                     </ul>
                                                 </li>
 
-                                                <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo-liquidation', 'pc-liquidation']) ? 'menu-open' : '' : '' }}">
+                                                <li class="nav-item has-treeview d-none {{ isset($trans_page) ? in_array($trans_page, ['prpo-liquidation', 'pc-liquidation']) ? 'menu-open' : '' : '' }}">
                                                     <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo-liquidation', 'pc-liquidation']) ? 'active' : '' : '' }}">
                                                         <i class="nav-icon material-icons icon--list">list_alt</i>
                                                         <p>LIQUIDATION</p>

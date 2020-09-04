@@ -10,7 +10,7 @@
                     <h1>Liquidations Report</h1>
                 </div>
                 <div class="col-sm-6 text-right">
-                    <a href="/transaction-liquidation/{{ $trans_page_url }}/{{ $_GET['company'] ? $_GET['company'] : '' }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
+                    <a href="/transaction/{{ $trans_page_url }}/{{ $_GET['company'] ? $_GET['company'] : '' }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
                 </div>
             </div>
         </div>

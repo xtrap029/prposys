@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Company;
 use App\CompanyProject;
 use App\Particulars;
-use App\ReleasedBy;
 use App\Settings;
 use App\Transaction;
 use App\TransactionStatus;
@@ -39,7 +38,7 @@ class TransactionsController extends Controller {
         
         if (!empty($_GET['s'])) {
             $transactions = Transaction::whereIn('trans_type', $trans_types)
-                                    ->whereIn('status_id', config('global.status'))
+                                    ->whereIn('status_id', config('global.page_generated'))
                                     ->whereHas('project', function($query) use($trans_company) {
                                         $query->where('company_id', $trans_company);
                                     })
@@ -48,36 +47,17 @@ class TransactionsController extends Controller {
             $transactions->appends(['s' => $_GET['s']]);
         } else {
             $transactions = Transaction::whereIn('trans_type', $trans_types)
-                                    ->whereIn('status_id', config('global.status'))
+                                    ->whereIn('status_id', config('global.page_generated'))
                                     ->whereHas('project', function($query) use($trans_company) {
                                         $query->where('company_id', $trans_company);
                                     })->orderBy('id', 'desc')->paginate(10);
         }
 
-        $released_by = ReleasedBy::orderBy('name', 'asc')->get();
-        $approvers = User::whereIn('role_id', config('global.approver_form'))->orderBy('name', 'asc')->get();
-        $can_edit_cleared = User::where('id', auth()->id())->first()->role_id == 1 ? true : false;
 
         foreach ($transactions as $key => $value) {
-            if (in_array($value->status_id, config('global.page_generated'))) {
-                $transactions[$key]->can_edit = TransactionHelper::check_can_generate_edit($value->id);
-                $transactions[$key]->can_cancel = TransactionHelper::check_can_generate_cancel($value->id);
-                $transactions[$key]->can_reset = TransactionHelper::check_can_generate_reset($value->id);
-            } else if (in_array($value->status_id, config('global.page_form'))) {
-                $transactions[$key]->can_edit = TransactionHelper::check_can_form_edit($value->id);
-                $transactions[$key]->can_cancel = TransactionHelper::check_can_form_cancel($value->id);
-                $transactions[$key]->can_issue = TransactionHelper::check_can_form_issue($value->id);
-                $transactions[$key]->can_reset = TransactionHelper::check_can_form_reset($value->id);
-                $transactions[$key]->can_approval = TransactionHelper::check_can_form_approval($value->id);
-                $transactions[$key]->can_print = TransactionHelper::check_can_form_print($value->id);
-            } else if (in_array($value->status_id, config('global.page_liquidation'))) {
-                $transactions[$key]->can_edit = TransactionHelper::check_can_liquidation_edit($value->id);
-                $transactions[$key]->can_reset = TransactionHelper::check_can_liquidation_reset($value->id);
-                $transactions[$key]->can_approval = TransactionHelper::check_can_liquidation_approval($value->id);
-                $transactions[$key]->can_print = TransactionHelper::check_can_liquidation_print($value->id);
-                $transactions[$key]->can_clear = TransactionHelper::check_can_liquidation_clear($value->id);
-                $transactions[$key]->can_edit_cleared = $can_edit_cleared;
-            }
+            $transactions[$key]->can_edit = $this->check_can_edit($value->id);
+            $transactions[$key]->can_cancel = $this->check_can_cancel($value->id);
+            $transactions[$key]->can_reset = $this->check_can_reset($value->id);
         }
         
         return view('pages.admin.transaction.index')->with([
@@ -86,9 +66,7 @@ class TransactionsController extends Controller {
             'page_label' => $page_label_index,
             'companies' => $companies,
             'company' => $company,
-            'transactions' => $transactions,
-            'approvers' => $approvers,
-            'released_by' => $released_by
+            'transactions' => $transactions
         ]);
     }
 
@@ -188,7 +166,7 @@ class TransactionsController extends Controller {
     }
 
     public function edit(Transaction $transaction) {
-        if (!TransactionHelper::check_can_generate_edit($transaction->id)) {
+        if (!$this->check_can_edit($transaction->id)) {
             return back()->with('error', __('messages.cant_edit'));
         }
 
@@ -218,7 +196,7 @@ class TransactionsController extends Controller {
 
     public function update(Request $request, Transaction $transaction) {
         // if can edit
-        if (!TransactionHelper::check_can_generate_edit($transaction->id)) {
+        if (!$this->check_can_edit($transaction->id)) {
             return back()->with('error', __('messages.cant_edit'));
         }
 
@@ -265,9 +243,9 @@ class TransactionsController extends Controller {
         $logs = Activity::where('subject_id', $transaction->id)
                 ->where('subject_type', 'App\Transaction')
                 ->orderBy('id', 'desc')->paginate(15)->onEachSide(1);
-        $perms['can_edit'] = TransactionHelper::check_can_generate_edit($transaction->id);
-        $perms['can_cancel'] = TransactionHelper::check_can_generate_cancel($transaction->id);
-        $perms['can_reset'] = TransactionHelper::check_can_generate_reset($transaction->id);
+        $perms['can_edit'] = $this->check_can_edit($transaction->id);
+        $perms['can_cancel'] = $this->check_can_cancel($transaction->id);
+        $perms['can_reset'] = $this->check_can_reset($transaction->id);
         // $perms['can_issue'] = $this->check_can_issue($transaction->id);
 
         switch ($transaction->trans_type) {
@@ -303,7 +281,7 @@ class TransactionsController extends Controller {
     }
     
     public function cancel(Request $request, Transaction $transaction) {
-        if (TransactionHelper::check_can_generate_cancel($transaction->id)) {
+        if ($this->check_can_cancel($transaction->id)) {
             $data = $request->validate([
                 'cancellation_reason' => ['required']
             ]);
@@ -435,87 +413,87 @@ class TransactionsController extends Controller {
         ]);
     }
 
-    // private function check_can_edit($transaction, $user = '') {
-    //     $can_edit = true;
+    private function check_can_edit($transaction, $user = '') {
+        $can_edit = true;
 
-    //     if (!$user) {
-    //         $user = auth()->id();
-    //     }
-    //     $user = User::where('id', $user)->first();
+        if (!$user) {
+            $user = auth()->id();
+        }
+        $user = User::where('id', $user)->first();
 
-    //     $transaction = Transaction::where('id', $transaction)->first();
+        $transaction = Transaction::where('id', $transaction)->first();
 
-    //     // check if unliquidated
-    //     if (in_array($transaction->status_id, config('global.generated'))) {
-    //         // check if not admin
-    //         if ($user->role_id != 1) {
-    //             // check if owned
-    //             if ($user->id == $transaction->owner_id) {
-    //                 // check if pr, not po
-    //                 if ($transaction->trans_type == 'pr') {
-    //                     // check role limit
-    //                     if ($user->role_id == 2) {
-    //                         $edit_pr_limit = Settings::where('type', 'LIMIT_EDIT_GENPR_USER_2')->first()->value;
-    //                     } else if ($user->role_id == 3) {
-    //                         $edit_pr_limit = Settings::where('type', 'LIMIT_EDIT_GENPR_USER_3')->first()->value;
-    //                     } else {
-    //                         $can_edit = false;
-    //                     }
+        // check if unliquidated
+        if (in_array($transaction->status_id, config('global.generated'))) {
+            // check if not admin
+            if ($user->role_id != 1) {
+                // check if owned
+                if ($user->id == $transaction->owner_id) {
+                    // check if pr, not po
+                    if ($transaction->trans_type == 'pr') {
+                        // check role limit
+                        if ($user->role_id == 2) {
+                            $edit_pr_limit = Settings::where('type', 'LIMIT_EDIT_GENPR_USER_2')->first()->value;
+                        } else if ($user->role_id == 3) {
+                            $edit_pr_limit = Settings::where('type', 'LIMIT_EDIT_GENPR_USER_3')->first()->value;
+                        } else {
+                            $can_edit = false;
+                        }
 
-    //                     // check if role limit is enough
-    //                     if ($transaction->edit_count >= $edit_pr_limit) {
-    //                         $can_edit = false;
-    //                     } 
-    //                 }
-    //             } else {
-    //                 $can_edit = false;
-    //             }
-    //         }
-    //     } else {
-    //         $can_edit = false;
-    //     }
+                        // check if role limit is enough
+                        if ($transaction->edit_count >= $edit_pr_limit) {
+                            $can_edit = false;
+                        } 
+                    }
+                } else {
+                    $can_edit = false;
+                }
+            }
+        } else {
+            $can_edit = false;
+        }
 
-    //     return $can_edit;
-    // }
+        return $can_edit;
+    }
 
-    // private function check_can_cancel($transaction, $user = '') {
-    //     $can_cancel = true;
+    private function check_can_cancel($transaction, $user = '') {
+        $can_cancel = true;
 
-    //     if (!$user) {
-    //         $user = auth()->id();
-    //     }
-    //     $user = User::where('id', $user)->first();
+        if (!$user) {
+            $user = auth()->id();
+        }
+        $user = User::where('id', $user)->first();
 
-    //     $transaction = Transaction::where('id', $transaction)->first();
+        $transaction = Transaction::where('id', $transaction)->first();
 
-    //     // check if unliquidated
-    //     if (in_array($transaction->status_id, config('global.generated'))) {
-    //         // check if not admin and not the owner
-    //         if ($user->role_id != 1 && $user->id != $transaction->owner_id) {
-    //             $can_cancel = false;
-    //         }
-    //     } else {
-    //         $can_cancel = false;
-    //     }
+        // check if unliquidated
+        if (in_array($transaction->status_id, config('global.generated'))) {
+            // check if not admin and not the owner
+            if ($user->role_id != 1 && $user->id != $transaction->owner_id) {
+                $can_cancel = false;
+            }
+        } else {
+            $can_cancel = false;
+        }
 
-    //     return $can_cancel;
-    // }
+        return $can_cancel;
+    }
 
-    // private function check_can_reset($transaction, $user = '') {
-    //     $can_reset = true;
+    private function check_can_reset($transaction, $user = '') {
+        $can_reset = true;
 
-    //     if (!$user) {
-    //         $user = auth()->id();
-    //     }
-    //     $user = User::where('id', $user)->first();
+        if (!$user) {
+            $user = auth()->id();
+        }
+        $user = User::where('id', $user)->first();
 
-    //     $transaction = Transaction::where('id', $transaction)->first();
+        $transaction = Transaction::where('id', $transaction)->first();
 
-    //     // check if reset
-    //     if (!in_array($transaction->status_id, config('global.generated')) || $user->role_id != 1 || in_array($transaction->trans_type, ['po', 'pc'])) {
-    //         $can_reset = false;
-    //     }
+        // check if reset
+        if (!in_array($transaction->status_id, config('global.generated')) || $user->role_id != 1 || in_array($transaction->trans_type, ['po', 'pc'])) {
+            $can_reset = false;
+        }
 
-    //     return $can_reset;
-    // }
+        return $can_reset;
+    }
 }

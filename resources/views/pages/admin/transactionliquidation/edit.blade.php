@@ -166,7 +166,7 @@
                     </div>
                 </div>
                 <div class="text-center mt-5 py-5 border-top">
-                    <a href="/transaction-liquidation/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="mr-3">Cancel</a>
+                    <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="mr-3">Cancel</a>
                     <input type="submit" class="btn btn-primary" value="Save">
                 </div>
             </form>

@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'Forms Report')
+@section('title', 'Generated Report')
 
 @section('content')
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Forms Report</h1>
+                    <h1>Generated Report</h1>
                 </div>
                 <div class="col-sm-6 text-right">
-                    <a href="/transaction/{{ $trans_page_url }}/{{ $_GET['company'] ? $_GET['company'] : '' }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
+                    <a href="/transaction/{{ $trans_page }}/{{ $_GET['company'] ? $_GET['company'] : '' }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
                 </div>
             </div>
         </div>
@@ -87,7 +87,7 @@
                                 <td class="border-0">{{ $status_sel }}</td>
                             </tr>
                         </table>
-                    </div>
+                    </div>                    
                     <div class="float-right">
                         <table class="table table-sm mb-0">
                             <tr>
@@ -107,30 +107,33 @@
                         <span class="mr-3 vlign--baseline-middle">{{ $transactions[0]->project->company->name }}</span>
                     </div>
                 @endif
-                
+
                 <table class="table mb-0 small table-striped">
                     <tr class="bg-gray font-weight-bold">
                         <td>Transaction</td>
+                        <td>Particulars</td>
+                        <td>Payee</td>
                         <td>Project</td>
-                        <td>COA Tagging</td>
-                        <td>Vendor/Payee</td>
-                        <td>Tax Type</td>
-                        <td>Amount</td>
-                        <td>Check No.</td>
-                        <td>Date Due</td>
-                        <td>Prep. By</td>
+                        <td>Prepared by</td>
+                        <td>Requested by</td>
+                        <td>Due Date</td>
+                        <td colspan="2" class="text-right">Amount</td>
+                        {{-- <td class="{{ empty($_GET['status']) || $_GET['status'] == "" ? '' : 'd-none' }}">Status</td> --}}
                     </tr>
                     @foreach ($transactions as $item)
                         <tr>
                             <td><h6 class="font-weight-bold">{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</h6></td>
-                            <td>{{ $item->project->project }}</td>
-                            <td>{{ $item->coatagging->name }}</td>
+                            <td>{{ $_GET['type'] == 'pc' ? $item->particulars_custom : $item->particulars->name }}</td>
                             <td>{{ $item->payee }}</td>
-                            <td>{{ $item->vattype->name }}</td>
-                            <td>{{ number_format($item->amount, 2, '.', ',') }}</td>
-                            <td>{{ $item->control_no ? $item->control_no : '-' }}</td>
-                            <td>{{ $item->due_at }}</td>
+                            <td>{{ $item->project->project }}</td>
                             <td>{{ $item->owner->name }}</td>
+                            <td>{{ $item->requested->name }}</td>
+                            <td>{{ $item->due_at }}</td>
+                            <td>{{ $item->currency }}</td>
+                            <td class="text-right border-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
+                            {{-- <td class="{{ empty($_GET['status']) || $_GET['status'] == "" ? '' : 'd-none' }}">
+                                {{ $item->status->name }}
+                            </td> --}}
                         </tr>
                     @endforeach
                     </tbody>

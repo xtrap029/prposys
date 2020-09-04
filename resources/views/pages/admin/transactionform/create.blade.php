@@ -77,7 +77,7 @@
                         @include('errors.inline', ['message' => $errors->first('vat_type_id')])
                     </div>
                     <div class="col-md-12 text-right mt-4">
-                        <a href="/transaction-form/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="mr-3">Cancel</a>
+                        <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="mr-3">Cancel</a>
                         <input type="submit" class="btn btn-primary" value="Save">
                     </div>
                 </div>

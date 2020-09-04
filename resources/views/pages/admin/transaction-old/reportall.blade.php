@@ -1,16 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Forms Report')
+@section('title', 'General Report')
 
 @section('content')
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Forms Report</h1>
-                </div>
-                <div class="col-sm-6 text-right">
-                    <a href="/transaction/{{ $trans_page_url }}/{{ $_GET['company'] ? $_GET['company'] : '' }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
+                    <h1>General Report</h1>
                 </div>
             </div>
         </div>
@@ -19,12 +16,13 @@
         <div class="container-fluid">
             <form action="" method="get" class="no-print">
                 <div class="form-row mb-3">
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <label for="">Type</label>
                         <select name="type" class="form-control">
-                            <option value="pr" {{ $_GET['type'] == "pr" ? 'selected' : '' }}>Payment Release</option>
-                            <option value="po" {{ $_GET['type'] == "po" ? 'selected' : '' }}>Purchase Order</option>
-                            <option value="pc" {{ $_GET['type'] == "pc" ? 'selected' : '' }}>Petty Cash</option>
+                            <option value="">All</option>
+                            <option value="pr" {{ $trans_type == "pr" ? 'selected' : '' }}>PR</option>
+                            <option value="po" {{ $trans_type == "po" ? 'selected' : '' }}>PO</option>
+                            <option value="pc" {{ $trans_type == "pc" ? 'selected' : '' }}>PC</option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -32,13 +30,14 @@
                         <select name="company" class="form-control">
                             <option value="">All</option>
                             @foreach ($companies as $item)
-                                <option value="{{ $item->id }}" {{ !empty($_GET['company']) ? $_GET['company'] == $item->id ? 'selected' : '' : '' }}>{{ $item->name }}</option>
+                                <option value="{{ $item->id }}" {{ !empty($trans_company) ? $trans_company == $item->id ? 'selected' : '' : '' }}>{{ $item->name }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="col-md-2">
                         <label for="">Status</label>
                         <select name="status" class="form-control">
+                            <option value="">All</option>
                             @foreach ($status as $item)
                                 <option value="{{ $item->id }}" {{ !empty($_GET['status']) ? $_GET['status'] == $item->id ? 'selected' : '' : '' }}>{{ ucfirst(strtolower($item->name)) }}</option>
                             @endforeach
@@ -54,11 +53,31 @@
                     </div>
                     <div class="col-md-1">
                         <label for="" class="invisible">.</label>
+                        <a href="/transaction/report-all" class="btn btn-secondary btn-block">Reset</a>
+                    </div>
+                    <div class="col-md-1">
+                        <label for="" class="invisible">.</label>
                         <input type="submit" value="Generate" class="btn btn-primary btn-block">
                     </div>
                     <div class="col-md-1">
                         <label for="" class="invisible">.</label>
-                        <a href="" class="btn btn-danger btn-block" onclick="window.print();">Print</a>
+                        <div class="btn-group btn-block" role="group">
+                            <button type="button" class="btn btn-danger" onclick="window.print();">Print</button>
+                            @if (!empty($_GET['status']) && in_array($_GET['status'], config('global.issued_cleared')))
+                                <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item {{ !in_array($_GET['status'], config('global.form_issued')) ? 'd-none' : '' }}" href="#"
+                                        onclick="window.open('/transaction-form/print-issued?type={{ $trans_type }}&company={{ $trans_company }}&from={{ $trans_from }}&to={{ $trans_to }}','name','width=800,height=800')">
+                                        Issued Forms
+                                    <a class="dropdown-item {{ !in_array($_GET['status'], config('global.liquidation_cleared')) ? 'd-none' : '' }}" href="#"
+                                        onclick="window.open('/transaction-liquidation/print-cleared?type={{ $trans_type }}&company={{ $trans_company }}&from={{ $trans_from }}&to={{ $trans_to }}','name','width=800,height=800')">
+                                        Cleared Forms
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </form>
@@ -68,69 +87,85 @@
                     <div class="float-left">
                         <table class="table table-sm mb-0">
                             <tr>
-                                <td class="border-0 pr-3">Transaction</td>
+                                <td class="border-0 pr-3">Type</td>
                                 <td class="border-0 font-weight-bold">
-                                    @switch($_GET['type'])
+                                    @switch($trans_type)
                                         @case('pr')
                                             Payment Release
                                             @break
                                         @case('po')
                                             Purchase Order
                                             @break
-                                        @default
+                                        @case('po')
                                             Petty Cash
+                                            @break
+                                        @default
+                                            All
                                     @endswitch
                                 </td>
                             </tr>
                             <tr>
                                 <td class="border-0 pr-3">Status</td>
-                                <td class="border-0">{{ $status_sel }}</td>
+                                <td class="border-0 font-weight-bold">{{ $status_sel != '' ? $status_sel : 'All' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="border-0 pr-3">Start Date</td>
+                                <td class="border-0 font-weight-bold">
+                                    {{ $trans_from != '' ? $trans_from : '-' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="border-0 pr-3">End Date</td>
+                                <td class="border-0 font-weight-bold">
+                                    {{ $trans_to != '' ? $trans_to : '-' }}
+                                </td>
                             </tr>
                         </table>
-                    </div>
+                    </div>                    
                     <div class="float-right">
                         <table class="table table-sm mb-0">
                             <tr>
                                 <td class="border-0 pr-3">Date Generated</td>
-                                <td class="border-0">{{ Carbon\Carbon::now() }}</td>
+                                <td class="border-0 font-weight-bold">{{ Carbon\Carbon::now() }}</td>
                             </tr>
                             <tr>
                                 <td class="border-0 pr-3">Generated By</td>
-                                <td class="border-0 text-right">{{ Auth::user()->name }}</td>
+                                <td class="border-0 font-weight-bold text-right">{{ Auth::user()->name }}</td>
                             </tr>
                         </table>
                     </div>
                 </div>
-                @if ($_GET['company'] != "" && count($transactions) > 0)
+                @if ($trans_company != "" && count($transactions) > 0)
                     <div class="mb-3 text-center">
                         <img src="/storage/public/images/companies/{{ $transactions[0]->project->company->logo }}" alt="" class="thumb thumb--xs mr-2 vlign--baseline-middle">
                         <span class="mr-3 vlign--baseline-middle">{{ $transactions[0]->project->company->name }}</span>
                     </div>
                 @endif
-                
+
                 <table class="table mb-0 small table-striped">
                     <tr class="bg-gray font-weight-bold">
                         <td>Transaction</td>
+                        <td>Company</td>
                         <td>Project</td>
-                        <td>COA Tagging</td>
-                        <td>Vendor/Payee</td>
-                        <td>Tax Type</td>
-                        <td>Amount</td>
-                        <td>Check No.</td>
-                        <td>Date Due</td>
-                        <td>Prep. By</td>
+                        <td>Check / Issue No.</td>
+                        <td>Date Issued</td>
+                        <td>Requested by</td>
+                        <td>Date Created</td>
+                        <td>Status</td>
                     </tr>
                     @foreach ($transactions as $item)
                         <tr>
                             <td><h6 class="font-weight-bold">{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</h6></td>
+                            <td>{{ $item->project->company->name }}</td>
                             <td>{{ $item->project->project }}</td>
-                            <td>{{ $item->coatagging->name }}</td>
-                            <td>{{ $item->payee }}</td>
-                            <td>{{ $item->vattype->name }}</td>
-                            <td>{{ number_format($item->amount, 2, '.', ',') }}</td>
-                            <td>{{ $item->control_no ? $item->control_no : '-' }}</td>
-                            <td>{{ $item->due_at }}</td>
-                            <td>{{ $item->owner->name }}</td>
+                            <td>{{ $item->control_no }}</td>
+                            <td>{{ $item->released_at }}</td>
+                            <td>{{ $item->requested->name }}</td>
+                            <td>{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
+                            <td>{{ $item->status->name }}</td>
+                            {{-- <td class="{{ empty($_GET['status']) || $_GET['status'] == "" ? '' : 'd-none' }}">
+                                {{ $item->status->name }}
+                            </td> --}}
                         </tr>
                     @endforeach
                     </tbody>
