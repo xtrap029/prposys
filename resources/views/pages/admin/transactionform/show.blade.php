@@ -18,7 +18,7 @@
                     <a href="#_" class="btn btn-danger {{ $perms['can_cancel'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-cancel"><i class="align-middle font-weight-bolder material-icons text-md">delete</i> Cancel</a>
                     
                     <a href="#_" class="btn btn-danger {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print</a>
-                    <a href="#" class="btn btn-success {{ $perms['can_issue'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-issue"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Issue</a>
+                    <a href="#" class="btn btn-success {{ $perms['can_issue'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-issue"><i class="align-middle font-weight-bolder material-icons text-md">check</i> {{ $transaction->is_deposit ? 'Deposit Notes' : 'Issue' }}</a>
                 </div>
 
                 <div class="modal fade" id="modal-make" tabindex="-1" role="dialog" aria-hidden="true">
@@ -135,7 +135,7 @@
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-5">
-                                                <label for="">Release Date</label>
+                                                <label for="">{{ $transaction->is_deposit ? 'Date Deposited' : 'Release Date' }}</label>
                                                 <input type="date" class="form-control @error('released_at') is-invalid @enderror" name="released_at" required>
                                                 @include('errors.inline', ['message' => $errors->first('released_at')])
                                             </div>
@@ -147,7 +147,7 @@
                                         </div>
                                         <div class="form-row mb-3">
                                             <div class="col-md-12">
-                                                <label for="">Released By</label>
+                                                <label for="">{{ $transaction->is_deposit ? 'Issued By' : 'Released By' }}</label>
                                                 <select name="released_by_id" class="form-control @error('released_by_id') is-invalid @enderror" required>
                                                     @foreach ($released_by as $item)
                                                         <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -157,7 +157,7 @@
                                             </div>
                                         </div>
                                         <div class="text-center mt-2">
-                                            <input type="submit" class="btn btn-success" value="Issue Now">
+                                            <input type="submit" class="btn btn-success" value="{{ $transaction->is_deposit ? 'Save' : 'Issue Now' }}">
                                         </div>
                                     </form>
                                 </div>
@@ -225,6 +225,10 @@
                             <div class="col-md-6 mt-3 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
                                 <label for="">Authorized Approver</label>
                                 <h5>{{ $transaction->form_approver_id ? $transaction->formapprover->name : '' }}</h5>
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <label for="">For Deposit?</label>
+                                <h5>{{ $transaction->is_deposit ? 'Yes' : 'No' }}</h5>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -296,7 +300,7 @@
                         </div>
                     </div>
                     @if ($transaction->status_id == 3)
-                        <div class="pb-2 mt-3 mb-4 border-bottom">
+                        <div class="pb-2 mt-5 mb-4 border-bottom">
                             <h3 class="d-inline-block mr-3">Cancellation Reason</h3>
                         </div>
                         <div>{{ $transaction->cancellation_reason }}</div>
@@ -317,7 +321,7 @@
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label for="">Released Date</label>
+                                    <label for="">{{ $transaction->is_deposit ? 'Date Deposited' : 'Released Date' }}</label>
                                     <h5>{{ $transaction->released_at }}</h5>
                                 </div>
                                 <div class="col-md-6">
@@ -327,7 +331,7 @@
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-12">
-                                    <label for="">Released By</label>
+                                    <label for="">{{ $transaction->is_deposit ? 'Issued By' : 'Released By' }}</label>
                                     <h5>{{ $transaction->releasedby->name }}</h5>
                                 </div>
                             </div>

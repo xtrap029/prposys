@@ -6,7 +6,7 @@
     <section class="content">
         <div class="container-fluid">
             <div class="float-right">Date Generated: <b>{{ Carbon\Carbon::now() }}</b></div>
-            <h1>{{ $trans_page }} - Form</h1>
+            <h1>{{ $transaction->is_deposit ? 'For Deposit' : $trans_page }} - Form</h1>
             <div class="row my-3">
                 <div class="col-10">
                     <h2 class="mt-4">{{ $transaction->project->company->name }}</h2>
@@ -144,7 +144,7 @@
                 <div class="col-6">
                     <table class="table table-sm">
                         <tr>
-                            <td>Released By</td>
+                            <td>{{ $transaction->is_deposit ? 'Issued By' : 'Released By' }}</td>
                             <td>{{ $transaction->released_by_id ? $transaction->releasedby->name : '' }}</td>
                         </tr>
                         <tr>
@@ -152,7 +152,7 @@
                             <td>{{ $transaction->control_no }}</td>
                         </tr>
                         <tr>
-                            <td>Date Released</td>
+                            <td>{{ $transaction->is_deposit ? 'Date Deposited' : 'Date Released' }}</td>
                             <td>{{ $transaction->released_at }}</td>
                         </tr>
                         <tr>

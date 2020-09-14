@@ -44,30 +44,55 @@
                 </div>
             </div>
             <div class="row row--print">
-                <div class="col-12 my-5">
-                    <table class="table table-sm">
-                        <tr class="font-weight-bold">
-                            <td>Pos.</td>
-                            <td>Date</td>
-                            <td>Type</td>
-                            <td>Description</td>
-                            <td>Location/Route</td>
-                            <td class="text-center">Receipt</td>
-                            <td class="text-right">Amount</td>
-                        </tr>
-                        @foreach ($transaction->liquidation as $key => $item)
-                            <tr>
-                                <td>{{ $key + 1 }}</td>
-                                <td>{{ $item->date }}</td>
-                                <td>{{ $item->expensetype->name }}</td>
-                                <td>{{ $item->description }}</td>
-                                <td>{{ $item->location }}</td>
-                                <td class="text-center">{{ $item->receipt == 1 ? 'Y' : 'N' }}</td>
-                                <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
+                @if (!$transaction->is_deposit)
+                    <div class="col-12 my-5">
+                        <table class="table table-sm">
+                            <tr class="font-weight-bold">
+                                <td>Pos.</td>
+                                <td>Date</td>
+                                <td>Type</td>
+                                <td>Description</td>
+                                <td>Location/Route</td>
+                                <td class="text-center">Receipt</td>
+                                <td class="text-right">Amount</td>
                             </tr>
-                        @endforeach
-                    </table>
-                </div>
+                            @foreach ($transaction->liquidation as $key => $item)
+                                <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $item->date }}</td>
+                                    <td>{{ $item->expensetype->name }}</td>
+                                    <td>{{ $item->description }}</td>
+                                    <td>{{ $item->location }}</td>
+                                    <td class="text-center">{{ $item->receipt == 1 ? 'Y' : 'N' }}</td>
+                                    <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
+                                </tr>
+                            @endforeach
+                        </table>
+                    </div>
+                @else
+                    <div class="col-12 my-5">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Date Deposited</th>
+                                    <th>Type</th>
+                                    <th>Bank</th>
+                                    <th>Reference Code</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead> 
+                            <tbody>
+                                <tr>
+                                    <td>{{ $transaction->depo_date }}</td>
+                                    <td>{{ $transaction->depo_type }}</td>
+                                    <td>{{ $transaction->bankbranch ? $transaction->bankbranch->bank->name.' ('.$transaction->bankbranch->name.')' : '' }}</td>
+                                    <td>{{ $transaction->depo_ref }}</td>
+                                    <td>{{ $transaction->status->name }}</td>
+                                </tr>
+                            </tbody>   
+                        </table>
+                    </div>
+                @endif
             </div>
             <div class="row row--print">
                 <div class="col-12 my-5">
@@ -131,38 +156,40 @@
                         </tr>
                     </table>
                 </div>
-            </div>
+            </div>     
             <div class="row row--print">
-                <div class="col-6">
-                    <table class="table table-sm">
-                        <tr>
-                            <td>Amount {{ $transaction->liq_balance >= 0 ? 'Reimbursed' : 'Returned' }}</td>
-                            <td class="font-weight-bold">{{ $transaction->currency }} {{ $transaction->liq_balance < 0 ? number_format($transaction->liq_balance*-1, 2, '.', ',') : $transaction->liq_balance }}</td>
-                        </tr>
-                        <tr>
-                            <td>Date Deposited</td>
-                            <td class="font-weight-bold">{{ $transaction->depo_date }}</td>
-                        </tr>
-                        <tr>
-                            <td>Type</td>
-                            <td class="font-weight-bold">{{ $transaction->depo_type }}</td>
-                        </tr>
-                        <tr>
-                            <td>Bank</td>
-                            <td class="font-weight-bold">{{ $transaction->bank ? $transaction->bank->name : '' }}</td>
-                        </tr>
-                        <tr>
-                            <td>Reference Code</td>
-                            <td class="font-weight-bold">{{ $transaction->depo_ref }}</td>
-                        </tr>
-                        <tr>
-                            <td>Status</td>
-                            <td class="font-weight-bold">{{ $transaction->status->name }}</td>
-                        </tr>
-                    </table>
+                <div class="col-7">
+                    @if (!$transaction->is_deposit)
+                        <table class="table table-sm">
+                                <tr>
+                                    <td>Amount {{ $transaction->liq_balance >= 0 ? 'Reimbursed' : 'Returned' }}</td>
+                                    <td class="font-weight-bold">{{ $transaction->currency }} {{ $transaction->liq_balance < 0 ? number_format($transaction->liq_balance*-1, 2, '.', ',') : $transaction->liq_balance }}</td>
+                                </tr>                        
+                            <tr>
+                                <td>Date Deposited</td>
+                                <td class="font-weight-bold">{{ $transaction->depo_date }}</td>
+                            </tr>
+                            <tr>
+                                <td>Type</td>
+                                <td class="font-weight-bold">{{ $transaction->depo_type }}</td>
+                            </tr>
+                            <tr>
+                                <td>Bank</td>
+                                <td class="font-weight-bold">{{ $transaction->bankbranch ? $transaction->bankbranch->bank->name.' ('.$transaction->bankbranch->name.')' : '' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Reference Code</td>
+                                <td class="font-weight-bold">{{ $transaction->depo_ref }}</td>
+                            </tr>
+                            <tr>
+                                <td>Status</td>
+                                <td class="font-weight-bold">{{ $transaction->status->name }}</td>
+                            </tr>
+                        </table>
+                    @endif
                 </div>
 
-                <div class="col-6">
+                <div class="col-5">
                     <table class="table table-sm">
                         <tr>
                             <td><span class="mr-5">Entered into Quickbooks</span> <input type="checkbox" class="ml-5"></td>
@@ -173,6 +200,9 @@
                         <tr>
                             <td>Date Entered</td>
                         </tr>
+                        <tr>
+                            <td><span class="mr-5">Files Uploaded</span> <span class="ml-5 pl-5">{{ count($transaction->attachments) }}</span></td>
+                        </tr>
                     </table>
                 </div>
                 <div class="col-4 text-center my-4 small">
@@ -181,12 +211,14 @@
                 </div>                
                 <div class="col-4 text-center my-4 small {{ $transaction->liquidation_approver_id ? '' : 'd-none' }}">
                     <div>{{ $transaction->liquidation_approver_id ? $transaction->liquidationapprover->name : '' }}</div>
-                    <div class="mt-2 pt-2 border-top font-weight-bold">Approver</div>
+                    <div class="mt-2 pt-2 border-top font-weight-bold">{{ !$transaction->is_deposit ? 'Approver' : 'Deposited By' }}</div>
                 </div>
-                <div class="col-4 text-center my-4 small">
-                    <div>{{ $final_approver }}</div>
-                    <div class="mt-2 pt-2 border-top font-weight-bold">Authorized By</div>
-                </div>
+                @if (!$transaction->is_deposit)
+                    <div class="col-4 text-center my-4 small">
+                        <div>{{ $final_approver }}</div>
+                        <div class="mt-2 pt-2 border-top font-weight-bold">Authorized By</div>
+                    </div>
+                @endif
                 <div class="col-4 text-center my-4 small">
                     <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
                     <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>

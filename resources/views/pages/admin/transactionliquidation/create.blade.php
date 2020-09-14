@@ -57,72 +57,118 @@
                         </button>
                     </div>
                 @endif
-                <div class="jsReplicate mt-5">
-                    <h4 class="text-center">Items</h4>
-                    <table class="table bg-white">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                                <th>Location/Route</th>
-                                <th class="text-center">Receipt</th>
-                                <th>Amount</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody class="jsReplicate_container">
-                            <tr>
-                                <td><input type="date" class="form-control" name="date[]" value="{{ old('date.0') }}" required></td>
-                                <td>
-                                    <select name="expense_type_id[]" class="form-control" required>
-                                        @foreach ($expense_types as $item)
-                                            <option value="{{ $item->id }}" {{ old('expense_type_id.0') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </td>
-                                <td><input type="text" class="form-control" name="description[]" value="{{ old('description.0') }}" required></td>
-                                <td><input type="text" class="form-control" name="location[]" value="{{ old('location.0') }}" required></td>
-                                <td class="text-center">
-                                    <select name="receipt[]" class="form-control">
-                                        <option value="1" {{ old('receipt.0') == 1 ? 'selected' : '' }}>Y</option>
-                                        <option value="0" {{ old('receipt.0') == 0 ? 'selected' : '' }}>N</option>
-                                    </select>
-                                </td>
-                                <td colspan="2"><input type="number" class="form-control" name="amount[]" step="0.01" value="{{ old('amount.0') }}" required></td>
-                            </tr>
-                            @if (old('date'))
-                                @foreach (old('date') as $key => $item)
-                                    @if ($key > 0)
-                                        <tr class="jsReplicate_template_item">
-                                            <td><input type="date" class="form-control" name="date[]" value="{{ old('date.'.$key) }}" required></td>
-                                            <td>
-                                                <select name="expense_type_id[]" class="form-control" required>
-                                                    @foreach ($expense_types as $expense_type)
-                                                        <option value="{{ $expense_type->id }}" {{ old('expense_type_id.'.$key) == $expense_type->id ? 'selected' : '' }}>{{ $expense_type->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </td>
-                                            <td><input type="text" class="form-control" name="description[]" value="{{ old('description.'.$key) }}" required></td>
-                                            <td><input type="text" class="form-control" name="location[]" value="{{ old('location.'.$key) }}" required></td>
-                                            <td class="text-center">
-                                                <select name="receipt[]" class="form-control">
-                                                    <option value="1" {{ old('receipt.'.$key) == 1 ? 'selected' : '' }}>Y</option>
-                                                    <option value="0" {{ old('receipt.'.$key) == 0 ? 'selected' : '' }}>N</option>
-                                                </select>
-                                            </td>
-                                            <td><input type="number" class="form-control" name="amount[]" step="0.01" value="{{ old('amount.'.$key) }}" required></td>
-                                            <td><button type="button" class="btn btn-danger jsReplicate_remove"><i class="nav-icon material-icons icon--list">delete</i></button></td>
-                                        </tr>
-                                    @endif
-                                @endforeach
-                            @endif
-                        </tbody>
-                    </table>
-                    <div class="text-center">
-                        <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
+                @if (!$transaction->is_deposit)
+                    <div class="jsReplicate mt-5">
+                        <h4 class="text-center">Items</h4>
+                        <table class="table bg-white">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th>Location/Route</th>
+                                    <th class="text-center">Receipt</th>
+                                    <th>Amount</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody class="jsReplicate_container">
+                                <tr>
+                                    <td><input type="date" class="form-control" name="date[]" value="{{ old('date.0') }}" required></td>
+                                    <td>
+                                        <select name="expense_type_id[]" class="form-control" required>
+                                            @foreach ($expense_types as $item)
+                                                <option value="{{ $item->id }}" {{ old('expense_type_id.0') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-control" name="description[]" value="{{ old('description.0') }}" required></td>
+                                    <td><input type="text" class="form-control" name="location[]" value="{{ old('location.0') }}" required></td>
+                                    <td class="text-center">
+                                        <select name="receipt[]" class="form-control">
+                                            <option value="1" {{ old('receipt.0') == 1 ? 'selected' : '' }}>Y</option>
+                                            <option value="0" {{ old('receipt.0') == 0 ? 'selected' : '' }}>N</option>
+                                        </select>
+                                    </td>
+                                    <td colspan="2"><input type="number" class="form-control" name="amount[]" step="0.01" value="{{ old('amount.0') }}" required></td>
+                                </tr>
+                                @if (old('date'))
+                                    @foreach (old('date') as $key => $item)
+                                        @if ($key > 0)
+                                            <tr class="jsReplicate_template_item">
+                                                <td><input type="date" class="form-control" name="date[]" value="{{ old('date.'.$key) }}" required></td>
+                                                <td>
+                                                    <select name="expense_type_id[]" class="form-control" required>
+                                                        @foreach ($expense_types as $expense_type)
+                                                            <option value="{{ $expense_type->id }}" {{ old('expense_type_id.'.$key) == $expense_type->id ? 'selected' : '' }}>{{ $expense_type->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td><input type="text" class="form-control" name="description[]" value="{{ old('description.'.$key) }}" required></td>
+                                                <td><input type="text" class="form-control" name="location[]" value="{{ old('location.'.$key) }}" required></td>
+                                                <td class="text-center">
+                                                    <select name="receipt[]" class="form-control">
+                                                        <option value="1" {{ old('receipt.'.$key) == 1 ? 'selected' : '' }}>Y</option>
+                                                        <option value="0" {{ old('receipt.'.$key) == 0 ? 'selected' : '' }}>N</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="number" class="form-control" name="amount[]" step="0.01" value="{{ old('amount.'.$key) }}" required></td>
+                                                <td><button type="button" class="btn btn-danger jsReplicate_remove"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                        <div class="text-center">
+                            <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
+                        </div>
                     </div>
-                </div>
+                @else
+                    <div class="row mt-5">                                            
+                        <div class="col-md-2">
+                            <label for="" class="font-weight-bold">Type</label>
+                            <select name="depo_type" class="form-control @error('depo_type') is-invalid @enderror" required>
+                                @foreach (config('global.deposit_type') as $item)
+                                    <option value="{{ $item }}">{{ $item }}</option>
+                                @endforeach
+                            </select>
+                            @include('errors.inline', ['message' => $errors->first('depo_type')])
+                        </div>
+                        <div class="col-md-3">
+                            <label for="" class="font-weight-bold">Bank</label>
+                            <select name="depo_bank_branch_id" class="form-control @error('depo_bank_branch_id') is-invalid @enderror" required>
+                                @foreach ($banks as $item)
+                                    <optgroup label="{{ $item->name }}">
+                                        @foreach ($item->bankbranches as $branch)
+                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                        @endforeach
+                                    </optgroup>
+                                @endforeach
+                            </select>
+                            @include('errors.inline', ['message' => $errors->first('depo_bank_branch_id')])
+                        </div>
+                        <div class="col-md-3">
+                            <label for="" class="font-weight-bold">Reference Code</label>
+                            <input type="text" name="depo_ref" class="form-control @error('depo_ref') is-invalid @enderror" required>
+                            @include('errors.inline', ['message' => $errors->first('depo_ref')])
+                        </div>
+                        <div class="col-md-2">
+                            <label for="" class="font-weight-bold">Deposited By</label>
+                            <select name="liquidation_approver_id" class="form-control @error('liquidation_approver_id') is-invalid @enderror">
+                                @foreach ($users as $item)
+                                    <option value="{{ $item->id }}" {{ $item->id == Auth::user()->id ? 'selected' : '' }}>{{ $item->name }}</option>                                        
+                                @endforeach
+                            </select>
+                            @include('errors.inline', ['message' => $errors->first('requested_id')])
+                        </div>
+                        <div class="col-md-2">
+                            <label for="" class="font-weight-bold">Date Deposited</label>
+                            <input type="date" name="depo_date" class="form-control @error('depo_date') is-invalid @enderror" required>
+                            @include('errors.inline', ['message' => $errors->first('depo_date')])
+                        </div>
+                    </div>
+                @endif
                 <div class="jsReplicate mt-5 pt-5">
                     <h4 class="text-center">Attachments</h4>
                     <div class="text-center mb-3">Attach receipts and documents here. Accepts .jpg, .png and .pdf file types, not more than 5mb each.</div>
@@ -162,30 +208,32 @@
                 </div>
             </form>
 
-            <table class="d-none">
-                <tbody class="jsReplicate_template">
-                    <tr class="jsReplicate_template_item">
-                        <td><input type="date" class="form-control" name="date[]" required></td>
-                        <td>
-                            <select name="expense_type_id[]" class="form-control" required>
-                                @foreach ($expense_types as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        </td>
-                        <td><input type="text" class="form-control" name="description[]" required></td>
-                        <td><input type="text" class="form-control" name="location[]" required></td>
-                        <td class="text-center">
-                            <select name="receipt[]" class="form-control">
-                                <option value="1">Y</option>
-                                <option value="0">N</option>
-                            </select>
-                        </td>
-                        <td><input type="number" class="form-control" name="amount[]" step="0.01" required></td>
-                        <td><button type="button" class="btn btn-danger jsReplicate_remove"><i class="nav-icon material-icons icon--list">delete</i></button></td>
-                    </tr>
-                </tbody>
-            </table>
+            @if (!$transaction->is_deposit)
+                <table class="d-none">
+                    <tbody class="jsReplicate_template">
+                        <tr class="jsReplicate_template_item">
+                            <td><input type="date" class="form-control" name="date[]" required></td>
+                            <td>
+                                <select name="expense_type_id[]" class="form-control" required>
+                                    @foreach ($expense_types as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+                            </td>
+                            <td><input type="text" class="form-control" name="description[]" required></td>
+                            <td><input type="text" class="form-control" name="location[]" required></td>
+                            <td class="text-center">
+                                <select name="receipt[]" class="form-control">
+                                    <option value="1">Y</option>
+                                    <option value="0">N</option>
+                                </select>
+                            </td>
+                            <td><input type="number" class="form-control" name="amount[]" step="0.01" required></td>
+                            <td><button type="button" class="btn btn-danger jsReplicate_remove"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            @endif
 
             <table class="d-none">
                 <tbody class="jsReplicate_template">

@@ -57,9 +57,20 @@ Route::middleware('auth')->group(function () {
         Route::resource('coa-tagging', 'Admin\CoaTaggingController', ['names' => ['index' => 'coatagging', 'create' => 'coatagging', 'edit' => 'coatagging']]);
         Route::resource('expense-type', 'Admin\ExpenseTypesController', ['names' => ['index' => 'expensetype', 'create' => 'expensetype', 'edit' => 'expensetype']]);
         Route::resource('particular', 'Admin\ParticularsController', ['names' => ['index' => 'particular', 'create' => 'particular', 'edit' => 'particular']]);
-        Route::resource('bank', 'Admin\BanksController', ['names' => ['index' => 'bank', 'create' => 'bank', 'edit' => 'bank']]);
         Route::resource('vat-type', 'Admin\VatTypesController', ['names' => ['index' => 'vattype', 'create' => 'vattype', 'edit' => 'vattype']]);
         Route::resource('released-by', 'Admin\ReleasedByController', ['names' => ['index' => 'releasedby', 'create' => 'releasedby', 'edit' => 'releasedby']]);
+        
+        Route::resource('bank', 'Admin\BanksController', ['names' => ['index' => 'bank', 'create' => 'bank', 'edit' => 'bank']]);
+
+        Route::prefix('bank-branch')->group(function () {
+            $url = 'Admin\BankBranchesController';
+
+            Route::get('/create', $url.'@create')->name('bank');
+            Route::post('/', $url.'@store');
+            Route::get('/edit/{bank_branch}', $url.'@edit')->where('bank_branch', '[0-9]+')->name('bank');
+            Route::put('/{bank_branch}', $url.'@update')->where('bank_branch', '[0-9]+');
+            Route::delete('/{bank_branch}', $url.'@destroy')->where('bank_branch', '[0-9]+');
+        });
     });
 
     // Access Level 1, 2, and 3
@@ -118,6 +129,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/clear/{transaction}', $url.'@clear')->where('transaction', '[0-9]+');
             Route::put('/clear/{transaction}', $url.'@clear_edit')->where('transaction', '[0-9]+');
             Route::get('/report/', $url.'@report')->middleware('checkRole:1|2');
+            Route::get('/report-deposit/', $url.'@report_deposit')->middleware('checkRole:1|2');
             Route::get('/print-cleared/', $url.'@print_cleared')->middleware('checkRole:1|2');
             
             Route::get('/finder-liquidation/{transaction}', $url.'@finder_liquidation')->where('transaction', '[0-9]+');

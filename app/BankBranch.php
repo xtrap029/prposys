@@ -6,17 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Bank extends Model {
+class BankBranch extends Model {
     use SoftDeletes;
     protected $dates = ['deleted_at'];
     protected $guarded = [];
 
     use LogsActivity;
-    protected static $logAttributes = ['name'];
-    protected static $logName = 'Bank';
+    protected static $logAttributes = ['name', 'bank.name'];
+    protected static $logName = 'Bank Branch';
     protected static $logOnlyDirty = true;
 
-    public function bankbranches() {
-        return $this->hasMany(BankBranch::class)->orderBy('name');
+    public function bank() {
+        return $this->belongsTo(Bank::class);
     }
 }

@@ -79,10 +79,14 @@
                             </div>         
                         </div>
                         <div class="row mb-3">                
-                            <div class="col-md-11">
+                            <div class="col-md-9">
                                 <label for="">Purpose</label>
                                 <h6>{{ $transaction->purpose }}</h6>
                             </div>   
+                            <div class="col-md-3">
+                                <label for="">For Deposit?</label>
+                                <h5>{{ $transaction->is_deposit ? 'Yes' : 'No' }}</h5>
+                            </div> 
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-3">
@@ -104,8 +108,9 @@
                         </div>
                     </div>
                     @if ($transaction->status_id == 3)
-                        <div class="pb-2 mt-3 mb-4 border-bottom">
+                        <div class="pb-2 mt-5 mb-4 border-bottom">
                             <h3 class="d-inline-block mr-3">Cancellation Reason</h3>
+                            <code>{{ $transaction->cancellation_number }}</code>
                         </div>
                         <div>{{ $transaction->cancellation_reason }}</div>
                     @endif

@@ -46,12 +46,42 @@ class TransactionsFormsController extends Controller {
         $released_by = ReleasedBy::orderBy('name', 'asc')->get();
         
         if (!empty($_GET['s'])) {
+            $key = $_GET['s'];
             $transactions = Transaction::whereIn('trans_type', $trans_types)
                                     ->whereIn('status_id', config('global.page_form'))
                                     ->whereHas('project', function($query) use($trans_company) {
                                         $query->where('company_id', $trans_company);
                                     })
-                                    ->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$_GET['s']."%")
+                                    ->where(static function ($query) use ($key) {
+                                        $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$key."%")
+                                            ->orWhereHas('particulars', function($query) use($key) {
+                                                $query->where('name', $key);
+                                            })
+                                            ->orWhereHas('project', function($query) use($key) {
+                                                $query->where('project', $key);
+                                            })
+                                            ->orWhere('particulars_custom', 'like', "%{$key}%")
+                                            ->orWhere('purpose', 'like', "%{$key}%")
+                                            ->orWhere('payee', 'like', "%{$key}%")
+                                            ->orWhereHas('coatagging', function($query) use($key) {
+                                                $query->where('name', $key);
+                                            })
+                                            ->orWhere('expense_type_description', 'like', "%{$key}%")
+                                            ->orWhereHas('expensetype', function($query) use($key) {
+                                                $query->where('name', $key);
+                                            })
+                                            ->orWhereHas('vattype', function($query) use($key) {
+                                                $query->where('name', $key);
+                                            })
+                                            ->orWhereHas('vattype', function($query) use($key) {
+                                                $query->where('code', $key);
+                                            })
+                                            ->orWhere('control_no', $key)
+                                            ->orWhere('control_type', $key)
+                                            ->orWhere('cancellation_reason', 'like', "%{$key}%")
+                                            ->orWhere('amount_issued', str_replace(',', '', $key))
+                                            ->orWhere('amount', str_replace(',', '', $key));
+                                    })
                                     ->orderBy('id', 'desc')->paginate(10);
             $transactions->appends(['s' => $_GET['s']]);
         } else {
@@ -276,6 +306,7 @@ class TransactionsFormsController extends Controller {
                 'cancellation_reason' => ['required']
             ]);
 
+            $data['cancellation_number'] = rand(100000000, 999999999);
             $data['status_id'] = 3;
             $data['updated_id'] = auth()->id();
             $transaction->update($data);

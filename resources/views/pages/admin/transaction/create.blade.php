@@ -88,11 +88,19 @@
                         </select>
                         @include('errors.inline', ['message' => $errors->first('requested_id')])
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label for="">Prepared by</label>
                         <h5>{{ Auth::user()->name }}</h5>
                     </div>
-                    <div class="col-md-3 text-right">
+                    <div class="col-md-2">
+                        <label for="">For Deposit?</label>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input @error('is_deposit') is-invalid @enderror" name="is_deposit" id="is_deposit" value="1" {{ old('is_deposit') == 'on' ? 'checked' : '' }}>
+                            <label class="form-check-label" for="is_deposit">Yes</label>
+                        </div>
+                        @include('errors.inline', ['message' => $errors->first('is_deposit')])
+                    </div>
+                    <div class="col-md-2 text-right">
                         <div class="mt-4">
                             <a href="/transaction/{{ $trans_page }}/{{ $trans_company }}" class="mr-3">Cancel</a>
                             <input type="submit" class="btn btn-primary" value="Save">

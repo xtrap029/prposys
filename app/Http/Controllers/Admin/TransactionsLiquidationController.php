@@ -41,12 +41,42 @@ class TransactionsLiquidationController extends Controller {
         $company = Company::where('id', $trans_company)->first();
         
         if (!empty($_GET['s'])) {
+            $key = $_GET['s'];
             $transactions = Transaction::whereIn('trans_type', $trans_types)
                                     ->whereIn('status_id', config('global.page_liquidation'))
                                     ->whereHas('project', function($query) use($trans_company) {
                                         $query->where('company_id', $trans_company);
                                     })
-                                    ->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$_GET['s']."%")
+                                    ->where(static function ($query) use ($key) {
+                                        $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$key."%")
+                                            ->orWhereHas('particulars', function($query) use($key) {
+                                                $query->where('name', $key);
+                                            })
+                                            ->orWhereHas('project', function($query) use($key) {
+                                                $query->where('project', $key);
+                                            })
+                                            ->orWhere('particulars_custom', 'like', "%{$key}%")
+                                            ->orWhere('purpose', 'like', "%{$key}%")
+                                            ->orWhere('payee', 'like', "%{$key}%")
+                                            ->orWhereHas('coatagging', function($query) use($key) {
+                                                $query->where('name', $key);
+                                            })
+                                            ->orWhere('expense_type_description', 'like', "%{$key}%")
+                                            ->orWhereHas('expensetype', function($query) use($key) {
+                                                $query->where('name', $key);
+                                            })
+                                            ->orWhereHas('vattype', function($query) use($key) {
+                                                $query->where('name', $key);
+                                            })
+                                            ->orWhereHas('vattype', function($query) use($key) {
+                                                $query->where('code', $key);
+                                            })
+                                            ->orWhere('control_no', $key)
+                                            ->orWhere('control_type', $key)
+                                            ->orWhere('cancellation_reason', 'like', "%{$key}%")
+                                            ->orWhere('amount_issued', str_replace(',', '', $key))
+                                            ->orWhere('amount', str_replace(',', '', $key));
+                                    })
                                     ->orderBy('id', 'desc')->paginate(10);
             $transactions->appends(['s' => $_GET['s']]);
         } else {
@@ -104,12 +134,16 @@ class TransactionsLiquidationController extends Controller {
         }
 
         $expense_types = ExpenseType::orderBy('name', 'asc')->get();
+        $banks = Bank::orderBy('name', 'asc')->get();
+        $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
 
         return view('pages.admin.transactionliquidation.create')->with([
             'trans_page_url' => $trans_page_url,
             'trans_page' => $trans_page,
             'transaction' => $transaction,
-            'expense_types' => $expense_types
+            'expense_types' => $expense_types,
+            'banks' => $banks,
+            'users' => $users,
         ]);
     }
 
@@ -120,31 +154,45 @@ class TransactionsLiquidationController extends Controller {
             $transaction = Transaction::where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), '=', $request->key)->first();
         }
 
-        // validate input
-        $data = $request->validate([
-            'date.*' => ['required', 'date'],
-            'expense_type_id.*' => ['required', 'exists:expense_types,id'],
-            'description.*' => ['required'],
-            'location.*' => ['required'],
-            'receipt.*' => ['in:1,0'],
-            'amount.*' => ['required', 'min:0'],
+        // validation rules
+        $validate = [
             'file.*' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
             'attachment_description.*' => ['required']
-        ]);
+        ];
 
-        $attr_liq['transaction_id'] = $transaction->id;
-        $attr_liq['owner_id'] = auth()->id();
-        $attr_liq['updated_id'] = auth()->id();
+        if (!$transaction->is_deposit) {
+            $validate['date.*'] = ['required', 'date'];
+            $validate['expense_type_id.*'] = ['required', 'exists:expense_types,id'];
+            $validate['description.*'] = ['required'];
+            $validate['location.*'] = ['required'];
+            $validate['receipt.*'] = ['in:1,0'];
+            $validate['amount.*'] = ['required', 'min:0'];
+        } else {
+            $validate['depo_type'] = ['required', 'in:'.implode(',', config('global.deposit_type'))];
+            $validate['depo_bank_branch_id'] = ['required', 'exists:bank_branches,id'];
+            $validate['depo_ref'] = ['required'];
+            $validate['depo_date'] = ['required', 'date'];
+            $validate['liquidation_approver_id'] = ['required', 'exists:users,id'];
+        }
 
-        foreach ($data['date'] as $key => $value) {
-            $attr_liq['date'] = $value;
-            $attr_liq['expense_type_id'] = $data['expense_type_id'][$key];
-            $attr_liq['description'] = $data['description'][$key];
-            $attr_liq['location'] = $data['location'][$key];
-            $attr_liq['receipt'] = $data['receipt'][$key];
-            $attr_liq['amount'] = $data['amount'][$key];
+        // validate input
+        $data = $request->validate($validate);
 
-            TransactionsLiquidation::create($attr_liq);
+        if (!$transaction->is_deposit) {
+            $attr_liq['transaction_id'] = $transaction->id;
+            $attr_liq['owner_id'] = auth()->id();
+            $attr_liq['updated_id'] = auth()->id();
+
+            foreach ($data['date'] as $key => $value) {
+                $attr_liq['date'] = $value;
+                $attr_liq['expense_type_id'] = $data['expense_type_id'][$key];
+                $attr_liq['description'] = $data['description'][$key];
+                $attr_liq['location'] = $data['location'][$key];
+                $attr_liq['receipt'] = $data['receipt'][$key];
+                $attr_liq['amount'] = $data['amount'][$key];
+
+                TransactionsLiquidation::create($attr_liq);
+            }
         }
 
         $attr_file['transaction_id'] = $transaction->id;
@@ -156,8 +204,16 @@ class TransactionsLiquidationController extends Controller {
             $attr_file['file'] = basename($request->file('file')[$key]->store('public/attachments/liquidation'));
             TransactionsAttachment::create($attr_file);
         }
+
+        if ($transaction->is_deposit) {
+            $transaction->depo_type = $data['depo_type'];
+            $transaction->depo_bank_branch_id = $data['depo_bank_branch_id'];
+            $transaction->depo_ref = $data['depo_ref'];
+            $transaction->depo_date = $data['depo_date'];
+            $transaction->liquidation_approver_id = $data['liquidation_approver_id'];
+        }
         
-        $transaction->status_id = 7;
+        $transaction->status_id = !$transaction->is_deposit ? config('global.liquidation_generated')[0] : config('global.liquidation_cleared')[0];
         $transaction->edit_count = 0;
         $transaction->updated_id = auth()->id();
         $transaction->update();
@@ -422,7 +478,7 @@ class TransactionsLiquidationController extends Controller {
         if ($this->check_can_clear($transaction->id)) {
             $data = $request->validate([
                 'depo_type' => ['required', 'in:'.implode(',', config('global.deposit_type'))],
-                'depo_bank_id' => ['required', 'exists:banks,id'],
+                'depo_bank_branch_id' => ['required', 'exists:bank_branches,id'],
                 'depo_ref' => ['required'],
                 'depo_date' => ['required', 'date'],
                 'depo_slip' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:6048']
@@ -488,6 +544,55 @@ class TransactionsLiquidationController extends Controller {
             'trans_page_url' => $trans_page_url,
             'companies' => $companies,
             'status' => $status,
+            'status_sel' => $status_sel,
+            'transactions' => $transactions
+        ]);
+    }
+
+    public function report_deposit() {
+        switch ($_GET['type']) {
+            case 'pr':
+            case 'po':
+                $trans_page_url = "prpo";
+                $trans_page = "prpo-liquidation";
+            break;  
+            case 'pc':
+                $trans_page_url = "pc";
+                $trans_page = "pc-liquidation";
+                break;            
+            default:
+                abort(404);
+                break;
+        }
+
+        $transactions = Transaction::where('trans_type', $_GET['type'])
+            ->where('is_deposit', '1')
+            ->where('status_id', config('global.liquidation_cleared')[0]);
+        
+        if (!empty($_GET['company'])) {
+            $req_company = $_GET['company'];
+            $transactions = $transactions->whereHas('project', function($query) use($req_company) {
+                $query->where('company_id', $req_company);
+            });
+        }
+
+        if (!empty($_GET['from'])) {
+            $transactions = $transactions->whereDate('created_at', '>=', $_GET['from']);
+        }
+        if (!empty($_GET['to'])) {
+            $transactions = $transactions->whereDate('created_at', '<=', $_GET['to']);
+        }
+
+        $transactions = $transactions->orderBy('id', 'desc')->get();
+
+        $companies = Company::orderBy('name', 'asc')->get();
+
+        $status_sel = TransactionStatus::where('id', config('global.liquidation_cleared')[0])->first()->name;
+
+        return view('pages.admin.transactionliquidation.reportdeposit')->with([
+            'trans_page' => $trans_page,
+            'trans_page_url' => $trans_page_url,
+            'companies' => $companies,
             'status_sel' => $status_sel,
             'transactions' => $transactions
         ]);
@@ -571,7 +676,7 @@ class TransactionsLiquidationController extends Controller {
         if (User::where('id', auth()->id())->first()->role_id == 1) {
             $data = $request->validate([
                 'depo_type' => ['required', 'in:'.implode(',', config('global.deposit_type'))],
-                'depo_bank_id' => ['required', 'exists:banks,id'],
+                'depo_bank_branch_id' => ['required', 'exists:bank_branches,id'],
                 'depo_ref' => ['required'],
                 'depo_date' => ['required', 'date'],
                 'depo_slip' => ['mimes:jpeg,png,jpg,pdf', 'max:6048']

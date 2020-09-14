@@ -35,6 +35,7 @@ class Transaction extends Model {
                                         'releasedby.name',
                                         'released_at',
                                         'amount_issued',
+                                        'cancellation_number',
                                         'cancellation_reason',
                                         'form_vat_code',
                                         'form_vat_name',
@@ -48,12 +49,14 @@ class Transaction extends Model {
                                         'formapprover.name',
                                         'liquidationapprover.name',
                                         'depo_type',
-                                        'bank.name',
+                                        // 'bank.name',
+                                        'bankbranch.name',
                                         'depo_ref',
                                         'depo_date',
                                         'depo_slip',
                                         'updatedby.name',
-                                        'status.name'
+                                        'status.name',
+                                        'is_deposit'
                                         ];
     protected static $logName = 'Transaction';
     protected static $logOnlyDirty = true;
@@ -114,7 +117,11 @@ class Transaction extends Model {
         return $this->hasMany(TransactionsAttachment::class);
     }
     
-    public function bank() {
-        return $this->belongsTo(Bank::class, 'depo_bank_id');
+    // public function bank() {
+    //     return $this->belongsTo(Bank::class, 'depo_bank_id');
+    // }
+
+    public function bankbranch() {
+        return $this->belongsTo(BankBranch::class, 'depo_bank_branch_id');
     }
 }

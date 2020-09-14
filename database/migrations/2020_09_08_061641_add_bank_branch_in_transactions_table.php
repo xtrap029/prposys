@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddDescriptionInTransactionsTable extends Migration
+class AddBankBranchInTransactionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,9 @@ class AddDescriptionInTransactionsTable extends Migration
     public function up()
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->string('expense_type_description')->after('coa_tagging_id')->nullable();
+            $table->unsignedBigInteger('depo_bank_branch_id')->after('depo_type')->nullable();
+
+            $table->foreign('depo_bank_branch_id')->references('id')->on('bank_branches')->onDelete('cascade');
         });
     }
 
@@ -26,7 +28,7 @@ class AddDescriptionInTransactionsTable extends Migration
     public function down()
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->dropColumn('expense_type_description');
+            $table->dropColumn('depo_bank_branch_id');
         });
     }
 }

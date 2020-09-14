@@ -7,7 +7,7 @@
         <section class="content" style="page-break-before: always">
             <div class="container-fluid">
                 <div class="float-right">Date Generated: <b>{{ Carbon\Carbon::now() }}</b></div>
-                <div class="row my-3">
+                <div class="row my-3 w-100">
                     <div class="col-6">
                         <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--sm">
                     </div>
@@ -144,7 +144,7 @@
                     <div class="col-6">
                         <table class="table table-sm">
                             <tr>
-                                <td>Released By</td>
+                                <td>{{ $transaction->is_deposit ? 'Issued By' : 'Released By' }}</td>
                                 <td>{{ $transaction->released_by_id ? $transaction->releasedby->name : '' }}</td>
                             </tr>
                             <tr>
@@ -152,7 +152,7 @@
                                 <td>{{ $transaction->control_no }}</td>
                             </tr>
                             <tr>
-                                <td>Date Released</td>
+                                <td>{{ $transaction->is_deposit ? 'Date Deposited' : 'Date Released' }}</td>
                                 <td>{{ $transaction->released_at }}</td>
                             </tr>
                             <tr>

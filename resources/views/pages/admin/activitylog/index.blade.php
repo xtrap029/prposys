@@ -90,6 +90,7 @@
                                                 @if (in_array($item->description, ['created', 'updated']))
                                                     @switch($item->subject_type)
                                                         @case('App\Bank')                           <?php $view_url = '/bank/'.$item->subject_id.'/edit'; ?> @break
+                                                        @case('App\BankBranch')                     <?php $view_url = '/bank-branch/edit/'.$item->subject_id; ?> @break
                                                         @case('App\CoaTagging')                     <?php $view_url = '/coa-tagging/'.$item->subject_id.'/edit'; ?> @break
                                                         @case('App\Company')                        <?php $view_url = '/company/'.$item->subject_id.'/edit'; ?> @break
                                                         @case('App\CompanyProject')                 <?php $view_url = '/company-project/edit/'.$item->subject_id; ?> @break

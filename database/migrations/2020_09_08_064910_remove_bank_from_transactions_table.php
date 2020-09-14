@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddDescriptionInTransactionsTable extends Migration
+class RemoveBankFromTransactionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,8 @@ class AddDescriptionInTransactionsTable extends Migration
     public function up()
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->string('expense_type_description')->after('coa_tagging_id')->nullable();
+            $table->dropForeign('transactions_depo_bank_id_foreign');
+            $table->dropColumn('depo_bank_id');
         });
     }
 
@@ -26,7 +27,7 @@ class AddDescriptionInTransactionsTable extends Migration
     public function down()
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->dropColumn('expense_type_description');
+            //
         });
     }
 }

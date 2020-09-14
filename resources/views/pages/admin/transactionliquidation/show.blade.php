@@ -119,12 +119,16 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="" class="font-weight-bold">Bank</label>
-                                                <select name="depo_bank_id" class="form-control @error('depo_bank_id') is-invalid @enderror" required>
+                                                <select name="depo_bank_branch_id" class="form-control @error('depo_bank_branch_id') is-invalid @enderror" required>
                                                     @foreach ($banks as $item)
-                                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                        <optgroup label="{{ $item->name }}">
+                                                            @foreach ($item->bankbranches as $branch)
+                                                                <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                                            @endforeach
+                                                        </optgroup>
                                                     @endforeach
                                                 </select>
-                                                @include('errors.inline', ['message' => $errors->first('depo_bank_id')])
+                                                @include('errors.inline', ['message' => $errors->first('depo_bank_branch_id')])
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="" class="font-weight-bold">Reference Code</label>
@@ -205,12 +209,16 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="" class="font-weight-bold">Bank</label>
-                                                <select name="depo_bank_id" class="form-control @error('depo_bank_id') is-invalid @enderror" required>
+                                                <select name="depo_bank_branch_id" class="form-control @error('depo_bank_branch_id') is-invalid @enderror" required>
                                                     @foreach ($banks as $item)
-                                                        <option value="{{ $item->id }}" {{ $transaction->depo_bank_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                        <optgroup label="{{ $item->name }}">
+                                                            @foreach ($item->bankbranches as $branch)
+                                                                <option value="{{ $branch->id }}" {{ $transaction->depo_bank_branch_id == $branch->id ? 'selected' : '' }}>{{ $branch->name }}</option>
+                                                            @endforeach
+                                                        </optgroup>
                                                     @endforeach
                                                 </select>
-                                                @include('errors.inline', ['message' => $errors->first('depo_bank_id')])
+                                                @include('errors.inline', ['message' => $errors->first('depo_bank_branch_id')])
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="" class="font-weight-bold">Reference Code</label>
@@ -224,11 +232,13 @@
                                                 <input type="date" name="depo_date" class="form-control @error('depo_date') is-invalid @enderror" value="{{ $transaction->depo_date }}" required>
                                                 @include('errors.inline', ['message' => $errors->first('depo_date')])
                                             </div>
-                                            <div class="col-md-8">
-                                                <label for="" class="font-weight-bold">Replace Slip Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than 5mb. )</small></label>
-                                                <input type="file" name="depo_slip" class="form-control @error('depo_slip') is-invalid @enderror">
-                                                @include('errors.inline', ['message' => $errors->first('depo_slip')])
-                                            </div>
+                                            @if (!$transaction->is_deposit)
+                                                <div class="col-md-8">
+                                                    <label for="" class="font-weight-bold">Replace Slip Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than 5mb. )</small></label>
+                                                    <input type="file" name="depo_slip" class="form-control @error('depo_slip') is-invalid @enderror">
+                                                    @include('errors.inline', ['message' => $errors->first('depo_slip')])
+                                                </div>
+                                            @endif
                                         </div>
                                         <div class="text-center mt-2">
                                             <input type="submit" class="btn btn-success" value="Clear Now">
@@ -263,10 +273,14 @@
                                 <td>{{ $transaction->status->name }}</td>
                             </tr>
                             <tr>
+                                <td class="font-weight-bold w-25">For Deposit?</td>
+                                <td>{{ $transaction->is_deposit ? 'Yes' : 'No' }}</td>
+                            </tr>
+                            <tr>
                                 <td class="font-weight-bold w-25">Requested by</td>
                                 <td>{{ $transaction->requested->name }}</td>
                             </tr>
-                            @if ($transaction->liquidation_approver_id)
+                            @if ($transaction->liquidation_approver_id && !$transaction->is_deposit)
                                 <tr>
                                     <td class="font-weight-bold w-25">Authorized Approver</td>
                                     <td>{{ $transaction->liquidationapprover->name }}</td>
@@ -312,39 +326,12 @@
                                 <td class="font-weight-bold w-25">Released Amount</td>
                                 <td>{{ $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
                             </tr>
-
-                            <tr>
-                                <td><span class="font-weight-bold w-25">Attachments</span></td>
-                                <td>
-                                    <a data-toggle="modal" data-target="#modal-attachments" href="#_">View All</a>
-                                    <div class="modal fade" id="modal-attachments" tabindex="-1" role="dialog" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header border-0">
-                                                    <h5 class="modal-title">Attachments</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body pt-0">
-                                                    @foreach ($transaction->attachments as $item)
-                                                        <p class="border-top pt-3">
-                                                            <a href="/storage/public/attachments/liquidation/{{ $item->file }}" target="_blank" style="vertical-align: sub">
-                                                                @if (pathinfo($item->file, PATHINFO_EXTENSION) == 'pdf')
-                                                                    <i class="material-icons mr-2 align-bottom" style="font-size: 40px">picture_as_pdf</i>
-                                                                @else
-                                                                    <i class="material-icons mr-2 align-bottom" style="font-size: 40px">insert_photo</i>    
-                                                                @endif
-                                                            </a>
-                                                            {{ $item->description }}
-                                                        </p>
-                                                    @endforeach
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                            @if (!$transaction->is_deposit)
+                                <tr>
+                                    <td><span class="font-weight-bold w-25">Attachments</span></td>
+                                    @include('pages.admin.transactionliquidation.show-attachment')
+                                </tr>
+                            @endif
                             <tr>
                                 <td colspan="2">
                                     <span class="font-weight-bold w-25">Purpose</span>
@@ -413,7 +400,7 @@
                         </table>
                     </div>
                     <div class="row mb-3">
-                        <table class="table table-bordered">
+                        <table class="table table-bordered {{ $transaction->is_deposit ? 'd-none' : '' }}">
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -511,7 +498,7 @@
                                 </tr>
                                 <tr>
                                     <td>Bank</td>
-                                    <td class="font-weight-bold">{{ $transaction->bank->name }}</td>
+                                    <td class="font-weight-bold">{{ $transaction->bankbranch->bank->name }} ({{ $transaction->bankbranch->name }})</td>
                                 </tr>
                                 <tr>
                                     <td>Rereference Code</td>
@@ -521,10 +508,23 @@
                                     <td>Date Deposited</td>
                                     <td class="font-weight-bold">{{ $transaction->depo_date }}</td>
                                 </tr>
-                                <tr>
-                                    <td>Slip Attachment</td>
-                                    <td class="font-weight-bold"><a href="/storage/public/attachments/deposit_slip/{{ $transaction->depo_slip }}" target="_blank"><i class="material-icons mr-2 align-bottom">attachment</i></a></td>
-                                </tr>
+                                @if ($transaction->is_deposit && $transaction->liquidation_approver_id)
+                                    <tr>
+                                        <td>Deposited By</td>
+                                        <td>{{ $transaction->liquidationapprover->name }}</td>
+                                    </tr>
+                                    @if ($transaction->is_deposit)
+                                        <tr>
+                                            <td>Attachments</td>
+                                            @include('pages.admin.transactionliquidation.show-attachment')
+                                        </tr>
+                                    @endif
+                                @else
+                                    <tr>
+                                        <td>Slip Attachment</td>
+                                        <td class="font-weight-bold"><a href="/storage/public/attachments/deposit_slip/{{ $transaction->depo_slip }}" target="_blank"><i class="material-icons mr-2 align-bottom">attachment</i></a></td>
+                                    </tr>
+                                @endif
                             </table>
                         @endif
                     </div>

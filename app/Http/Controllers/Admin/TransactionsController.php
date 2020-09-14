@@ -37,17 +37,45 @@ class TransactionsController extends Controller {
         $company = Company::where('id', $trans_company)->first();
         
         if (!empty($_GET['s'])) {
+            $key = $_GET['s'];
             $transactions = Transaction::whereIn('trans_type', $trans_types)
-                                    ->whereIn('status_id', config('global.page_generated'))
+                                    ->whereIn('status_id', config('global.status'))
                                     ->whereHas('project', function($query) use($trans_company) {
                                         $query->where('company_id', $trans_company);
                                     })
-                                    ->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$_GET['s']."%")
+                                    ->where(static function ($query) use ($key) {
+                                        $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$key."%")
+                                            ->orWhereHas('particulars', function($query) use($key) {
+                                                $query->where('name', $key);
+                                            })
+                                            ->orWhere('particulars_custom', 'like', "%{$key}%")
+                                            ->orWhere('purpose', 'like', "%{$key}%")
+                                            ->orWhere('payee', 'like', "%{$key}%")
+                                            ->orWhereHas('coatagging', function($query) use($key) {
+                                                $query->where('name', $key);
+                                            })
+                                            ->orWhere('expense_type_description', 'like', "%{$key}%")
+                                            ->orWhereHas('expensetype', function($query) use($key) {
+                                                $query->where('name', $key);
+                                            })
+                                            ->orWhereHas('vattype', function($query) use($key) {
+                                                $query->where('name', $key);
+                                            })
+                                            ->orWhereHas('vattype', function($query) use($key) {
+                                                $query->where('code', $key);
+                                            })
+                                            ->orWhere('control_no', $key)
+                                            ->orWhere('control_type', $key)
+                                            ->orWhere('cancellation_reason', 'like', "%{$key}%")
+                                            ->orWhere('cancellation_number', $key)
+                                            ->orWhere('amount_issued', str_replace(',', '', $key))
+                                            ->orWhere('amount', str_replace(',', '', $key));
+                                    })
                                     ->orderBy('id', 'desc')->paginate(10);
             $transactions->appends(['s' => $_GET['s']]);
         } else {
             $transactions = Transaction::whereIn('trans_type', $trans_types)
-                                    ->whereIn('status_id', config('global.page_generated'))
+                                    ->whereIn('status_id', config('global.status'))
                                     ->whereHas('project', function($query) use($trans_company) {
                                         $query->where('company_id', $trans_company);
                                     })->orderBy('id', 'desc')->paginate(10);
@@ -55,9 +83,11 @@ class TransactionsController extends Controller {
 
 
         foreach ($transactions as $key => $value) {
-            $transactions[$key]->can_edit = $this->check_can_edit($value->id);
-            $transactions[$key]->can_cancel = $this->check_can_cancel($value->id);
-            $transactions[$key]->can_reset = $this->check_can_reset($value->id);
+            if (in_array($value->status_id, config('global.page_generated'))) {
+                $transactions[$key]->can_edit = $this->check_can_edit($value->id);
+                $transactions[$key]->can_cancel = $this->check_can_cancel($value->id);
+                $transactions[$key]->can_reset = $this->check_can_reset($value->id);
+            }
         }
         
         return view('pages.admin.transaction.index')->with([
@@ -113,7 +143,8 @@ class TransactionsController extends Controller {
                 'project_id' => ['required', 'exists:company_projects,id'],
                 'payee' => ['required'],
                 'due_at' => ['required', 'date'],
-                'requested_id' => ['required', 'exists:users,id']
+                'requested_id' => ['required', 'exists:users,id'],
+                'is_deposit' => ['boolean']
             ];
 
             if ($trans_type == 'pc') {
@@ -195,6 +226,7 @@ class TransactionsController extends Controller {
     }
 
     public function update(Request $request, Transaction $transaction) {
+
         // if can edit
         if (!$this->check_can_edit($transaction->id)) {
             return back()->with('error', __('messages.cant_edit'));
@@ -205,7 +237,8 @@ class TransactionsController extends Controller {
             'amount' => ['required', 'min:0'],
             'purpose' => ['required'],
             'project_id' => ['required', 'exists:company_projects,id'],
-            'payee' => ['required']
+            'payee' => ['required'],
+            'is_deposit' => ['boolean']
         ];
 
         if ($transaction->trans_type == 'pc') {
@@ -215,6 +248,8 @@ class TransactionsController extends Controller {
         }
 
         $data = $request->validate($validation);
+
+        $data['is_deposit'] = $request->has('is_deposit') ?: '0';
 
         // if not pr, not admin, amount does exceed limit
         if ($transaction->trans_type == 'pr' 
@@ -286,6 +321,7 @@ class TransactionsController extends Controller {
                 'cancellation_reason' => ['required']
             ]);
 
+            $data['cancellation_number'] = rand(100000000, 999999999);
             $data['status_id'] = 3;
             $data['updated_id'] = auth()->id();
             $transaction->update($data);

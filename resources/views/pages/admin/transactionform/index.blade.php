@@ -80,7 +80,7 @@
                                 @endif
 
                                 <form action="/transaction-form/{{ $trans_page_url }}/{{ $company->id }}" method="GET" class="input-group w-25 float-right">
-                                    <input type="text" class="form-control" name="s" placeholder="Transaction Code" value="{{ app('request')->input('s') }}">
+                                    <input type="text" class="form-control" name="s" value="{{ app('request')->input('s') }}">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary py-0 px-2" type="submit">
                                             <i class="material-icons mt-1">search</i>

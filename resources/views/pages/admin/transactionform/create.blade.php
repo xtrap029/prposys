@@ -64,7 +64,7 @@
                     </div> --}}
                     <div class="col-md-5">
                         <label for="">Description</label>
-                        <input type="text" name="expense_type_description" value="{{ old('expense_type_description') }}" class="form-control @error('expense_type_description') is-invalid @enderror" required>
+                        <input type="text" name="expense_type_description" value="{{ old('expense_type_description') ?? $transaction->is_deposit ? $transaction->purpose : ''  }}" class="form-control @error('expense_type_description') is-invalid @enderror" required>
                         @include('errors.inline', ['message' => $errors->first('expense_type_description')])
                     </div>
                     <div class="col-md-2">
