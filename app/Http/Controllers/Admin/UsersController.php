@@ -13,7 +13,13 @@ use Illuminate\Support\Facades\Storage;
 class UsersController extends Controller {
 
     public function index() {
-        $users = User::orderBy('name', 'asc')->get();
+        $users = User::orderBy('name', 'asc');
+        
+        if (!isset($_GET['all'])) {
+            $users = $users->whereNotNull('role_id');
+        }
+
+        $users = $users->get();
         // $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
         // $users_inactive = User::whereNull('role_id')->orderBy('name', 'asc')->get();
         

@@ -18,7 +18,12 @@
                 <thead>
                     <tr>
                         <th colspan="4">List</th>
-                        <th class="text-right"><a href="/user/create">Create</a></th>
+                        <th class="text-right">
+                            @if (!isset($_GET['all'])) <a href="/user?all=1" class="mr-5">Show Inactive</a>
+                            @else <a href="/user" class="mr-5">Hide Inactive</a>
+                            @endif
+                            <a href="/user/create">Create</a>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
