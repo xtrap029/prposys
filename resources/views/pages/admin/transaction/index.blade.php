@@ -45,6 +45,13 @@
                                 @endif
 
                                 <form action="/transaction/{{ $trans_page }}/{{ $company->id }}" method="GET" class="input-group w-25 float-right">
+                                    @if ($trans_page == 'prpo')
+                                        <select name="type" class="form-control" style="max-width: 80px">
+                                            <option value="">All</option>
+                                            <option value="pr" {{ app('request')->input('type') == 'pr' ? 'selected' : '' }}>PR</option>
+                                            <option value="po" {{ app('request')->input('type') == 'po' ? 'selected' : '' }}>PO</option>
+                                        </select>
+                                    @endif
                                     <input type="text" class="form-control" name="s" value="{{ app('request')->input('s') }}">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary py-0 px-2" type="submit">

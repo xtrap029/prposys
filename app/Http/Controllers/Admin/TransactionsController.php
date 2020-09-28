@@ -36,8 +36,15 @@ class TransactionsController extends Controller {
         $companies = Company::orderBy('name', 'asc')->get();
         $company = Company::where('id', $trans_company)->first();
         
-        if (!empty($_GET['s'])) {
+        if (!empty($_GET['s']) || !empty($_GET['type'])) {
+            
+            if ($_GET['type'] != "") {
+                $type = $_GET['type'];
+                $trans_types = [$type];
+            }
+            
             $key = $_GET['s'];
+            
             $transactions = Transaction::whereIn('trans_type', $trans_types)
                                     ->whereIn('status_id', config('global.status'))
                                     ->whereHas('project', function($query) use($trans_company) {
