@@ -44,7 +44,7 @@
                 </div>
                 <div class="row row--print">
                     @if (!$transaction->is_deposit)
-                        <div class="col-12 my-5">
+                        <div class="col-12 my-3">
                             <table class="table table-sm">
                                 <tr class="font-weight-bold">
                                     <td>Pos.</td>
@@ -69,7 +69,7 @@
                             </table>
                         </div>
                     @else
-                        <div class="col-12 my-5">
+                        <div class="col-12 my-3">
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
@@ -94,7 +94,7 @@
                     @endif
                 </div>
                 <div class="row row--print">
-                    <div class="col-12 my-5">
+                    <div class="col-12 my-3">
                         <table class="table table-sm">
                             @foreach ($transactions_summary[$key2] as $item)
                                 <tr>
@@ -206,21 +206,21 @@
                     </div>
 
                     <div class="col-4 text-center my-4 small">
-                        <div>{{ $transaction->requested->name }}</div>
+                        <h5>{{ $transaction->requested->name }}</h5>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Requested By</div>
                     </div>                
                     <div class="col-4 text-center my-4 small {{ $transaction->liquidation_approver_id ? '' : 'd-none' }}">
-                        <div>{{ $transaction->liquidation_approver_id ? $transaction->liquidationapprover->name : '' }}</div>
+                        <h5>{{ $transaction->liquidation_approver_id ? $transaction->liquidationapprover->name : '' }}</h5>
                         <div class="mt-2 pt-2 border-top font-weight-bold">{{ !$transaction->is_deposit ? 'Approver' : 'Deposited By' }}</div>
                     </div>
                     @if (!$transaction->is_deposit)
                         <div class="col-4 text-center my-4 small">
-                            <div>{{ $final_approver }}</div>
+                            <h5>{{ $final_approver }}</h5>
                             <div class="mt-2 pt-2 border-top font-weight-bold">Authorized By</div>
                         </div>
                     @endif
                     <div class="col-4 text-center my-4 small">
-                        <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
+                        <h5>{{ Carbon\Carbon::now()->toDateString() }}</h5>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
                     </div>
                 </div>

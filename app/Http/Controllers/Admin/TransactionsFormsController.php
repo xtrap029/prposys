@@ -125,11 +125,16 @@ class TransactionsFormsController extends Controller {
     }
 
     public function create() {
-        if (empty($_GET['key']) || !$this->check_can_create($_GET['key'])) {
+        if (empty($_GET['key']) || empty($_GET['company']) || !$this->check_can_create($_GET['key'], $_GET['company'])) {
             return back()->with('error', __('messages.make_not_allowed'));
         }
 
-        $transaction = Transaction::where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), '=', $_GET['key'])->first();
+        $company = $_GET['company'];
+        $transaction = Transaction::where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), '=', $_GET['key'])
+            ->whereHas('project', function($query) use($company) {
+                $query->where('company_id', $company);
+            })
+            ->first();
 
         switch ($transaction->trans_type) {
             case 'pr':
@@ -162,10 +167,15 @@ class TransactionsFormsController extends Controller {
 
     public function store(Request $request) {
         // if can edit
-        if (!$this->check_can_create($request->key)) {
+        if (!$this->check_can_create($request->key, $request->company)) {
             return back()->with('error', __('messages.cant_create'));
         } else {
-            $transaction = Transaction::where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), '=', $request->key)->first();
+            $company = $request->company;
+            $transaction = Transaction::where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), '=', $request->key)
+                ->whereHas('project', function($query) use($company) {
+                    $query->where('company_id', $company);
+                })
+                ->first();
         }
 
         // validate input
@@ -511,10 +521,13 @@ class TransactionsFormsController extends Controller {
         ]);
     }
 
-    private function check_can_create($key) {
+    private function check_can_create($key, $company) {
         $can_create = true;
 
         $result = Transaction::where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), '=', $key)
+            ->whereHas('project', function($query) use($company) {
+                $query->where('company_id', $company);
+            })
             ->whereIn('status_id', config('global.generated'));
 
         if (User::where('id', auth()->id())->first()->role_id != 1) {

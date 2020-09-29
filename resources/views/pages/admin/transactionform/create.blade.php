@@ -43,6 +43,7 @@
             <form action="" method="post">
                 @csrf
                 <input type="hidden" name="key" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}">
+                <input type="hidden" name="company" value="{{ $transaction->project->company->id }}">
                 <div class="form-row mb-3">
                     <div class="col-md-5">
                         <label for="">COA Tagging</label>

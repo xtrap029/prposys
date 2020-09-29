@@ -47,6 +47,7 @@
             <form action="" method="post" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="key" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}">
+                <input type="hidden" name="company" value="{{ $transaction->project->company->id }}">
                 @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible fade show rounded" role="alert">
                         @foreach ($errors->all() as $key => $error)

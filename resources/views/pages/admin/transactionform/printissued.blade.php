@@ -167,24 +167,24 @@
                     </div>
 
                     <div class="col-4 small text-center my-4">
-                        <div>{{ $transaction->owner->name }}</div>
+                        <h5>{{ $transaction->owner->name }}</h5>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Prepared By</div>
                     </div>
                     <div class="col-4 small text-center my-4">
-                        <div>{{ $transaction->requested->name }}</div>
+                        <h5>{{ $transaction->requested->name }}</h5>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Requested By</div>
                     </div>
                     <div class="col-4 small text-center my-4 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
-                        <div>{{ $transaction->form_approver_id ? $transaction->formapprover->name : '' }}</div>
+                        <h5>{{ $transaction->form_approver_id ? $transaction->formapprover->name : '' }}</h5>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Approver</div>
                     </div>
                     <div class="col-4 small text-center my-4">
-                        <div>{{ $final_approver }}</div>
+                        <h5>{{ $final_approver }}</h5>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Authorized By</div>
                     </div>
     
                     <div class="col-4 small text-center my-4">
-                        <div>{{ Carbon\Carbon::now()->toDateString() }}</div>
+                        <h5>{{ Carbon\Carbon::now()->toDateString() }}</h5>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
                     </div>
                 </div>
