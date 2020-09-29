@@ -188,7 +188,12 @@ class TransactionsController extends Controller {
         }
 
         // generate transaction code
-        $latest_trans = Transaction::where('trans_year', now()->year)->where('trans_type', $data['trans_type'])->orderBy('trans_seq', 'desc')->first();
+        $latest_trans = Transaction::where('trans_year', now()->year)
+            ->where('trans_type', $data['trans_type'])
+            ->whereHas('project', function($query) use($trans_company) {
+                $query->where('company_id', $trans_company);
+            })
+            ->orderBy('trans_seq', 'desc')->first();
         $data['trans_year'] = now()->year;
         if($latest_trans) {
             $data['trans_seq'] = $latest_trans->trans_seq+1;
