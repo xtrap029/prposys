@@ -581,7 +581,7 @@ class TransactionsFormsController extends Controller {
         $transaction = Transaction::where('id', $transaction)->first();
 
         // check if unliquidated
-        if (in_array($transaction->status_id, config('global.generated_form'))) {
+        if (in_array($transaction->status_id, config('global.generated_form')) || ($user->role_id == 1 && in_array($transaction->status_id, config('global.form_approval')))) {
             // check if not admin
             if ($user->role_id != 1) {
                 // check if owned
