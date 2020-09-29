@@ -85,6 +85,7 @@ class TransactionsLiquidationController extends Controller {
                                     })
                                     ->orderBy('id', 'desc')->paginate(10);
             $transactions->appends(['s' => $_GET['s']]);
+            $transactions->appends(['type' => $_GET['type']]);
         } else {
             $transactions = Transaction::whereIn('trans_type', $trans_types)
                                     ->whereIn('status_id', config('global.page_liquidation'))
