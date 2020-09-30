@@ -309,7 +309,7 @@ class TransactionsFormsController extends Controller {
         ]);
 
         // if non admin requestor, validate limit applicable for pr only
-        if (User::where('id', $data['requested_id'])->first()->role_id != 1 && $trans_type == 'pr') {
+        if (User::where('id', $data['requested_id'])->first()->role_id != 1 && $transaction->trans_type == 'pr') {
             $trans_bal = TransactionHelper::check_unliquidated_balance($data['requested_id']);
 
             $validator = \Validator::make(request()->all(), []);
