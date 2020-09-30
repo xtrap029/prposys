@@ -248,7 +248,7 @@ class TransactionsFormsController extends Controller {
     }
 
     public function edit(Transaction $transaction) {
-        if (!$this->check_can_edit($transaction->id)) {
+        if (!$this->check_can_edit($transaction->id) && !$this->check_can_issue($transaction->id)) {
             return back()->with('error', __('messages.cant_edit'));
         }
 
@@ -270,20 +270,25 @@ class TransactionsFormsController extends Controller {
         $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orderBy('name', 'asc')->get();
         // $expense_types = ExpenseType::orderBy('name', 'asc')->get();
         $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('id', 'asc')->get();
+        $particulars = Particulars::where('type', $transaction->trans_type)->get();
+        $projects = CompanyProject::where('company_id', $transaction->project->company_id)->get();
+        $users = User::whereNotNull('role_id')->get();
         
         return view('pages.admin.transactionform.edit')->with([
             'transaction' => $transaction,
             'trans_page_url' => $trans_page_url,
             'trans_page' => $trans_page,
             'coa_taggings' => $coa_taggings,
-            // 'expense_types' => $expense_types,
-            'vat_types' => $vat_types
+            'vat_types' => $vat_types,
+            'particulars' => $particulars,
+            'users' => $users,
+            'projects' => $projects
         ]);
     }
 
     public function update(Request $request, Transaction $transaction) {
         // if can edit
-        if (!$this->check_can_edit($transaction->id)) {
+        if (!$this->check_can_edit($transaction->id) && !$this->check_can_issue($transaction->id)) {
             return back()->with('error', __('messages.cant_edit'));
         }
 
@@ -293,10 +298,43 @@ class TransactionsFormsController extends Controller {
             // 'expense_type_id' => ['required', 'exists:expense_types,id'],
             'expense_type_description' => ['required'],
             'vat_type_id' => ['required', 'exists:vat_types,id'],
+
+            'amount' => ['required', 'min:0'],
+            'purpose' => ['required'],
+            'project_id' => ['required', 'exists:company_projects,id'],
+            'payee' => ['required'],
+            'currency' => ['required', 'in:PHP'],
+            'due_at' => ['required', 'date'],
+            'requested_id' => ['required', 'exists:users,id']
         ]);
+
+        // if non admin requestor, validate limit applicable for pr only
+        if (User::where('id', $data['requested_id'])->first()->role_id != 1 && $trans_type == 'pr') {
+            $trans_bal = TransactionHelper::check_unliquidated_balance($data['requested_id']);
+
+            $validator = \Validator::make(request()->all(), []);
+
+            if ($trans_bal['amount'] < $data['amount']) {
+                $validator->errors()->add('amount', __('messages.exceed_amount_unliq'));
+            }
+            
+            if ($trans_bal['count'] < 1) {
+                $validator->errors()->add('particulars_id', __('messages.exceed_count_unliq'));
+            }
+
+            if ($validator->errors()->count() > 0) {
+                return redirect('/transaction/create/'.$request->trans_type.'/'.$trans_company)
+                ->withErrors($validator)
+                ->withInput();
+            }
+        }
 
         if (User::where('id', auth()->id())->first()->role_id != 1) {
             $data['edit_count'] = $transaction->edit_count + 1;
+        }
+
+        if ($this->check_can_issue($transaction->id)) {
+            $data['status_id'] = 5;
         }
         
         $data['updated_id'] = auth()->id();
@@ -594,6 +632,7 @@ class TransactionsFormsController extends Controller {
         $transaction = Transaction::where('id', $transaction)->first();
 
         // check if unliquidated
+        // if (in_array($transaction->status_id, config('global.generated_form'))) {
         if (in_array($transaction->status_id, config('global.generated_form')) || ($user->role_id == 1 && in_array($transaction->status_id, config('global.form_approval')))) {
             // check if not admin
             if ($user->role_id != 1) {

@@ -65,7 +65,7 @@
                             <th>Transaction</th>
                             <th>Payee</th>
                             <th class="text-right">Amount (PHP)</th>
-                            <th>Particulars</th>
+                            <th>Description</th>
                             <th>Date Gen.</th>
                             <th>Date Req.</th>
                             <th>Req. By</th>
@@ -79,7 +79,7 @@
                                 <td>{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</td>
                                 <td>{{ $item->payee }}</td>
                                 <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
-                                <td>{{ $trans_page == 'prpo' ? $item->particulars->name : $item->particulars_custom }}</td>
+                                <td>{{ $item->expense_type_description }}</td>
                                 <td>{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
                                 <td>{{ $item->created_at->toDateString() }}</td>
                                 <td>{{ $item->requested->name }}</td>
