@@ -20,8 +20,9 @@
         'deposit_type' => ['BANK', 'CHECK', 'ONLINE'],
         'issued_cleared' => [4, 9],
         'status' => [1, 3, 4, 5, 6, 7, 8, 9],
+        'status_approval' => [6, 8],
         'trans_types' => ['pr', 'po', 'pc'],
         'site_icon' => '/images/logo.png',
-        'control_types' => ['Deposit Cash', 'Petty Cash', 'Online', 'Deposit Check'],
+        'control_types' => ['Cash', 'Online', 'Check'],
         'control_types_pc' => 'Petty Cash',
     ];

@@ -46,7 +46,7 @@ class TransactionsFormsController extends Controller {
 
         $released_by = ReleasedBy::orderBy('name', 'asc')->get();
         
-        if (!empty($_GET['s']) || !empty($_GET['type'])) {
+        if (!empty($_GET['s']) || !empty($_GET['type']) || !empty($_GET['status'])) {
             
             if ($_GET['type'] != "") {
                 $type = $_GET['type'];
@@ -88,8 +88,27 @@ class TransactionsFormsController extends Controller {
                                             ->orWhere('cancellation_reason', 'like', "%{$key}%")
                                             ->orWhere('amount_issued', str_replace(',', '', $key))
                                             ->orWhere('amount', str_replace(',', '', $key));
-                                    })
-                                    ->orderBy('id', 'desc')->paginate(10);
+                                    });
+            
+            if ($_GET['status'] != "") {
+                switch ($_GET['status']) {
+                    case 'requested':
+                        break;
+                        $transactions = $transactions->where('requested_id', auth()->id());
+                    case 'prepared':
+                        $transactions = $transactions->where('owner_id', auth()->id());
+                        break;
+                    case 'approval':
+                        if (in_array(User::where('id', auth()->id())->first()->role_id, [1, 2])) {
+                            $transactions = $transactions->whereIn('status_id', config('global.status_approval'));
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+                                    
+            $transactions = $transactions->orderBy('id', 'desc')->paginate(10);
             $transactions->appends(['s' => $_GET['s']]);
             $transactions->appends(['type' => $_GET['type']]);
         } else {
@@ -599,27 +618,27 @@ class TransactionsFormsController extends Controller {
     }
 
     private function check_can_cancel($transaction, $user = '') {
-        // $can_cancel = true;
+        $can_cancel = true;
 
-        // if (!$user) {
-        //     $user = auth()->id();
-        // }
-        // $user = User::where('id', $user)->first();
+        if (!$user) {
+            $user = auth()->id();
+        }
+        $user = User::where('id', $user)->first();
 
-        // $transaction = Transaction::where('id', $transaction)->first();
+        $transaction = Transaction::where('id', $transaction)->first();
 
-        // // check if unliquidated
-        // if (in_array($transaction->status_id, config('global.generated_form'))) {
-        //     // check if not admin and not the owner
-        //     if ($user->role_id != 1 && $user->id != $transaction->owner_id) {
-        //         $can_cancel = false;
-        //     }
-        // } else {
-        //     $can_cancel = false;
-        // }
+        // check if unliquidated
+        if (in_array($transaction->status_id, config('global.generated_form'))) {
+            // check if not admin and not the owner
+            if ($user->role_id != 1 && $user->id != $transaction->owner_id) {
+                $can_cancel = false;
+            }
+        } else {
+            $can_cancel = false;
+        }
 
-        // return $can_cancel;
-        return false;
+        return $can_cancel;
+        // return false;
     }
 
     private function check_can_edit($transaction, $user = '') {

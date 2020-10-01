@@ -40,7 +40,7 @@ class TransactionsLiquidationController extends Controller {
         $companies = Company::orderBy('name', 'asc')->get();
         $company = Company::where('id', $trans_company)->first();
         
-        if (!empty($_GET['s']) || !empty($_GET['type'])) {
+        if (!empty($_GET['s']) || !empty($_GET['type']) || !empty($_GET['status'])) {
             
             if ($_GET['type'] != "") {
                 $type = $_GET['type'];
@@ -82,8 +82,27 @@ class TransactionsLiquidationController extends Controller {
                                             ->orWhere('cancellation_reason', 'like', "%{$key}%")
                                             ->orWhere('amount_issued', str_replace(',', '', $key))
                                             ->orWhere('amount', str_replace(',', '', $key));
-                                    })
-                                    ->orderBy('id', 'desc')->paginate(10);
+                                    });
+            
+            if ($_GET['status'] != "") {
+                switch ($_GET['status']) {
+                    case 'requested':
+                        break;
+                        $transactions = $transactions->where('requested_id', auth()->id());
+                    case 'prepared':
+                        $transactions = $transactions->where('owner_id', auth()->id());
+                        break;
+                    case 'approval':
+                        if (in_array(User::where('id', auth()->id())->first()->role_id, [1, 2])) {
+                            $transactions = $transactions->whereIn('status_id', config('global.status_approval'));
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            $transactions = $transactions->orderBy('id', 'desc')->paginate(10);
             $transactions->appends(['s' => $_GET['s']]);
             $transactions->appends(['type' => $_GET['type']]);
         } else {
