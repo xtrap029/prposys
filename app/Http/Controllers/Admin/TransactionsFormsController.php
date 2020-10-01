@@ -303,7 +303,7 @@ class TransactionsFormsController extends Controller {
             'purpose' => ['required'],
             'project_id' => ['required', 'exists:company_projects,id'],
             'payee' => ['required'],
-            'currency' => ['required', 'in:PHP'],
+            'currency' => ['required'],
             'due_at' => ['required', 'date'],
             'requested_id' => ['required', 'exists:users,id']
         ]);

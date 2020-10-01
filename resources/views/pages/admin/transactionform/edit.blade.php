@@ -61,7 +61,9 @@
                     <div class="col-md-2">
                         <label for="">Currency</label>
                         <select name="currency" class="form-control @error('currency') is-invalid @enderror">
-                            <option value="PHP">PHP</option>   
+                            <option value="PHP">PHP</option> 
+                            <option value="USD">USD</option>   
+                            <option value="EUR">EUR</option>   
                         </select>
                     </div>
                     <div class="col-md-4">

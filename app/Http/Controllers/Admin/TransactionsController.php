@@ -145,7 +145,7 @@ class TransactionsController extends Controller {
 
             $validation = [
                 'trans_type' => ['required', 'in:pr,po,pc'],
-                'currency' => ['required', 'in:PHP'],
+                'currency' => ['required'],
                 'amount' => ['required', 'min:0'],
                 'purpose' => ['required'],
                 'project_id' => ['required', 'exists:company_projects,id'],

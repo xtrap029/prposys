@@ -19,7 +19,7 @@ class CreateTransactionsTable extends Migration
             $table->year('trans_year');
             $table->integer('trans_seq');
             $table->unsignedBigInteger('particulars_id')->nullable();
-            $table->enum('currency', ['PHP', 'USD']);
+            $table->enum('currency', ['PHP', 'USD', 'EUR']);
             $table->decimal('amount', 10, 2);
             $table->text('purpose');
             $table->string('payee');
