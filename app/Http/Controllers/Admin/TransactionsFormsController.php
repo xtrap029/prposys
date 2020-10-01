@@ -14,6 +14,7 @@ use App\Transaction;
 use App\TransactionStatus;
 use App\User;
 use App\VatType;
+use App\Helpers\TransactionHelper;
 use Spatie\Activitylog\Models\Activity;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
