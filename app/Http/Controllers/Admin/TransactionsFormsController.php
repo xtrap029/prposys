@@ -618,27 +618,27 @@ class TransactionsFormsController extends Controller {
     }
 
     private function check_can_cancel($transaction, $user = '') {
-        $can_cancel = true;
+        // $can_cancel = true;
 
-        if (!$user) {
-            $user = auth()->id();
-        }
-        $user = User::where('id', $user)->first();
+        // if (!$user) {
+        //     $user = auth()->id();
+        // }
+        // $user = User::where('id', $user)->first();
 
-        $transaction = Transaction::where('id', $transaction)->first();
+        // $transaction = Transaction::where('id', $transaction)->first();
 
-        // check if unliquidated
-        if (in_array($transaction->status_id, config('global.generated_form'))) {
-            // check if not admin and not the owner
-            if ($user->role_id != 1 && $user->id != $transaction->owner_id) {
-                $can_cancel = false;
-            }
-        } else {
-            $can_cancel = false;
-        }
+        // // check if unliquidated
+        // if (in_array($transaction->status_id, config('global.generated_form'))) {
+        //     // check if not admin and not the owner
+        //     if ($user->role_id != 1 && $user->id != $transaction->owner_id) {
+        //         $can_cancel = false;
+        //     }
+        // } else {
+        //     $can_cancel = false;
+        // }
 
-        return $can_cancel;
-        // return false;
+        // return $can_cancel;
+        return false;
     }
 
     private function check_can_edit($transaction, $user = '') {
