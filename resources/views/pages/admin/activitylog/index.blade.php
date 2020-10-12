@@ -101,6 +101,7 @@
                                                         @case('App\Settings')                       <?php $view_url = '/settings'; ?> @break
                                                         @case('App\Transaction')                    <?php $view_url = '/transaction/view/'.$item->subject_id; ?> @break
                                                         @case('App\TransactionsAttachment')         <?php $view_url = '/transaction-liquidation/finder-attachment/'.$item->subject_id; ?> @break
+                                                        @case('App\TransactionsDescription')        <?php $view_url = '#'; ?> @break
                                                         @case('App\TransactionsLiquidation')        <?php $view_url = '/transaction-liquidation/finder-liquidation/'.$item->subject_id; ?> @break
                                                         @case('App\User')                           <?php $view_url = '/user/'.$item->subject_id.'/edit'; ?> @break
                                                         @case('App\VatType')                        <?php $view_url = '/vat-type/'.$item->subject_id.'/edit'; ?> @break

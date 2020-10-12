@@ -243,54 +243,56 @@
                                     <tr>
                                         <th>Qty</th>
                                         <th>Description</th>
+                                        <th>Particulars</th>
                                         <th class="text-right">Unit Price</th>
                                         <th class="text-right">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="border-bottom-2">
+                                    @foreach ($transaction->transaction_description as $item_desc)
+                                        <tr>
+                                            <td>{{ $item_desc->qty }}</td>
+                                            <td>{{ $item_desc->description }}</td>
+                                            <td>{{ $item_desc->particulars->name }}</td>
+                                            <td class="text-right">{{ number_format($item_desc->amount, 2, '.', ',') }}</td>
+                                            <td class="text-right">{{ number_format($item_desc->amount * $item_desc->qty, 2, '.', ',') }}</td>
+                                        </tr>
+                                    @endforeach
+                                    {{-- <tr class="border-bottom-2">
                                         <td>1</td>
-                                        {{-- <td>{{ $transaction->expensetype->name }}</td> --}}
                                         <td>{{ $transaction->expense_type_description }}</td>
                                         <td class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_unit && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_unit : $transaction->amount, 2, '.', ',') }}</td>
                                         <td class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_unit && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_unit : $transaction->amount, 2, '.', ',') }}</td>
-                                    </tr>
+                                    </tr> --}}
                                     <tr class="font-weight-bold">
-                                        <td colspan="2" class="text-right">
+                                        <td colspan="3" class="text-right">
                                             {{ $transaction->form_amount_vat && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_vat : $transaction->vattype->vat 
                                                 + $transaction->form_amount_wht && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_wht : $transaction->vattype->wht == 0 ? 'Total' : 'Subtotal' }}
                                         </td>
-                                        <td></td>
-                                        <td class="text-right">
-                                            {{ number_format($transaction->form_amount_subtotal && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_subtotal : $transaction->custom_subtotal, 2, '.', ',') }}
-                                        </td>
+                                        <td colspan="2" class="text-right">{{ number_format($transaction->form_amount_subtotal && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_subtotal : $transaction->custom_subtotal, 2, '.', ',') }}</td>
                                     </tr>
                                     @if ($transaction->custom_vat > 0 || ($transaction->form_amount_vat && !in_array($transaction->status_id, config('global.generated_form'))))
                                     <tr>
-                                        <td colspan="2" class="text-right">VAT</td>
-                                        <td></td>
-                                        <td class="text-right">{{ number_format($transaction->form_amount_vat && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_vat : $transaction->custom_vat, 2, '.', ',') }}</td>
+                                        <td colspan="3" class="text-right">VAT</td>
+                                        <td colspan="2" class="text-right">{{ number_format($transaction->form_amount_vat && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_vat : $transaction->custom_vat, 2, '.', ',') }}</td>
                                     </tr>
                                     @endif
                                     @if ($transaction->custom_wht > 0 || ($transaction->form_vat_wht && !in_array($transaction->status_id, config('global.generated_form'))))
                                     <tr>
-                                        <td></td>
-                                        <td class="text-right">Less Withholding Tax</td>
+                                        <td colspan="3" class="text-right">Less Withholding Tax</td>
                                         <td class="text-right">{{ $transaction->form_vat_wht && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_vat_name." (".$transaction->form_vat_wht."%)" : $transaction->vattype->name." (".$transaction->vattype->wht."%)" }}</td>
                                         <td class="text-right">({{ number_format($transaction->form_amount_wht ? $transaction->form_amount_wht : $transaction->custom_wht, 2, '.', ',') }})</td>
                                     </tr>
                                     @endif
                                     @if ($transaction->custom_vat > 0 || ($transaction->form_amount_payable && !in_array($transaction->status_id, config('global.generated_form'))))
                                     <tr class="font-weight-bold">
-                                        <td colspan="2" class="text-right">Total Payable</td>
-                                        <td></td>
-                                        <td class="text-right">{{ number_format($transaction->form_amount_payable && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_payable : $transaction->custom_total_payable, 2, '.', ',') }}</td>
+                                        <td colspan="3" class="text-right">Total Payable</td>
+                                        <td colspan="2" class="text-right">{{ number_format($transaction->form_amount_payable && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_payable : $transaction->custom_total_payable, 2, '.', ',') }}</td>
                                     </tr>
                                     @endif
                                     <tr class="font-weight-bold border-top-2">
-                                        <td colspan="2" class="text-right">Amount</td>
-                                        <td></td>
-                                        <td class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_payable && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_payable : $transaction->custom_total_payable, 2, '.', ',') }}</td>
+                                        <td colspan="3" class="text-right">Amount</td>
+                                        <td colspan="2" class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_payable && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_payable : $transaction->custom_total_payable, 2, '.', ',') }}</td>
                                     </tr>
                                 </tbody>
                             </table>

@@ -109,6 +109,10 @@ class Transaction extends Model {
         return $this->belongsTo(TransactionStatus::class);
     }
 
+    public function transaction_description() {
+        return $this->hasMany(TransactionsDescription::class);
+    }
+
     public function liquidation() {
         return $this->hasMany(TransactionsLiquidation::class);
     }

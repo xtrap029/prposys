@@ -99,6 +99,10 @@ Route::middleware('auth')->group(function () {
             
             Route::get('/create', $url.'@create');
             Route::post('/create', $url.'@store');
+
+            Route::get('/create-backdoor', $url.'@create_backdoor');
+            Route::post('/create-backdoor', $url.'@store_backdoor');
+
             Route::get('/view/{transaction}', $url.'@show')->where('transaction', '[0-9]+');
             Route::get('/edit/{transaction}', $url.'@edit')->where('transaction', '[0-9]+');
             Route::put('/edit/{transaction}', $url.'@update')->where('transaction', '[0-9]+');

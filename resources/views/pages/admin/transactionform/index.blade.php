@@ -77,6 +77,51 @@
                                         </div>
                                     </div>
                                 @endif
+
+                                @if ($trans_page_url == 'prpo')
+                                    <a data-toggle="modal" data-target="#modal-make-pr-backdoor" href="#_" class="mx-3 vlign--baseline-middle">Make Form (Backdoor)</a>
+                                    <div class="modal fade" id="modal-make-pr-backdoor" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-md" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header border-0">
+                                                    <h5 class="modal-title">Select PR/PO to make</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <form action="/transaction-form/create-backdoor" method="get">
+                                                        <input type="hidden" name="company" value="{{ $company->id }}" required>
+                                                        <input type="text" name="key" class="form-control" placeholder="PR/PO-XXXX-XXXXX" required>
+                                                        <input type="submit" class="btn btn-primary mt-2" value="Check">
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @else
+                                    <a data-toggle="modal" data-target="#modal-make-pc-backdoor" href="#_" class="mx-3 vlign--baseline-middle">Make Form (Backdoor)</a>
+                                    <div class="modal fade" id="modal-make-pc-backdoor" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-md" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header border-0">
+                                                    <h5 class="modal-title">Select PC to make</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <form action="/transaction-form/create-backdoor" method="get">
+                                                        <input type="hidden" name="company" value="{{ $company->id }}" required>
+                                                        <input type="text" name="key" class="form-control" placeholder="PC-XXXX-XXXXX" required>
+                                                        <input type="submit" class="btn btn-primary mt-2" value="Check">
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
                                 @if (in_array(Auth::user()->role_id, [1, 2]))
                                     <a href="/transaction-form/report?type={{ $trans_types[0] }}&company={{ $company->id }}&status={{ config('global.generated_form')[0] }}" class="mx-3 vlign--baseline-middle">Reports</a>
                                 @endif

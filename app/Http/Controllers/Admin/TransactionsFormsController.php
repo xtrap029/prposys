@@ -11,6 +11,7 @@ use App\Particulars;
 use App\ReleasedBy;
 use App\Settings;
 use App\Transaction;
+use App\TransactionsDescription;
 use App\TransactionStatus;
 use App\User;
 use App\VatType;
@@ -93,8 +94,8 @@ class TransactionsFormsController extends Controller {
             if ($_GET['status'] != "") {
                 switch ($_GET['status']) {
                     case 'requested':
-                        break;
                         $transactions = $transactions->where('requested_id', auth()->id());
+                        break;
                     case 'prepared':
                         $transactions = $transactions->where('owner_id', auth()->id());
                         break;
@@ -172,7 +173,7 @@ class TransactionsFormsController extends Controller {
         }
 
         $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orderBy('name', 'asc')->get();
-        // $expense_types = ExpenseType::orderBy('name', 'asc')->get();
+        $particulars = Particulars::where('type', $transaction->trans_type)->get();
         $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('id', 'asc')->get();
 
         return view('pages.admin.transactionform.create')->with([
@@ -180,7 +181,7 @@ class TransactionsFormsController extends Controller {
             'trans_page' => $trans_page,
             'transaction' => $transaction,
             'coa_taggings' => $coa_taggings,
-            // 'expense_types' => $expense_types,
+            'particulars' => $particulars,
             'vat_types' => $vat_types
         ]);
     }
@@ -202,14 +203,125 @@ class TransactionsFormsController extends Controller {
         $data = $request->validate([
             'coa_tagging_id' => ['required', 'exists:coa_taggings,id'],
             // 'expense_type_id' => ['required', 'exists:expense_types,id'],
-            'expense_type_description' => ['required'],
+            // 'expense_type_description' => ['required'],
             'vat_type_id' => ['required', 'exists:vat_types,id'],
         ]);
 
+        $data_desc = $request->validate([
+            'qty.*' => ['required', 'min:1'],
+            'particulars_id.*' => ['required', 'exists:particulars,id'],
+            'description.*' => ['required'],
+            'amount.*' => ['required', 'min:0']
+        ]);
+
+        $attr_desc['transaction_id'] = $transaction->id;
+        $attr_desc['owner_id'] = auth()->id();
+        $attr_desc['updated_id'] = auth()->id();
+
+        foreach ($data_desc['qty'] as $key => $value) {
+            $attr_desc['qty'] = $value;
+            $attr_desc['description'] = $data_desc['description'][$key];
+            $attr_desc['particulars_id'] = $data_desc['particulars_id'][$key];
+            $attr_desc['amount'] = $data_desc['amount'][$key];
+
+            TransactionsDescription::create($attr_desc);
+        }
+
+        
         $data['edit_count'] = 0;
         $data['status_id'] = 5;
         $data['updated_id'] = auth()->id();
+        
+        $transaction->update($data);
 
+        return redirect('/transaction-form/view/'.$transaction->id);
+    }
+
+    public function create_backdoor() {
+        if (empty($_GET['key']) || empty($_GET['company']) || !$this->check_can_create_backdoor($_GET['key'], $_GET['company'])) {
+            return back()->with('error', __('messages.make_not_allowed'));
+        }
+
+
+        $company = $_GET['company'];
+        $transaction = Transaction::where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), '=', $_GET['key'])
+            ->whereHas('project', function($query) use($company) {
+                $query->where('company_id', $company);
+            })
+            ->first();
+
+        switch ($transaction->trans_type) {
+            case 'pr':
+            case 'po':
+                $trans_page = "prpo-form";
+                $trans_page_url = "prpo";
+            break;  
+            case 'pc':
+                $trans_page = "pc-form";
+                $trans_page_url = "pc";
+                break;            
+            default:
+                abort(404);
+                break;
+        }
+
+        $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orderBy('name', 'asc')->get();
+        $particulars = Particulars::where('type', $transaction->trans_type)->get();
+        $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('id', 'asc')->get();
+
+        return view('pages.admin.transactionform.create')->with([
+            'trans_page_url' => $trans_page_url,
+            'trans_page' => $trans_page,
+            'transaction' => $transaction,
+            'coa_taggings' => $coa_taggings,
+            'particulars' => $particulars,
+            'vat_types' => $vat_types
+        ]);
+    }
+
+    public function store_backdoor(Request $request) {
+        // if can edit
+        if (!$this->check_can_create_backdoor($request->key, $request->company)) {
+            return back()->with('error', __('messages.cant_create'));
+        } else {
+            $company = $request->company;
+            $transaction = Transaction::where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), '=', $request->key)
+                ->whereHas('project', function($query) use($company) {
+                    $query->where('company_id', $company);
+                })
+                ->first();
+        }
+
+        // validate input
+        $data = $request->validate([
+            'coa_tagging_id' => ['required', 'exists:coa_taggings,id'],
+            // 'expense_type_id' => ['required', 'exists:expense_types,id'],
+            // 'expense_type_description' => ['required'],
+            'vat_type_id' => ['required', 'exists:vat_types,id'],
+        ]);
+
+        $data_desc = $request->validate([
+            'qty.*' => ['required', 'min:1'],
+            'particulars_id.*' => ['required', 'exists:particulars,id'],
+            'description.*' => ['required'],
+            'amount.*' => ['required', 'min:0']
+        ]);
+
+        $attr_desc['transaction_id'] = $transaction->id;
+        $attr_desc['owner_id'] = auth()->id();
+        $attr_desc['updated_id'] = auth()->id();
+
+        foreach ($data_desc['qty'] as $key => $value) {
+            $attr_desc['qty'] = $value;
+            $attr_desc['description'] = $data_desc['description'][$key];
+            $attr_desc['particulars_id'] = $data_desc['particulars_id'][$key];
+            $attr_desc['amount'] = $data_desc['amount'][$key];
+
+            TransactionsDescription::create($attr_desc);
+        }
+
+        $data['updated_id'] = auth()->id();
+        
         $transaction->update($data);
 
         return redirect('/transaction-form/view/'.$transaction->id);
@@ -316,7 +428,7 @@ class TransactionsFormsController extends Controller {
         $data = $request->validate([
             'coa_tagging_id' => ['required', 'exists:coa_taggings,id'],
             // 'expense_type_id' => ['required', 'exists:expense_types,id'],
-            'expense_type_description' => ['required'],
+            // 'expense_type_description' => ['required'],
             'vat_type_id' => ['required', 'exists:vat_types,id'],
 
             'amount' => ['required', 'min:0'],
@@ -327,6 +439,28 @@ class TransactionsFormsController extends Controller {
             'due_at' => ['required', 'date'],
             'requested_id' => ['required', 'exists:users,id']
         ]);
+
+        $data_desc = $request->validate([
+            'qty.*' => ['required', 'min:1'],
+            'particulars_id.*' => ['required', 'exists:particulars,id'],
+            'description.*' => ['required'],
+            'amount_desc.*' => ['required', 'min:0']
+        ]);
+
+        $attr_desc['transaction_id'] = $transaction->id;
+        $attr_desc['owner_id'] = auth()->id();
+        $attr_desc['updated_id'] = auth()->id();
+
+        TransactionsDescription::where('transaction_id', $transaction->id)->delete();
+
+        foreach ($data_desc['qty'] as $key => $value) {
+            $attr_desc['qty'] = $value;
+            $attr_desc['description'] = $data_desc['description'][$key];
+            $attr_desc['particulars_id'] = $data_desc['particulars_id'][$key];
+            $attr_desc['amount'] = $data_desc['amount_desc'][$key];
+
+            TransactionsDescription::create($attr_desc);
+        }
 
         // if non admin requestor, validate limit applicable for pr only
         if (User::where('id', $data['requested_id'])->first()->role_id != 1 && $transaction->trans_type == 'pr') {
@@ -587,6 +721,26 @@ class TransactionsFormsController extends Controller {
                 $query->where('company_id', $company);
             })
             ->whereIn('status_id', config('global.generated'));
+
+        if (User::where('id', auth()->id())->first()->role_id != 1) {
+            $result = $result->where('owner_id', auth()->id());
+        }
+
+        $result = $result->count();
+
+        if ($result == 0) $can_create = false;
+
+        return $can_create;
+    }
+
+    private function check_can_create_backdoor($key, $company) {
+        $can_create = true;
+
+        $result = Transaction::where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), '=', $key)
+            ->whereHas('project', function($query) use($company) {
+                $query->where('company_id', $company);
+            })
+            ->whereNotIn('status_id', config('global.generated'));
 
         if (User::where('id', auth()->id())->first()->role_id != 1) {
             $result = $result->where('owner_id', auth()->id());

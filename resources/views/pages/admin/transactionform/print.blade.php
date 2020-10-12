@@ -7,7 +7,7 @@
         <div class="container-fluid">
             <div class="float-right">Date Generated: <b>{{ Carbon\Carbon::now() }}</b></div>
             <h1>{{ $transaction->is_deposit ? 'For Deposit' : $trans_page }} - Form</h1>
-            <div class="row my-3">
+            <div class="row row--print my-3">
                 <div class="col-10">
                     <h2 class="mt-4">{{ $transaction->project->company->name }}</h2>
                 </div>
@@ -15,7 +15,7 @@
                     <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--sm">
                 </div>
             </div>
-            <div class="row">
+            <div class="row row--print">
                 <div class="col-4">
                     <table class="table">
                         <thead>
@@ -46,8 +46,9 @@
                         </tbody>
                     </table>
                 </div> 
-                
-                <div class="col-12 my-5">
+            </div>
+            <div class="row row--print">                
+                <div class="col-12 my-3">
                     <table class="table">
                         <tr>
                             <td class="font-weight-bold">Due Date</td>
@@ -62,25 +63,26 @@
                             <td colspan="5" class="font-weight-bold">{{ $transaction->payee }}</td>
                         </tr>
                         <tr>
-                            <td colspan="6" class="my-5 py-5"></td>
+                            <td colspan="6" class="my-4 py-4"></td>
                         </tr>
                         <tr class="font-weight-bold">
-                            <td>Item Number</td>
-                            <td class="text-center">Qty</td>
-                            <td>Description</td>
-                            <td colspan="2">Particulars</td>
-                            <td class="text-right">Total</td>
+                            <td>Item No.</td>                            
+                            <th>Qty</th>
+                            <th>Description</th>
+                            <th>Particulars</th>
+                            <th class="text-right">Unit Price</th>
+                            <th class="text-right">Total</th>
                         </tr>
-                        <tr>
-                            <td>1</td>
-                            <td class="text-center">1</td>
-                            <td>{{ $transaction->expense_type_description }}</td>
-                            <td colspan="2">{{ $transaction->trans_type != 'pc' ? $transaction->particulars->name : $transaction->particulars_custom }}</td>
-                            <td class="text-right">
-                                <span class="float-left">{{ $transaction->currency }}</span>
-                                {{ number_format($transaction->form_amount_unit, 2, '.', ',') }}
-                            </td>
-                        </tr>
+                        @foreach ($transaction->transaction_description as $key => $item_desc)
+                            <tr>
+                                <td>{{ $key + 1 }}</td>
+                                <td>{{ $item_desc->qty }}</td>
+                                <td>{{ $item_desc->description }}</td>
+                                <td>{{ $item_desc->particulars->name }}</td>
+                                <td class="text-right">{{ number_format($item_desc->amount, 2, '.', ',') }}</td>
+                                <td class="text-right">{{ number_format($item_desc->amount * $item_desc->qty, 2, '.', ',') }}</td>
+                            </tr>
+                        @endforeach
                         <tr class="font-weight-bold">
                             <td colspan="2"></td>
                             <td>{{ $transaction->form_amount_vat + $transaction->form_amount_wht == 0 ? 'Total' : 'Subtotal' }}</td>
@@ -88,7 +90,7 @@
                             <td class="text-right"><span class="float-left">{{ $transaction->currency }}</span> {{ number_format($transaction->form_amount_subtotal, 2, '.', ',') }}</td>
                         </tr>
                         <tr>
-                            <td colspan="6" class="my-5 py-5"></td>
+                            <td colspan="6" class="my-4 py-4"></td>
                         </tr>
                         @if ($transaction->form_amount_vat)
                         <tr>
@@ -116,7 +118,7 @@
                         </tr>
                         @endif
                         <tr>
-                            <td colspan="6" class="my-5 py-5"></td>
+                            <td colspan="6" class="my-4 py-4"></td>
                         </tr>
                         <tr class="font-weight-bold border-top-2">
                             <td colspan="2"></td>
@@ -126,7 +128,8 @@
                         </tr>
                     </table>
                 </div>
-
+            </div>
+            <div class="row row--print">
                 <div class="col-6">
                     <table class="table table-sm">
                         <tr>
@@ -140,7 +143,6 @@
                         </tr>
                     </table>
                 </div>
-
                 <div class="col-6">
                     <table class="table table-sm">
                         <tr>
@@ -165,7 +167,8 @@
                         </tr>
                     </table>
                 </div>
-
+            </div>
+            <div class="row row--print">
                 <div class="col-4 small text-center my-4">
                     <h5>{{ $transaction->owner->name }}</h5>
                     <div class="mt-2 pt-2 border-top font-weight-bold">Prepared By</div>

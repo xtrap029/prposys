@@ -87,8 +87,8 @@ class TransactionsLiquidationController extends Controller {
             if ($_GET['status'] != "") {
                 switch ($_GET['status']) {
                     case 'requested':
-                        break;
                         $transactions = $transactions->where('requested_id', auth()->id());
+                        break;
                     case 'prepared':
                         $transactions = $transactions->where('owner_id', auth()->id());
                         break;

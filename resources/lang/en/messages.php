@@ -22,5 +22,6 @@ return [
     'issue_prompt' => 'Issue Payment',
     'approval_prompt' => 'Send for approval',
     'clear_prompt' => 'Deposit Information',
-    'make_not_allowed' => 'Transaction Code not available.'
+    'make_not_allowed' => 'Transaction Code not available.',
+    'required_amount' => 'Required amount should match total items amount.',
 ];
