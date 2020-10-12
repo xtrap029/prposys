@@ -82,7 +82,7 @@
                                     <a href="/transaction-form/report?type={{ $trans_types[0] }}&company={{ $company->id }}&status={{ config('global.generated_form')[0] }}" class="mx-3 vlign--baseline-middle">Reports</a>
                                 @endif
 
-                                <form action="/transaction-form/{{ $trans_page_url }}/{{ $company->id }}" method="GET" class="input-group w-50 float-right">
+                                <form action="/transaction-form/{{ $trans_page_url }}/{{ $company->id }}" method="GET" class="input-group w-40 float-right">
                                     <select name="status" class="form-control">
                                         <option value="">All Status</option>
                                         <option value="requested" {{ app('request')->input('status') == 'requested' ? 'selected' : '' }}>Requested</option>
@@ -98,7 +98,7 @@
                                             <option value="po" {{ app('request')->input('type') == 'po' ? 'selected' : '' }}>PO</option>
                                         </select>
                                     @endif
-                                    <input type="text" class="form-control" name="s" value="{{ app('request')->input('s') }}" placeholder="Type keyword here...">
+                                    <input type="text" class="form-control" name="s" value="{{ app('request')->input('s') }}" placeholder="keyword here...">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary py-0 px-2" type="submit">
                                             <i class="material-icons mt-1">search</i>

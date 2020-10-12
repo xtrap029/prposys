@@ -512,15 +512,20 @@ class TransactionsLiquidationController extends Controller {
 
     public function clear(Request $request, Transaction $transaction) {
         if ($this->check_can_clear($transaction->id)) {
-            $data = $request->validate([
-                'depo_type' => ['required', 'in:'.implode(',', config('global.deposit_type'))],
-                'depo_bank_branch_id' => ['required', 'exists:bank_branches,id'],
-                'depo_ref' => ['required'],
-                'depo_date' => ['required', 'date'],
-                'depo_slip' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:6048']
-            ]);
+            $data = [];
 
-            $data['depo_slip'] = basename($request->file('depo_slip')->store('public/attachments/deposit_slip'));
+            if ($transaction->liquidation->sum('amount') - $transaction->amount_issued != 0) {
+                $data = $request->validate([
+                    'depo_type' => ['required', 'in:'.implode(',', config('global.deposit_type'))],
+                    'depo_bank_branch_id' => ['required', 'exists:bank_branches,id'],
+                    'depo_ref' => ['required'],
+                    'depo_date' => ['required', 'date'],
+                    'depo_slip' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:6048']
+                ]);
+                
+                $data['depo_slip'] = basename($request->file('depo_slip')->store('public/attachments/deposit_slip'));
+            }
+
             $data['status_id'] = 9;
             $data['liquidation_approver_id'] = auth()->id();
             $data['updated_id'] = auth()->id();

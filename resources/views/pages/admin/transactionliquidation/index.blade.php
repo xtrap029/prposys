@@ -35,7 +35,7 @@
                                 <span class="mr-3 vlign--baseline-middle">{{ $company->name }}</span>
                                 
                                 @if ($trans_page_url == 'prpo')
-                                    <a data-toggle="modal" data-target="#modal-liquidate-pr" href="#_" class="mx-3 vlign--baseline-middle">Liquidate PR/PO</a>
+                                    <a data-toggle="modal" data-target="#modal-liquidate-pr" href="#_" class="mx-3 vlign--baseline-middle">Liquidate</a>
                                     <div class="modal fade" id="modal-liquidate-pr" tabindex="-1" role="dialog" aria-hidden="true">
                                         <div class="modal-dialog modal-md" role="document">
                                             <div class="modal-content">
@@ -56,7 +56,7 @@
                                         </div>
                                     </div>
                                 @else
-                                    <a data-toggle="modal" data-target="#modal-liquidate-pc" href="#_" class="mx-3 vlign--baseline-middle">Liquidate PC</a>
+                                    <a data-toggle="modal" data-target="#modal-liquidate-pc" href="#_" class="mx-3 vlign--baseline-middle">Liquidate</a>
                                     <div class="modal fade" id="modal-liquidate-pc" tabindex="-1" role="dialog" aria-hidden="true">
                                         <div class="modal-dialog modal-md" role="document">
                                             <div class="modal-content">
@@ -79,10 +79,10 @@
                                 @endif
                                 @if (in_array(Auth::user()->role_id, [1, 2]))
                                     <a href="/transaction-liquidation/report?type={{ $trans_types[0] }}&company={{ $company->id }}&status={{ config('global.liquidation_generated')[0] }}" class="mx-3 vlign--baseline-middle">Reports</a>
-                                    <a href="/transaction-liquidation/report-deposit?type={{ $trans_types[0] }}&company={{ $company->id }}" class="mx-3 vlign--baseline-middle">Reports - Deposit</a>
+                                    <a href="/transaction-liquidation/report-deposit?type={{ $trans_types[0] }}&company={{ $company->id }}" class="mx-3 vlign--baseline-middle">Rep. Deposits</a>
                                 @endif
 
-                                <form action="/transaction-liquidation/{{ $trans_page_url }}/{{ $company->id }}" method="GET" class="input-group w-50 float-right">
+                                <form action="/transaction-liquidation/{{ $trans_page_url }}/{{ $company->id }}" method="GET" class="input-group w-40 float-right">
                                     <select name="status" class="form-control">
                                         <option value="">All Status</option>
                                         <option value="requested" {{ app('request')->input('status') == 'requested' ? 'selected' : '' }}>Requested</option>
@@ -98,7 +98,7 @@
                                             <option value="po" {{ app('request')->input('type') == 'po' ? 'selected' : '' }}>PO</option>
                                         </select>
                                     @endif
-                                    <input type="text" class="form-control" name="s" value="{{ app('request')->input('s') }}" placeholder="Type keyword here...">
+                                    <input type="text" class="form-control" name="s" value="{{ app('request')->input('s') }}" placeholder="keyword here...">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary py-0 px-2" type="submit">
                                             <i class="material-icons mt-1">search</i>
