@@ -3,3 +3,28 @@
         margin-top: -5px;
     }
 }
+
+.sidebar--tecc {
+    & .nav-sidebar > .nav-item > .nav-link.active {
+        background-color: $blue;
+        color: white;
+    }
+
+    & .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+        border-color: $blue;
+    }
+
+    & .nav-treeview > .nav-item > .nav-link.active,
+    & .nav-treeview > .nav-item > .nav-link.active:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+        color: black;
+    }
+
+    & .sidebar a {
+        color: black;
+    }
+
+    & .brand-link {
+        color: rgba(0, 0, 0, 0.8);
+    }
+}

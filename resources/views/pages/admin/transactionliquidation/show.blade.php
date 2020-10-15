@@ -85,20 +85,20 @@
                                         <table class="table table-bordered">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-center">Amount Used</th>
                                                     <th class="text-center">Total Advanced</th>
-                                                    <th class="text-center">Bal. to be {{ $transaction->liq_balance >= 0 ? 'paid' : 'returned' }}</th>
+                                                    <th class="text-center">Amount Used</th>
+                                                    <th class="text-center">Amount to be {{ $transaction->liq_balance >= 0 ? 'paid' : 'returned' }}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
                                                     <td class="text-center">
                                                         {{ $transaction->currency }}
-                                                        {{ number_format($transaction->liq_subtotal, 2, '.', ',') }}
+                                                        {{ number_format($transaction->amount_issued, 2, '.', ',') }}
                                                     </td>
                                                     <td class="text-center">
                                                         {{ $transaction->currency }}
-                                                        {{ number_format($transaction->amount_issued, 2, '.', ',') }}
+                                                        {{ number_format($transaction->liq_subtotal, 2, '.', ',') }}
                                                     </td>
                                                     <td class="text-center">
                                                         {{ $transaction->currency }}
@@ -177,20 +177,20 @@
                                         <table class="table table-bordered">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-center">Amount Used</th>
                                                     <th class="text-center">Total Advanced</th>
-                                                    <th class="text-center">Bal. to be {{ $transaction->liq_balance >= 0 ? 'paid' : 'returned' }}</th>
+                                                    <th class="text-center">Amount Used</th>
+                                                    <th class="text-center">Amount to be {{ $transaction->liq_balance >= 0 ? 'paid' : 'returned' }}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
                                                     <td class="text-center">
                                                         {{ $transaction->currency }}
-                                                        {{ number_format($transaction->liq_subtotal, 2, '.', ',') }}
+                                                        {{ number_format($transaction->amount_issued, 2, '.', ',') }}
                                                     </td>
                                                     <td class="text-center">
                                                         {{ $transaction->currency }}
-                                                        {{ number_format($transaction->amount_issued, 2, '.', ',') }}
+                                                        {{ number_format($transaction->liq_subtotal, 2, '.', ',') }}
                                                     </td>
                                                     <td class="text-center">
                                                         {{ $transaction->currency }}

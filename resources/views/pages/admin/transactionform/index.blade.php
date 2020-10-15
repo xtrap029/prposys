@@ -86,18 +86,15 @@
                                     <select name="status" class="form-control">
                                         <option value="">All Status</option>
                                         <option value="requested" {{ app('request')->input('status') == 'requested' ? 'selected' : '' }}>Requested</option>
-                                        @if (in_array(Auth::user()->role_id, [1, 2]))
-                                            <option value="prepared" {{ app('request')->input('status') == 'prepared' ? 'selected' : '' }}>Prepared</option>
-                                        @endif
+                                        <option value="prepared" {{ app('request')->input('status') == 'prepared' ? 'selected' : '' }}>Prepared</option>
                                         <option value="approval" {{ app('request')->input('status') == 'approval' ? 'selected' : '' }}>Awaiting Approval</option>
+                                        <option value="issued" {{ app('request')->input('status') == 'issued' ? 'selected' : '' }}>Issued</option>
                                     </select>
-                                    @if ($trans_page_url == 'prpo')
-                                        <select name="type" class="form-control">
-                                            <option value="">All Types</option>
-                                            <option value="pr" {{ app('request')->input('type') == 'pr' ? 'selected' : '' }}>PR</option>
-                                            <option value="po" {{ app('request')->input('type') == 'po' ? 'selected' : '' }}>PO</option>
-                                        </select>
-                                    @endif
+                                    <select name="type" class="form-control {{ $trans_page_url == 'prpo' ? '' : 'd-none' }}">
+                                        <option value="">All Types</option>
+                                        <option value="pr" {{ app('request')->input('type') == 'pr' ? 'selected' : '' }}>PR</option>
+                                        <option value="po" {{ app('request')->input('type') == 'po' ? 'selected' : '' }}>PO</option>
+                                    </select>
                                     <input type="text" class="form-control" name="s" value="{{ app('request')->input('s') }}" placeholder="keyword here...">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary py-0 px-2" type="submit">

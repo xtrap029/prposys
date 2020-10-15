@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="card card-widget widget-user">
-                    <div class="widget-user-header bg-maroon">
+                    <div class="widget-user-header bg--tecc">
                         <h3 class="widget-user-username">{{ $user->name }}</h3>
                         <h5 class="widget-user-desc">{{ $user->role->name }}</h5>
                     </div>
@@ -17,6 +17,9 @@
                     </div>
                     <div class="card-footer bg-white">
                         <div class="row">
+                            <div class="col-12 text-center pb-3 font-weight-bold text-primary">
+                                {{ $user->company->name }}
+                            </div>
                             <div class="col-sm-6 border-right">
                                 <div class="description-block">
                                     <h5 class="description-header">Email</h5>
@@ -34,18 +37,26 @@
                 </div>
             </div>
             <div class="col-md-8 d-flex">
-                <div class="card jsInspire w-100">
+                {{-- <div class="card jsInspire w-100">
                     <div class="card-body h-100 d-table">
                         <div class="text-white d-table-cell vlign--middle text-center">
                             <h5 class="jsInspire_quote"></h5>
                             <h6 class="jsInspire_author"></h6>
                         </div>
                     </div>
+                </div> --}}
+                <div class="card w-100">
+                    <div class="card-body rounded h-100 d-table" style="
+                        background-image:url('{{ config('global.site_banner') }}');
+                        background-size:cover;
+                        background-position:center;
+                        margin-right: -1px;">
+                    </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="info-box bg-orange p-3">
-                    <span class="info-box-icon"><i class="material-icons" style="font-size:45px">payments</i></span>
+                <div class="info-box p-3">
+                    <span class="info-box-icon"><i class="material-icons text-olive" style="font-size:45px">payments</i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">Total Unliquidated Amount</span>
                         <span class="info-box-number">P{{ number_format($unliquidated_bal['used_amount'], 2, '.', ',') }}</span>
@@ -57,8 +68,8 @@
                         </span>
                     </div>
                 </div>
-                <div class="info-box bg-warning p-3">
-                    <span class="info-box-icon"><i class="material-icons" style="font-size:45px">format_list_numbered</i></span>
+                <div class="info-box p-3">
+                    <span class="info-box-icon"><i class="material-icons text-danger" style="font-size:45px">format_list_numbered</i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">Total Unliquidated Transactions</span>
                         <span class="info-box-number">{{ $unliquidated_bal['used_count'] }} transactions</span>
@@ -71,11 +82,19 @@
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Unliquidated Transactions</h3>
+                    <div class="card-header pb-2">
+                        <h3 class="card-title">Latest Unliquidated</h3>
                         <div class="card-tools">
+                            <button type="button" class="btn btn-tool pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="material-icons text-primary">list</i>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="transaction-form/prpo/{{ $user->company_id }}?status=issued&type=pr&s=">Payment Release</a>
+                                <a class="dropdown-item" href="transaction-form/prpo/{{ $user->company_id }}?status=issued&type=po&s=">Purchase Order</a>
+                                <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=issued&type=&s=">Petty Cash</a>
+                            </div>
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="material-icons">minimize</i>
+                                <i class="material-icons text-primary">arrow_drop_up</i>
                             </button>
                         </div>
                     </div>
@@ -84,28 +103,40 @@
                             <thead>
                                 <tr>
                                     <th>Transaction</th>
-                                    <th>Status</th>
-                                    <th>Last Update</th>
+                                    <th class="text-right">Amount</th>
+                                    <th class="text-center">Last Update</th>
                                 </tr>
                             </thead>
                             @foreach ($unliquidated as $item)
                                 <tr>
-                                    <td>{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</td>
-                                    <td>{{ $item->status->name }}</td>
-                                    <td>{{ Carbon::parse($item->updated_at)->diffForHumans() }}</td>
+                                    <td>
+                                        <a href="transaction-form/view/{{ $item->id }}">
+                                            {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                        </a>
+                                    </td>
+                                    <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
+                                    <td class="text-center">{{ Carbon::parse($item->updated_at)->diffForHumans() }}</td>
                                 </tr>
                             @endforeach
                         </table>
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Recent Cleared Transactions</h3>
+                    <div class="card-header pb-2">
+                        <h3 class="card-title">Latest Cleared</h3>
                         <div class="card-tools">
+                            <button type="button" class="btn btn-tool pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="material-icons text-primary">list</i>
+                            </button>                            
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="transaction-liquidation/prpo/{{ $user->company_id }}?status=cleared&type=pr&s=">Payment Release</a>
+                                <a class="dropdown-item" href="transaction-liquidation/prpo/{{ $user->company_id }}?status=cleared&type=po&s=">Purchase Order</a>
+                                <a class="dropdown-item" href="transaction-liquidation/pc/{{ $user->company_id }}?status=cleared&type=&s=">Petty Cash</a>
+                            </div>
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="material-icons">minimize</i>
+                                <i class="material-icons text-primary">arrow_drop_up</i>
                             </button>
-                        </div>
+                        </div>  
                     </div>
                     <div class="card-body p-0">
                         <table class="table table-striped small m-0">
@@ -113,14 +144,18 @@
                                 <tr>
                                     <th>Transaction</th>
                                     <th class="text-right">Balance</th>
-                                    <th>Last Update</th>
+                                    <th class="text-center">Last Update</th>
                                 </tr>
                             </thead>
                             @foreach ($cleared as $item)
-                                <tr class="{{ number_format($item->liquidation->sum('amount') - $item->amount_issued, 2, '.', ',') > 0 ? 'bg-success' : '' }}">
-                                    <td>{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</td>
+                                <tr>
+                                    <td>
+                                        <a href="transaction-liquidation/view/{{ $item->id }}">
+                                            {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                        </a>
+                                    </td>
                                     <td class="text-right">{{ number_format($item->liquidation->sum('amount') - $item->amount_issued, 2, '.', ',') }}</td>
-                                    <td>{{ Carbon::parse($item->updated_at)->diffForHumans() }}</td>
+                                    <td class="text-center">{{ Carbon::parse($item->updated_at)->diffForHumans() }}</td>
                                 </tr>
                             @endforeach
                         </table>
@@ -161,17 +196,25 @@
                     </div>
                     <div class="col-4 col-md-2 my-3">
                         <div class="description-block">
-                            <h5 class="description-header text-success">{{ $stats['cleared'] }}</h5>
+                            <h5 class="description-header text-primary">{{ $stats['cleared'] }}</h5>
                             <span class="description-text">Cleared</span>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Recent Transactions Requested</h3>
+                            <div class="card-header pb-2">
+                                <h3 class="card-title">Latest Form - Approval</h3>
                                 <div class="card-tools">
+                                    <button type="button" class="btn btn-tool pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="material-icons text-primary">list</i>
+                                    </button>                            
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="transaction-form/prpo/{{ $user->company_id }}?status=approval&type=pr&s=">Payment Release</a>
+                                        <a class="dropdown-item" href="transaction-form/prpo/{{ $user->company_id }}?status=approval&type=po&s=">Purchase Order</a>
+                                        <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=approval&type=&s=">Petty Cash</a>
+                                    </div>
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                        <i class="material-icons">minimize</i>
+                                        <i class="material-icons text-primary">arrow_drop_up</i>
                                     </button>
                                 </div>
                             </div>
@@ -180,26 +223,30 @@
                                     <thead>
                                         <tr>
                                             <th>Transaction</th>
-                                            <th>Status</th>
-                                            <th>Last Update</th>
+                                            <th class="text-right">Amount</th>
+                                            <th class="text-center">Last Update</th>
                                         </tr>
                                     </thead>
                                     @foreach ($requested as $item)
                                         <tr>
-                                            <td>{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</td>
-                                            <td>{{ $item->status->name }}</td>
-                                            <td>{{ Carbon::parse($item->updated_at)->diffForHumans() }}</td>
+                                            <td>
+                                                <a href="transaction-form/view/{{ $item->id }}">
+                                                    {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                                </a>
+                                            </td>
+                                            <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
+                                            <td class="text-center">{{ Carbon::parse($item->updated_at)->diffForHumans() }}</td>
                                         </tr>
                                     @endforeach
                                 </table>
                             </div>
                         </div>
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Recent Transactions Prepared</h3>
+                        <div class="card d-none">
+                            <div class="card-header pb-2">
+                                <h3 class="card-title">Latest Prepared</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                        <i class="material-icons">minimize</i>
+                                        <i class="material-icons text-primary">arrow_drop_up</i>
                                     </button>
                                 </div>
                             </div>
@@ -225,11 +272,11 @@
                     </div>
                     <div class="col-md-6">
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Recent Activities</h3>
+                            <div class="card-header pb-2">
+                                <h3 class="card-title">Latest Activities</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                        <i class="material-icons">minimize</i>
+                                        <i class="material-icons text-primary">arrow_drop_up</i>
                                     </button>
                                 </div>
                             </div>
@@ -296,15 +343,18 @@
                                                                     @if (in_array($item->description, ['created', 'updated']))
                                                                         @switch($item->subject_type)
                                                                             @case('App\Bank')                           <?php $view_url = '/bank/'.$item->subject_id.'/edit'; ?> @break
+                                                                            @case('App\BankBranch')                     <?php $view_url = '/bank-branch/edit/'.$item->subject_id; ?> @break
                                                                             @case('App\CoaTagging')                     <?php $view_url = '/coa-tagging/'.$item->subject_id.'/edit'; ?> @break
                                                                             @case('App\Company')                        <?php $view_url = '/company/'.$item->subject_id.'/edit'; ?> @break
                                                                             @case('App\CompanyProject')                 <?php $view_url = '/company-project/edit/'.$item->subject_id; ?> @break
                                                                             @case('App\ExpenseType')                    <?php $view_url = '/expense-type/'.$item->subject_id.'/edit'; ?> @break
                                                                             @case('App\Particular')                     <?php $view_url = '/particular/'.$item->subject_id.'/edit'; ?> @break
+                                                                            @case('App\ReleasedBy')                     <?php $view_url = '/released-by/'.$item->subject_id.'/edit'; ?> @break
                                                                             @case('App\Role')                           <?php $view_url = '/role/'.$item->subject_id.'/edit'; ?> @break
                                                                             @case('App\Settings')                       <?php $view_url = '/settings'; ?> @break
-                                                                            @case('App\item')                    <?php $view_url = '/transaction/view/'.$item->subject_id; ?> @break
+                                                                            @case('App\Transaction')                    <?php $view_url = '/transaction/view/'.$item->subject_id; ?> @break
                                                                             @case('App\TransactionsAttachment')         <?php $view_url = '/transaction-liquidation/finder-attachment/'.$item->subject_id; ?> @break
+                                                                            @case('App\TransactionsDescription')        <?php $view_url = '#'; ?> @break
                                                                             @case('App\TransactionsLiquidation')        <?php $view_url = '/transaction-liquidation/finder-liquidation/'.$item->subject_id; ?> @break
                                                                             @case('App\User')                           <?php $view_url = '/user/'.$item->subject_id.'/edit'; ?> @break
                                                                             @case('App\VatType')                        <?php $view_url = '/vat-type/'.$item->subject_id.'/edit'; ?> @break
@@ -336,23 +386,23 @@
 
 @section('script')
     <script type="text/javascript">
-        $(function() {
-            $.ajax({
-                url: "https://quotes.rest/qod?language=en",
-                context: document.body
-            }).done(function(response) {
-                quote = response.contents.quotes[0]
-                item = '.jsInspire'
+        // $(function() {
+        //     $.ajax({
+        //         url: "https://quotes.rest/qod?language=en",
+        //         context: document.body
+        //     }).done(function(response) {
+        //         quote = response.contents.quotes[0]
+        //         item = '.jsInspire'
 
-                $(item).css({
-                    "background-image":"url("+quote.background+")",
-                    "background-size":"cover",
-                    "background-position":"center",
-                })
+        //         $(item).css({
+        //             "background-image":"url("+quote.background+")",
+        //             "background-size":"cover",
+        //             "background-position":"center",
+        //         })
 
-                $(item+'_quote').text(quote.quote)
-                $(item+'_author').text(quote.author)
-            })
-        })
+        //         $(item+'_quote').text(quote.quote)
+        //         $(item+'_author').text(quote.author)
+        //     })
+        // })
     </script>
 @endsection

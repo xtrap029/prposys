@@ -1,0 +1,8 @@
+.progress {
+    background-color: gray !important;
+    height: 3px !important;
+
+    &-bar {
+        background-color: red !important;
+    }
+}

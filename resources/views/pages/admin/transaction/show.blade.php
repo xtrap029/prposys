@@ -10,6 +10,7 @@
                     <a href="/transaction/{{ $trans_page }}/{{ $transaction->project->company_id }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
                     <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>
                     <a href="/transaction/reset/{{ $transaction->id }}" class="btn btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
+                    <a href="#_" class="btn btn-default {{ $perms['can_reassign'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-reassign"><i class="align-middle font-weight-bolder material-icons text-md">perm_identity</i> Reassign</a>
                 </div>
                 <div class="col-md-6 text-right mb-4">
                     <a href="/transaction/edit/{{ $transaction->id }}" class="btn btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
@@ -34,6 +35,47 @@
                                         <textarea name="cancellation_reason" class="form-control @error('cancellation_reason') is-invalid @enderror" rows="3" placeholder="Cancellation Reason" required></textarea>
                                         @include('errors.inline', ['message' => $errors->first('cancellation_reason')])
                                         <input type="submit" class="btn btn-danger mt-2" value="Cancel Now">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                @if ($perms['can_reassign'])
+                    <div class="modal fade" id="modal-reassign" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-md" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title">{{ __('messages.reassign_prompt') }}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <form action="/transaction/reassign/{{ $transaction->id }}" method="post">
+                                        @csrf
+                                        @method('put')
+                                        <div class="row">
+                                            <div class="col-md-6 form-group">
+                                                <label for="">Prepared by</label>
+                                                <select name="owner_id" class="form-control">
+                                                    @foreach ($users as $user)
+                                                        <option value="{{ $user->id }}" {{ $user->id == $transaction->owner_id ? 'selected' : '' }}>{{ $user->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label for="">Requested by</label>
+                                                <select name="requested_id" class="form-control">
+                                                    @foreach ($users as $user)
+                                                        <option value="{{ $user->id }}" {{ $user->id == $transaction->requested_id ? 'selected' : '' }}>{{ $user->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        {{-- <textarea name="cancellation_reason" class="form-control @error('cancellation_reason') is-invalid @enderror" rows="3" placeholder="Cancellation Reason" required></textarea> --}}
+                                        <input type="submit" class="btn btn-danger mt-2" value="Reassign Now">
                                     </form>
                                 </div>
                             </div>

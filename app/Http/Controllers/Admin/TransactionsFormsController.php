@@ -100,8 +100,15 @@ class TransactionsFormsController extends Controller {
                         $transactions = $transactions->where('owner_id', auth()->id());
                         break;
                     case 'approval':
-                        if (in_array(User::where('id', auth()->id())->first()->role_id, [1, 2])) {
-                            $transactions = $transactions->whereIn('status_id', config('global.status_approval'));
+                        $transactions = $transactions->whereIn('status_id', config('global.form_approval'));
+                        if (!in_array(User::where('id', auth()->id())->first()->role_id, [1, 2])) {
+                            $transactions->where('requested_id', auth()->id());
+                        }
+                        break;
+                    case 'issued':
+                        $transactions = $transactions->whereIn('status_id', config('global.form_issued'));
+                        if (!in_array(User::where('id', auth()->id())->first()->role_id, [1, 2])) {
+                            $transactions->where('requested_id', auth()->id());
                         }
                         break;
                     default:
@@ -112,6 +119,7 @@ class TransactionsFormsController extends Controller {
             $transactions = $transactions->orderBy('id', 'desc')->paginate(10);
             $transactions->appends(['s' => $_GET['s']]);
             $transactions->appends(['type' => $_GET['type']]);
+            $transactions->appends(['status' => $_GET['status']]);
         } else {
             $transactions = Transaction::whereIn('trans_type', $trans_types)
                                     ->whereIn('status_id', config('global.page_form'))

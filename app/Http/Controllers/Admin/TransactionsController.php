@@ -88,8 +88,9 @@ class TransactionsController extends Controller {
                         $transactions = $transactions->where('owner_id', auth()->id());
                         break;
                     case 'approval':
-                        if (in_array(User::where('id', auth()->id())->first()->role_id, [1, 2])) {
-                            $transactions = $transactions->whereIn('status_id', config('global.status_approval'));
+                        $transactions = $transactions->whereIn('status_id', config('global.status_approval'));
+                        if (!in_array(User::where('id', auth()->id())->first()->role_id, [1, 2])) {
+                            $transactions->where('requested_id', auth()->id());
                         }
                         break;
                     default:
@@ -314,7 +315,10 @@ class TransactionsController extends Controller {
         $perms['can_edit'] = $this->check_can_edit($transaction->id);
         $perms['can_cancel'] = $this->check_can_cancel($transaction->id);
         $perms['can_reset'] = $this->check_can_reset($transaction->id);
+        $perms['can_reassign'] = $this->check_can_reassign($transaction->id);        
         // $perms['can_issue'] = $this->check_can_issue($transaction->id);
+
+        $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
 
         switch ($transaction->trans_type) {
             case 'pr':
@@ -333,8 +337,24 @@ class TransactionsController extends Controller {
             'transaction' => $transaction,
             'perms' => $perms,
             'logs' => $logs,
+            'users' => $users,
             'trans_page' => $trans_page
         ]);
+    }
+
+    public function reassign(Request $request, Transaction $transaction) {
+        if ($this->check_can_reassign($transaction->id)) {
+            $data = $request->validate([
+                'requested_id' => ['required', 'exists:users,id'],
+                'owner_id' => ['required', 'exists:users,id']
+            ]);
+
+            $data['updated_id'] = auth()->id();
+            $transaction->update($data);
+            return back()->with('success', 'Transaction'.__('messages.reassign_success'));
+        } else {
+            return back()->with('error', __('messages.cant_edit'));
+        }
     }
 
     public function reset(Transaction $transaction) {
@@ -564,5 +584,22 @@ class TransactionsController extends Controller {
         }
 
         return $can_reset;
+    }
+
+    private function check_can_reassign($transaction, $user = '') {
+        $can_reassign = true;
+
+        if (!$user) {
+            $user = auth()->id();
+        }
+
+        $user = User::where('id', $user)->first();
+
+        // check if reassign
+        if ($user->role_id != 1) {
+            $can_reassign = false;
+        }
+
+        return $can_reassign;
     }
 }

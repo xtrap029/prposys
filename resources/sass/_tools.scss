@@ -30,3 +30,10 @@
 .w-40 {
     width: 40% !important;
 }
+
+.bg--tecc, .bg--tecc > a {
+    color: white !important;
+}
+.bg--tecc {
+    background-color: $blue !important;
+}

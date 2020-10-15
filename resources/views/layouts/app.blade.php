@@ -59,7 +59,7 @@
             @guest  
             @else
                 <!-- Main Sidebar Container -->
-                <aside class="main-sidebar elevation-4 sidebar-light-maroon">
+                <aside class="main-sidebar elevation-4 sidebar--tecc">
                     <!-- Brand Logo -->
                     <a href="/" class="brand-link navbar-white">
                         <img src="{{ config('global.site_icon') }}" alt="" class="brand-image" style="opacity: .8">
@@ -79,7 +79,7 @@
                                             </div>
                                             <div class="info">
                                                 <a href="/my-account" class="d-block">{{ Auth::user()->name }}</a>
-                                                <span class="small text-danger font-weight-bold">{{ Auth::user()->role->name }}</span>
+                                                <span class="small text-secondary font-weight-bold">{{ Auth::user()->role->name }}</span>
                                             </div>
                                         @endguest
                                     </div>
@@ -140,7 +140,7 @@
                                                 <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo-liquidation', 'pc-liquidation']) ? 'menu-open' : '' : '' }}">
                                                     <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo-liquidation', 'pc-liquidation']) ? 'active' : '' : '' }}">
                                                         <i class="nav-icon material-icons icon--list">list_alt</i>
-                                                        <p>LIQUIDATION</p>
+                                                        <p>CLEARING / LIQ.</p>
                                                     </a>
                                                     <ul class="nav nav-treeview">
                                                         <li class="nav-item">
