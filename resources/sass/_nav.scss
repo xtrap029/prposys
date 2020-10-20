@@ -5,6 +5,8 @@
 }
 
 .sidebar--tecc {
+    background-color: white;
+
     & .nav-sidebar > .nav-item > .nav-link.active {
         background-color: $blue;
         color: white;

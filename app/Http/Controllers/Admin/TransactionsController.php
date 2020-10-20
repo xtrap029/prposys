@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Company;
 use App\CompanyProject;
 use App\Particulars;
+use App\ReleasedBy;
 use App\Settings;
 use App\Transaction;
 use App\TransactionStatus;
@@ -315,10 +316,10 @@ class TransactionsController extends Controller {
         $perms['can_edit'] = $this->check_can_edit($transaction->id);
         $perms['can_cancel'] = $this->check_can_cancel($transaction->id);
         $perms['can_reset'] = $this->check_can_reset($transaction->id);
-        $perms['can_reassign'] = $this->check_can_reassign($transaction->id);        
-        // $perms['can_issue'] = $this->check_can_issue($transaction->id);
+        $perms['can_manage'] = $this->check_can_manage($transaction->id);    
 
         $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
+        $releasing_users = ReleasedBy::orderBy('name', 'asc')->get();
 
         switch ($transaction->trans_type) {
             case 'pr':
@@ -338,16 +339,30 @@ class TransactionsController extends Controller {
             'perms' => $perms,
             'logs' => $logs,
             'users' => $users,
+            'releasing_users' => $releasing_users,
             'trans_page' => $trans_page
         ]);
     }
 
-    public function reassign(Request $request, Transaction $transaction) {
-        if ($this->check_can_reassign($transaction->id)) {
-            $data = $request->validate([
-                'requested_id' => ['required', 'exists:users,id'],
-                'owner_id' => ['required', 'exists:users,id']
-            ]);
+    public function manage(Request $request, Transaction $transaction) {
+        if ($this->check_can_manage($transaction->id)) {
+
+            if (in_array($transaction->status_id, config('global.form_issued'))
+                || in_array($transaction->status_id, config('global.liquidations'))
+                || in_array($transaction->status_id, config('global.liquidation_cleared'))) {
+                $data = $request->validate([
+                    'requested_id' => ['required', 'exists:users,id'],
+                    'owner_id' => ['required', 'exists:users,id'],
+                    'released_at' => ['required', 'date'],
+                    'released_by_id' => ['required', 'exists:released_by,id']
+                ]); 
+            } else {
+                $data = $request->validate([
+                    'requested_id' => ['required', 'exists:users,id'],
+                    'owner_id' => ['required', 'exists:users,id']
+                ]); 
+            }
+
 
             $data['updated_id'] = auth()->id();
             $transaction->update($data);
@@ -586,7 +601,7 @@ class TransactionsController extends Controller {
         return $can_reset;
     }
 
-    private function check_can_reassign($transaction, $user = '') {
+    private function check_can_manage($transaction, $user = '') {
         $can_reassign = true;
 
         if (!$user) {

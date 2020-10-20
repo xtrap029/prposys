@@ -43567,6 +43567,10 @@ label:not(.form-check-label):not(.custom-file-label) {
   margin-top: -5px;
 }
 
+.sidebar--tecc {
+  background-color: white;
+}
+
 .sidebar--tecc .nav-sidebar > .nav-item > .nav-link.active {
   background-color: #0076A8;
   color: white;

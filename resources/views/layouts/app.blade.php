@@ -98,7 +98,7 @@
                                                 <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc']) ? 'menu-open' : '' : '' }}">
                                                     <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc']) ? 'active' : '' : '' }}">
                                                         <i class="nav-icon material-icons icon--list">list_alt</i>
-                                                        <p>GENERATE</p>
+                                                        <p>Gen. / History</p>
                                                     </a>
                                                     <ul class="nav nav-treeview">
                                                         <li class="nav-item">
@@ -119,7 +119,7 @@
                                                 <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo-form', 'pc-form']) ? 'menu-open' : '' : '' }}">
                                                     <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo-form', 'pc-form']) ? 'active' : '' : '' }}">
                                                         <i class="nav-icon material-icons icon--list">list_alt</i>
-                                                        <p>FORMS</p>
+                                                        <p>Make Forms / Issued</p>
                                                     </a>
                                                     <ul class="nav nav-treeview">
                                                         <li class="nav-item">
@@ -140,7 +140,7 @@
                                                 <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo-liquidation', 'pc-liquidation']) ? 'menu-open' : '' : '' }}">
                                                     <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo-liquidation', 'pc-liquidation']) ? 'active' : '' : '' }}">
                                                         <i class="nav-icon material-icons icon--list">list_alt</i>
-                                                        <p>CLEARING / LIQ.</p>
+                                                        <p>Clearing / Liq.</p>
                                                     </a>
                                                     <ul class="nav nav-treeview">
                                                         <li class="nav-item">
