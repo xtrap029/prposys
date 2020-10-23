@@ -17,7 +17,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="card card-widget widget-user">
-                        <div class="widget-user-header bg-maroon">
+                        <div class="widget-user-header bg--tecc">
                             <h3 class="widget-user-username">{{ $user->name }}</h3>
                             <h5 class="widget-user-desc">{{ $user->role->name }}</h5>
                         </div>

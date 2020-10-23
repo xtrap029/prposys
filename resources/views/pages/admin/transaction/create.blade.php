@@ -102,7 +102,47 @@
                         </div>
                         @include('errors.inline', ['message' => $errors->first('is_deposit')])
                     </div>
-                    <div class="col-md-2 text-right">
+                    <div class="card col-md-12 mt-4 d-none">
+                        <div class="card-header font-weight-bold">
+                            Select Transaction Mode
+                        </div>
+                        <div class="card-body pb-1 row">                            
+                            <div class="col-md-4">
+                                <div class="callout callout-info py-2 px-3 mx-1 row">
+                                    <div class="col-md-2">
+                                        <input type="radio" name="mode" class="form-control m-auto outline-0">
+                                    </div>
+                                    <div class="col-md-10">
+                                        <h6 class="font-weight-bold mb-1">Regular</h6>
+                                        <p>Lorem ipsum dolor sit amet, consectetur, et dolore magna aliqua.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="callout callout-danger py-2 px-3 mx-1 row">
+                                    <div class="col-md-2">
+                                        <input type="radio" name="mode" class="form-control m-auto outline-0">
+                                    </div>
+                                    <div class="col-md-10">
+                                        <h6 class="font-weight-bold mb-1">Human Resource</h6>
+                                        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="callout callout-success py-2 px-3 mx-1 row">
+                                    <div class="col-md-2">
+                                        <input type="radio" name="mode" class="form-control m-auto outline-0">
+                                    </div>
+                                    <div class="col-md-10">
+                                        <h6 class="font-weight-bold mb-1">Bills Payment</h6>          
+                                        <p>Excepteur sint non proident, sunt in culpa qui mollit anim id.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 text-center">
                         <div class="mt-4">
                             <a href="/transaction/{{ $trans_page }}/{{ $trans_company }}" class="mr-3">Cancel</a>
                             <input type="submit" class="btn btn-primary" value="Save">

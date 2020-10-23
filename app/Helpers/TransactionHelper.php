@@ -4,9 +4,30 @@ namespace App\Helpers;
 
 use App\Settings;
 use App\Transaction;
+use App\TransactionsLiquidation;
 use App\User;
 
 final class TransactionHelper {
+    public static function check_liquidated_balance($user) {
+        $user = User::where('id', $user)->first();
+
+        $transactions = Transaction::where('requested_id', $user->id)
+                        ->where('trans_type', 'pr')
+                        ->whereIn('status_id', config('global.liquidation_cleared'))->get();
+
+        $trans_liq_bal['liq_amount_sum'] = 0;
+        foreach ($transactions as $value) {
+            $liq_sum = TransactionsLiquidation::where('transaction_id', $value->id)->get();
+            $liq_sum = $liq_sum->sum('amount');
+            $trans_liq_bal['liq_amount_sum'] += $liq_sum;
+        }
+
+        $trans_liq_bal['issued_amount_sum'] = $transactions->sum('amount_issued');
+        $trans_liq_bal['percentage_amount'] = ($trans_liq_bal['liq_amount_sum']/$trans_liq_bal['issued_amount_sum']) * 100;
+        $trans_liq_bal['balance'] = $trans_liq_bal['issued_amount_sum'] - $trans_liq_bal['liq_amount_sum'];
+
+        return $trans_liq_bal;
+    }
     public static function check_unliquidated_balance($user) {
         $user = User::where('id', $user)->first();
 

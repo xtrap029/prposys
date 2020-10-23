@@ -43622,6 +43622,10 @@ label:not(.form-check-label):not(.custom-file-label) {
   outline: none;
 }
 
+.description-block--status .description-header {
+  font-size: 30px;
+}
+
 .icon--list {
   vertical-align: bottom;
 }
@@ -43696,6 +43700,11 @@ label:not(.form-check-label):not(.custom-file-label) {
   background-color: #0076A8 !important;
 }
 
+.outline-0:focus {
+  outline: none;
+  box-shadow: none;
+}
+
 @media print {
   .row--print {
     page-break-inside: avoid;
@@ -43704,10 +43713,14 @@ label:not(.form-check-label):not(.custom-file-label) {
 
 .progress {
   background-color: gray !important;
-  height: 3px !important;
+  height: 10px !important;
 }
 
 .progress-bar {
-  background-color: red !important;
+  background-color: #0076A8 !important;
+}
+
+.progress-bar--danger {
+  background-color: #e3342f !important;
 }
 

@@ -37,3 +37,8 @@
 .bg--tecc {
     background-color: $blue !important;
 }
+
+.outline-0:focus {
+    outline: none;
+    box-shadow: none;
+}

@@ -98,7 +98,7 @@
                                                 <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc']) ? 'menu-open' : '' : '' }}">
                                                     <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc']) ? 'active' : '' : '' }}">
                                                         <i class="nav-icon material-icons icon--list">list_alt</i>
-                                                        <p>Gen. / History</p>
+                                                        <p>Gen. / Summary</p>
                                                     </a>
                                                     <ul class="nav nav-treeview">
                                                         <li class="nav-item">

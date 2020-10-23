@@ -1,8 +1,12 @@
 .progress {
     background-color: gray !important;
-    height: 3px !important;
+    height: 10px !important;
 
     &-bar {
-        background-color: red !important;
+        background-color: $blue !important;
+        
+        &--danger {
+            background-color: $red !important;
+        }
     }
 }

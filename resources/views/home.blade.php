@@ -54,36 +54,211 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            
+            <div class="col-md-6">
+                <div class="info-box p-3">
+                    <span class="info-box-icon"><i class="material-icons text-olive" style="font-size:45px">payment</i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Total Balance Amount</span>
+                        <span class="info-box-number">
+                            P {{ number_format($liquidated_bal['balance'], 2, '.', ',') }}
+                            <span class="float-right {{ $liquidated_bal['percentage_amount'] >= 100 ? 'text-danger' : 'text-primary' }}">{{ number_format($liquidated_bal['percentage_amount'], 1) }}%</span>
+                        </span>
+                        <div class="progress">
+                            <div class="progress-bar {{ $liquidated_bal['percentage_amount'] >= 100 ? 'progress-bar--danger' : '' }}" style="width: {{ $liquidated_bal['percentage_amount'] }}%"></div>
+                        </div>
+                        <span class="progress-description">
+                            with P{{ number_format($liquidated_bal['liq_amount_sum'], 2, '.', ',') }} liquidated
+                            versus P{{ number_format($liquidated_bal['issued_amount_sum'], 2, '.', ',') }} issued
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
                 <div class="info-box p-3">
                     <span class="info-box-icon"><i class="material-icons text-olive" style="font-size:45px">payments</i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">Total Unliquidated Amount</span>
-                        <span class="info-box-number">P{{ number_format($unliquidated_bal['used_amount'], 2, '.', ',') }}</span>
+                        <span class="info-box-number">
+                            P {{ number_format($unliquidated_bal['used_amount'], 2, '.', ',') }}
+                            <span class="float-right {{ $unliquidated_bal['percentage_amount'] >= 100 ? 'text-danger' : 'text-primary' }}">{{ number_format($unliquidated_bal['percentage_amount'], 1) }}%</span>
+                        </span>
                         <div class="progress">
-                            <div class="progress-bar" style="width: {{ $unliquidated_bal['percentage_amount'] }}%"></div>
+                            <div class="progress-bar {{ $unliquidated_bal['percentage_amount'] >= 100 ? 'progress-bar--danger' : '' }}" style="width: {{ $unliquidated_bal['percentage_amount'] }}%"></div>
                         </div>
                         <span class="progress-description">
                             with P{{ number_format($unliquidated_bal['limit_amount'], 2, '.', ',') }} limit
                         </span>
                     </div>
                 </div>
-                <div class="info-box p-3">
-                    <span class="info-box-icon"><i class="material-icons text-danger" style="font-size:45px">format_list_numbered</i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Total Unliquidated Transactions</span>
-                        <span class="info-box-number">{{ $unliquidated_bal['used_count'] }} transactions</span>
-                        <div class="progress">
-                            <div class="progress-bar" style="width: {{ $unliquidated_bal['percentage_count'] }}%"></div>
-                        </div>
-                        <span class="progress-description">
-                            with {{ $unliquidated_bal['limit_count'] }} transactions limit
-                        </span>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <div class="my-3">
+                    <div class="description-block description-block--status">
+                        <h5 class="description-header text-danger">{{ $stats['cancelled'] }}</h5>
+                        <span class="description-text">Cancelled</span>
                     </div>
                 </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="my-3">
+                    <div class="description-block description-block--status">
+                        <h5 class="description-header text-orange">{{ $stats['generated'] }}</h5>
+                        <span class="description-text">Generated</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="my-3">
+                    <div class="description-block description-block--status">
+                        <h5 class="description-header text-primary">{{ $stats['issued'] }}</h5>
+                        <span class="description-text">Issued / For Liq.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="my-3">
+                    <div class="description-block description-block--status">
+                        <h5 class="description-header text-success">{{ $stats['cleared'] }}</h5>
+                        <span class="description-text">Cleared</span>
+                    </div>
+                </div>
+            </div>
+
+            @if (in_array($user->role_id, config('global.admin_subadmin')))
+                <div class="col-12 col-md-6">
+                    <div class="card">
+                        <div class="card-header pb-2">
+                            <h3 class="card-title">Form Approval / For Issue</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="material-icons text-primary">list</i>
+                                </button>                            
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="transaction-form/prpo/{{ $user->company_id }}?status=approval&type=pr&s=">Payment Release</a>
+                                    <a class="dropdown-item" href="transaction-form/prpo/{{ $user->company_id }}?status=approval&type=po&s=">Purchase Order</a>
+                                    {{-- <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=approval&type=&s=">Petty Cash</a> --}}
+                                </div>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="material-icons text-primary">arrow_drop_up</i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-striped small m-0">
+                                <thead>
+                                    <tr>
+                                        <th>Transaction</th>
+                                        <th class="text-right">Amount</th>
+                                        <th class="text-center">Last Update</th>
+                                    </tr>
+                                </thead>
+                                @foreach ($for_issue as $item)
+                                    <tr>
+                                        <td>
+                                            <a href="transaction-form/view/{{ $item->id }}">
+                                                {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                            </a>
+                                        </td>
+                                        <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
+                                        <td class="text-center">{{ Carbon::parse($item->updated_at)->diffForHumans() }}</td>
+                                    </tr>
+                                @endforeach
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card">
+                        <div class="card-header pb-2">
+                            <h3 class="card-title">Form Clearing</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="material-icons text-primary">list</i>
+                                </button>                            
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="transaction-liquidation/prpo/{{ $user->company_id }}?status=approval&type=pr&s=">Payment Release</a>
+                                    <a class="dropdown-item" href="transaction-liquidation/prpo/{{ $user->company_id }}?status=approval&type=po&s=">Purchase Order</a>
+                                    {{-- <a class="dropdown-item" href="transaction-liquidation/pc/{{ $user->company_id }}?status=approval&type=&s=">Petty Cash</a> --}}
+                                </div>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="material-icons text-primary">arrow_drop_up</i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-striped small m-0">
+                                <thead>
+                                    <tr>
+                                        <th>Transaction</th>
+                                        <th class="text-right">Amount</th>
+                                        <th class="text-center">Last Update</th>
+                                    </tr>
+                                </thead>
+                                @foreach ($for_clearing as $item)
+                                    <tr>
+                                        <td>
+                                            <a href="transaction-liquidation/view/{{ $item->id }}">
+                                                {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                            </a>
+                                        </td>
+                                        <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
+                                        <td class="text-center">{{ Carbon::parse($item->updated_at)->diffForHumans() }}</td>
+                                    </tr>
+                                @endforeach
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <div class="col-md-4">
                 <div class="card">
                     <div class="card-header pb-2">
-                        <h3 class="card-title">Latest Unliquidated</h3>
+                        <h3 class="card-title">Generated</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="material-icons text-primary">list</i>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=&type=pr&s=">Payment Release</a>
+                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=&type=po&s=">Purchase Order</a>
+                                {{-- <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=issued&type=&s=">Petty Cash</a> --}}
+                            </div>
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="material-icons text-primary">arrow_drop_up</i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-striped small m-0">
+                            <thead>
+                                <tr>
+                                    <th>Transaction</th>
+                                    <th class="text-right">Amount</th>
+                                    <th class="text-center">Last Update</th>
+                                </tr>
+                            </thead>
+                            @foreach ($generated as $item)
+                                <tr>
+                                    <td>
+                                        <a href="transaction/view/{{ $item->id }}">
+                                            {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                        </a>
+                                    </td>
+                                    <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
+                                    <td class="text-center">{{ Carbon::parse($item->updated_at)->diffForHumans() }}</td>
+                                </tr>
+                            @endforeach
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header pb-2">
+                        <h3 class="card-title">Unliquidated</h3>
                         <div class="card-tools">
                             <button type="button" class="btn btn-tool pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="material-icons text-primary">list</i>
@@ -91,7 +266,7 @@
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" href="transaction-form/prpo/{{ $user->company_id }}?status=issued&type=pr&s=">Payment Release</a>
                                 <a class="dropdown-item" href="transaction-form/prpo/{{ $user->company_id }}?status=issued&type=po&s=">Purchase Order</a>
-                                <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=issued&type=&s=">Petty Cash</a>
+                                {{-- <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=issued&type=&s=">Petty Cash</a> --}}
                             </div>
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                 <i class="material-icons text-primary">arrow_drop_up</i>
@@ -121,9 +296,11 @@
                         </table>
                     </div>
                 </div>
+            </div>
+            <div class="col-md-4">
                 <div class="card">
                     <div class="card-header pb-2">
-                        <h3 class="card-title">Latest Cleared</h3>
+                        <h3 class="card-title">Cleared</h3>
                         <div class="card-tools">
                             <button type="button" class="btn btn-tool pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="material-icons text-primary">list</i>
@@ -131,7 +308,7 @@
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" href="transaction-liquidation/prpo/{{ $user->company_id }}?status=cleared&type=pr&s=">Payment Release</a>
                                 <a class="dropdown-item" href="transaction-liquidation/prpo/{{ $user->company_id }}?status=cleared&type=po&s=">Purchase Order</a>
-                                <a class="dropdown-item" href="transaction-liquidation/pc/{{ $user->company_id }}?status=cleared&type=&s=">Petty Cash</a>
+                                {{-- <a class="dropdown-item" href="transaction-liquidation/pc/{{ $user->company_id }}?status=cleared&type=&s=">Petty Cash</a> --}}
                             </div>
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                 <i class="material-icons text-primary">arrow_drop_up</i>
@@ -162,9 +339,10 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-md-8">
                 <div class="row">
-                    <div class="col-4 col-md-2 my-3 border-right">
+                    {{-- <div class="col-4 col-md-2 my-3 border-right">
                         <div class="description-block">
                             <h5 class="description-header text-danger">{{ $stats['cancelled'] }}</h5>
                             <span class="description-text">Cancelled</span>
@@ -199,51 +377,11 @@
                             <h5 class="description-header text-primary">{{ $stats['cleared'] }}</h5>
                             <span class="description-text">Cleared</span>
                         </div>
-                    </div>
-                    <div class="col-md-6">
+                    </div> --}}
+                    {{-- <div class="col-md-6">
                         <div class="card">
                             <div class="card-header pb-2">
-                                <h3 class="card-title">Latest Form - Approval</h3>
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-tool pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="material-icons text-primary">list</i>
-                                    </button>                            
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="transaction-form/prpo/{{ $user->company_id }}?status=approval&type=pr&s=">Payment Release</a>
-                                        <a class="dropdown-item" href="transaction-form/prpo/{{ $user->company_id }}?status=approval&type=po&s=">Purchase Order</a>
-                                        <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=approval&type=&s=">Petty Cash</a>
-                                    </div>
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                        <i class="material-icons text-primary">arrow_drop_up</i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="card-body p-0">
-                                <table class="table table-striped small m-0">
-                                    <thead>
-                                        <tr>
-                                            <th>Transaction</th>
-                                            <th class="text-right">Amount</th>
-                                            <th class="text-center">Last Update</th>
-                                        </tr>
-                                    </thead>
-                                    @foreach ($requested as $item)
-                                        <tr>
-                                            <td>
-                                                <a href="transaction-form/view/{{ $item->id }}">
-                                                    {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
-                                                </a>
-                                            </td>
-                                            <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
-                                            <td class="text-center">{{ Carbon::parse($item->updated_at)->diffForHumans() }}</td>
-                                        </tr>
-                                    @endforeach
-                                </table>
-                            </div>
-                        </div>
-                        <div class="card d-none">
-                            <div class="card-header pb-2">
-                                <h3 class="card-title">Latest Prepared</h3>
+                                <h3 class="card-title">Prepared</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                         <i class="material-icons text-primary">arrow_drop_up</i>
@@ -269,11 +407,11 @@
                                 </table>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
+                    </div> --}}
+                    {{-- <div class="col-md-6">
                         <div class="card">
                             <div class="card-header pb-2">
-                                <h3 class="card-title">Latest Activities</h3>
+                                <h3 class="card-title">Activities</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                         <i class="material-icons text-primary">arrow_drop_up</i>
@@ -341,26 +479,6 @@
                                                                 </div>
                                                                 <div class="modal-footer border-0">
                                                                     @if (in_array($item->description, ['created', 'updated']))
-                                                                        @switch($item->subject_type)
-                                                                            @case('App\Bank')                           <?php $view_url = '/bank/'.$item->subject_id.'/edit'; ?> @break
-                                                                            @case('App\BankBranch')                     <?php $view_url = '/bank-branch/edit/'.$item->subject_id; ?> @break
-                                                                            @case('App\CoaTagging')                     <?php $view_url = '/coa-tagging/'.$item->subject_id.'/edit'; ?> @break
-                                                                            @case('App\Company')                        <?php $view_url = '/company/'.$item->subject_id.'/edit'; ?> @break
-                                                                            @case('App\CompanyProject')                 <?php $view_url = '/company-project/edit/'.$item->subject_id; ?> @break
-                                                                            @case('App\ExpenseType')                    <?php $view_url = '/expense-type/'.$item->subject_id.'/edit'; ?> @break
-                                                                            @case('App\Particular')                     <?php $view_url = '/particular/'.$item->subject_id.'/edit'; ?> @break
-                                                                            @case('App\ReleasedBy')                     <?php $view_url = '/released-by/'.$item->subject_id.'/edit'; ?> @break
-                                                                            @case('App\Role')                           <?php $view_url = '/role/'.$item->subject_id.'/edit'; ?> @break
-                                                                            @case('App\Settings')                       <?php $view_url = '/settings'; ?> @break
-                                                                            @case('App\Transaction')                    <?php $view_url = '/transaction/view/'.$item->subject_id; ?> @break
-                                                                            @case('App\TransactionsAttachment')         <?php $view_url = '/transaction-liquidation/finder-attachment/'.$item->subject_id; ?> @break
-                                                                            @case('App\TransactionsDescription')        <?php $view_url = '#'; ?> @break
-                                                                            @case('App\TransactionsLiquidation')        <?php $view_url = '/transaction-liquidation/finder-liquidation/'.$item->subject_id; ?> @break
-                                                                            @case('App\User')                           <?php $view_url = '/user/'.$item->subject_id.'/edit'; ?> @break
-                                                                            @case('App\VatType')                        <?php $view_url = '/vat-type/'.$item->subject_id.'/edit'; ?> @break
-                                                                            @default                                                        
-                                                                        @endswitch
-                                                                    <a href="{{ !empty($view_url) ? $view_url : '#' }}" class="btn btn-primary" target="_blank">View Item</a>
                                                                     @endif
                                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                                 </div>
@@ -376,7 +494,7 @@
                                 </table>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>
