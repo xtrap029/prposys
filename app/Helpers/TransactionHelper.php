@@ -23,7 +23,10 @@ final class TransactionHelper {
         }
 
         $trans_liq_bal['issued_amount_sum'] = $transactions->sum('amount_issued');
-        $trans_liq_bal['percentage_amount'] = ($trans_liq_bal['liq_amount_sum']/$trans_liq_bal['issued_amount_sum']) * 100;
+        $trans_liq_bal['percentage_amount'] = 0;
+        if ($trans_liq_bal['issued_amount_sum'] > 0) {
+            $trans_liq_bal['percentage_amount'] = ($trans_liq_bal['liq_amount_sum']/$trans_liq_bal['issued_amount_sum']) * 100;
+        }
         $trans_liq_bal['balance'] = $trans_liq_bal['issued_amount_sum'] - $trans_liq_bal['liq_amount_sum'];
 
         return $trans_liq_bal;
