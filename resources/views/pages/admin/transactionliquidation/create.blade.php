@@ -58,7 +58,7 @@
                         </button>
                     </div>
                 @endif
-                @if (!$transaction->is_deposit)
+                @if (!$transaction->is_deposit && !$transaction->is_bills)
                     <div class="jsReplicate mt-5">
                         <h4 class="text-center">Items</h4>
                         <table class="table bg-white">
@@ -125,7 +125,7 @@
                             <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
                         </div>
                     </div>
-                @else
+                @elseif($transaction->is_deposit)
                     <div class="row mt-5">                                            
                         <div class="col-md-2">
                             <label for="" class="font-weight-bold">Type</label>
@@ -209,7 +209,7 @@
                 </div>
             </form>
 
-            @if (!$transaction->is_deposit)
+            @if (!$transaction->is_deposit && !$transaction->is_bills)
                 <table class="d-none">
                     <tbody class="jsReplicate_template">
                         <tr class="jsReplicate_template_item">

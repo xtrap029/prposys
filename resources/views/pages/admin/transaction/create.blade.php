@@ -76,12 +76,12 @@
                     </div>
                 </div>
                 <div class="form-row mb-3">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="">Due Date</label>
                         <input type="date" class="form-control @error('due_at') is-invalid @enderror" name="due_at" value="{{ old('due_at') }}" required>
                         @include('errors.inline', ['message' => $errors->first('due_at')])
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="">Requested by</label>
                         <select name="requested_id" class="form-control @error('requested_id') is-invalid @enderror">
                             @foreach ($users as $item)
@@ -90,27 +90,27 @@
                         </select>
                         @include('errors.inline', ['message' => $errors->first('requested_id')])
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-4">
                         <label for="">Prepared by</label>
                         <h5>{{ Auth::user()->name }}</h5>
                     </div>
-                    <div class="col-md-2">
+                    {{-- <div class="col-md-2">
                         <label for="">For Deposit?</label>
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input @error('is_deposit') is-invalid @enderror" name="is_deposit" id="is_deposit" value="1" {{ old('is_deposit') == 'on' ? 'checked' : '' }}>
                             <label class="form-check-label" for="is_deposit">Yes</label>
                         </div>
                         @include('errors.inline', ['message' => $errors->first('is_deposit')])
-                    </div>
-                    <div class="card col-md-12 mt-4 d-none">
+                    </div> --}}
+                    <div class="card col-md-12 mt-4">
                         <div class="card-header font-weight-bold">
-                            Select Transaction Mode
+                            Select Transaction Category
                         </div>
                         <div class="card-body pb-1 row">                            
                             <div class="col-md-4">
                                 <div class="callout callout-info py-2 px-3 mx-1 row">
                                     <div class="col-md-2">
-                                        <input type="radio" name="mode" class="form-control m-auto outline-0">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[0] }}" class="form-control m-auto outline-0" checked>
                                     </div>
                                     <div class="col-md-10">
                                         <h6 class="font-weight-bold mb-1">Regular</h6>
@@ -121,7 +121,7 @@
                             <div class="col-md-4">
                                 <div class="callout callout-danger py-2 px-3 mx-1 row">
                                     <div class="col-md-2">
-                                        <input type="radio" name="mode" class="form-control m-auto outline-0">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[1] }}" class="form-control m-auto outline-0">
                                     </div>
                                     <div class="col-md-10">
                                         <h6 class="font-weight-bold mb-1">Human Resource</h6>
@@ -132,7 +132,7 @@
                             <div class="col-md-4">
                                 <div class="callout callout-success py-2 px-3 mx-1 row">
                                     <div class="col-md-2">
-                                        <input type="radio" name="mode" class="form-control m-auto outline-0">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[2] }}" class="form-control m-auto outline-0">
                                     </div>
                                     <div class="col-md-10">
                                         <h6 class="font-weight-bold mb-1">Bills Payment</h6>          

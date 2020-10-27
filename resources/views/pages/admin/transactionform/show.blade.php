@@ -230,6 +230,10 @@
                                 <label for="">For Deposit?</label>
                                 <h5>{{ $transaction->is_deposit ? 'Yes' : 'No' }}</h5>
                             </div>
+                            <div class="col-md-6 mt-3">
+                                <label for="">Bills Payment?</label>
+                                <h5>{{ $transaction->is_bills ? 'Yes' : 'No' }}</h5>
+                            </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-11">

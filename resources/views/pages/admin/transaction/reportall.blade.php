@@ -22,7 +22,7 @@
                             <option value="">All</option>
                             <option value="pr" {{ $trans_type == "pr" ? 'selected' : '' }}>PR</option>
                             <option value="po" {{ $trans_type == "po" ? 'selected' : '' }}>PO</option>
-                            <option value="pc" {{ $trans_type == "pc" ? 'selected' : '' }}>PC</option>
+                            {{-- <option value="pc" {{ $trans_type == "pc" ? 'selected' : '' }}>PC</option> --}}
                         </select>
                     </div>
                     <div class="col-md-2">

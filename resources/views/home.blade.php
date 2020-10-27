@@ -50,7 +50,8 @@
                         background-image:url('{{ config('global.site_banner') }}');
                         background-size:cover;
                         background-position:center;
-                        margin-right: -1px;">
+                        margin-right: -1px;
+                        min-height: 200px;">
                     </div>
                 </div>
             </div>
@@ -67,7 +68,7 @@
                         <div class="progress">
                             <div class="progress-bar {{ $liquidated_bal['percentage_amount'] >= 100 ? 'progress-bar--danger' : '' }}" style="width: {{ $liquidated_bal['percentage_amount'] }}%"></div>
                         </div>
-                        <span class="progress-description">
+                        <span>
                             with P{{ number_format($liquidated_bal['liq_amount_sum'], 2, '.', ',') }} liquidated
                             versus P{{ number_format($liquidated_bal['issued_amount_sum'], 2, '.', ',') }} issued
                         </span>
@@ -86,7 +87,7 @@
                         <div class="progress">
                             <div class="progress-bar {{ $unliquidated_bal['percentage_amount'] >= 100 ? 'progress-bar--danger' : '' }}" style="width: {{ $unliquidated_bal['percentage_amount'] }}%"></div>
                         </div>
-                        <span class="progress-description">
+                        <span>
                             with P{{ number_format($unliquidated_bal['limit_amount'], 2, '.', ',') }} limit
                         </span>
                     </div>

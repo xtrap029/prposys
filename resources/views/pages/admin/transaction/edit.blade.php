@@ -71,27 +71,67 @@
                     </div>
                 </div>
                 <div class="form-row mb-3">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="">Due Date</label>
                         <input type="text" class="form-control" value="{{ $transaction->due_at }}" readonly>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="">Requested by</label>
                         <input type="text" class="form-control" value="{{ $transaction->requested->name }}" readonly>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-4">
                         <label for="">Prepared by</label>
                         <h5>{{ $transaction->owner->name }}</h5>
                     </div>
-                    <div class="col-md-2">
+                    {{-- <div class="col-md-2">
                         <label for="">For Deposit?</label>
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input @error('is_deposit') is-invalid @enderror" name="is_deposit" id="is_deposit" value="1" {{ $transaction->is_deposit == '1' ? 'checked' : '' }}>
                             <label class="form-check-label" for="is_deposit">Yes</label>
                         </div>
                         @include('errors.inline', ['message' => $errors->first('is_deposit')])
+                    </div> --}}
+                    <div class="card col-md-12 mt-4">
+                        <div class="card-header font-weight-bold">
+                            Select Transaction Category
+                        </div>
+                        <div class="card-body pb-1 row">                            
+                            <div class="col-md-4">
+                                <div class="callout callout-info py-2 px-3 mx-1 row">
+                                    <div class="col-md-2">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[0] }}" class="form-control m-auto outline-0" {{ $transaction->is_deposit == 0 ? 'checked' : '' }}>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <h6 class="font-weight-bold mb-1">Regular</h6>
+                                        <p>Lorem ipsum dolor sit amet, consectetur, et dolore magna aliqua.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="callout callout-danger py-2 px-3 mx-1 row">
+                                    <div class="col-md-2">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[1] }}" class="form-control m-auto outline-0"  {{ $transaction->is_deposit == 1 ? 'checked' : '' }}>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <h6 class="font-weight-bold mb-1">Human Resource</h6>
+                                        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="callout callout-success py-2 px-3 mx-1 row">
+                                    <div class="col-md-2">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[2] }}" class="form-control m-auto outline-0"  {{ $transaction->is_bills == 1 ? 'checked' : '' }}>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <h6 class="font-weight-bold mb-1">Bills Payment</h6>          
+                                        <p>Excepteur sint non proident, sunt in culpa qui mollit anim id.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-2 text-right">
+                    <div class="col-md-12 text-center">
                         <div class="mt-4">
                             <a href="/transaction/{{ $trans_page }}/{{ $transaction->project->company_id }}" class="mr-3">Cancel</a>
                             <input type="submit" class="btn btn-primary" value="Save">

@@ -30,7 +30,7 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th colspan="11" class="border-0">
+                            <th colspan="9" class="border-0">
                                 <img src="/storage/public/images/companies/{{ $company->logo }}" alt="" class="thumb thumb--xxs mr-2 vlign--baseline-middle">
                                 <span class="mr-3 vlign--baseline-middle">{{ $company->name }}</span>
                                 
@@ -66,12 +66,12 @@
                             </th>
                         </tr>
                         <tr>
-                            <th>Transaction</th>
-                            <th>Payee</th>
-                            <th class="text-right">Amount (PHP)</th>
-                            <th>Description</th>
+                            <th>{{ $trans_page == 'prpo' ? 'PR/PO' : 'PC' }} #</th>
+                            <th>Vendor/Payee</th>
+                            <th class="text-center">Currency</th>
+                            <th class="text-right">Amount</th>
+                            <th>Purpose</th>
                             <th>Date Gen.</th>
-                            <th>Date Req.</th>
                             <th>Req. By</th>
                             <th>Status</th>
                             <th></th>
@@ -82,10 +82,10 @@
                             <tr>
                                 <td>{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</td>
                                 <td>{{ $item->payee }}</td>
+                                <td class="text-center">{{ $item->currency }}</td>
                                 <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
-                                <td>{{ $item->expense_type_description }}</td>
+                                <td>{{ $item->purpose }}</td>
                                 <td>{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
-                                <td>{{ $item->created_at->toDateString() }}</td>
                                 <td>{{ $item->requested->name }}</td>
                                 <td>{{ $item->status->name }}</td>
                                 <td>
@@ -129,7 +129,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="11" class="text-center">{{ __('messages.empty') }}</td>
+                                <td colspan="9" class="text-center">{{ __('messages.empty') }}</td>
                             </tr>
                         @endforelse
                     </tbody>

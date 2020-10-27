@@ -27,4 +27,5 @@
         'site_banner' => '/images/banners/'.rand(1, 32).'.png',
         'control_types' => ['Cash', 'Online', 'Check'],
         'control_types_pc' => 'Petty Cash',
+        'trans_category' => ['reg', 'hr', 'bp'],
     ];

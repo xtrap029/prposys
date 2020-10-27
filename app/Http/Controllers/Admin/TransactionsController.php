@@ -174,7 +174,7 @@ class TransactionsController extends Controller {
                 'payee' => ['required'],
                 'due_at' => ['required', 'date'],
                 'requested_id' => ['required', 'exists:users,id'],
-                'is_deposit' => ['boolean']
+                'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
             ];
 
             if ($trans_type == 'pc') {
@@ -182,8 +182,19 @@ class TransactionsController extends Controller {
             } else {
                 $validation['particulars_id'] = ['required', 'exists:particulars,id'];
             }
-
+            
             $data = $request->validate($validation);
+
+            $data['is_deposit'] = 0;
+            $data['is_bills'] = 0;
+            
+            if ($data['trans_category'] == 'hr') {
+                $data['is_deposit'] = 1;
+            } else if ($data['trans_category'] == 'bp') {
+                $data['is_bills'] = 1;
+            }
+
+            unset($data['trans_category']);
 
             $trans_company = CompanyProject::where('id', $data['project_id'])->first()->company_id;
 
@@ -273,7 +284,7 @@ class TransactionsController extends Controller {
             'purpose' => ['required'],
             'project_id' => ['required', 'exists:company_projects,id'],
             'payee' => ['required'],
-            'is_deposit' => ['boolean']
+            'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
         ];
 
         if ($transaction->trans_type == 'pc') {
@@ -284,7 +295,18 @@ class TransactionsController extends Controller {
 
         $data = $request->validate($validation);
 
-        $data['is_deposit'] = $request->has('is_deposit') ?: '0';
+        $data['is_deposit'] = 0;
+        $data['is_bills'] = 0;
+        
+        if ($data['trans_category'] == 'hr') {
+            $data['is_deposit'] = 1;
+        } else if ($data['trans_category'] == 'bp') {
+            $data['is_bills'] = 1;
+        }
+
+        unset($data['trans_category']);
+
+        // $data['is_deposit'] = $request->has('is_deposit') ?: '0';
 
         // if not pr, not admin, amount does exceed limit
         if ($transaction->trans_type == 'pr' 

@@ -95,7 +95,13 @@
                                             
                                             @if (in_array(Auth::user()->role_id, [1, 2, 3]))
                                                 <li class="nav-header">TRANSACTION</li>
-                                                <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc']) ? 'menu-open' : '' : '' }}">
+                                                <li class="nav-item">
+                                                    <a href="/transaction/prpo/{{ Auth::user()->company_id }}" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc']) ? 'active' : '' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">list_alt</i>
+                                                        <p><p>Gen. / Summary</p>
+                                                    </a>
+                                                </li>
+                                                {{-- <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc']) ? 'menu-open' : '' : '' }}">
                                                     <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc']) ? 'active' : '' : '' }}">
                                                         <i class="nav-icon material-icons icon--list">list_alt</i>
                                                         <p>Gen. / Summary</p>
@@ -103,20 +109,23 @@
                                                     <ul class="nav nav-treeview">
                                                         <li class="nav-item">
                                                             <a href="/transaction/prpo/{{ Auth::user()->company_id }}" class="nav-link ml-1 pl-5 {{ isset($trans_page) ? $trans_page == 'prpo' ? 'active' : '' : '' }}">
-                                                                {{-- <i class="nav-icon material-icons icon--list">more_vert</i> --}}
                                                                 <p>Pr / Po</p>
                                                             </a>
                                                         </li>
                                                         <li class="nav-item">
                                                             <a href="/transaction/pc/{{ Auth::user()->company_id }}" class="nav-link ml-1 pl-5 {{ isset($trans_page) ? $trans_page == 'pc' ? 'active' : '' : '' }}">
-                                                                {{-- <i class="nav-icon material-icons icon--list">more_vert</i> --}}
                                                                 <p>Petty Cash</p>
                                                             </a>
                                                         </li>
                                                     </ul>
+                                                </li> --}}
+                                                <li class="nav-item">
+                                                    <a href="/transaction-form/prpo/{{ Auth::user()->company_id }}" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo-form', 'pc-form']) ? 'active' : '' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">list_alt</i>
+                                                        <p>Make Forms / Issued</p>
+                                                    </a>
                                                 </li>
-
-                                                <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo-form', 'pc-form']) ? 'menu-open' : '' : '' }}">
+                                                {{-- <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo-form', 'pc-form']) ? 'menu-open' : '' : '' }}">
                                                     <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo-form', 'pc-form']) ? 'active' : '' : '' }}">
                                                         <i class="nav-icon material-icons icon--list">list_alt</i>
                                                         <p>Make Forms / Issued</p>
@@ -124,20 +133,23 @@
                                                     <ul class="nav nav-treeview">
                                                         <li class="nav-item">
                                                             <a href="/transaction-form/prpo/{{ Auth::user()->company_id }}" class="nav-link ml-1 pl-5 {{ isset($trans_page) ? $trans_page == 'prpo-form' ? 'active' : '' : '' }}">
-                                                                {{-- <i class="nav-icon material-icons icon--list">more_vert</i> --}}
                                                                 <p>Pr / Po</p>
                                                             </a>
                                                         </li>
                                                         <li class="nav-item">
                                                             <a href="/transaction-form/pc/{{ Auth::user()->company_id }}" class="nav-link ml-1 pl-5 {{ isset($trans_page) ? $trans_page == 'pc-form' ? 'active' : '' : '' }}">
-                                                                {{-- <i class="nav-icon material-icons icon--list">more_vert</i> --}}
                                                                 <p>Petty Cash</p>
                                                             </a>
                                                         </li>
                                                     </ul>
+                                                </li> --}}
+                                                <li class="nav-item">
+                                                    <a href="/transaction-liquidation/prpo/{{ Auth::user()->company_id }}" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo-liquidation', 'pc-liquidation']) ? 'active' : '' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">list_alt</i>
+                                                        <p>Clearing / Liq.</p>
+                                                    </a>
                                                 </li>
-
-                                                <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo-liquidation', 'pc-liquidation']) ? 'menu-open' : '' : '' }}">
+                                                {{-- <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo-liquidation', 'pc-liquidation']) ? 'menu-open' : '' : '' }}">
                                                     <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo-liquidation', 'pc-liquidation']) ? 'active' : '' : '' }}">
                                                         <i class="nav-icon material-icons icon--list">list_alt</i>
                                                         <p>Clearing / Liq.</p>
@@ -145,18 +157,16 @@
                                                     <ul class="nav nav-treeview">
                                                         <li class="nav-item">
                                                             <a href="/transaction-liquidation/prpo/{{ Auth::user()->company_id }}" class="nav-link ml-1 pl-5 {{ isset($trans_page) ? $trans_page == 'prpo-liquidation' ? 'active' : '' : '' }}">
-                                                                {{-- <i class="nav-icon material-icons icon--list">more_vert</i> --}}
                                                                 <p>Pr / Po</p>
                                                             </a>
                                                         </li>
                                                         <li class="nav-item">
                                                             <a href="/transaction-liquidation/pc/{{ Auth::user()->company_id }}" class="nav-link ml-1 pl-5 {{ isset($trans_page) ? $trans_page == 'pc-liquidation' ? 'active' : '' : '' }}">
-                                                                {{-- <i class="nav-icon material-icons icon--list">more_vert</i> --}}
                                                                 <p>Petty Cash</p>
                                                             </a>
                                                         </li>
                                                     </ul>
-                                                </li>
+                                                </li> --}}
                                                 <li class="nav-item">
                                                     <a href="/transaction/report-all" class="nav-link {{ Route::currentRouteName() == 'transactionreport' ? 'active' : '' }}">
                                                         <i class="nav-icon material-icons icon--list">assessment</i><p> REPORTS</p>

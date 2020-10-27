@@ -6,7 +6,16 @@
     <section class="content">
         <div class="container-fluid">
             <div class="float-right">Date Generated: <b>{{ Carbon\Carbon::now() }}</b></div>
-            <h1>{{ $transaction->is_deposit ? 'For Deposit' : $trans_page }} - Form</h1>
+            <h1>
+                @if ($transaction->is_deposit)
+                    For Deposit
+                @elseif($transaction->is_bills)
+                    Bills Payment
+                @else
+                    {{ $trans_page }}
+                @endif
+                - Form
+            </h1>
             <div class="row row--print my-3">
                 <div class="col-10">
                     <h2 class="mt-4">{{ $transaction->project->company->name }}</h2>

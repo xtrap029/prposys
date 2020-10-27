@@ -30,7 +30,7 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th colspan="11" class="border-0">
+                            <th colspan="10" class="border-0">
                                 <img src="/storage/public/images/companies/{{ $company->logo }}" alt="" class="thumb thumb--xxs mr-2 vlign--baseline-middle">
                                 <span class="mr-3 vlign--baseline-middle">{{ $company->name }}</span>
                                 
@@ -105,14 +105,13 @@
                             </th>
                         </tr>
                         <tr>
-                            <th>Transaction</th>
-                            <th>Project</th>
+                            <th>{{ $trans_page_url == 'prpo' ? 'PR/PO' : 'PC' }} #</th>
                             <th>COA Tagging</th>
                             <th>Vendor/Payee</th>
-                            <th>Tax Type</th>
-                            <th class="text-right">Amount (PHP)</th>
-                            <th>Check No.</th>
-                            <th>Date Due</th>
+                            <th>Particulars</th>
+                            <th class="text-center">Currency</th>
+                            <th class="text-right">Amount</th>
+                            <th>Check/Online #</th>
                             <th>Prep. By</th>
                             <th>Status</th>
                             <th></th>
@@ -122,13 +121,12 @@
                         @forelse ($transactions as $item)
                             <tr>
                                 <td>{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</td>
-                                <td>{{ $item->project->project }}</td>
                                 <td>{{ $item->coatagging->name }}</td>
                                 <td>{{ $item->payee }}</td>
-                                <td>{{ $item->vattype->name }}</td>
+                                <td>{{ $item->particulars->name }}</td>
+                                <td class="text-center">{{ $item->currency }}</td>
                                 <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
                                 <td>{{ $item->control_no ? $item->control_no : '-' }}</td>
-                                <td>{{ Carbon::parse($item->due_at)->format('Y-m-d') }}</td>
                                 <td>{{ $item->owner->name }}</td>
                                 <td>{{ $item->status->name }}</td>
                                 <td>
@@ -274,7 +272,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="11" class="text-center">{{ __('messages.empty') }}</td>
+                                <td colspan="10" class="text-center">{{ __('messages.empty') }}</td>
                             </tr>
                         @endforelse
                     </tbody>

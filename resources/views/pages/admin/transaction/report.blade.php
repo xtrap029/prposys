@@ -24,7 +24,7 @@
                         <select name="type" class="form-control">
                             <option value="pr" {{ $_GET['type'] == "pr" ? 'selected' : '' }}>Payment Release</option>
                             <option value="po" {{ $_GET['type'] == "po" ? 'selected' : '' }}>Purchase Order</option>
-                            <option value="pc" {{ $_GET['type'] == "pc" ? 'selected' : '' }}>Petty Cash</option>
+                            {{-- <option value="pc" {{ $_GET['type'] == "pc" ? 'selected' : '' }}>Petty Cash</option> --}}
                         </select>
                     </div>
                     <div class="col-md-2">

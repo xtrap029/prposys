@@ -37,7 +37,7 @@
                     <a href="#_" class="btn btn-danger" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print Generated {{ strtoupper($transaction->trans_type) }} Form</a>
                     <a href="#_" class="btn btn-danger {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-liquidation/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print Liquidation</a>
                     <a href="#_" class="btn btn-success {{ $perms['can_clear'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear"><i class="align-middle font-weight-bolder material-icons text-md">payments</i> Clear / Deposit</a>
-                    <a href="#_" class="btn btn-primary {{ $perms['can_edit_cleared'] && $transaction->liq_balance != 0 ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear-edit"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit Deposit Info</a>
+                    <a href="#_" class="btn btn-primary {{ $perms['can_edit_cleared'] && $transaction->liq_balance != 0 ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear-edit"><i class="align-middle font-weight-bolder material-icons text-md">{{ !$transaction->is_bills ? 'edit' : 'visibility' }}</i> {{ !$transaction->is_bills ? 'Edit' : 'View' }} Deposit Info</a>
                 </div>
                 
                 @if ($perms['can_approval'])
@@ -199,52 +199,56 @@
                                                 </tr>
                                             </tbody>
                                         </table>
-                                        <div class="row mt-5">                                            
-                                            <div class="col-md-2">
-                                                <label for="" class="font-weight-bold">Type</label>
-                                                <select name="depo_type" class="form-control @error('depo_type') is-invalid @enderror" required>
-                                                    @foreach (config('global.deposit_type') as $item)
-                                                        <option value="{{ $item }}" {{ $transaction->depo_type == $item ? 'selected' : '' }}>{{ $item }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @include('errors.inline', ['message' => $errors->first('depo_type')])
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="" class="font-weight-bold">Bank</label>
-                                                <select name="depo_bank_branch_id" class="form-control @error('depo_bank_branch_id') is-invalid @enderror" required>
-                                                    @foreach ($banks as $item)
-                                                        <optgroup label="{{ $item->name }}">
-                                                            @foreach ($item->bankbranches as $branch)
-                                                                <option value="{{ $branch->id }}" {{ $transaction->depo_bank_branch_id == $branch->id ? 'selected' : '' }}>{{ $branch->name }}</option>
-                                                            @endforeach
-                                                        </optgroup>
-                                                    @endforeach
-                                                </select>
-                                                @include('errors.inline', ['message' => $errors->first('depo_bank_branch_id')])
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="" class="font-weight-bold">Reference Code</label>
-                                                <input type="text" name="depo_ref" class="form-control @error('depo_ref') is-invalid @enderror" value="{{ $transaction->depo_ref }}" required>
-                                                @include('errors.inline', ['message' => $errors->first('depo_ref')])
-                                            </div>
-                                        </div>
-                                        <div class="row mt-3 mb-5">
-                                            <div class="col-md-4">
-                                                <label for="" class="font-weight-bold">Date Deposited</label>
-                                                <input type="date" name="depo_date" class="form-control @error('depo_date') is-invalid @enderror" value="{{ $transaction->depo_date }}" required>
-                                                @include('errors.inline', ['message' => $errors->first('depo_date')])
-                                            </div>
-                                            @if (!$transaction->is_deposit)
-                                                <div class="col-md-8">
-                                                    <label for="" class="font-weight-bold">Replace Slip Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than 5mb. )</small></label>
-                                                    <input type="file" name="depo_slip" class="form-control @error('depo_slip') is-invalid @enderror">
-                                                    @include('errors.inline', ['message' => $errors->first('depo_slip')])
+                                        @if (!$transaction->is_bills)
+                                            @if ($transaction->liq_balance != 0)
+                                            <div class="row mt-5">                                            
+                                                <div class="col-md-2">
+                                                    <label for="" class="font-weight-bold">Type</label>
+                                                    <select name="depo_type" class="form-control @error('depo_type') is-invalid @enderror" required>
+                                                        @foreach (config('global.deposit_type') as $item)
+                                                            <option value="{{ $item }}" {{ $transaction->depo_type == $item ? 'selected' : '' }}>{{ $item }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    @include('errors.inline', ['message' => $errors->first('depo_type')])
                                                 </div>
-                                            @endif
-                                        </div>
+                                                <div class="col-md-6">
+                                                    <label for="" class="font-weight-bold">Bank</label>
+                                                    <select name="depo_bank_branch_id" class="form-control @error('depo_bank_branch_id') is-invalid @enderror" required>
+                                                        @foreach ($banks as $item)
+                                                            <optgroup label="{{ $item->name }}">
+                                                                @foreach ($item->bankbranches as $branch)
+                                                                    <option value="{{ $branch->id }}" {{ $transaction->depo_bank_branch_id == $branch->id ? 'selected' : '' }}>{{ $branch->name }}</option>
+                                                                @endforeach
+                                                            </optgroup>
+                                                        @endforeach
+                                                    </select>
+                                                    @include('errors.inline', ['message' => $errors->first('depo_bank_branch_id')])
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="" class="font-weight-bold">Reference Code</label>
+                                                    <input type="text" name="depo_ref" class="form-control @error('depo_ref') is-invalid @enderror" value="{{ $transaction->depo_ref }}" required>
+                                                    @include('errors.inline', ['message' => $errors->first('depo_ref')])
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3 mb-5">
+                                                <div class="col-md-4">
+                                                    <label for="" class="font-weight-bold">Date Deposited</label>
+                                                    <input type="date" name="depo_date" class="form-control @error('depo_date') is-invalid @enderror" value="{{ $transaction->depo_date }}" required>
+                                                    @include('errors.inline', ['message' => $errors->first('depo_date')])
+                                                </div>
+                                                @if (!$transaction->is_deposit)
+                                                    <div class="col-md-8">
+                                                        <label for="" class="font-weight-bold">Replace Slip Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than 5mb. )</small></label>
+                                                        <input type="file" name="depo_slip" class="form-control @error('depo_slip') is-invalid @enderror">
+                                                        @include('errors.inline', ['message' => $errors->first('depo_slip')])
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @endif
                                         <div class="text-center mt-2">
                                             <input type="submit" class="btn btn-success" value="Clear Now">
                                         </div>
+                                        @endif
                                     </form>
                                 </div>
                             </div>
@@ -279,10 +283,14 @@
                                 <td>{{ $transaction->is_deposit ? 'Yes' : 'No' }}</td>
                             </tr>
                             <tr>
+                                <td class="font-weight-bold w-25">Bills Payment?</td>
+                                <td>{{ $transaction->is_bills ? 'Yes' : 'No' }}</td>
+                            </tr>
+                            <tr>
                                 <td class="font-weight-bold w-25">Requested by</td>
                                 <td>{{ $transaction->requested->name }}</td>
                             </tr>
-                            @if ($transaction->liquidation_approver_id && !$transaction->is_deposit)
+                            @if ($transaction->liquidation_approver_id && !$transaction->is_deposit && !$transaction->is_bills)
                                 <tr>
                                     <td class="font-weight-bold w-25">Authorized Approver</td>
                                     <td>{{ $transaction->liquidationapprover->name }}</td>
@@ -328,7 +336,7 @@
                                 <td class="font-weight-bold w-25">Released Amount</td>
                                 <td>{{ $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
                             </tr>
-                            @if (!$transaction->is_deposit)
+                            @if (!$transaction->is_deposit && !$transaction->is_bills)
                                 <tr>
                                     <td><span class="font-weight-bold w-25">Attachments</span></td>
                                     @include('pages.admin.transactionliquidation.show-attachment')
@@ -404,7 +412,7 @@
                         </table>
                     </div>
                     <div class="row mb-3">
-                        <table class="table table-bordered {{ $transaction->is_deposit ? 'd-none' : '' }}">
+                        <table class="table table-bordered {{ $transaction->is_deposit || $transaction->is_bills ? 'd-none' : '' }}">
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -497,33 +505,38 @@
                                             {{ number_format($transaction->liq_balance >= 0 ? $transaction->liq_balance : $transaction->liq_balance*-1, 2, '.', ',') }}
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>Type</td>
-                                        <td class="font-weight-bold">{{ $transaction->depo_type }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Bank</td>
-                                        <td class="font-weight-bold">{{ $transaction->bankbranch->bank->name }} ({{ $transaction->bankbranch->name }})</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Rereference Code</td>
-                                        <td class="font-weight-bold">{{ $transaction->depo_ref }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Date Deposited</td>
-                                        <td class="font-weight-bold">{{ $transaction->depo_date }}</td>
-                                    </tr>
-                                    @if ($transaction->is_deposit && $transaction->liquidation_approver_id)
+                                    @if (!$transaction->is_bills)
+                                        <tr>
+                                            <td>Type</td>
+                                            <td class="font-weight-bold">{{ $transaction->depo_type }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Bank</td>
+                                            <td class="font-weight-bold">{{ $transaction->bankbranch->bank->name }} ({{ $transaction->bankbranch->name }})</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rereference Code</td>
+                                            <td class="font-weight-bold">{{ $transaction->depo_ref }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Date Deposited</td>
+                                            <td class="font-weight-bold">{{ $transaction->depo_date }}</td>
+                                        </tr>    
+                                    @endif
+                                    @if (($transaction->is_deposit) && $transaction->liquidation_approver_id)
                                         <tr>
                                             <td>Deposited By</td>
                                             <td>{{ $transaction->liquidationapprover->name }}</td>
                                         </tr>
-                                        @if ($transaction->is_deposit)
-                                            <tr>
-                                                <td>Attachments</td>
-                                                @include('pages.admin.transactionliquidation.show-attachment')
-                                            </tr>
-                                        @endif
+                                        <tr>
+                                            <td>Attachments</td>
+                                            @include('pages.admin.transactionliquidation.show-attachment')
+                                        </tr>
+                                    @elseif($transaction->is_bills)
+                                        <tr>
+                                            <td>Attachments</td>
+                                            @include('pages.admin.transactionliquidation.show-attachment')
+                                        </tr>
                                     @else
                                         <tr>
                                             <td>Slip Attachment</td>

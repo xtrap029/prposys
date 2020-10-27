@@ -105,13 +105,15 @@
                             </th>
                         </tr>
                         <tr>
-                            <th>Transaction</th>
+                            <th>{{ $trans_page_url == 'prpo' ? 'PR/PO' : 'PC' }} #</th>
                             <th>Project</th>
                             <th>COA Tagging</th>
-                            <th class="text-right">Subtotal</th>
-                            <th class="text-right">Deposit/Payment</th>
+                            <th class="text-center">Currency</th>
+                            <th class="text-right">Req. Amount</th>
+                            <th class="text-right">Liq. Amount</th>
                             <th class="text-right">Balance</th>
                             <th>Req. By</th>
+                            <th>Deposit #</th>
                             <th>Status</th>
                             <th></th>
                         </tr>
@@ -122,10 +124,12 @@
                                 <td>{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</td>
                                 <td>{{ $item->project->project }}</td>
                                 <td>{{ $item->coatagging->name }}</td>
-                                <td class="text-right">{{ number_format($item->liquidation->sum('amount'), 2, '.', ',') }}</td>
+                                <td class="text-center">{{ $item->currency }}</td>
                                 <td class="text-right">{{ number_format($item->amount_issued, 2, '.', ',') }}</td>
+                                <td class="text-right">{{ number_format($item->liquidation->sum('amount'), 2, '.', ',') }}</td>
                                 <td class="text-right">{{ number_format($item->liquidation->sum('amount') - $item->amount_issued, 2, '.', ',') }}</td>
                                 <td>{{ $item->requested->name }}</td>
+                                <td>{{ $item->depo_ref ?: '-'  }}</td>
                                 <td>{{ $item->status->name }}</td>
                                 <td>
                                     <div class="dropdown show dropleft">

@@ -204,14 +204,14 @@ class TransactionsLiquidationController extends Controller {
             'attachment_description.*' => ['required']
         ];
 
-        if (!$transaction->is_deposit) {
+        if (!$transaction->is_deposit && !$transaction->is_bills) {
             $validate['date.*'] = ['required', 'date'];
             $validate['expense_type_id.*'] = ['required', 'exists:expense_types,id'];
             $validate['description.*'] = ['required'];
             $validate['location.*'] = ['required'];
             $validate['receipt.*'] = ['in:1,0'];
             $validate['amount.*'] = ['required', 'min:0'];
-        } else {
+        } else if ($transaction->is_deposit)  {
             $validate['depo_type'] = ['required', 'in:'.implode(',', config('global.deposit_type'))];
             $validate['depo_bank_branch_id'] = ['required', 'exists:bank_branches,id'];
             $validate['depo_ref'] = ['required'];
@@ -222,7 +222,7 @@ class TransactionsLiquidationController extends Controller {
         // validate input
         $data = $request->validate($validate);
 
-        if (!$transaction->is_deposit) {
+        if (!$transaction->is_deposit && !$transaction->is_bills) {
             $attr_liq['transaction_id'] = $transaction->id;
             $attr_liq['owner_id'] = auth()->id();
             $attr_liq['updated_id'] = auth()->id();
@@ -257,7 +257,7 @@ class TransactionsLiquidationController extends Controller {
             $transaction->liquidation_approver_id = $data['liquidation_approver_id'];
         }
         
-        $transaction->status_id = !$transaction->is_deposit ? config('global.liquidation_generated')[0] : config('global.liquidation_cleared')[0];
+        $transaction->status_id = !$transaction->is_deposit && !$transaction->is_bills ? config('global.liquidation_generated')[0] : config('global.liquidation_cleared')[0];
         $transaction->edit_count = 0;
         $transaction->updated_id = auth()->id();
         $transaction->update();
@@ -313,7 +313,7 @@ class TransactionsLiquidationController extends Controller {
                 break;
         }
 
-        $transaction->liq_subtotal = $transaction->liquidation->sum('amount');
+        $transaction->liq_subtotal = number_format($transaction->liquidation->sum('amount'), 2, '.', '');
         $transaction->liq_before_vat = $transaction->liq_subtotal * 0.12;
         $transaction->liq_vat = $transaction->liq_subtotal - $transaction->liq_before_vat;
         $transaction->liq_balance = $transaction->liq_subtotal - $transaction->amount_issued;  
@@ -522,7 +522,7 @@ class TransactionsLiquidationController extends Controller {
         if ($this->check_can_clear($transaction->id)) {
             $data = [];
 
-            if ($transaction->liquidation->sum('amount') - $transaction->amount_issued != 0) {
+            if (number_format($transaction->liquidation->sum('amount'), 2, '.', '') - $transaction->amount_issued != 0) {
                 $data = $request->validate([
                     'depo_type' => ['required', 'in:'.implode(',', config('global.deposit_type'))],
                     'depo_bank_branch_id' => ['required', 'exists:bank_branches,id'],

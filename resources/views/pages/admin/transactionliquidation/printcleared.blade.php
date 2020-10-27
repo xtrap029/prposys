@@ -43,7 +43,7 @@
                     </div>  
                 </div>
                 <div class="row row--print">
-                    @if (!$transaction->is_deposit)
+                    @if (!$transaction->is_deposit && !$transaction->is_bills)
                         <div class="col-12 my-3">
                             <table class="table table-sm">
                                 <tr class="font-weight-bold">
@@ -158,7 +158,7 @@
                 </div>
                 <div class="row row--print">
                     <div class="col-7">
-                        @if (!$transaction->is_deposit)
+                        @if (!$transaction->is_deposit && !$transaction->is_bills)
                             <table class="table table-sm">
                                 <tr>
                                     <td>Amount {{ $transaction->liq_balance >= 0 ? 'Reimbursed' : 'Returned' }}</td>
@@ -213,7 +213,7 @@
                         <h5>{{ $transaction->liquidation_approver_id ? $transaction->liquidationapprover->name : '' }}</h5>
                         <div class="mt-2 pt-2 border-top font-weight-bold">{{ !$transaction->is_deposit ? 'Approver' : 'Deposited By' }}</div>
                     </div>
-                    @if (!$transaction->is_deposit)
+                    @if (!$transaction->is_deposit && !$transaction->is_bills)
                         <div class="col-4 text-center my-4 small">
                             <h5>{{ $final_approver }}</h5>
                             <div class="mt-2 pt-2 border-top font-weight-bold">Authorized By</div>
