@@ -23,6 +23,7 @@
                                 </div>
                                 <div class="modal-body text-center">
                                     <form action="/transaction-liquidation/create" method="get">
+                                        <input type="hidden" name="company" value="{{ $transaction->project->company_id }}" required>
                                         <input type="text" name="key" class="form-control" placeholder="{{ $transaction->trans_type == 'pc' ? 'PC' : 'PR/PO' }}-XXXX-XXXXX" required>
                                         <input type="submit" class="btn btn-primary mt-2" value="Check">
                                     </form>
