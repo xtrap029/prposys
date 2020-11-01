@@ -94,7 +94,7 @@
                             <th>Purpose</th>
                             <th class="text-center">Currency</th>
                             <th class="text-right">Amount</th>
-                            <th>Trans. #</th>
+                            <th class="text-nowrap">Trans. #</th>
                             <th>Due Date</th>
                             <th>Prep. By</th>
                             <th>Status</th>
@@ -104,7 +104,7 @@
                     <tbody>
                         @forelse ($transactions as $item)
                             <tr>
-                                <td>
+                                <td class="text-nowrap">
                                     <a href="/{{ $item->url_view }}/view/{{ $item->id }}">
                                         {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
                                     </a>
@@ -114,9 +114,9 @@
                                 <td class="text-center">{{ $item->currency }}</td>
                                 <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
                                 <td>{{ $item->control_no }}</td>
-                                <td>{{ Carbon::parse($item->due_at)->format('Y-m-d') }}</td>
-                                <td>{{ $item->owner->name }}</td>
-                                <td>{{ $item->status->name }}</td>
+                                <td class="text-nowrap">{{ Carbon::parse($item->due_at)->format('Y-m-d') }}</td>
+                                <td class="text-nowrap">{{ $item->owner->name }}</td>
+                                <td class="text-nowrap">{{ $item->status->name }}</td>
                                 {{-- <td> --}}
                                     {{-- <div class="dropdown show dropleft">
                                         <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
