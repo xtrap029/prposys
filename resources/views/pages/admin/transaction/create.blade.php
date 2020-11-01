@@ -113,7 +113,7 @@
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[0] }}" class="form-control m-auto outline-0" checked>
                                     </div>
                                     <div class="col-md-10">
-                                        <h6 class="font-weight-bold mb-1">Regular</h6>
+                                        <h6 class="font-weight-bold mb-1">Regular Transaction</h6>
                                         <p>Lorem ipsum dolor sit amet, consectetur, et dolore magna aliqua.</p>
                                     </div>
                                 </div>
@@ -124,7 +124,7 @@
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[1] }}" class="form-control m-auto outline-0">
                                     </div>
                                     <div class="col-md-10">
-                                        <h6 class="font-weight-bold mb-1">Human Resource</h6>
+                                        <h6 class="font-weight-bold mb-1">Human Resource Transaction</h6>
                                         <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
                                     </div>
                                 </div>

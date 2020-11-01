@@ -743,7 +743,7 @@ class TransactionsLiquidationController extends Controller {
         }
     }
 
-    private function check_can_create($key, $company) {
+    public function check_can_create($key, $company) {
         $can_create = true;
 
         $result = Transaction::where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), '=', $key)

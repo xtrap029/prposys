@@ -183,14 +183,14 @@
                         </thead>
                         <tbody class="jsReplicate_container">
                             <tr>
-                                <td><input type="file" name="file[]" class="form-control" required></td>
+                                <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
                                 <td colspan="2"><input type="text" name="attachment_description[]" class="form-control" value="{{ old('attachment_description.0') }}" required></td>
                             </tr>
                             @if (old('attachment_description'))
                                 @foreach (old('attachment_description') as $key => $item)
                                     @if ($key > 0)
                                         <tr>
-                                            <td><input type="file" name="file[]" class="form-control" required></td>
+                                            <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
                                             <td><input type="text" name="attachment_description[]" class="form-control" value="{{ old('attachment_description.'.$key) }}" required></td>
                                             <td><button type="button" class="btn btn-danger jsReplicate_remove"><i class="nav-icon material-icons icon--list">delete</i></button></td>
                                         </tr>
@@ -204,7 +204,7 @@
                     </div>
                 </div>
                 <div class="text-center mt-5 py-5 border-top">
-                    <a href="/transaction-liquidation/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="mr-3">Cancel</a>
+                    <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="mr-3">Cancel</a>
                     <input type="submit" class="btn btn-primary" value="Save">
                 </div>
             </form>
@@ -239,7 +239,7 @@
             <table class="d-none">
                 <tbody class="jsReplicate_template">
                     <tr class="jsReplicate_template_item">
-                        <td><input type="file" name="file[]" class="form-control" required></td>
+                        <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
                         <td><input type="text" name="attachment_description[]" class="form-control" required></td>
                         <td><button type="button" class="btn btn-danger jsReplicate_remove"><i class="nav-icon material-icons icon--list">delete</i></button></td>
                     </tr>

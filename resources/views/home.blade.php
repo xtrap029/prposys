@@ -17,9 +17,6 @@
                     </div>
                     <div class="card-footer bg-white">
                         <div class="row">
-                            <div class="col-12 text-center pb-3 font-weight-bold text-primary">
-                                {{ $user->company->name }}
-                            </div>
                             <div class="col-sm-6 border-right">
                                 <div class="description-block">
                                     <h5 class="description-header">Email</h5>
@@ -31,6 +28,17 @@
                                     <h5 class="description-header">Joined</h5>
                                     <span>{{ Carbon::parse($user->created_at)->diffForHumans() }}</span>
                                 </div>
+                            </div>
+                            <div class="col-12 py-3">
+                                <form action="/my-account" method="post">
+                                    @csrf
+                                    @method('put')
+                                    <select name="company_id" class="form-control" onchange="this.form.submit()">
+                                        @foreach ($companies as $item)
+                                            <option value="{{ $item->id }}" {{ $user->company_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </form>
                             </div>
                         </div>
                     </div>

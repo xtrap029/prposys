@@ -13,9 +13,9 @@
                     <a href="#_" class="btn btn-default {{ $perms['can_manage'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-manage"><i class="align-middle font-weight-bolder material-icons text-md">security</i> Manage</a>
                 </div>
                 <div class="col-md-6 text-right mb-4">
+                    <a href="/transaction-form/create?company={{ $transaction->project->company_id }}&key={{ strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq) }}" class="btn btn-success {{ $perms['can_create'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Make Form</a>
                     <a href="/transaction/edit/{{ $transaction->id }}" class="btn btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
                     <a href="#_" class="btn btn-danger {{ $perms['can_cancel'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-cancel"><i class="align-middle font-weight-bolder material-icons text-md">delete</i> Cancel</a>
-                    {{-- <a href="#" class="btn btn-success {{ $perms['can_issue'] ? '' : 'd-none' }} px-5" data-toggle="modal" data-target="#modal-issue"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Issued</a> --}}
                 </div>
                 
                 @if ($perms['can_cancel'])

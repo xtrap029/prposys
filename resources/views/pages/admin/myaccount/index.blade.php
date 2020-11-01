@@ -46,7 +46,7 @@
                     <form action="/my-account" method="post" enctype="multipart/form-data">
                         @csrf
                         @method('put')
-                        <div class="form-group">
+                        <div class="form-group d-none">
                             <label for="">Default Company</label>
                             <select name="company_id" class="form-control">
                                 @foreach ($companies as $item)
@@ -54,16 +54,13 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-row">
-                            <div class="col-md-6">
-                                <label for="">Change Password</label>
-                                <input type="password" class="form-control @error('password') is-invalid @enderror" name="password">
-                                @include('errors.inline', ['message' => $errors->first('password')])
-                            </div>
-                            <div class="col-md-6">
-                                <label for="">Confirm Change Password</label>
-                                <input type="password" class="form-control" name="password_confirmation">
-                            </div>
+                        <div class="form-group mt-3">
+                            <label for="">Change Password</label>
+                            <input type="password" class="form-control @error('password') is-invalid @enderror" name="password">
+                            @include('errors.inline', ['message' => $errors->first('password')])
+                        <div class="form-group mt-3">
+                            <label for="">Confirm Change Password</label>
+                            <input type="password" class="form-control" name="password_confirmation">
                         </div>
                         <div class="form-group mt-3">
                             <label for="avatar" class="d-block">Avatar</label>

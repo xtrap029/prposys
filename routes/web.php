@@ -90,7 +90,7 @@ Route::middleware('auth')->group(function () {
             Route::put('/cancel/{transaction}', $url.'@cancel')->where('transaction', '[0-9]+');
             Route::put('/manage/{transaction}', $url.'@manage')->where('transaction', '[0-9]+');
             Route::get('/report/', $url.'@report')->middleware('checkRole:1|2');
-            Route::get('/report-all/', $url.'@report_all');
+            Route::get('/report-all/', $url.'@report_all')->name('transactionreport');
 
             Route::get('/{trans_page}/{trans_company?}', $url.'@index')->where('trans_company', '[0-9]+');
         });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Spatie\Activitylog\Models\Activity;
+use App\Company;
 use App\Transaction;
 use App\User;
 use App\Helpers\TransactionHelper;
@@ -12,6 +13,7 @@ class HomeController extends Controller {
 
     public function index() {
         $user = User::where('id', auth()->id())->first();
+        $companies = Company::orderBy('name', 'asc')->get();
         $company_id = $user->company_id;
 
         $generated = Transaction::whereHas('project', function($query) use($company_id) {
@@ -76,6 +78,7 @@ class HomeController extends Controller {
 
         return view('home')->with([
             'user' => $user,
+            'companies' => $companies,
             'generated' => $generated,
             'unliquidated' => $unliquidated,
             'unliquidated_bal' => $unliquidated_bal,

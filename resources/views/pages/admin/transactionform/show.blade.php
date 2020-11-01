@@ -7,11 +7,12 @@
         <div class="container-fluid">
             <div class="form-row"> 
                 <div class="col-md-6 mb-4">
-                    <a href="/transaction-form/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
+                    <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
                     <a data-toggle="modal" data-target="#modal-make" href="#_" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>                
                     <a href="/transaction-form/reset/{{ $transaction->id }}" class="btn btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                 </div>
                 <div class="col-md-6 text-right mb-4">
+                    <a href="/transaction-liquidation/create?company={{ $transaction->project->company_id }}&key={{ strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq) }}" class="btn btn-success {{ $perms['can_create'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Liquidate</a>
                     <a href="/transaction-form/edit/{{ $transaction->id }}" class="btn btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
                     {{-- <a href="#_" class="btn btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-approval"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a> --}}
                     <a href="/transaction-form/approval/{{ $transaction->id }}" class="btn btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a>
@@ -308,6 +309,7 @@
                     @if ($transaction->status_id == 3)
                         <div class="pb-2 mt-5 mb-4 border-bottom">
                             <h3 class="d-inline-block mr-3">Cancellation Reason</h3>
+                            <code>{{ $transaction->cancellation_number }}</code>
                         </div>
                         <div>{{ $transaction->cancellation_reason }}</div>
                     @elseif ($transaction->status_id == 4)

@@ -46,6 +46,6 @@ class MyAccountController extends Controller {
 
         $user->update($data);
 
-        return redirect('/my-account')->with('success', 'Account'.__('messages.edit_success'));
+        return back()->with('success', 'Account'.__('messages.edit_success'));
     }
 }

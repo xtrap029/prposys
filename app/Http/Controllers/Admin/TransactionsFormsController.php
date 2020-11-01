@@ -255,6 +255,10 @@ class TransactionsFormsController extends Controller {
         $perms['can_approval'] = $this->check_can_approval($transaction->id);
         $perms['can_print'] = $this->check_can_print($transaction->id);
         $perms['can_issue'] = $this->check_can_issue($transaction->id);
+        $perms['can_create'] = app('App\Http\Controllers\Admin\TransactionsLiquidationController')->check_can_create(
+            $transaction->trans_type."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
+            $transaction->project->company_id
+        );
 
         $released_by = ReleasedBy::orderBy('name', 'asc')->get();
 
@@ -438,7 +442,7 @@ class TransactionsFormsController extends Controller {
             $data['updated_id'] = auth()->id();
             $transaction->update($data);
 
-            return redirect('/transaction/view/'.$transaction->id)->with('success', 'Transaction Form'.__('messages.cancel_success'));
+            return redirect('/transaction-form/view/'.$transaction->id)->with('success', 'Transaction Form'.__('messages.cancel_success'));
         } else {
             return back()->with('error', __('messages.cant_edit'));
         }
@@ -632,7 +636,7 @@ class TransactionsFormsController extends Controller {
         ]);
     }
 
-    private function check_can_create($key, $company) {
+    public function check_can_create($key, $company) {
         $can_create = true;
 
         $result = Transaction::where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), '=', $key)

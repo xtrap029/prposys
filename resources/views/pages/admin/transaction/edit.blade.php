@@ -102,7 +102,7 @@
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[0] }}" class="form-control m-auto outline-0" {{ $transaction->is_deposit == 0 ? 'checked' : '' }}>
                                     </div>
                                     <div class="col-md-10">
-                                        <h6 class="font-weight-bold mb-1">Regular</h6>
+                                        <h6 class="font-weight-bold mb-1">Regular Transaction</h6>
                                         <p>Lorem ipsum dolor sit amet, consectetur, et dolore magna aliqua.</p>
                                     </div>
                                 </div>
@@ -113,7 +113,7 @@
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[1] }}" class="form-control m-auto outline-0"  {{ $transaction->is_deposit == 1 ? 'checked' : '' }}>
                                     </div>
                                     <div class="col-md-10">
-                                        <h6 class="font-weight-bold mb-1">Human Resource</h6>
+                                        <h6 class="font-weight-bold mb-1">Human Resource Transaction</h6>
                                         <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
                                     </div>
                                 </div>
@@ -133,7 +133,7 @@
                     </div>
                     <div class="col-md-12 text-center">
                         <div class="mt-4">
-                            <a href="/transaction/{{ $trans_page }}/{{ $transaction->project->company_id }}" class="mr-3">Cancel</a>
+                            <a href="/transaction/view/{{ $transaction->id }}" class="mr-3">Cancel</a>
                             <input type="submit" class="btn btn-primary" value="Save">
                         </div>
                     </div>

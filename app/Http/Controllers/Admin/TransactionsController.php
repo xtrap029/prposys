@@ -34,10 +34,16 @@ class TransactionsController extends Controller {
                 break;
         }
 
+        $trans_status = TransactionStatus::whereIn('id', config('global.status'))->get();
         $companies = Company::orderBy('name', 'asc')->get();
         $company = Company::where('id', $trans_company)->first();
+        $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
         
-        if (!empty($_GET['s']) || !empty($_GET['type']) || !empty($_GET['status'])) {
+        if (!empty($_GET['s'])
+            || !empty($_GET['type'])
+            || !empty($_GET['status'])
+            || !empty($_GET['user_req'])
+            || !empty($_GET['user_prep'])) {
             
             if ($_GET['type'] != "") {
                 $type = $_GET['type'];
@@ -80,29 +86,16 @@ class TransactionsController extends Controller {
                                             ->orWhere('amount', str_replace(',', '', $key));
                                     });
                                     
-            if ($_GET['status'] != "") {
-                switch ($_GET['status']) {
-                    case 'requested':
-                        $transactions = $transactions->where('requested_id', auth()->id());
-                        break;
-                    case 'prepared':
-                        $transactions = $transactions->where('owner_id', auth()->id());
-                        break;
-                    case 'approval':
-                        $transactions = $transactions->whereIn('status_id', config('global.status_approval'));
-                        if (!in_array(User::where('id', auth()->id())->first()->role_id, [1, 2])) {
-                            $transactions->where('requested_id', auth()->id());
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
+            if ($_GET['status'] != "") $transactions = $transactions->where('status_id', $_GET['status']);
+            if ($_GET['user_req'] != "") $transactions = $transactions->where('requested_id', $_GET['user_req']);
+            if ($_GET['user_prep'] != "") $transactions = $transactions->where('owner_id', $_GET['user_prep']);
 
             $transactions = $transactions->orderBy('id', 'desc')->paginate(10);
             $transactions->appends(['s' => $_GET['s']]);
             $transactions->appends(['type' => $_GET['type']]);
             $transactions->appends(['status' => $_GET['status']]);
+            $transactions->appends(['user_req' => $_GET['user_req']]);
+            $transactions->appends(['user_prep' => $_GET['user_prep']]);
         } else {
             $transactions = Transaction::whereIn('trans_type', $trans_types)
                                     ->whereIn('status_id', config('global.status'))
@@ -118,14 +111,23 @@ class TransactionsController extends Controller {
                 $transactions[$key]->can_cancel = $this->check_can_cancel($value->id);
                 $transactions[$key]->can_reset = $this->check_can_reset($value->id);
             }
+
+            $transactions[$key]->url_view = "transaction";
+            if (in_array($value->status_id, config('global.page_form'))) {
+                $transactions[$key]->url_view .= "-form";
+            } else if (in_array($value->status_id, config('global.page_liquidation'))) {
+                $transactions[$key]->url_view .= "-liquidation";
+            }
         }
         
         return view('pages.admin.transaction.index')->with([
             'trans_page' => $trans_page,
             'trans_types' => $trans_types,
+            'trans_status' => $trans_status,
             'page_label' => $page_label_index,
             'companies' => $companies,
             'company' => $company,
+            'users' => $users,
             'transactions' => $transactions
         ]);
     }
@@ -339,6 +341,10 @@ class TransactionsController extends Controller {
         $perms['can_cancel'] = $this->check_can_cancel($transaction->id);
         $perms['can_reset'] = $this->check_can_reset($transaction->id);
         $perms['can_manage'] = $this->check_can_manage($transaction->id);    
+        $perms['can_create'] = app('App\Http\Controllers\Admin\TransactionsFormsController')->check_can_create(
+            $transaction->trans_type."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
+            $transaction->project->company_id
+        );
 
         $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
         $releasing_users = ReleasedBy::orderBy('name', 'asc')->get();
