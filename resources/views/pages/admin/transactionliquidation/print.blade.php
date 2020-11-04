@@ -23,7 +23,6 @@
                                 <th>Request No.</th>
                                 <th>Date Requested</th>
                                 <th>Staff</th>
-                                <th>Project</th>
                                 <th>COA Tagging</th>
                             </tr>
                         </thead>
@@ -36,11 +35,68 @@
                                 </td>
                                 <td>{{ Carbon::parse($transaction->created_at)->format('Y-m-d') }}</td>
                                 <td>{{ $transaction->requested->name }}</td>
-                                <td>{{ $transaction->project->project }}</td>
                                 <td>{{ $transaction->coatagging->name }}</td>
                             </tr>
                         </tbody>
                     </table>
+                    <div class="row">
+                        <div class="col-md-7">
+                            <table class="table table-sm">
+                                <tr>
+                                    <td class="font-weight-bold">Project</td>
+                                    <td>{{ $transaction->project->project }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Vendor / Payee</td>
+                                    <td>{{ $transaction->payee }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Particulars</td>
+                                    <td>{{ $transaction->particulars_custom ?: $transaction->particulars->name }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Purpose</td>
+                                    <td>{{ $transaction->purpose }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Due Date</td>
+                                    <td>{{ $transaction->due_at }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Tax Type</td>
+                                    <td>{{ $transaction->form_vat_name ? $transaction->form_vat_name : $transaction->vattype->name }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-5">
+                            <table class="table table-sm">
+                                <tr>
+                                    <td class="font-weight-bold">Issue Type</td>
+                                    <td>{{ $transaction->control_type }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Issue No</td>
+                                    <td>{{ $transaction->control_no }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Released Date</td>
+                                    <td>{{ $transaction->released_at }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Released Amount</td>
+                                    <td>{{ $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">For Deposit?</td>
+                                    <td>{{ $transaction->is_deposit ? 'Yes' : 'No' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Bills Payment?</td>
+                                    <td>{{ $transaction->is_bills ? 'Yes' : 'No' }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="row row--print">

@@ -28,4 +28,12 @@
         'control_types' => ['Cash', 'Online', 'Check'],
         'control_types_pc' => 'Petty Cash',
         'trans_category' => ['reg', 'hr', 'bp'],
+        'status_filter' => [
+            ['PR/PO# Generated', '1,5'],
+            ['Form-Approval', '6'],
+            ['Issued', '4'],
+            ['Liq-Approval', '7,8'],
+            ['Cleared', '9'],
+            ['Cancelled', '3'],
+        ]
     ];

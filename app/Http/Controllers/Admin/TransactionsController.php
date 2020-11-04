@@ -38,7 +38,7 @@ class TransactionsController extends Controller {
         $companies = Company::orderBy('name', 'asc')->get();
         $company = Company::where('id', $trans_company)->first();
         $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
-        
+
         if (!empty($_GET['s'])
             || !empty($_GET['type'])
             || !empty($_GET['status'])
@@ -60,33 +60,33 @@ class TransactionsController extends Controller {
                                     ->where(static function ($query) use ($key) {
                                         $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$key."%")
                                             ->orWhereHas('particulars', function($query) use($key) {
-                                                $query->where('name', $key);
+                                                $query->where('name', 'like', "%{$key}%");
                                             })
                                             ->orWhere('particulars_custom', 'like', "%{$key}%")
                                             ->orWhere('purpose', 'like', "%{$key}%")
                                             ->orWhere('payee', 'like', "%{$key}%")
                                             ->orWhereHas('coatagging', function($query) use($key) {
-                                                $query->where('name', $key);
+                                                $query->where('name', 'like', "%{$key}%");
                                             })
                                             ->orWhere('expense_type_description', 'like', "%{$key}%")
                                             ->orWhereHas('expensetype', function($query) use($key) {
-                                                $query->where('name', $key);
+                                                $query->where('name', 'like', "%{$key}%");
                                             })
                                             ->orWhereHas('vattype', function($query) use($key) {
-                                                $query->where('name', $key);
+                                                $query->where('name', 'like', "%{$key}%");
                                             })
                                             ->orWhereHas('vattype', function($query) use($key) {
-                                                $query->where('code', $key);
+                                                $query->where('code', 'like', "%{$key}%");
                                             })
-                                            ->orWhere('control_no', $key)
-                                            ->orWhere('control_type', $key)
+                                            ->orWhere('control_no', 'like', "%{$key}%")
+                                            ->orWhere('control_type', 'like', "%{$key}%")
                                             ->orWhere('cancellation_reason', 'like', "%{$key}%")
-                                            ->orWhere('cancellation_number', $key)
-                                            ->orWhere('amount_issued', str_replace(',', '', $key))
-                                            ->orWhere('amount', str_replace(',', '', $key));
+                                            ->orWhere('cancellation_number', 'like', "%{$key}%")
+                                            ->orWhere('amount_issued', 'like', str_replace(',', '', $key))
+                                            ->orWhere('amount', 'like', str_replace(',', '', $key));
                                     });
                                     
-            if ($_GET['status'] != "") $transactions = $transactions->where('status_id', $_GET['status']);
+            if ($_GET['status'] != "") $transactions = $transactions->whereIn('status_id', explode(',', $_GET['status']));
             if ($_GET['user_req'] != "") $transactions = $transactions->where('requested_id', $_GET['user_req']);
             if ($_GET['user_prep'] != "") $transactions = $transactions->where('owner_id', $_GET['user_prep']);
 

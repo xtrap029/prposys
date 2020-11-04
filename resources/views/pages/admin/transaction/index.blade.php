@@ -55,8 +55,8 @@
                                 <form action="/transaction/{{ $trans_page }}/{{ $company->id }}" method="GET" class="input-group mt-3">
                                     <select name="status" class="form-control">
                                         <option value="">All Status</option>
-                                        @foreach ($trans_status as $item)
-                                            <option value="{{ $item->id }}" {{ app('request')->input('status') == $item->id ? 'selected' : '' }}>{{ ucwords(strtolower($item->name)) }}</option>
+                                        @foreach (config('global.status_filter') as $item)
+                                            <option value="{{ $item[1] }}" {{ app('request')->input('status') == $item[1] ? 'selected' : '' }}>{{ $item[0] }}</option>
                                         @endforeach
                                     </select>
                                     <select name="type" class="form-control {{ $trans_page == 'prpo' ? '' : 'd-none' }}">
