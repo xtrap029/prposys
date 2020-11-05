@@ -38,7 +38,7 @@
                     <a href="#_" class="btn btn-danger" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print Generated {{ strtoupper($transaction->trans_type) }} Form</a>
                     <a href="#_" class="btn btn-danger {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-liquidation/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print Liquidation</a>
                     <a href="#_" class="btn btn-success {{ $perms['can_clear'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear"><i class="align-middle font-weight-bolder material-icons text-md">payments</i> Clear / Deposit</a>
-                    <a href="#_" class="btn btn-primary {{ $perms['can_edit_cleared'] && $transaction->liq_balance != 0 ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear-edit"><i class="align-middle font-weight-bolder material-icons text-md">{{ !$transaction->is_bills ? 'edit' : 'visibility' }}</i> {{ !$transaction->is_bills ? 'Edit' : 'View' }} Deposit Info</a>
+                    <a href="#_" class="btn btn-primary {{ $perms['can_edit_cleared'] && $transaction->liq_balance != 0 ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear-edit"><i class="align-middle font-weight-bolder material-icons text-md">{{ !$transaction->is_bills && !$transaction->is_hr ? 'edit' : 'visibility' }}</i> {{ !$transaction->is_bills && !$transaction->is_hr ? 'Edit' : 'View' }} Deposit Info</a>
                 </div>
                 
                 @if ($perms['can_approval'])
@@ -200,7 +200,7 @@
                                                 </tr>
                                             </tbody>
                                         </table>
-                                        @if (!$transaction->is_bills)
+                                        @if (!$transaction->is_bills && !$transaction->is_hr)
                                             @if ($transaction->liq_balance != 0)
                                             <div class="row mt-5">                                            
                                                 <div class="col-md-2">
@@ -280,18 +280,24 @@
                                 <td>{{ $transaction->status->name }}</td>
                             </tr>
                             <tr>
-                                <td class="font-weight-bold w-25">For Deposit?</td>
-                                <td>{{ $transaction->is_deposit ? 'Yes' : 'No' }}</td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold w-25">Bills Payment?</td>
-                                <td>{{ $transaction->is_bills ? 'Yes' : 'No' }}</td>
+                                <td class="font-weight-bold w-25">Transaction Category</td>
+                                <td>
+                                    @if ($transaction->is_deposit)
+                                        Deposit Transaction
+                                    @elseif ($transaction->is_bills)    
+                                        Bills Payment
+                                    @elseif ($transaction->is_hr)    
+                                        Human Resource
+                                    @else
+                                        Regular Transaction    
+                                    @endif
+                                </td>
                             </tr>
                             <tr>
                                 <td class="font-weight-bold w-25">Requested by</td>
                                 <td>{{ $transaction->requested->name }}</td>
                             </tr>
-                            @if ($transaction->liquidation_approver_id && !$transaction->is_deposit && !$transaction->is_bills)
+                            @if ($transaction->liquidation_approver_id && !$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
                                 <tr>
                                     <td class="font-weight-bold w-25">Authorized Approver</td>
                                     <td>{{ $transaction->liquidationapprover->name }}</td>
@@ -337,7 +343,7 @@
                                 <td class="font-weight-bold w-25">Released Amount</td>
                                 <td>{{ $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
                             </tr>
-                            @if (!$transaction->is_deposit && !$transaction->is_bills)
+                            @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
                                 <tr>
                                     <td><span class="font-weight-bold w-25">Attachments</span></td>
                                     @include('pages.admin.transactionliquidation.show-attachment')
@@ -413,7 +419,7 @@
                         </table>
                     </div>
                     <div class="row mb-3">
-                        <table class="table table-bordered {{ $transaction->is_deposit || $transaction->is_bills ? 'd-none' : '' }}">
+                        <table class="table table-bordered {{ $transaction->is_deposit || $transaction->is_bills || $transaction->is_hr ? 'd-none' : '' }}">
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -506,7 +512,7 @@
                                             {{ number_format($transaction->liq_balance >= 0 ? $transaction->liq_balance : $transaction->liq_balance*-1, 2, '.', ',') }}
                                         </td>
                                     </tr>
-                                    @if (!$transaction->is_bills)
+                                    @if (!$transaction->is_bills && !$transaction->is_hr)
                                         <tr>
                                             <td>Type</td>
                                             <td class="font-weight-bold">{{ $transaction->depo_type }}</td>
@@ -533,7 +539,7 @@
                                             <td>Attachments</td>
                                             @include('pages.admin.transactionliquidation.show-attachment')
                                         </tr>
-                                    @elseif($transaction->is_bills)
+                                    @elseif($transaction->is_bills || $transaction->is_hr)
                                         <tr>
                                             <td>Attachments</td>
                                             @include('pages.admin.transactionliquidation.show-attachment')

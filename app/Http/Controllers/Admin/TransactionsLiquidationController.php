@@ -204,7 +204,7 @@ class TransactionsLiquidationController extends Controller {
             'attachment_description.*' => ['required']
         ];
 
-        if (!$transaction->is_deposit && !$transaction->is_bills) {
+        if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr) {
             $validate['date.*'] = ['required', 'date'];
             $validate['expense_type_id.*'] = ['required', 'exists:expense_types,id'];
             $validate['description.*'] = ['required'];
@@ -222,7 +222,7 @@ class TransactionsLiquidationController extends Controller {
         // validate input
         $data = $request->validate($validate);
 
-        if (!$transaction->is_deposit && !$transaction->is_bills) {
+        if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr) {
             $attr_liq['transaction_id'] = $transaction->id;
             $attr_liq['owner_id'] = auth()->id();
             $attr_liq['updated_id'] = auth()->id();
@@ -257,7 +257,7 @@ class TransactionsLiquidationController extends Controller {
             $transaction->liquidation_approver_id = $data['liquidation_approver_id'];
         }
         
-        $transaction->status_id = !$transaction->is_deposit && !$transaction->is_bills ? config('global.liquidation_generated')[0] : config('global.liquidation_cleared')[0];
+        $transaction->status_id = !$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr ? config('global.liquidation_generated')[0] : config('global.liquidation_cleared')[0];
         $transaction->edit_count = 0;
         $transaction->updated_id = auth()->id();
         $transaction->update();

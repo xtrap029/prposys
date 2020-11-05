@@ -189,11 +189,14 @@ class TransactionsController extends Controller {
 
             $data['is_deposit'] = 0;
             $data['is_bills'] = 0;
+            $data['is_hr'] = 0;
             
-            if ($data['trans_category'] == 'hr') {
+            if ($data['trans_category'] == config('global.trans_category')[1]) {
                 $data['is_deposit'] = 1;
-            } else if ($data['trans_category'] == 'bp') {
+            } else if ($data['trans_category'] == config('global.trans_category')[2]) {
                 $data['is_bills'] = 1;
+            } else if ($data['trans_category'] == config('global.trans_category')[3]) {
+                $data['is_hr'] = 1;
             }
 
             unset($data['trans_category']);
@@ -299,11 +302,14 @@ class TransactionsController extends Controller {
 
         $data['is_deposit'] = 0;
         $data['is_bills'] = 0;
+        $data['is_hr'] = 0;
         
-        if ($data['trans_category'] == 'hr') {
+        if ($data['trans_category'] == config('global.trans_category')[1]) {
             $data['is_deposit'] = 1;
-        } else if ($data['trans_category'] == 'bp') {
+        } else if ($data['trans_category'] == config('global.trans_category')[2]) {
             $data['is_bills'] = 1;
+        } else if ($data['trans_category'] == config('global.trans_category')[3]) {
+            $data['is_hr'] = 1;
         }
 
         unset($data['trans_category']);

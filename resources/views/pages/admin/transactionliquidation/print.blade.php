@@ -87,12 +87,18 @@
                                     <td>{{ $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-weight-bold">For Deposit?</td>
-                                    <td>{{ $transaction->is_deposit ? 'Yes' : 'No' }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold">Bills Payment?</td>
-                                    <td>{{ $transaction->is_bills ? 'Yes' : 'No' }}</td>
+                                    <td class="font-weight-bold">Transaction Category</td>
+                                    <td>
+                                        @if ($transaction->is_deposit)
+                                            Deposit Transaction
+                                        @elseif ($transaction->is_bills)    
+                                            Bills Payment
+                                        @elseif ($transaction->is_hr)    
+                                            Human Resource
+                                        @else
+                                            Regular Transaction    
+                                        @endif
+                                    </td>
                                 </tr>
                             </table>
                         </div>
@@ -100,7 +106,7 @@
                 </div>
             </div>
             <div class="row row--print">
-                @if (!$transaction->is_deposit && !$transaction->is_bills)
+                @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
                     <div class="col-12">
                         <table class="table table-sm mb-0">
                             <tr class="font-weight-bold">
@@ -212,7 +218,7 @@
             </div>     
             <div class="row row--print">
                 <div class="col-7">
-                    @if (!$transaction->is_deposit && !$transaction->is_bills)
+                    @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
                         <table class="table table-sm">
                             <tr>
                                 <td>Amount {{ $transaction->liq_balance >= 0 ? 'Reimbursed' : 'Returned' }}</td>
@@ -266,7 +272,7 @@
                     <h6 class="font-weight-bold">{{ $transaction->liquidation_approver_id ? $transaction->liquidationapprover->name : '' }}</h6>
                     <div class="mt-2 border-top">{{ !$transaction->is_deposit ? 'Approver' : 'Deposited By' }}</div>
                 </div>
-                @if (!$transaction->is_deposit && !$transaction->is_bills)
+                @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
                     <div class="col-3 text-center pt-3 my-4">
                         <h6 class="font-weight-bold">{{ $final_approver }}</h6>
                         <div class="mt-2 border-top">Authorized By</div>

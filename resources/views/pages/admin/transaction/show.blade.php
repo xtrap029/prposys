@@ -136,18 +136,24 @@
                             </div>         
                         </div>
                         <div class="row mb-3">                
-                            <div class="col-md-6">
+                            <div class="col-md-9">
                                 <label for="">Purpose</label>
                                 <h6>{{ $transaction->purpose }}</h6>
                             </div>   
                             <div class="col-md-3">
-                                <label for="">For Deposit?</label>
-                                <h5>{{ $transaction->is_deposit ? 'Yes' : 'No' }}</h5>
-                            </div> 
-                            <div class="col-md-3">
-                                <label for="">Bills Payment?</label>
-                                <h5>{{ $transaction->is_bills ? 'Yes' : 'No' }}</h5>
-                            </div> 
+                                <label for="">Transaction Category</label>
+                                <h5>
+                                    @if ($transaction->is_deposit)
+                                        Deposit Transaction
+                                    @elseif ($transaction->is_bills)    
+                                        Bills Payment
+                                    @elseif ($transaction->is_hr)    
+                                        Human Resource
+                                    @else
+                                        Regular Transaction    
+                                    @endif
+                                </h5>
+                            </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-3">

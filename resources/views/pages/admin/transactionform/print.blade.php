@@ -11,6 +11,8 @@
                     For Deposit
                 @elseif($transaction->is_bills)
                     Bills Payment
+                @elseif($transaction->is_hr)
+                    Human Resource
                 @else
                     {{ $trans_page }}
                 @endif
