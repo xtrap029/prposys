@@ -6,18 +6,18 @@
     <section class="content">
         <div class="container-fluid">
             <div class="float-right">Date Generated: <b>{{ Carbon\Carbon::now() }}</b></div>
-            <h1>{{ strtoupper($transaction->trans_type) }} Liquidation</h1>
-            <div class="row my-3">
+            <h2>{{ strtoupper($transaction->trans_type) }} Liquidation</h2>
+            <div class="row">
                 <div class="col-10">
-                    <h2 class="mt-4">{{ $transaction->project->company->name }}</h2>
+                    <h3 class="mt-4">{{ $transaction->project->company->name }}</h3>
                 </div>
                 <div class="col-2 text-right">
                     <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--sm">
                 </div>
             </div>
-            <div class="row">
+            <div class="row mb-3">
                 <div class="col-12">
-                    <table class="table">
+                    <table class="table table-sm">
                         <thead>
                             <tr>
                                 <th>Request No.</th>
@@ -29,9 +29,9 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <h3 class="font-weight-bold pb-0 mb-0">
+                                    <h5 class="font-weight-bold pb-0 mb-0">
                                         {{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}
-                                    </h3>
+                                    </h5>
                                 </td>
                                 <td>{{ Carbon::parse($transaction->created_at)->format('Y-m-d') }}</td>
                                 <td>{{ $transaction->requested->name }}</td>
@@ -101,8 +101,8 @@
             </div>
             <div class="row row--print">
                 @if (!$transaction->is_deposit && !$transaction->is_bills)
-                    <div class="col-12 my-3">
-                        <table class="table table-sm">
+                    <div class="col-12">
+                        <table class="table table-sm mb-0">
                             <tr class="font-weight-bold">
                                 <td>Pos.</td>
                                 <td>Date</td>
@@ -126,8 +126,8 @@
                         </table>
                     </div>
                 @else
-                    <div class="col-12 my-3">
-                        <table class="table table-sm">
+                    <div class="col-12">
+                        <table class="table table-sm mb-0">
                             <thead>
                                 <tr>
                                     <th>Date Deposited</th>
@@ -151,7 +151,7 @@
                 @endif
             </div>
             <div class="row row--print">
-                <div class="col-12 my-3">
+                <div class="col-12">
                     <table class="table table-sm">
                         @foreach ($transaction_summary as $item)
                             <tr>
@@ -162,9 +162,6 @@
                                 </td>
                             </tr>
                         @endforeach
-                        <tr>
-                            <td colspan="7" class="py-4"></td>
-                        </tr>
                         <tr>
                             <td colspan="4" class="font-weight-bold small text-right">Before VAT</td>
                             <td></td>
@@ -183,7 +180,7 @@
                         </tr>
                         <tr>
                             <td colspan="4" class="font-weight-bold small text-right">Subtotal</td>
-                            <td class="pb-3"><div class="pb-5"></div></td>
+                            <td></td>
                             <td colspan="2" class="bg-white text-right font-weight-bold">
                                 <span class="float-left">{{ $transaction->currency }}</span>
                                 {{ number_format($transaction->liq_subtotal, 2, '.', ',') }}
@@ -261,23 +258,23 @@
                         </tr>
                     </table>
                 </div>
-                <div class="col-4 text-center my-4 small">
-                    <h5>{{ $transaction->requested->name }}</h5>
-                    <div class="mt-2 pt-2 border-top font-weight-bold">Requested By</div>
+                <div class="col-3 text-center pt-3 my-4">
+                    <h6 class="font-weight-bold">{{ $transaction->requested->name }}</h6>
+                    <div class="mt-2 border-top">Requested By</div>
                 </div>                
-                <div class="col-4 text-center my-4 small {{ $transaction->liquidation_approver_id ? '' : 'd-none' }}">
-                    <h5>{{ $transaction->liquidation_approver_id ? $transaction->liquidationapprover->name : '' }}</h5>
-                    <div class="mt-2 pt-2 border-top font-weight-bold">{{ !$transaction->is_deposit ? 'Approver' : 'Deposited By' }}</div>
+                <div class="col-3 text-center pt-3 my-4 {{ $transaction->liquidation_approver_id ? '' : 'd-none' }}">
+                    <h6 class="font-weight-bold">{{ $transaction->liquidation_approver_id ? $transaction->liquidationapprover->name : '' }}</h6>
+                    <div class="mt-2 border-top">{{ !$transaction->is_deposit ? 'Approver' : 'Deposited By' }}</div>
                 </div>
                 @if (!$transaction->is_deposit && !$transaction->is_bills)
-                    <div class="col-4 text-center my-4 small">
-                        <h5>{{ $final_approver }}</h5>
-                        <div class="mt-2 pt-2 border-top font-weight-bold">Authorized By</div>
+                    <div class="col-3 text-center pt-3 my-4">
+                        <h6 class="font-weight-bold">{{ $final_approver }}</h6>
+                        <div class="mt-2 border-top">Authorized By</div>
                     </div>
                 @endif
-                <div class="col-4 text-center my-4 small">
-                    <h5>{{ Carbon\Carbon::now()->toDateString() }}</h5>
-                    <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
+                <div class="col-3 text-center pt-3 my-4">
+                    <h6 class="font-weight-bold">{{ Carbon\Carbon::now()->toDateString() }}</h6>
+                    <div class="mt-2 border-top">Date</div>
                 </div>
             </div>
         </div>
