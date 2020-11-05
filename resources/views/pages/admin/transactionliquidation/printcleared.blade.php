@@ -28,9 +28,9 @@
                             <tbody>
                                 <tr>
                                     <td>
-                                        <h5 class="font-weight-bold pb-0 mb-0">
+                                        <h3 class="font-weight-bold pb-0 mb-0">
                                             {{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}
-                                        </h5>
+                                        </h3>
                                     </td>
                                     <td>{{ Carbon::parse($transaction->created_at)->format('Y-m-d') }}</td>
                                     <td>{{ $transaction->requested->name }}</td>
