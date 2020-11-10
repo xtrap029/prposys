@@ -112,7 +112,7 @@
                                 <td>{{ $item->payee }}</td>
                                 <td>{{ $item->purpose }}</td>
                                 <td class="text-center">{{ $item->currency }}</td>
-                                <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
+                                <td class="text-right">{{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}</td>
                                 <td>{{ $item->control_no }}</td>
                                 <td class="text-nowrap">{{ Carbon::parse($item->due_at)->format('Y-m-d') }}</td>
                                 <td class="text-nowrap">{{ $item->owner->name }}</td>

@@ -87,7 +87,7 @@ class Transaction extends Model {
     }
 
     public function releasedby() {
-        return $this->belongsTo(ReleasedBy::class, 'released_by_id');
+        return $this->belongsTo(ReleasedBy::class, 'released_by_id')->withTrashed();
     }
 
     public function owner() {

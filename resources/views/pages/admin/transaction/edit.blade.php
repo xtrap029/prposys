@@ -98,10 +98,10 @@
                         <div class="card-body pb-1 row">                            
                             <div class="col-12 col-md-3">
                                 <div class="callout callout-info py-2 mx-2 row">
-                                    <div class="col-md-3">
+                                    <div class="col-3">
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[0] }}" class="form-control m-auto outline-0" {{ $transaction->is_deposit == 0 && $transaction->is_bills == 0 && $transaction->is_hr == 0 ? 'checked' : '' }}>
                                     </div>
-                                    <div class="col-md-9">
+                                    <div class="col-9 mt-2">
                                         <h6 class="font-weight-bold">Regular Transaction</h6>
                                         <p class="d-none">Lorem ipsum dolor sit amet, consectetur, et dolore magna aliqua.</p>
                                     </div>
@@ -109,10 +109,10 @@
                             </div>
                             <div class="col-12 col-md-3">
                                 <div class="callout callout-danger py-2 mx-2 row">
-                                    <div class="col-md-3">
+                                    <div class="col-3">
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[1] }}" class="form-control m-auto outline-0"  {{ $transaction->is_deposit == 1 ? 'checked' : '' }}>
                                     </div>
-                                    <div class="col-md-9">
+                                    <div class="col-9 mt-2">
                                         <h6 class="font-weight-bold">Deposit Transaction</h6>
                                         <p class="d-none">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
                                     </div>
@@ -120,10 +120,10 @@
                             </div>
                             <div class="col-12 col-md-3">
                                 <div class="callout callout-success py-2 mx-2 row">
-                                    <div class="col-md-3">
+                                    <div class="col-3">
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[2] }}" class="form-control m-auto outline-0"  {{ $transaction->is_bills == 1 ? 'checked' : '' }}>
                                     </div>
-                                    <div class="col-md-9">
+                                    <div class="col-9 mt-2">
                                         <h6 class="font-weight-bold">Bills Payment</h6>          
                                         <p class="d-none">Excepteur sint non proident, sunt in culpa qui mollit anim id.</p>
                                     </div>
@@ -131,10 +131,10 @@
                             </div>
                             <div class="col-12 col-md-3">
                                 <div class="callout callout-success py-2 mx-2 row">
-                                    <div class="col-md-3">
+                                    <div class="col-3">
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[3] }}" class="form-control m-auto outline-0"  {{ $transaction->is_hr == 1 ? 'checked' : '' }}>
                                     </div>
-                                    <div class="col-md-9">
+                                    <div class="col-9 mt-2">
                                         <h6 class="font-weight-bold">Human Resource</h6>          
                                         <p class="d-none">Excepteur sint non proident, sunt in culpa qui mollit anim id.</p>
                                     </div>
