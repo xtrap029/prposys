@@ -144,13 +144,13 @@
                                 <label for="">Transaction Category</label>
                                 <h5>
                                     @if ($transaction->is_deposit)
-                                        Deposit Transaction
+                                        {{ config('global.trans_category_label')[1] }}
                                     @elseif ($transaction->is_bills)    
-                                        Bills Payment
+                                        {{ config('global.trans_category_label')[2] }}
                                     @elseif ($transaction->is_hr)    
-                                        Human Resource
+                                        {{ config('global.trans_category_label')[3] }}
                                     @else
-                                        Regular Transaction    
+                                        {{ config('global.trans_category_label')[0] }}
                                     @endif
                                 </h5>
                             </div>
@@ -200,7 +200,7 @@
                                             <div class="modal-dialog modal-lg" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header border-0">
-                                                        <h5 class="modal-title">{{ ucfirst($item->description) }} {{ Carbon::parse($item->created_at)->diffForHumans() }}</h5>
+                                                        <h5 class="modal-title">{{ ucfirst($item->description) }} {{ Carbon::parse($item->created_at)->diffInDays(Carbon::now()) >= 1 ? $item->created_at->format('Y-m-d') : $item->created_at->diffForHumans() }}</h5>
                                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
@@ -253,7 +253,7 @@
                                         </div>
                                     </td>
                                     <td>{{ $item->causer->name }}</td>
-                                    <td class="text-right">{{ Carbon::parse($item->created_at)->diffForHumans() }}</td>
+                                    <td class="text-right">{{ Carbon::parse($item->created_at)->diffInDays(Carbon::now()) >= 1 ? $item->created_at->format('Y-m-d') : $item->created_at->diffForHumans() }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

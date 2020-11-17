@@ -26,7 +26,7 @@
                             <div class="col-sm-6">
                                 <div class="description-block">
                                     <h5 class="description-header">Joined</h5>
-                                    <span>{{ Carbon::parse($user->created_at)->diffForHumans() }}</span>
+                                    <span>{{ Carbon::parse($user->created_at)->diffInDays(Carbon::now()) >= 1 ? $user->created_at->format('Y-m-d') : $user->created_at->diffForHumans() }}</span>
                                 </div>
                             </div>
                             <div class="col-12 py-3">
@@ -171,7 +171,7 @@
                                             </a>
                                         </td>
                                         <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
-                                        <td class="text-center">{{ Carbon::parse($item->updated_at)->diffForHumans() }}</td>
+                                        <td class="text-center">{{ Carbon::parse($item->updated_at)->diffInDays(Carbon::now()) >= 1 ? $item->updated_at->format('Y-m-d') : $item->updated_at->diffForHumans() }}</td>
                                     </tr>
                                 @endforeach
                             </table>
@@ -213,7 +213,7 @@
                                             </a>
                                         </td>
                                         <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
-                                        <td class="text-center">{{ Carbon::parse($item->updated_at)->diffForHumans() }}</td>
+                                        <td class="text-center">{{ Carbon::parse($item->updated_at)->diffInDays(Carbon::now()) >= 1 ? $item->updated_at->format('Y-m-d') : $item->updated_at->diffForHumans() }}</td>
                                     </tr>
                                 @endforeach
                             </table>
@@ -257,7 +257,7 @@
                                         </a>
                                     </td>
                                     <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
-                                    <td class="text-center">{{ Carbon::parse($item->updated_at)->diffForHumans() }}</td>
+                                    <td class="text-center">{{ Carbon::parse($item->updated_at)->diffInDays(Carbon::now()) >= 1 ? $item->updated_at->format('Y-m-d') : $item->updated_at->diffForHumans() }}</td>
                                 </tr>
                             @endforeach
                         </table>
@@ -299,7 +299,7 @@
                                         </a>
                                     </td>
                                     <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
-                                    <td class="text-center">{{ Carbon::parse($item->updated_at)->diffForHumans() }}</td>
+                                    <td class="text-center">{{ Carbon::parse($item->updated_at)->diffInDays(Carbon::now()) >= 1 ? $item->updated_at->format('Y-m-d') : $item->updated_at->diffForHumans() }}</td>
                                 </tr>
                             @endforeach
                         </table>
@@ -341,7 +341,7 @@
                                         </a>
                                     </td>
                                     <td class="text-right">{{ number_format($item->liquidation->sum('amount') - $item->amount_issued, 2, '.', ',') }}</td>
-                                    <td class="text-center">{{ Carbon::parse($item->updated_at)->diffForHumans() }}</td>
+                                    <td class="text-center">{{ Carbon::parse($item->updated_at)->diffInDays(Carbon::now()) >= 1 ? $item->updated_at->format('Y-m-d') : $item->updated_at->diffForHumans() }}</td>
                                 </tr>
                             @endforeach
                         </table>
@@ -410,7 +410,7 @@
                                         <tr>
                                             <td>{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</td>
                                             <td>{{ $item->status->name }}</td>
-                                            <td>{{ Carbon::parse($item->updated_at)->diffForHumans() }}</td>
+                                            <td>{{ Carbon::parse($item->updated_at)->diffInDays(Carbon::now()) >= 1 ? $item->updated_at->format('Y-m-d') : $item->updated_at->diffForHumans() }}</td>
                                         </tr>
                                     @endforeach
                                 </table>
@@ -438,7 +438,7 @@
                                                         <div class="modal-dialog modal-lg" role="document">
                                                             <div class="modal-content">
                                                                 <div class="modal-header border-0">
-                                                                    <h5 class="modal-title">{{ ucfirst($item->description) }} {{ Carbon::parse($item->created_at)->diffForHumans() }}</h5>
+                                                                    <h5 class="modal-title">{{ ucfirst($item->description) }} {{ Carbon::parse($item->created_at)->diffInDays(Carbon::now()) >= 1 ? $item->updated_at->format('Y-m-d') : $item->updated_at->diffForHumans() }}</h5>
                                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                         <span aria-hidden="true">&times;</span>
                                                                     </button>
@@ -496,7 +496,7 @@
                                                     </div>
                                                 </td>
                                                 <td>{{ $item->log_name }}</td>
-                                                <td class="text-right">{{ Carbon::parse($item->created_at)->diffForHumans() }}</td>
+                                                <td class="text-right">{{ Carbon::parse($item->created_at)->diffInDays(Carbon::now()) >= 1 ? $item->updated_at->format('Y-m-d') : $item->updated_at->diffForHumans() }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>

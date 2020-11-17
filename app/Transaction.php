@@ -57,7 +57,8 @@ class Transaction extends Model {
                                         'updatedby.name',
                                         'status.name',
                                         'is_deposit',
-                                        'is_bills'
+                                        'is_bills',
+                                        'is_hr'
                                         ];
     protected static $logName = 'Transaction';
     protected static $logOnlyDirty = true;

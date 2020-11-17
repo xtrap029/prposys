@@ -104,6 +104,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/view/{transaction}', $url.'@show')->where('transaction', '[0-9]+');
             Route::get('/edit/{transaction}', $url.'@edit')->where('transaction', '[0-9]+');
             Route::put('/edit/{transaction}', $url.'@update')->where('transaction', '[0-9]+');
+            Route::put('/edit-issued/{transaction}', $url.'@update_issued')->where('transaction', '[0-9]+');
             Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
             Route::put('/cancel/{transaction}', $url.'@cancel')->where('transaction', '[0-9]+');
             // Route::put('/approval/{transaction}', $url.'@approval')->where('transaction', '[0-9]+');

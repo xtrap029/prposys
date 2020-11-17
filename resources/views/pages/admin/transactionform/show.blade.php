@@ -229,17 +229,30 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <label for="">Transaction Category</label>
-                                <h5>
-                                    @if ($transaction->is_deposit)
-                                        Deposit Transaction
-                                    @elseif ($transaction->is_bills)    
-                                        Bills Payment
-                                    @elseif ($transaction->is_hr)    
-                                        Human Resource
-                                    @else
-                                        Regular Transaction    
-                                    @endif
-                                </h5>
+                                @if ($perms['can_edit_issued'])
+                                    <form action="/transaction-form/edit-issued/{{ $transaction->id }}" method="post">
+                                        @csrf
+                                        @method('put')
+                                        <select name="trans_category" class="form-control w-50" onchange="this.form.submit()">
+                                            <option value="{{ config('global.trans_category')[0] }}" {{ $transaction->is_deposit == 0 && $transaction->is_bills == 0 && $transaction->is_hr == 0 ? 'selected' : '' }}>{{ config('global.trans_category_label')[0] }}</option>
+                                            <option value="{{ config('global.trans_category')[1] }}" {{ $transaction->is_deposit == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[1] }}</option>
+                                            <option value="{{ config('global.trans_category')[2] }}" {{ $transaction->is_bills == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[2] }}</option>
+                                            <option value="{{ config('global.trans_category')[3] }}" {{ $transaction->is_hr == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[3] }}</option>
+                                        </select>
+                                    </form>
+                                @else
+                                    <h5>
+                                        @if ($transaction->is_deposit)
+                                            {{ config('global.trans_category_label')[1] }}
+                                        @elseif ($transaction->is_bills)    
+                                            {{ config('global.trans_category_label')[2] }}
+                                        @elseif ($transaction->is_hr)    
+                                            {{ config('global.trans_category_label')[3] }}
+                                        @else
+                                            {{ config('global.trans_category_label')[0] }}    
+                                        @endif
+                                    </h5>
+                                @endif
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -370,7 +383,7 @@
                                             <div class="modal-dialog modal-lg" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header border-0">
-                                                        <h5 class="modal-title">{{ ucfirst($item->description) }} {{ Carbon::parse($item->created_at)->diffForHumans() }}</h5>
+                                                        <h5 class="modal-title">{{ ucfirst($item->description) }} {{ Carbon::parse($item->created_at)->diffInDays(Carbon::now()) >= 1 ? $item->created_at->format('Y-m-d') : $item->created_at->diffForHumans() }}</h5>
                                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
@@ -423,7 +436,7 @@
                                         </div>
                                     </td>
                                     <td>{{ $item->causer->name }}</td>
-                                    <td class="text-right">{{ Carbon::parse($item->created_at)->diffForHumans() }}</td>
+                                    <td class="text-right">{{ Carbon::parse($item->created_at)->diffInDays(Carbon::now()) >= 1 ? $item->created_at->format('Y-m-d') : $item->created_at->diffForHumans() }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

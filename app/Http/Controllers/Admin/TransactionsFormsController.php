@@ -259,6 +259,7 @@ class TransactionsFormsController extends Controller {
             $transaction->trans_type."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
             $transaction->project->company_id
         );
+        $perms['can_edit_issued'] = $this->check_can_edit_issued($transaction->id);
 
         $released_by = ReleasedBy::orderBy('name', 'asc')->get();
 
@@ -359,8 +360,23 @@ class TransactionsFormsController extends Controller {
             'payee' => ['required'],
             'currency' => ['required'],
             'due_at' => ['required', 'date'],
-            'requested_id' => ['required', 'exists:users,id']
+            'requested_id' => ['required', 'exists:users,id'],
+            'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
         ]);
+
+        $data['is_deposit'] = 0;
+        $data['is_bills'] = 0;
+        $data['is_hr'] = 0;
+        
+        if ($data['trans_category'] == config('global.trans_category')[1]) {
+            $data['is_deposit'] = 1;
+        } else if ($data['trans_category'] == config('global.trans_category')[2]) {
+            $data['is_bills'] = 1;
+        } else if ($data['trans_category'] == config('global.trans_category')[3]) {
+            $data['is_hr'] = 1;
+        }
+
+        unset($data['trans_category']);
 
         $data_desc = $request->validate([
             'qty.*' => ['required', 'min:1'],
@@ -413,6 +429,37 @@ class TransactionsFormsController extends Controller {
             $data['status_id'] = 5;
         }
         
+        $data['updated_id'] = auth()->id();
+
+        $transaction->update($data);
+
+        return redirect('/transaction-form/view/'.$transaction->id);
+    }
+
+    public function update_issued(Request $request, Transaction $transaction) {
+        if (!$this->check_can_edit_issued($transaction->id)) {
+            return back()->with('error', __('messages.cant_edit'));
+        }
+
+        // validate input
+        $data = $request->validate([
+            'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
+        ]);
+
+        $data['is_deposit'] = 0;
+        $data['is_bills'] = 0;
+        $data['is_hr'] = 0;
+        
+        if ($data['trans_category'] == config('global.trans_category')[1]) {
+            $data['is_deposit'] = 1;
+        } else if ($data['trans_category'] == config('global.trans_category')[2]) {
+            $data['is_bills'] = 1;
+        } else if ($data['trans_category'] == config('global.trans_category')[3]) {
+            $data['is_hr'] = 1;
+        }
+
+        unset($data['trans_category']);
+
         $data['updated_id'] = auth()->id();
 
         $transaction->update($data);
@@ -775,6 +822,24 @@ class TransactionsFormsController extends Controller {
         }
 
         return $can_print;
+    }
+
+    private function check_can_edit_issued($transaction, $user = '') {
+        $admin_subadmin = true;
+
+        if (!$user) {
+            $user = auth()->id();
+        }
+
+        $user = User::where('id', $user)->first();
+
+        $transaction = Transaction::where('id', $transaction)->first();
+
+        if (!in_array($user->role_id, config('global.admin_subadmin')) || !in_array($transaction->status_id, config('global.form_issued'))) {
+            $admin_subadmin = false;
+        }
+
+        return $admin_subadmin;
     }
 
     private function check_can_issue($transaction, $user = '') {

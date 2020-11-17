@@ -35,7 +35,7 @@
                                 <div class="col-sm-6">
                                     <div class="description-block">
                                         <h5 class="description-header">Joined</h5>
-                                        <span>{{ Carbon::parse($user->created_at)->diffForHumans() }}</span>
+                                        <span>{{ Carbon::parse($user->created_at)->diffInDays(Carbon::now()) >= 1 ? $user->created_at->format('Y-m-d') : $user->created_at->diffForHumans() }}</span>
                                     </div>
                                 </div>
                             </div>

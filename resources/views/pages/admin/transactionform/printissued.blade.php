@@ -8,17 +8,17 @@
             <div class="container-fluid">
                 <div class="float-right">Date Generated: <b>{{ Carbon\Carbon::now() }}</b></div>
                 {{-- <h1>{{ $transaction->is_deposit ? 'For Deposit' : $trans_page }} - Form</h1> --}}
-                <div class="row row--print my-3 w-100">
+                <div class="row row--print w-100">
                     <div class="col-6">
                         <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--sm">
                     </div>
                     <div class="col-6">
-                        <h2 class="text-right mt-3">{{ $transaction->project->company->name }}</h2>
+                        <h3 class="text-right mt-3">{{ $transaction->project->company->name }}</h3>
                     </div>
                 </div>
                 <div class="row row--print">
                     <div class="col-4">
-                        <table class="table">
+                        <table class="table table-sm mb-0">
                             <thead>
                                 <tr>
                                     <th>Project</th>
@@ -34,7 +34,7 @@
                         </table>
                     </div>          
                     <div class="col-8">
-                        <table class="table">
+                        <table class="table table-sm mb-0">
                             <thead>
                                 <tr>
                                     <th>Purpose</th>
@@ -49,8 +49,8 @@
                     </div> 
                 </div>
                 <div class="row row--print">                
-                    <div class="col-12 my-3">
-                        <table class="table">
+                    <div class="col-12">
+                        <table class="table table-sm">
                             <tr>
                                 <td class="font-weight-bold">Due Date</td>
                                 <td colspan="2">{{ $transaction->due_at }}</td>
@@ -64,7 +64,7 @@
                                 <td colspan="5" class="font-weight-bold">{{ $transaction->payee }}</td>
                             </tr>
                             <tr>
-                                <td colspan="6" class="my-4 py-4"></td>
+                                <td colspan="6" class="py-3"></td>
                             </tr>
                             <tr class="font-weight-bold">
                                 <td>Item No.</td>                            
@@ -89,9 +89,6 @@
                                 <td>{{ $transaction->form_amount_vat + $transaction->form_amount_wht == 0 ? 'Total' : 'Subtotal' }}</td>
                                 <td colspan="2"></td>
                                 <td class="text-right"><span class="float-left">{{ $transaction->currency }}</span> {{ number_format($transaction->form_amount_subtotal, 2, '.', ',') }}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="6" class="my-4 py-4"></td>
                             </tr>
                             @if ($transaction->form_amount_vat)
                             <tr>
@@ -118,9 +115,6 @@
                                 <td class="text-right"><span class="float-left">{{ $transaction->currency }}</span> {{ number_format($transaction->form_amount_payable, 2, '.', ',') }}</td>
                             </tr>
                             @endif
-                            <tr>
-                                <td colspan="6" class="my-4 py-4"></td>
-                            </tr>
                             <tr class="font-weight-bold border-top-2">
                                 <td colspan="2"></td>
                                 <td>Amount</td>
@@ -169,25 +163,25 @@
                         </table>
                     </div>
                 </div>
-                <div class="row row--print">
-                    <div class="col-4 small text-center my-4">
+                <div class="row row--print mt-3">
+                    <div class="col-3 small text-center my-4">
                         <h5>{{ $transaction->owner->name }}</h5>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Prepared By</div>
                     </div>
-                    <div class="col-4 small text-center my-4">
+                    <div class="col-3 small text-center my-4">
                         <h5>{{ $transaction->requested->name }}</h5>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Requested By</div>
                     </div>
-                    <div class="col-4 small text-center my-4 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
+                    <div class="col-3 small text-center my-4 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
                         <h5>{{ $transaction->form_approver_id ? $transaction->formapprover->name : '' }}</h5>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Approver</div>
                     </div>
-                    <div class="col-4 small text-center my-4">
+                    <div class="col-3 small text-center my-4">
                         <h5>{{ $final_approver }}</h5>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Authorized By</div>
                     </div>
 
-                    <div class="col-4 small text-center my-4">
+                    <div class="col-3 small text-center my-4">
                         <h5>{{ Carbon\Carbon::now()->toDateString() }}</h5>
                         <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
                     </div>

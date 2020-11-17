@@ -90,13 +90,13 @@
                                     <td class="font-weight-bold">Transaction Category</td>
                                     <td>
                                         @if ($transaction->is_deposit)
-                                            Deposit Transaction
+                                            {{ config('global.trans_category_label')[1] }}
                                         @elseif ($transaction->is_bills)    
-                                            Bills Payment
+                                            {{ config('global.trans_category_label')[2] }}
                                         @elseif ($transaction->is_hr)    
-                                            Human Resource
+                                            {{ config('global.trans_category_label')[3] }}
                                         @else
-                                            Regular Transaction    
+                                            {{ config('global.trans_category_label')[0] }}   
                                         @endif
                                     </td>
                                 </tr>

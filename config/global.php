@@ -28,6 +28,7 @@
         'control_types' => ['Cash', 'Online', 'Check'],
         'control_types_pc' => 'Petty Cash',
         'trans_category' => ['reg', 'dt', 'bp', 'hr'],
+        'trans_category_label' => ['Regular Transaction', 'Deposit Transaction', 'Bills Payment', 'Human Resource'],
         'status_filter' => [
             ['PR/PO# Generated', '1,5'],
             ['Form-Approval', '6'],

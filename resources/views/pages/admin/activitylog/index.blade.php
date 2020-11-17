@@ -30,7 +30,7 @@
                             <td>{{ ucfirst($item->description) }}</td>
                             <td>{{ $item->log_name }}</td>
                             <td>{{ $item->causer->name }}</td>
-                            <td>{{ Carbon::parse($item->created_at)->diffForHumans() }}</td>
+                            <td>{{ Carbon::parse($item->created_at)->diffInDays(Carbon::now()) >= 1 ? $item->created_at->format('Y-m-d') : $item->created_at->diffForHumans() }}</td>
                             <td class="text-right">
                                 <a href="#_" data-toggle="modal" data-target="#modal-{{ $item->id }}"><small>More info</small></a>
                                 <div class="modal fade" id="modal-{{ $item->id }}" tabindex="-1" role="dialog" aria-hidden="true">

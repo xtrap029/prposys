@@ -113,7 +113,7 @@
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[0] }}" class="form-control m-auto outline-0" checked>
                                     </div>
                                     <div class="col-9 mt-2">
-                                        <h6 class="font-weight-bold">Regular Transaction</h6>
+                                        <h6 class="font-weight-bold">{{ config('global.trans_category_label')[0] }}</h6>
                                         <p class="d-none">Lorem ipsum dolor sit amet, consectetur, et dolore magna aliqua.</p>
                                     </div>
                                 </div>
@@ -124,7 +124,7 @@
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[1] }}" class="form-control m-auto outline-0">
                                     </div>
                                     <div class="col-9 mt-2">
-                                        <h6 class="font-weight-bold">Deposit Transaction</h6>
+                                        <h6 class="font-weight-bold">{{ config('global.trans_category_label')[1] }}</h6>
                                         <p class="d-none">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
                                     </div>
                                 </div>
@@ -135,7 +135,7 @@
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[2] }}" class="form-control m-auto outline-0">
                                     </div>
                                     <div class="col-9 mt-2">
-                                        <h6 class="font-weight-bold">Bills Payment</h6>          
+                                        <h6 class="font-weight-bold">{{ config('global.trans_category_label')[2] }}</h6>          
                                         <p class="d-none">Excepteur sint non proident, sunt in culpa qui mollit anim id.</p>
                                     </div>
                                 </div>
@@ -146,7 +146,7 @@
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[3] }}" class="form-control m-auto outline-0">
                                     </div>
                                     <div class="col-9 mt-2">
-                                        <h6 class="font-weight-bold">Human Resource</h6>
+                                        <h6 class="font-weight-bold">{{ config('global.trans_category_label')[3] }}</h6>
                                         <p class="d-none">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
                                     </div>
                                 </div>
