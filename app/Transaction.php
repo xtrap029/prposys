@@ -64,23 +64,23 @@ class Transaction extends Model {
     protected static $logOnlyDirty = true;
 
     public function particulars() {
-        return $this->belongsTo(Particulars::class);
+        return $this->belongsTo(Particulars::class)->withTrashed();
     }
 
     public function project() {
-        return $this->belongsTo(CompanyProject::class);
+        return $this->belongsTo(CompanyProject::class)->withTrashed();
     }
 
     public function coatagging() {
-        return $this->belongsTo(CoaTagging::class, 'coa_tagging_id');
+        return $this->belongsTo(CoaTagging::class, 'coa_tagging_id')->withTrashed();
     }
 
     public function expensetype() {
-        return $this->belongsTo(ExpenseType::class, 'expense_type_id');
+        return $this->belongsTo(ExpenseType::class, 'expense_type_id')->withTrashed();
     }
 
     public function vattype() {
-        return $this->belongsTo(VatType::class, 'vat_type_id');
+        return $this->belongsTo(VatType::class, 'vat_type_id')->withTrashed();
     }
 
     public function requested() {
@@ -128,6 +128,6 @@ class Transaction extends Model {
     // }
 
     public function bankbranch() {
-        return $this->belongsTo(BankBranch::class, 'depo_bank_branch_id');
+        return $this->belongsTo(BankBranch::class, 'depo_bank_branch_id')->withTrashed();
     }
 }
