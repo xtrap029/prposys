@@ -17,52 +17,60 @@
                     </div>
                 </div>
                 <div class="row row--print">
-                    <div class="col-4">
-                        <table class="table table-sm mb-0">
+                    <div class="col-12">
+                        <table class="table table-sm">
                             <thead>
                                 <tr>
+                                    <th>Request No.</th>
+                                    <th>Date Requested</th>
                                     <th>Project</th>
                                     <th>COA Tagging</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
+                                    <td>
+                                        <h3 class="font-weight-bold pb-0 mb-0">
+                                            {{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}
+                                        </h3>
+                                    </td>
+                                    <td>{{ Carbon::parse($transaction->created_at)->format('Y-m-d') }}</td>
                                     <td>{{ $transaction->project->project }}</td>
                                     <td>{{ $transaction->coatagging->name }}</td>
                                 </tr>
                             </tbody>
                         </table>
-                    </div>          
-                    <div class="col-8">
-                        <table class="table table-sm mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Purpose</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>{{ $transaction->purpose }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div> 
+                        <div class="row">
+                            <div class="col-md-8">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td class="font-weight-bold">Purpose</td>
+                                        <td>{{ $transaction->purpose }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold">Vendor</td>
+                                        <td>{{ $transaction->payee }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-4">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td class="font-weight-bold">Due Date</td>
+                                        <td>{{ $transaction->due_at }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold">Tax Type</td>
+                                        <td>{{ $transaction->form_vat_name ? $transaction->form_vat_name : $transaction->vattype->name }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>        
                 </div>
                 <div class="row row--print">                
                     <div class="col-12">
                         <table class="table table-sm">
-                            <tr>
-                                <td class="font-weight-bold">Due Date</td>
-                                <td colspan="2">{{ $transaction->due_at }}</td>
-                                <td class="font-weight-bold">Request No.</td>
-                                <td colspan="2">
-                                    <h3 class="font-weight-bold pb-0 mb-0">{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</h3>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold">Vendor</td>
-                                <td colspan="5" class="font-weight-bold">{{ $transaction->payee }}</td>
-                            </tr>
                             <tr>
                                 <td colspan="6" class="py-3"></td>
                             </tr>

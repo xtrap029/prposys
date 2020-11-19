@@ -127,9 +127,9 @@
                     </div>
                 @elseif($transaction->is_deposit)
                     <div class="row mt-5">                                            
-                        <div class="col-md-2">
-                            <label for="" class="font-weight-bold">Type</label>
-                            <select name="depo_type" class="form-control @error('depo_type') is-invalid @enderror" required>
+                        <div class="col-md-3">
+                            <label for="" class="font-weight-bold">Mode</label>
+                            <select name="depo_type" class="depo_type form-control @error('depo_type') is-invalid @enderror" required>
                                 @foreach (config('global.deposit_type') as $item)
                                     <option value="{{ $item }}">{{ $item }}</option>
                                 @endforeach
@@ -137,7 +137,7 @@
                             @include('errors.inline', ['message' => $errors->first('depo_type')])
                         </div>
                         <div class="col-md-3">
-                            <label for="" class="font-weight-bold">Bank</label>
+                            <label for="" class="font-weight-bold">Type / Account #</label>
                             <select name="depo_bank_branch_id" class="form-control @error('depo_bank_branch_id') is-invalid @enderror" required>
                                 @foreach ($banks as $item)
                                     <optgroup label="{{ $item->name }}">
@@ -149,12 +149,14 @@
                             </select>
                             @include('errors.inline', ['message' => $errors->first('depo_bank_branch_id')])
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <label for="" class="font-weight-bold">Reference Code</label>
-                            <input type="text" name="depo_ref" class="form-control @error('depo_ref') is-invalid @enderror" required>
+                            <input type="text" name="depo_ref" class="depo_ref form-control @error('depo_ref') is-invalid @enderror" required>
                             @include('errors.inline', ['message' => $errors->first('depo_ref')])
                         </div>
-                        <div class="col-md-2">
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-3">
                             <label for="" class="font-weight-bold">Deposited By</label>
                             <select name="liquidation_approver_id" class="form-control @error('liquidation_approver_id') is-invalid @enderror">
                                 @foreach ($users as $item)
@@ -163,10 +165,15 @@
                             </select>
                             @include('errors.inline', ['message' => $errors->first('requested_id')])
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label for="" class="font-weight-bold">Date Deposited</label>
                             <input type="date" name="depo_date" class="form-control @error('depo_date') is-invalid @enderror" required>
                             @include('errors.inline', ['message' => $errors->first('depo_date')])
+                        </div>
+                        <div class="col-md-6">
+                            <label for="" class="font-weight-bold">Received By</label>
+                            <input type="text" name="depo_received_by" class="form-control @error('depo_received_by') is-invalid @enderror" required>
+                            @include('errors.inline', ['message' => $errors->first('depo_received_by')])
                         </div>
                     </div>
                 @endif
@@ -266,6 +273,19 @@
                 })
             }
 
+            checkDepo()
+
+            $('.depo_type').on('change', function() {
+                checkDepo()
+            })
+
+            function checkDepo() {
+                if ($('.depo_type').val() == 'CASH') {
+                    $('.depo_ref').removeAttr('required')
+                } else {
+                    $('.depo_ref').prop('required',true)
+                }
+            }
         })
     </script>
 @endsection

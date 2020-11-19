@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Branch')
+@section('title', 'Edit Account')
 
 @section('content')
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Edit Bank Branch</h1>
+                    <h1>Edit Account</h1>
                 </div>
             </div>
         </div>
@@ -18,7 +18,7 @@
                 @csrf
                 @method('put')
                 <div class="form-group">
-                    <label for="">Branch Name</label>
+                    <label for="">Account Name</label>
                     <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ $bank_branch->name }}" required>
                     @include('errors.inline', ['message' => $errors->first('name')])
                 </div>

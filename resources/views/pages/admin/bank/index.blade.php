@@ -20,7 +20,7 @@
                         <th>List</th>
                         <th class="text-right">
                             <a href="/bank/create" class="mr-4">Create Bank</a>
-                            <a href="/bank-branch/create">Create Branch</a>
+                            <a href="/bank-branch/create">Create Account</a>
                         </th>
                     </tr>
                 </thead>

@@ -218,33 +218,39 @@
             </div>     
             <div class="row row--print">
                 <div class="col-7">
-                    @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
-                        <table class="table table-sm">
-                            <tr>
-                                <td>Amount {{ $transaction->liq_balance >= 0 ? 'Reimbursed' : 'Returned' }}</td>
-                                <td class="font-weight-bold">{{ $transaction->currency }} {{ $transaction->liq_balance < 0 ? number_format($transaction->liq_balance*-1, 2, '.', ',') : $transaction->liq_balance }}</td>
-                            </tr>                        
-                            <tr>
-                                <td>Date Deposited</td>
-                                <td class="font-weight-bold">{{ $transaction->depo_date }}</td>
-                            </tr>
-                            <tr>
-                                <td>Type</td>
-                                <td class="font-weight-bold">{{ $transaction->depo_type }}</td>
-                            </tr>
-                            <tr>
-                                <td>Bank</td>
-                                <td class="font-weight-bold">{{ $transaction->bankbranch ? $transaction->bankbranch->bank->name.' ('.$transaction->bankbranch->name.')' : '' }}</td>
-                            </tr>
-                            <tr>
-                                <td>Reference Code</td>
-                                <td class="font-weight-bold">{{ $transaction->depo_ref }}</td>
-                            </tr>
-                            <tr>
-                                <td>Status</td>
-                                <td class="font-weight-bold">{{ $transaction->status->name }}</td>
-                            </tr>
-                        </table>
+                    @if (!$transaction->is_bills && !$transaction->is_hr)
+                        @if ($transaction->liq_balance != 0)
+                            <table class="table table-sm">
+                                <tr>
+                                    <td>Amount {{ $transaction->liq_balance >= 0 ? 'Reimbursed' : 'Returned' }}</td>
+                                    <td class="font-weight-bold">{{ $transaction->currency }} {{ $transaction->liq_balance < 0 ? number_format($transaction->liq_balance*-1, 2, '.', ',') : $transaction->liq_balance }}</td>
+                                </tr>                        
+                                <tr>
+                                    <td>Date Deposited</td>
+                                    <td class="font-weight-bold">{{ $transaction->depo_date }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Type</td>
+                                    <td class="font-weight-bold">{{ $transaction->depo_type }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Bank</td>
+                                    <td class="font-weight-bold">{{ $transaction->bankbranch ? $transaction->bankbranch->bank->name.' ('.$transaction->bankbranch->name.')' : '' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Reference Code</td>
+                                    <td class="font-weight-bold">{{ $transaction->depo_ref }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Received By</td>
+                                    <td class="font-weight-bold">{{ $transaction->depo_received_by }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Status</td>
+                                    <td class="font-weight-bold">{{ $transaction->status->name }}</td>
+                                </tr>
+                            </table>
+                        @endif
                     @endif
                 </div>
 

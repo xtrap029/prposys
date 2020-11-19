@@ -216,6 +216,7 @@ class TransactionsLiquidationController extends Controller {
             $validate['depo_bank_branch_id'] = ['required', 'exists:bank_branches,id'];
             $validate['depo_ref'] = ['required'];
             $validate['depo_date'] = ['required', 'date'];
+            $validate['depo_received_by'] = [];
             $validate['liquidation_approver_id'] = ['required', 'exists:users,id'];
         }
 
@@ -254,6 +255,7 @@ class TransactionsLiquidationController extends Controller {
             $transaction->depo_bank_branch_id = $data['depo_bank_branch_id'];
             $transaction->depo_ref = $data['depo_ref'];
             $transaction->depo_date = $data['depo_date'];
+            $transaction->depo_received_by = $data['depo_received_by'];
             $transaction->liquidation_approver_id = $data['liquidation_approver_id'];
         }
         
@@ -526,7 +528,8 @@ class TransactionsLiquidationController extends Controller {
                 $data = $request->validate([
                     'depo_type' => ['required', 'in:'.implode(',', config('global.deposit_type'))],
                     'depo_bank_branch_id' => ['required', 'exists:bank_branches,id'],
-                    'depo_ref' => ['required'],
+                    'depo_ref' => [],
+                    'depo_received_by' => ['required'],
                     'depo_date' => ['required', 'date'],
                     'depo_slip' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:6048']
                 ]);
@@ -726,7 +729,8 @@ class TransactionsLiquidationController extends Controller {
             $data = $request->validate([
                 'depo_type' => ['required', 'in:'.implode(',', config('global.deposit_type'))],
                 'depo_bank_branch_id' => ['required', 'exists:bank_branches,id'],
-                'depo_ref' => ['required'],
+                'depo_ref' => [],
+                'depo_received_by' => ['required'],
                 'depo_date' => ['required', 'date'],
                 'depo_slip' => ['mimes:jpeg,png,jpg,pdf', 'max:6048']
             ]);

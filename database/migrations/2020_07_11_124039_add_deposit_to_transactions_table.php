@@ -14,7 +14,7 @@ class AddDepositToTransactionsTable extends Migration
     public function up()
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->enum('depo_type', ['BANK', 'CHECK', 'ONLINE'])->after('liquidation_approver_id')->nullable();
+            $table->enum('depo_type', ['BANK', 'CHECK', 'ONLINE', 'CASH'])->after('liquidation_approver_id')->nullable();
             $table->unsignedBigInteger('depo_bank_id')->after('depo_type')->nullable();
             $table->string('depo_ref')->after('depo_bank_id')->nullable();
             $table->date('depo_date')->after('depo_ref')->nullable();
