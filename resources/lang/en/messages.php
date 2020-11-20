@@ -13,6 +13,7 @@ return [
     'clear_success' => ' successfully cleared!',
     'leave_blank' => 'Leave blank to use default setting.',
     'invalid_access' => 'Invalid access!',
+    'invalid_command' => 'Command Invalid!',
     'cant_create' => 'You are not allowed to create the item right now.',
     'cant_edit' => 'You are not allowed to edit the item right now.',
     'cant_print' => 'You are not allowed to print the item right now.',

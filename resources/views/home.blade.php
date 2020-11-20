@@ -102,7 +102,7 @@
                 </div>
             </div>
 
-            <div class="col-6 col-md-3">
+            <div class="col-6 col-md-3 {{ $stats['cancelled'] > 0 ? '' : 'd-none' }}">
                 <div class="my-3">
                     <div class="description-block description-block--status">
                         <h5 class="description-header text-danger">{{ $stats['cancelled'] }}</h5>
@@ -110,7 +110,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-6 col-md-3">
+            <div class="col-6 col-md-3 {{ $stats['generated'] > 0 ? '' : 'd-none' }}">
                 <div class="my-3">
                     <div class="description-block description-block--status">
                         <h5 class="description-header text-orange">{{ $stats['generated'] }}</h5>
@@ -118,7 +118,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-6 col-md-3">
+            <div class="col-6 col-md-3 {{ $stats['issued'] > 0 ? '' : 'd-none' }}">
                 <div class="my-3">
                     <div class="description-block description-block--status">
                         <h5 class="description-header text-primary">{{ $stats['issued'] }}</h5>
@@ -126,7 +126,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-6 col-md-3">
+            <div class="col-6 col-md-3 {{ $stats['cleared'] > 0 ? '' : 'd-none' }}">
                 <div class="my-3">
                     <div class="description-block description-block--status">
                         <h5 class="description-header text-success">{{ $stats['cleared'] }}</h5>
@@ -136,18 +136,20 @@
             </div>
 
             @if (in_array($user->role_id, config('global.admin_subadmin')))
-                <div class="col-12 col-md-6">
+
+                {{-- FOR APPROVAL --}}
+                <div class="col-12 col-md-12">
                     <div class="card">
                         <div class="card-header pb-2">
-                            <h3 class="card-title">Form Approval / For Issue</h3>
+                            <h3 class="card-title">For Approval</h3>
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons text-primary">list</i>
                                 </button>                            
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="transaction-form/prpo/{{ $user->company_id }}?status=approval&type=pr&s=">Payment Release</a>
-                                    <a class="dropdown-item" href="transaction-form/prpo/{{ $user->company_id }}?status=approval&type=po&s=">Purchase Order</a>
-                                    {{-- <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=approval&type=&s=">Petty Cash</a> --}}
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=6&type=pr&s=&user_req=&user_prep">Payment Release</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=6&type=po&s=&user_req=&user_prep">Purchase Order</a>
+                                    {{-- <a class="dropdown-item" href="transaction/pc/{{ $user->company_id }}?status=6&type=&s=&user_req=&user_prep">Petty Cash</a> --}}
                                 </div>
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                     <i class="material-icons text-primary">arrow_drop_up</i>
@@ -158,9 +160,12 @@
                             <table class="table table-striped small m-0">
                                 <thead>
                                     <tr>
-                                        <th>Transaction</th>
+                                        <th>PO/PR #</th>
+                                        <th>Vendor/Payee</th>
+                                        <th>Purpose</th>
                                         <th class="text-right">Amount</th>
-                                        <th class="text-center">Last Update</th>
+                                        <th class="text-center">Trans. #</th>
+                                        <th class="text-center">Due Date</th>
                                     </tr>
                                 </thead>
                                 @foreach ($for_issue as $item)
@@ -170,26 +175,31 @@
                                                 {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
                                             </a>
                                         </td>
-                                        <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
-                                        <td class="text-center">{{ Carbon::parse($item->updated_at)->diffInDays(Carbon::now()) >= 1 ? $item->updated_at->format('Y-m-d') : $item->updated_at->diffForHumans() }}</td>
+                                        <td>{{ $item->payee }}</td>
+                                        <td>{{ $item->purpose }}</td>
+                                        <td class="text-right">{{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}</td>
+                                        <td class="text-center">-</td>
+                                        <td class="text-center">{{ $item->due_at }}</td>
                                     </tr>
                                 @endforeach
                             </table>
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-6">
+
+                {{-- LIQ./FOR APPROVAL --}}
+                <div class="col-12 col-md-12">
                     <div class="card">
                         <div class="card-header pb-2">
-                            <h3 class="card-title">Form Clearing</h3>
+                            <h3 class="card-title">Liq./For Approval</h3>
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons text-primary">list</i>
                                 </button>                            
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="transaction-liquidation/prpo/{{ $user->company_id }}?status=approval&type=pr&s=">Payment Release</a>
-                                    <a class="dropdown-item" href="transaction-liquidation/prpo/{{ $user->company_id }}?status=approval&type=po&s=">Purchase Order</a>
-                                    {{-- <a class="dropdown-item" href="transaction-liquidation/pc/{{ $user->company_id }}?status=approval&type=&s=">Petty Cash</a> --}}
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=pr&s=&user_req=&user_prep">Payment Release</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=po&s=&user_req=&user_prep">Purchase Order</a>
+                                    {{-- <a class="dropdown-item" href="transaction-liquidation/pc/{{ $user->company_id }}?status=7,8&type=&s=&user_req=&user_prep">Petty Cash</a> --}}
                                 </div>
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                     <i class="material-icons text-primary">arrow_drop_up</i>
@@ -200,9 +210,12 @@
                             <table class="table table-striped small m-0">
                                 <thead>
                                     <tr>
-                                        <th>Transaction</th>
+                                        <th>PO/PR #</th>
+                                        <th>Vendor/Payee</th>
+                                        <th>Purpose</th>
                                         <th class="text-right">Amount</th>
-                                        <th class="text-center">Last Update</th>
+                                        <th>Trans. #</th>
+                                        <th class="text-center">Date Released</th>
                                     </tr>
                                 </thead>
                                 @foreach ($for_clearing as $item)
@@ -212,17 +225,22 @@
                                                 {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
                                             </a>
                                         </td>
-                                        <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
-                                        <td class="text-center">{{ Carbon::parse($item->updated_at)->diffInDays(Carbon::now()) >= 1 ? $item->updated_at->format('Y-m-d') : $item->updated_at->diffForHumans() }}</td>
+                                        <td>{{ $item->payee }}</td>
+                                        <td>{{ $item->purpose }}</td>
+                                        <td class="text-right">{{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}</td>
+                                        <td>{{ $item->control_no }}</td>
+                                        <td class="text-center">{{ $item->released_at }}</td>
                                     </tr>
                                 @endforeach
                             </table>
                         </div>
                     </div>
                 </div>
+
             @endif
 
-            <div class="col-md-4">
+            {{-- GENERATED --}}
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header pb-2">
                         <h3 class="card-title">Generated</h3>
@@ -231,9 +249,9 @@
                                 <i class="material-icons text-primary">list</i>
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=&type=pr&s=">Payment Release</a>
-                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=&type=po&s=">Purchase Order</a>
-                                {{-- <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=issued&type=&s=">Petty Cash</a> --}}
+                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=1,5&type=pr&s=&user_req=&user_prep">Payment Release</a>
+                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=1,5&type=po&s=&user_req=&user_prep">Purchase Order</a>
+                                {{-- <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=1,5issued&type=&s=&user_req=&user_prep">Petty Cash</a> --}}
                             </div>
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                 <i class="material-icons text-primary">arrow_drop_up</i>
@@ -244,9 +262,12 @@
                         <table class="table table-striped small m-0">
                             <thead>
                                 <tr>
-                                    <th>Transaction</th>
+                                    <th>PO/PR #</th>
+                                    <th>Vendor/Payee</th>
+                                    <th>Purpose</th>
                                     <th class="text-right">Amount</th>
-                                    <th class="text-center">Last Update</th>
+                                    <th class="text-center">Trans. #</th>
+                                    <th class="text-center">Last Updated</th>
                                 </tr>
                             </thead>
                             @foreach ($generated as $item)
@@ -256,7 +277,10 @@
                                             {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
                                         </a>
                                     </td>
+                                    <td>{{ $item->payee }}</td>
+                                    <td>{{ $item->payee }}</td>
                                     <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
+                                    <td class="text-center">-</td>
                                     <td class="text-center">{{ Carbon::parse($item->updated_at)->diffInDays(Carbon::now()) >= 1 ? $item->updated_at->format('Y-m-d') : $item->updated_at->diffForHumans() }}</td>
                                 </tr>
                             @endforeach
@@ -264,7 +288,9 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+
+            {{-- UNLIQUIDATED --}}
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header pb-2">
                         <h3 class="card-title">Unliquidated</h3>
@@ -273,9 +299,9 @@
                                 <i class="material-icons text-primary">list</i>
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="transaction-form/prpo/{{ $user->company_id }}?status=issued&type=pr&s=">Payment Release</a>
-                                <a class="dropdown-item" href="transaction-form/prpo/{{ $user->company_id }}?status=issued&type=po&s=">Purchase Order</a>
-                                {{-- <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=issued&type=&s=">Petty Cash</a> --}}
+                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=4&type=pr&s=&user_req=&user_prep">Payment Release</a>
+                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=4&type=po&s=&user_req=&user_prep">Purchase Order</a>
+                                {{-- <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=issued&type=&s=&user_req=&user_prep">Petty Cash</a> --}}
                             </div>
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                 <i class="material-icons text-primary">arrow_drop_up</i>
@@ -286,9 +312,12 @@
                         <table class="table table-striped small m-0">
                             <thead>
                                 <tr>
-                                    <th>Transaction</th>
+                                    <th>PO/PR #</th>
+                                    <th>Vendor/Payee</th>
+                                    <th>Purpose</th>
                                     <th class="text-right">Amount</th>
-                                    <th class="text-center">Last Update</th>
+                                    <th>Trans. #</th>
+                                    <th class="text-center">Date Released</th>
                                 </tr>
                             </thead>
                             @foreach ($unliquidated as $item)
@@ -298,15 +327,20 @@
                                             {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
                                         </a>
                                     </td>
-                                    <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
-                                    <td class="text-center">{{ Carbon::parse($item->updated_at)->diffInDays(Carbon::now()) >= 1 ? $item->updated_at->format('Y-m-d') : $item->updated_at->diffForHumans() }}</td>
+                                    <td>{{ $item->payee }}</td>
+                                    <td>{{ $item->purpose }}</td>
+                                    <td class="text-right">{{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}</td>
+                                    <td>{{ $item->control_no }}</td>
+                                    <td class="text-center">{{ $item->released_at }}</td>
                                 </tr>
                             @endforeach
                         </table>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+
+            {{-- CLEARED --}}
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header pb-2">
                         <h3 class="card-title">Cleared</h3>
@@ -315,8 +349,8 @@
                                 <i class="material-icons text-primary">list</i>
                             </button>                            
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="transaction-liquidation/prpo/{{ $user->company_id }}?status=cleared&type=pr&s=">Payment Release</a>
-                                <a class="dropdown-item" href="transaction-liquidation/prpo/{{ $user->company_id }}?status=cleared&type=po&s=">Purchase Order</a>
+                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=9&type=pr&s=&user_req=&user_prep">Payment Release</a>
+                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=9&type=po&s=&user_req=&user_prep">Purchase Order</a>
                                 {{-- <a class="dropdown-item" href="transaction-liquidation/pc/{{ $user->company_id }}?status=cleared&type=&s=">Petty Cash</a> --}}
                             </div>
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -328,9 +362,12 @@
                         <table class="table table-striped small m-0">
                             <thead>
                                 <tr>
-                                    <th>Transaction</th>
-                                    <th class="text-right">Balance</th>
-                                    <th class="text-center">Last Update</th>
+                                    <th>PO/PR #</th>
+                                    <th>Vendor/Payee</th>
+                                    <th>Purpose</th>
+                                    <th class="text-right">Amount</th>
+                                    <th>Trans. #</th>
+                                    <th class="text-center">Last Updated</th>
                                 </tr>
                             </thead>
                             @foreach ($cleared as $item)
@@ -340,7 +377,10 @@
                                             {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
                                         </a>
                                     </td>
-                                    <td class="text-right">{{ number_format($item->liquidation->sum('amount') - $item->amount_issued, 2, '.', ',') }}</td>
+                                    <td>{{ $item->payee }}</td>
+                                    <td>{{ $item->purpose }}</td>
+                                    <td class="text-right">{{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}</td>
+                                    <td>{{ $item->depo_ref }}</td>
                                     <td class="text-center">{{ Carbon::parse($item->updated_at)->diffInDays(Carbon::now()) >= 1 ? $item->updated_at->format('Y-m-d') : $item->updated_at->diffForHumans() }}</td>
                                 </tr>
                             @endforeach
@@ -348,6 +388,60 @@
                     </div>
                 </div>
             </div>
+
+            @if (in_array($user->role_id, config('global.admin_subadmin')))        
+
+                {{-- DEPOSITED --}}
+                <div class="col-12 col-md-12">
+                    <div class="card">
+                        <div class="card-header pb-2">
+                            <h3 class="card-title">Deposited</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="material-icons text-primary">list</i>
+                                </button>                            
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=pr&s=&user_req=&user_prep">Payment Release</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=po&s=&user_req=&user_prep">Purchase Order</a>
+                                    {{-- <a class="dropdown-item" href="transaction-liquidation/pc/{{ $user->company_id }}?status=7,8&type=&s=&user_req=&user_prep">Petty Cash</a> --}}
+                                </div>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="material-icons text-primary">arrow_drop_up</i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-striped small m-0">
+                                <thead>
+                                    <tr>
+                                        <th>PO/PR #</th>
+                                        <th>Payor</th>
+                                        <th>Purpose</th>
+                                        <th class="text-right">Amount</th>
+                                        <th>Trans. #</th>
+                                        <th class="text-center">Date Deposited</th>
+                                    </tr>
+                                </thead>
+                                @foreach ($deposited as $item)
+                                    <tr>
+                                        <td>
+                                            <a href="transaction-liquidation/view/{{ $item->id }}">
+                                                {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                            </a>
+                                        </td>
+                                        <td>-</td>
+                                        <td>{{ $item->purpose }}</td>
+                                        <td class="text-right">{{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}</td>
+                                        <td>{{ $item->control_no }}</td>
+                                        <td class="text-center">{{ $item->depo_date }}</td>
+                                    </tr>
+                                @endforeach
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            @endif
 
             <div class="col-md-8">
                 <div class="row">

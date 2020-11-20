@@ -12,6 +12,7 @@ use App\Transaction;
 use App\TransactionStatus;
 use App\User;
 use App\Helpers\TransactionHelper;
+use App\Helpers\UserHelper;
 use Spatie\Activitylog\Models\Activity;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -430,6 +431,14 @@ class TransactionsController extends Controller {
             return back()->with('success', 'Transaction'.__('messages.cancel_success'));
         } else {
             return back()->with('error', __('messages.cant_edit'));
+        }
+    }
+
+    public function update_company(Request $request) {
+        if (UserHelper::switch_company($request->company_id)) {
+            return redirect('/transaction/prpo/'.$request->company_id);
+        } else {
+            return back()->with('error', __('messages.invalid_command'));
         }
     }
 

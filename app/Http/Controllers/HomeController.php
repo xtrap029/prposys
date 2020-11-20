@@ -19,45 +19,60 @@ class HomeController extends Controller {
         $generated = Transaction::whereHas('project', function($query) use($company_id) {
                             $query->where('company_id', $company_id);
                         })
+                        ->where('trans_type', '!=', 'pc')
                         ->where('owner_id', auth()->id())
-                        ->whereIn('status_id', config('global.generated'))
+                        ->whereIn('status_id', config('global.form_generated'))
                         ->orderBy('updated_at', 'desc')
-                        ->limit(5)
+                        ->limit(6)
                         ->get();
 
         $unliquidated = Transaction::whereHas('project', function($query) use($company_id) {
                             $query->where('company_id', $company_id);
                         })
+                        ->where('trans_type', '!=', 'pc')
                         ->where('requested_id', auth()->id())
                         ->whereIn('status_id', config('global.form_issued'))
                         ->orderBy('updated_at', 'desc')
-                        ->limit(5)
+                        ->limit(6)
                         ->get();
 
         $cleared = Transaction::whereHas('project', function($query) use($company_id) {
                             $query->where('company_id', $company_id);
                         })
+                        ->where('trans_type', '!=', 'pc')
                         ->where('requested_id', auth()->id())
                         ->whereIn('status_id', config('global.liquidation_cleared'))
                         ->orderBy('updated_at', 'desc')
-                        ->limit(5)
+                        ->limit(6)
                         ->get();
 
         $for_issue = Transaction::whereHas('project', function($query) use($company_id) {
                             $query->where('company_id', $company_id);
                         })
+                        ->where('trans_type', '!=', 'pc')
                         ->whereIn('status_id', config('global.form_approval'))
-                        ->orderBy('id', 'desc')
-                        ->limit(5)
+                        ->orderBy('updated_at', 'desc')
+                        ->limit(6)
                         ->get();
 
         $for_clearing = Transaction::whereHas('project', function($query) use($company_id) {
                             $query->where('company_id', $company_id);
                         })
-                        ->whereIn('status_id', config('global.liquidation_approval'))
-                        ->orderBy('id', 'desc')
-                        ->limit(5)
+                        ->where('trans_type', '!=', 'pc')
+                        ->whereIn('status_id', config('global.liquidations'))
+                        ->orderBy('updated_at', 'desc')
+                        ->limit(6)
                         ->get();
+
+        $deposited = Transaction::whereHas('project', function($query) use($company_id) {
+                        $query->where('company_id', $company_id);
+                    })
+                    ->where('trans_type', '!=', 'pc')
+                    ->whereIn('status_id', config('global.liquidation_cleared'))
+                    ->where('is_deposit', '1')
+                    ->orderBy('updated_at', 'desc')
+                    ->limit(6)
+                    ->get();
 
         $unliquidated_bal = TransactionHelper::check_unliquidated_balance(auth()->id());
         $liquidated_bal = TransactionHelper::check_liquidated_balance(auth()->id());
@@ -69,12 +84,12 @@ class HomeController extends Controller {
         //              ->orderBy('id', 'desc')
         //              ->limit(5)->get();
 
-        $stats['cancelled'] = Transaction::whereIn('status_id', config('global.cancelled'))->where('requested_id', auth()->id())->count();
-        $stats['generated'] = Transaction::whereIn('status_id', config('global.generated'))->where('requested_id', auth()->id())->count();
-        // $stats['forms'] = Transaction::whereIn('status_id', config('global.forms'))->where('requested_id', auth()->id())->count();
-        $stats['issued'] = Transaction::whereIn('status_id', config('global.form_issued'))->where('requested_id', auth()->id())->count();
-        // $stats['liquidation'] = Transaction::whereIn('status_id', config('global.liquidations'))->where('requested_id', auth()->id())->count();
-        $stats['cleared'] = Transaction::whereIn('status_id', config('global.liquidation_cleared'))->where('requested_id', auth()->id())->count();
+        $stats['cancelled'] = Transaction::where('trans_type', '!=', 'pc')->whereIn('status_id', config('global.cancelled'))->where('requested_id', auth()->id())->count();
+        $stats['generated'] = Transaction::where('trans_type', '!=', 'pc')->whereIn('status_id', config('global.generated'))->where('requested_id', auth()->id())->count();
+        // $stats['forms'] = Transaction::where('trans_type', '!=', 'pc')->whereIn('status_id', config('global.forms'))->where('requested_id', auth()->id())->count();
+        $stats['issued'] = Transaction::where('trans_type', '!=', 'pc')->whereIn('status_id', config('global.form_issued'))->where('requested_id', auth()->id())->count();
+        // $stats['liquidation'] = Transaction::where('trans_type', '!=', 'pc')->whereIn('status_id', config('global.liquidations'))->where('requested_id', auth()->id())->count();
+        $stats['cleared'] = Transaction::where('trans_type', '!=', 'pc')->whereIn('status_id', config('global.liquidation_cleared'))->where('requested_id', auth()->id())->count();
 
         return view('home')->with([
             'user' => $user,
@@ -88,6 +103,7 @@ class HomeController extends Controller {
             'for_clearing' => $for_clearing,
             // 'prepared' => $prepared,
             'cleared' => $cleared,
+            'deposited' => $deposited,
             'stats' => $stats
         ]);
     }

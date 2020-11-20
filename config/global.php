@@ -2,6 +2,7 @@
     return [
         'admin_subadmin' => [1, 2],
         'generated' => [1],
+        'form_generated' => [1, 5],
         'cancelled' => [3],
         'generated_form' => [5],
         'form_approval' => [6],

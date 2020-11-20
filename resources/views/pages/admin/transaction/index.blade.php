@@ -3,24 +3,22 @@
 @section('title', 'Transaction - Generate')
 
 @section('content')
-    <section class="content-header">
+    <section class="content-header pb-0">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
                     <h1>Generate {{ $page_label }}</h1>
                 </div>
-                <div class="col-sm-6 text-right">
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle d-none" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Select Company
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            @foreach ($companies as $item)
-                                <a class="dropdown-item" href="/transaction/{{ $trans_page }}/{{ $item->id }}">{{ $item->name }}</a>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
+                <form action="/transaction/edit-company" method="post" class="col-sm-6">
+                    @csrf
+                    @method('put')
+                    <select name="company_id" class="form-control w-auto border-0 bg-transparent font-weight-bold outline-0 float-right" onchange="this.form.submit()">
+                        @foreach ($companies as $item)
+                            <option value="{{ $item->id }}" {{ $company->id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                        @endforeach
+                    </select>
+                    <img src="/storage/public/images/companies/{{ $company->logo }}" alt="" class="thumb thumb--xxs mt-2 mr-2 vlign--baseline-middle float-right">
+                </form>
             </div>
         </div>
     </section>
@@ -31,61 +29,64 @@
                     <thead>
                         <tr>
                             <th colspan="9" class="border-0 px-0">
-                                <img src="/storage/public/images/companies/{{ $company->logo }}" alt="" class="thumb thumb--xxs mr-2 vlign--baseline-middle">
-                                <span class="mr-3 vlign--baseline-middle">{{ $company->name }}</span>
+                                {{-- <img src="/storage/public/images/companies/{{ $company->logo }}" alt="" class="thumb thumb--xxs mr-2 vlign--baseline-middle">
+                                <span class="mr-3 vlign--baseline-middle">{{ $company->name }}</span> --}}
                                 
-                                <div class="float-right">
-                                    @if ($trans_page == 'prpo')
-                                    <a href="/transaction/create/pr/{{ $company->id }}" class="mx-3 vlign--baseline-middle">Generate PR</a>
-                                    <a href="/transaction/create/po/{{ $company->id }}" class="mx-3 vlign--baseline-middle">Generate PO</a>
-                                    @else
-                                        <a href="/transaction/create/pc/{{ $company->id }}" class="mx-3 vlign--baseline-middle">Generate PC</a>
-                                    @endif
-                                    @if (in_array(Auth::user()->role_id, [1, 2]))
-                                        <a href="#" class="mx-3 vlign--baseline-middle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Reports</a>                            
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="/transaction/report?type={{ $trans_types[0] }}&company={{ $company->id }}&status={{ config('global.generated')[0] }}">Generated</a>
-                                            <a class="dropdown-item" href="/transaction-form/report?type={{ $trans_types[0] }}&company={{ $company->id }}&status={{ config('global.generated_form')[0] }}">Make Forms / Issued</a>
-                                            <a class="dropdown-item" href="/transaction-liquidation/report?type={{ $trans_types[0] }}&company={{ $company->id }}&status={{ config('global.liquidation_generated')[0] }}">Clearing / Liq.</a>
-                                            <a class="dropdown-item" href="/transaction-liquidation/report-deposit?type={{ $trans_types[0] }}&company={{ $company->id }}">Deposits</a>
-                                        </div>
-                                    @endif
-                                </div>
-
-                                <form action="/transaction/{{ $trans_page }}/{{ $company->id }}" method="GET" class="input-group mt-3">
-                                    <select name="status" class="form-control">
-                                        <option value="">All Status</option>
-                                        @foreach (config('global.status_filter') as $item)
-                                            <option value="{{ $item[1] }}" {{ app('request')->input('status') == $item[1] ? 'selected' : '' }}>{{ $item[0] }}</option>
-                                        @endforeach
-                                    </select>
-                                    <select name="type" class="form-control {{ $trans_page == 'prpo' ? '' : 'd-none' }}">
-                                        <option value="">All Types</option>
-                                        <option value="pr" {{ app('request')->input('type') == 'pr' ? 'selected' : '' }}>PR</option>
-                                        <option value="po" {{ app('request')->input('type') == 'po' ? 'selected' : '' }}>PO</option>
-                                    </select>
-                                    <select name="user_req" class="form-control">
-                                        <option value="">Requested By</option>
-                                        @foreach ($users as $item)
-                                            <option value="{{ $item->id }}" {{ app('request')->input('user_req') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <select name="user_prep" class="form-control">
-                                        <option value="">Prepared By</option>
-                                        @foreach ($users as $item)
-                                            <option value="{{ $item->id }}" {{ app('request')->input('user_prep') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <input type="text" class="form-control" name="s" value="{{ app('request')->input('s') }}" placeholder="keyword here...">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-primary py-0 px-2" type="submit">
-                                            <i class="material-icons mt-1">search</i>
-                                        </button>
-                                        <a href="{{ parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) }}" class="btn btn-secondary py-0 px-2" type="submit">
-                                            <i class="material-icons mt-1 text-white">clear</i>
-                                        </a>
+                                <div class="row">
+                                    <div class="col-md-3 pt-3">
+                                        @if ($trans_page == 'prpo')
+                                        <a href="/transaction/create/pr/{{ $company->id }}" class="mx-3 vlign--baseline-middle">New PR</a>
+                                        <a href="/transaction/create/po/{{ $company->id }}" class="mx-3 vlign--baseline-middle">New PO</a>
+                                        @else
+                                            <a href="/transaction/create/pc/{{ $company->id }}" class="mx-3 vlign--baseline-middle">Generate PC</a>
+                                        @endif
+                                        @if (in_array(Auth::user()->role_id, [1, 2]))
+                                            <a href="#" class="mx-3 vlign--baseline-middle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Reports</a>                            
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="/transaction/report?type={{ $trans_types[0] }}&company={{ $company->id }}&status={{ config('global.generated')[0] }}">Generated</a>
+                                                <a class="dropdown-item" href="/transaction-form/report?type={{ $trans_types[0] }}&company={{ $company->id }}&status={{ config('global.generated_form')[0] }}">Make Forms / Issued</a>
+                                                <a class="dropdown-item" href="/transaction-liquidation/report?type={{ $trans_types[0] }}&company={{ $company->id }}&status={{ config('global.liquidation_generated')[0] }}">Clearing / Liq.</a>
+                                                <a class="dropdown-item" href="/transaction-liquidation/report-deposit?type={{ $trans_types[0] }}&company={{ $company->id }}">Deposits</a>
+                                            </div>
+                                        @endif
                                     </div>
-                                </form>
+                                    <div class="col-md-9">
+                                        <form action="/transaction/{{ $trans_page }}/{{ $company->id }}" method="GET" class="input-group mt-3">
+                                            <select name="status" class="form-control">
+                                                <option value="">All Status</option>
+                                                @foreach (config('global.status_filter') as $item)
+                                                    <option value="{{ $item[1] }}" {{ app('request')->input('status') == $item[1] ? 'selected' : '' }}>{{ $item[0] }}</option>
+                                                @endforeach
+                                            </select>
+                                            <select name="type" class="form-control {{ $trans_page == 'prpo' ? '' : 'd-none' }}">
+                                                <option value="">All Types</option>
+                                                <option value="pr" {{ app('request')->input('type') == 'pr' ? 'selected' : '' }}>PR</option>
+                                                <option value="po" {{ app('request')->input('type') == 'po' ? 'selected' : '' }}>PO</option>
+                                            </select>
+                                            <select name="user_req" class="form-control">
+                                                <option value="">Requested By</option>
+                                                @foreach ($users as $item)
+                                                    <option value="{{ $item->id }}" {{ app('request')->input('user_req') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            <select name="user_prep" class="form-control">
+                                                <option value="">Prepared By</option>
+                                                @foreach ($users as $item)
+                                                    <option value="{{ $item->id }}" {{ app('request')->input('user_prep') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            <input type="text" class="form-control" name="s" value="{{ app('request')->input('s') }}" placeholder="keyword here...">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary py-0 px-2" type="submit">
+                                                    <i class="material-icons mt-1">search</i>
+                                                </button>
+                                                <a href="{{ parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) }}" class="btn btn-secondary py-0 px-2" type="submit">
+                                                    <i class="material-icons mt-1 text-white">clear</i>
+                                                </a>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </th>
                         </tr>
                         <tr>
