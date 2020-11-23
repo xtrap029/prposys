@@ -41,7 +41,7 @@
                                             <a href="/transaction/create/pc/{{ $company->id }}" class="mx-3 vlign--baseline-middle">Generate PC</a>
                                         @endif
                                         @if (in_array(Auth::user()->role_id, [1, 2]))
-                                            <a href="#" class="mx-3 vlign--baseline-middle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Reports</a>                            
+                                            <a href="#" class="mx-3 vlign--baseline-middle d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Reports</a>                            
                                             <div class="dropdown-menu">
                                                 <a class="dropdown-item" href="/transaction/report?type={{ $trans_types[0] }}&company={{ $company->id }}&status={{ config('global.generated')[0] }}">Generated</a>
                                                 <a class="dropdown-item" href="/transaction-form/report?type={{ $trans_types[0] }}&company={{ $company->id }}&status={{ config('global.generated_form')[0] }}">Make Forms / Issued</a>

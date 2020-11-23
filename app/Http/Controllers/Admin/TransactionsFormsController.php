@@ -87,8 +87,12 @@ class TransactionsFormsController extends Controller {
                                             ->orWhere('control_no', $key)
                                             ->orWhere('control_type', $key)
                                             ->orWhere('cancellation_reason', 'like', "%{$key}%")
-                                            ->orWhere('amount_issued', str_replace(',', '', $key))
-                                            ->orWhere('amount', str_replace(',', '', $key));
+                                            ->orWhere('amount_issued', 'like', str_replace(',', '', "%{$key}%"))
+                                            ->orWhere('amount_issued', '=', str_replace(',', '', $key))
+                                            ->orWhere('form_amount_payable', 'like', str_replace(',', '', "%{$key}%"))
+                                            ->orWhere('form_amount_payable', '=', str_replace(',', '', $key))
+                                            ->orWhere('amount', 'like', str_replace(',', '', "%{$key}%"))
+                                            ->orWhere('amount', '=', str_replace(',', '', $key));
                                     });
             
             if ($_GET['status'] != "") {

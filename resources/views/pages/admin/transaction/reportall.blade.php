@@ -34,12 +34,12 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <label for="">Status</label>
                         <select name="status" class="form-control">
                             <option value="">All</option>
-                            @foreach ($status as $item)
-                                <option value="{{ $item->id }}" {{ !empty($_GET['status']) ? $_GET['status'] == $item->id ? 'selected' : '' : '' }}>{{ ucfirst(strtolower($item->name)) }}</option>
+                            @foreach (config('global.status_filter_reports') as $item)
+                                <option value="{{ $item[1] }}" {{ !empty($_GET['status']) ? $_GET['status'] == $item[1] ? 'selected' : '' : '' }}>{{ $item[0] }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -79,6 +79,10 @@
                             @endif
                         </div>
                     </div>
+                    <div class="col-md-1">
+                        <label for="" class="invisible">.</label>
+                        <a href="{{ url()->current().'?'.http_build_query(array_merge(request()->all(),['csv' => ''])) }}" class="btn btn-success btn-block" target="_blank">CSV</a>
+                    </div>
                 </div>
             </form>
 
@@ -106,7 +110,8 @@
                             </tr>
                             <tr>
                                 <td class="border-0 pr-3">Status</td>
-                                <td class="border-0 font-weight-bold">{{ $status_sel != '' ? $status_sel : 'All' }}</td>
+                                {{-- <td class="border-0 font-weight-bold">{{ $status_sel != '' ? $status_sel : 'All' }}</td> --}}
+                                <td class="border-0 font-weight-bold">{{ isset($_GET['status']) && $_GET['status'] != "" ? config('global.status_filter_reports')[array_search($_GET['status'], array_column(config('global.status_filter_reports'), 1))][0] : 'All' }}</td>
                             </tr>
                             <tr>
                                 <td class="border-0 pr-3">Start Date</td>
@@ -144,25 +149,31 @@
 
                 <table class="table mb-0 small table-striped">
                     <tr class="bg-gray font-weight-bold">
-                        <td>Transaction</td>
-                        <td>Company</td>
-                        <td>Project</td>
-                        <td>Check / Issue No.</td>
-                        <td>Date Issued</td>
-                        <td>Requested by</td>
-                        <td>Date Created</td>
-                        <td>Status</td>
+                        <td class="text-nowrap">PO/PR #</td>
+                        <td class="text-nowrap">Company</td>
+                        <td class="text-nowrap">Project</td>
+                        <td class="text-nowrap">Purpose</td>
+                        <td class="text-nowrap">Currency</td>
+                        <td class="text-nowrap">Amount</td>
+                        <td class="text-nowrap">Date Gen.</td>
+                        <td class="text-nowrap">Trans. #</td>
+                        <td class="text-nowrap">Last Updated</td>
+                        <td class="text-nowrap">Req. By</td>
+                        <td class="text-nowrap">Status</td>
                     </tr>
                     @foreach ($transactions as $item)
                         <tr>
-                            <td><h6 class="font-weight-bold">{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</h6></td>
+                            <td class="text-nowrap"><h6 class="font-weight-bold">{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</h6></td>
                             <td>{{ $item->project->company->name }}</td>
                             <td>{{ $item->project->project }}</td>
+                            <td>{{ $item->purpose }}</td>
+                            <td class="text-nowrap">{{ $item->currency }}</td>
+                            <td class="text-nowrap">{{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}</td>
+                            <td class="text-nowrap">{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
                             <td>{{ $item->control_no }}</td>
-                            <td>{{ $item->released_at }}</td>
-                            <td>{{ $item->requested->name }}</td>
-                            <td>{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
-                            <td>{{ $item->status->name }}</td>
+                            <td class="text-nowrap">{{ Carbon::parse($item->updated_at)->format('Y-m-d') }}</td>
+                            <td class="text-nowrap">{{ $item->requested->name }}</td>
+                            <td class="text-nowrap">{{ $item->status->name }}</td>
                             {{-- <td class="{{ empty($_GET['status']) || $_GET['status'] == "" ? '' : 'd-none' }}">
                                 {{ $item->status->name }}
                             </td> --}}

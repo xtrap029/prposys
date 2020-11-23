@@ -37,5 +37,14 @@
             ['Liq-Approval', '7,8'],
             ['Cleared', '9'],
             ['Cancelled', '3'],
+        ],
+        'status_filter_reports' => [
+            ['Generated', '1,5'],
+            ['For Approval', '6'],
+            ['Issued', '4'],
+            ['Liq./Generated', '7'],
+            ['Liq./For Approval', '8'],
+            ['Cleared', '9'],
+            ['Cancelled', '3'],
         ]
     ];

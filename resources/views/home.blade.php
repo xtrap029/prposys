@@ -143,7 +143,8 @@
                         <div class="card-header pb-2">
                             <h3 class="card-title">For Approval</h3>
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=6&type=&s=&user_req=&user_prep">Show More</a>
+                                <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons text-primary">list</i>
                                 </button>                            
                                 <div class="dropdown-menu">
@@ -156,7 +157,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="card-body p-0">
+                        <div class="card-body p-0 table-responsive">
                             <table class="table table-striped small m-0">
                                 <thead>
                                     <tr>
@@ -193,7 +194,8 @@
                         <div class="card-header pb-2">
                             <h3 class="card-title">Liq./For Approval</h3>
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=&s=&user_req=&user_prep">Show More</a>
+                                <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons text-primary">list</i>
                                 </button>                            
                                 <div class="dropdown-menu">
@@ -206,7 +208,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="card-body p-0">
+                        <div class="card-body p-0 table-responsive">
                             <table class="table table-striped small m-0">
                                 <thead>
                                     <tr>
@@ -245,7 +247,8 @@
                     <div class="card-header pb-2">
                         <h3 class="card-title">Generated</h3>
                         <div class="card-tools">
-                            <button type="button" class="btn btn-tool pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=1,5&type=&s=&user_req=&user_prep">Show More</a>
+                            <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="material-icons text-primary">list</i>
                             </button>
                             <div class="dropdown-menu">
@@ -258,7 +261,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="card-body p-0">
+                    <div class="card-body p-0 table-responsive">
                         <table class="table table-striped small m-0">
                             <thead>
                                 <tr>
@@ -295,7 +298,8 @@
                     <div class="card-header pb-2">
                         <h3 class="card-title">Unliquidated</h3>
                         <div class="card-tools">
-                            <button type="button" class="btn btn-tool pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=4&type=&s=&user_req=&user_prep">Show More</a>
+                            <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="material-icons text-primary">list</i>
                             </button>
                             <div class="dropdown-menu">
@@ -308,7 +312,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="card-body p-0">
+                    <div class="card-body p-0 table-responsive">
                         <table class="table table-striped small m-0">
                             <thead>
                                 <tr>
@@ -345,7 +349,8 @@
                     <div class="card-header pb-2">
                         <h3 class="card-title">Cleared</h3>
                         <div class="card-tools">
-                            <button type="button" class="btn btn-tool pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=9&type=&s=&user_req=&user_prep">Show More</a>
+                            <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="material-icons text-primary">list</i>
                             </button>                            
                             <div class="dropdown-menu">
@@ -358,7 +363,7 @@
                             </button>
                         </div>  
                     </div>
-                    <div class="card-body p-0">
+                    <div class="card-body p-0 table-responsive">
                         <table class="table table-striped small m-0">
                             <thead>
                                 <tr>
@@ -397,7 +402,8 @@
                         <div class="card-header pb-2">
                             <h3 class="card-title">Deposited</h3>
                             <div class="card-tools">
-                                <button type="button" class="btn btn-tool pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=&s=&user_req=&user_prep">Show More</a>
+                                <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons text-primary">list</i>
                                 </button>                            
                                 <div class="dropdown-menu">
@@ -410,7 +416,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="card-body p-0">
+                        <div class="card-body p-0 table-responsive">
                             <table class="table table-striped small m-0">
                                 <thead>
                                     <tr>
