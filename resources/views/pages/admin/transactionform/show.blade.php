@@ -220,6 +220,10 @@
                                 <h5>{{ $transaction->owner->name }}</h5>
                             </div>
                             <div class="col-md-6">
+                                <label for="">Requested By</label>
+                                <h5>{{ $transaction->requested->name }}</h5>
+                            </div>
+                            <div class="col-md-6">
                                 <label for="">Status</label>
                                 <h5>{{ $transaction->status->name }}</h5>
                             </div>

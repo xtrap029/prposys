@@ -313,6 +313,10 @@
                                 <td class="font-weight-bold w-25">Requested by</td>
                                 <td>{{ $transaction->requested->name }}</td>
                             </tr>
+                            <tr>
+                                <td class="font-weight-bold w-25">Prepared by</td>
+                                <td>{{ $transaction->owner->name }}</td>
+                            </tr>
                             @if ($transaction->liquidation_approver_id && !$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
                                 <tr>
                                     <td class="font-weight-bold w-25">Authorized Approver</td>
