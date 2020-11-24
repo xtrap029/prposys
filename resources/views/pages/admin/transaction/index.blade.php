@@ -28,7 +28,7 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th colspan="9" class="border-0 px-0">
+                            <th colspan="10" class="border-0 px-0">
                                 {{-- <img src="/storage/public/images/companies/{{ $company->logo }}" alt="" class="thumb thumb--xxs mr-2 vlign--baseline-middle">
                                 <span class="mr-3 vlign--baseline-middle">{{ $company->name }}</span> --}}
                                 
@@ -95,9 +95,10 @@
                             <th>Purpose</th>
                             <th class="text-center">Currency</th>
                             <th class="text-right">Amount</th>
+                            <th class="text-nowrap">Date Gen.</th>
                             <th class="text-nowrap">Trans. #</th>
-                            <th>Due Date</th>
-                            <th>Prep. By</th>
+                            <th class="text-nowrap">Date Rel.</th>
+                            <th class="text-nowrap">Req. By</th>
                             <th>Status</th>
                             {{-- <th></th> --}}
                         </tr>
@@ -113,10 +114,11 @@
                                 <td>{{ $item->payee }}</td>
                                 <td>{{ $item->purpose }}</td>
                                 <td class="text-center">{{ $item->currency }}</td>
-                                <td class="text-right">{{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}</td>
+                                <td class="text-right text-nowrap">{{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}</td>
+                                <td class="text-nowrap">{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
                                 <td>{{ $item->control_no }}</td>
-                                <td class="text-nowrap">{{ Carbon::parse($item->due_at)->format('Y-m-d') }}</td>
-                                <td class="text-nowrap">{{ $item->owner->name }}</td>
+                                <td class="text-nowrap">{{ Carbon::parse($item->released_at)->format('Y-m-d') }}</td>
+                                <td class="text-nowrap">{{ $item->requested->name }}</td>
                                 <td class="text-nowrap">{{ $item->status->name }}</td>
                                 {{-- <td> --}}
                                     {{-- <div class="dropdown show dropleft">
@@ -158,7 +160,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="text-center">{{ __('messages.empty') }}</td>
+                                <td colspan="10" class="text-center">{{ __('messages.empty') }}</td>
                             </tr>
                         @endforelse
                     </tbody>
