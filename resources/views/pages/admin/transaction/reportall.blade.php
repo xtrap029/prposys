@@ -170,7 +170,7 @@
                             <td>{{ $item->currency }}</td>
                             <td>{{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}</td>
                             <td>{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
-                            <td>{{ $item->control_no }}</td>
+                            <td style="word-break: break-all;">{{ $item->control_no }}</td>
                             <td>{{ Carbon::parse($item->updated_at)->format('Y-m-d') }}</td>
                             <td>{{ $item->requested->name }}</td>
                             <td>{{ $item->status->name }}</td>
