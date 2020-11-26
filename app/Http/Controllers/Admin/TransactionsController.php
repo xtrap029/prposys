@@ -43,6 +43,7 @@ class TransactionsController extends Controller {
 
         if (!empty($_GET['s'])
             || !empty($_GET['type'])
+            || !empty($_GET['category'])
             || !empty($_GET['status'])
             || !empty($_GET['user_req'])
             || !empty($_GET['user_prep'])) {
@@ -95,11 +96,13 @@ class TransactionsController extends Controller {
             if ($_GET['status'] != "") $transactions = $transactions->whereIn('status_id', explode(',', $_GET['status']));
             if ($_GET['user_req'] != "") $transactions = $transactions->where('requested_id', $_GET['user_req']);
             if ($_GET['user_prep'] != "") $transactions = $transactions->where('owner_id', $_GET['user_prep']);
+            if ($_GET['category'] != "") $transactions = $transactions->where($_GET['category'], 1);
 
             $transactions = $transactions->orderBy('id', 'desc')->paginate(10);
             $transactions->appends(['s' => $_GET['s']]);
             $transactions->appends(['type' => $_GET['type']]);
             $transactions->appends(['status' => $_GET['status']]);
+            $transactions->appends(['category' => $_GET['category']]);
             $transactions->appends(['user_req' => $_GET['user_req']]);
             $transactions->appends(['user_prep' => $_GET['user_prep']]);
         } else {
@@ -544,6 +547,11 @@ class TransactionsController extends Controller {
             // $status_sel = TransactionStatus::where('id', $_GET['status'])->first()->name;
         }
 
+        if (!empty($_GET['category'])) {
+            $transactions = $transactions->where($_GET['category'], 1);
+            // $status_sel = TransactionStatus::where('id', $_GET['status'])->first()->name;
+        }
+
         if (!empty($_GET['from'])) {
             $transactions = $transactions->whereDate('created_at', '>=', $_GET['from']);
             $trans_from = $_GET['from'];
@@ -612,7 +620,7 @@ class TransactionsController extends Controller {
         } else {
             return view('pages.admin.transaction.reportall')->with([
                 'companies' => $companies,
-                'status' => $status,
+                // 'status' => $status,
                 // 'status_sel' => $status_sel,
                 'transactions' => $transactions,
                 'trans_type' => $trans_type,

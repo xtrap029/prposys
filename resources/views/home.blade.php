@@ -143,7 +143,7 @@
                         <div class="card-header pb-2">
                             <h3 class="card-title">For Approval</h3>
                             <div class="card-tools">
-                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=6&type=&s=&user_req=&user_prep">Show More</a>
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=6&category=&type=&s=&user_req=&user_prep">Show More</a>
                                 <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons text-primary">list</i>
                                 </button>                            
@@ -194,7 +194,7 @@
                         <div class="card-header pb-2">
                             <h3 class="card-title">Liq./For Approval</h3>
                             <div class="card-tools">
-                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=&s=&user_req=&user_prep">Show More</a>
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=7,8&category=&type=&s=&user_req=&user_prep">Show More</a>
                                 <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons text-primary">list</i>
                                 </button>                            
@@ -247,7 +247,7 @@
                     <div class="card-header pb-2">
                         <h3 class="card-title">Generated</h3>
                         <div class="card-tools">
-                            <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=1,5&type=&s=&user_req=&user_prep">Show More</a>
+                            <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=1,5&category=&type=&s=&user_req=&user_prep">Show More</a>
                             <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="material-icons text-primary">list</i>
                             </button>
@@ -298,7 +298,7 @@
                     <div class="card-header pb-2">
                         <h3 class="card-title">Unliquidated</h3>
                         <div class="card-tools">
-                            <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=4&type=&s=&user_req=&user_prep">Show More</a>
+                            <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=4&category=&type=&s=&user_req=&user_prep">Show More</a>
                             <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="material-icons text-primary">list</i>
                             </button>
@@ -349,7 +349,7 @@
                     <div class="card-header pb-2">
                         <h3 class="card-title">Cleared</h3>
                         <div class="card-tools">
-                            <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=9&type=&s=&user_req=&user_prep">Show More</a>
+                            <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=9&category=&type=&s=&user_req=&user_prep">Show More</a>
                             <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="material-icons text-primary">list</i>
                             </button>                            
@@ -402,7 +402,7 @@
                         <div class="card-header pb-2">
                             <h3 class="card-title">Deposited</h3>
                             <div class="card-tools">
-                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=&s=&user_req=&user_prep">Show More</a>
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=9&category=is_deposit&type=&s=&user_req=&user_prep">Show More</a>
                                 <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons text-primary">list</i>
                                 </button>                            
@@ -435,7 +435,7 @@
                                                 {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
                                             </a>
                                         </td>
-                                        <td>-</td>
+                                        <td>{{ $item->payor }}</td>
                                         <td>{{ $item->purpose }}</td>
                                         <td class="text-right">{{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}</td>
                                         <td>{{ $item->control_no }}</td>

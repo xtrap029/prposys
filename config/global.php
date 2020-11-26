@@ -29,7 +29,10 @@
         'control_types' => ['Cash', 'Online', 'Check'],
         'control_types_pc' => 'Petty Cash',
         'trans_category' => ['reg', 'dt', 'bp', 'hr'],
+        'trans_category_column' => ['', 'is_deposit', 'is_bills', 'is_hr'],
         'trans_category_label' => ['Regular Transaction', 'Deposit Transaction', 'Bills Payment', 'Human Resource'],
+        'trans_category_label_filter' => ['All Categories', 'Deposit Transaction', 'Bills Payment', 'Human Resource'],
+        'trans_category_label_filter_2' => ['All', 'Deposit Transaction', 'Bills Payment', 'Human Resource'],
         'status_filter' => [
             ['PR/PO# Generated', '1,5'],
             ['Form-Approval', '6'],

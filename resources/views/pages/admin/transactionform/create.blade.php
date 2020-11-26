@@ -45,7 +45,12 @@
                 <input type="hidden" name="key" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}">
                 <input type="hidden" name="company" value="{{ $transaction->project->company->id }}">
                 <div class="form-row mb-3">
-                    <div class="col-md-8">
+                    <div class="col-md-5 {{ $transaction->is_deposit ? '' : 'd-none' }}">
+                        <label for="">Payor</label>
+                        <input type="text" name="payor" class="form-control @error('payor') is-invalid @enderror" {{ $transaction->is_deposit ? 'required' : '' }}>
+                        @include('errors.inline', ['message' => $errors->first('payor')])
+                    </div>      
+                    <div class="{{ $transaction->is_deposit ? 'col-md-5' : 'col-md-9' }}">
                         <label for="">COA Tagging</label>
                         <select name="coa_tagging_id" class="form-control @error('coa_tagging_id') is-invalid @enderror" required>
                             @foreach ($coa_taggings as $item)
@@ -54,21 +59,7 @@
                         </select>
                         @include('errors.inline', ['message' => $errors->first('coa_tagging_id')])
                     </div>
-                    {{-- <div class="col-md-5">
-                        <label for="">Expense Type / Description</label>
-                        <select name="expense_type_id" class="form-control @error('expense_type_id') is-invalid @enderror" required>
-                            @foreach ($expense_types as $item)
-                                <option value="{{ $item->id }}" {{ $item->id == old('expense_type_id') ? 'selected' : '' }}>{{ $item->name }}</option>
-                            @endforeach
-                        </select>
-                        @include('errors.inline', ['message' => $errors->first('expense_type_id')])
-                    </div> --}}
-                    {{-- <div class="col-md-5">
-                        <label for="">Description</label>
-                        <input type="text" name="expense_type_description" value="{{ old('expense_type_description') ?? $transaction->is_deposit ? $transaction->purpose : ''  }}" class="form-control @error('expense_type_description') is-invalid @enderror" required>
-                        @include('errors.inline', ['message' => $errors->first('expense_type_description')])
-                    </div> --}}
-                    <div class="col-md-4">
+                    <div class="{{ $transaction->is_deposit ? 'col-md-2' : 'col-md-3' }}">
                         <label for="">Tax Type</label>
                         <select name="vat_type_id" class="form-control">
                             @foreach ($vat_types as $item)

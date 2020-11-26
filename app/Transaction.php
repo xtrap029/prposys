@@ -25,6 +25,7 @@ class Transaction extends Model {
                                         'due_at',
                                         'edit_count',
                                         'requested.name',
+                                        'payor',
                                         'owner.name',
                                         'coatagging.name',
                                         'expense_type_description',

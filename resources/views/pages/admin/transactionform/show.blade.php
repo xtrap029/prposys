@@ -140,10 +140,23 @@
                                                 <input type="date" class="form-control @error('released_at') is-invalid @enderror" name="released_at" required>
                                                 @include('errors.inline', ['message' => $errors->first('released_at')])
                                             </div>
-                                            <div class="col-md-7">
+                                            @if ($transaction->is_deposit)
+                                                <div class="col-md-1">
+                                                    <label class="invisible">.</label>
+                                                    {{ $transaction->currency }}
+                                                </div>
+                                            @endif
+                                            <div class="{{ $transaction->is_deposit ? 'col-md-6' : 'col-md-7' }}">
                                                 <label for="">Amount</label>
                                                 <input type="number" class="form-control @error('amount_issued') is-invalid @enderror" name="amount_issued" step="0.01" value="{{ $transaction->amount }}" required>
                                                 @include('errors.inline', ['message' => $errors->first('amount_issued')])
+                                            </div>
+                                        </div>
+                                        <div class="form-row mb-3 {{ $transaction->is_deposit ? '' : 'd-none' }}">
+                                            <div class="col-md-12">
+                                                <label for="">Payor</label>
+                                                <input type="text" name="payor" class="form-control @error('payor') is-invalid @enderror" value="{{ $transaction->payor }}" {{ $transaction->is_deposit ? 'required' : '' }}>
+                                                @include('errors.inline', ['message' => $errors->first('payor')])
                                             </div>
                                         </div>
                                         <div class="form-row mb-3">
@@ -200,25 +213,31 @@
                                 <h5>{{ $transaction->coatagging->name }}</h5>
                             </div>
                             <div class="col-md-6">
-                                <label for="">Due Date</label>
-                                <h5>{{ $transaction->due_at }}</h5>
+                                <label for="">Payor</label>
+                                <h5>{{ $transaction->payor ?: 'n/a' }}</h5>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
+                                <label for="">Due Date</label>
+                                <h5>{{ $transaction->due_at }}</h5>
+                            </div>
+                            <div class="col-md-6">
                                 <label for="">Vendor / Payee</label>
                                 <h5>{{ $transaction->payee }}</h5>
                             </div>
+                        </div>
+                        <div class="row mb-3">    
                             <div class="col-md-6">
                                 <label for="">Tax Type</label>
                                 <h5>{{ $transaction->form_vat_name && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_vat_name : $transaction->vattype->name }}</h5>
-                            </div>
-                        </div>
-                        <div class="row mb-3">                            
+                            </div>                        
                             <div class="col-md-6">
                                 <label for="">Prepared By</label>
                                 <h5>{{ $transaction->owner->name }}</h5>
                             </div>
+                        </div>
+                        <div class="row mb-3">  
                             <div class="col-md-6">
                                 <label for="">Requested By</label>
                                 <h5>{{ $transaction->requested->name }}</h5>
@@ -227,11 +246,13 @@
                                 <label for="">Status</label>
                                 <h5>{{ $transaction->status->name }}</h5>
                             </div>
-                            <div class="col-md-6 mt-3 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
+                        </div>
+                        <div class="row mb-3">  
+                            <div class="col-md-6 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
                                 <label for="">Authorized Approver</label>
                                 <h5>{{ $transaction->form_approver_id ? $transaction->formapprover->name : '' }}</h5>
                             </div>
-                            <div class="col-md-6 mt-3">
+                            <div class="col-md-6">
                                 <label for="">Transaction Category</label>
                                 @if ($perms['can_edit_issued'])
                                     <form action="/transaction-form/edit-issued/{{ $transaction->id }}" method="post">

@@ -213,6 +213,7 @@ class TransactionsFormsController extends Controller {
 
         // validate input
         $data = $request->validate([
+            'payor' => [],
             'coa_tagging_id' => ['required', 'exists:coa_taggings,id'],
             // 'expense_type_id' => ['required', 'exists:expense_types,id'],
             // 'expense_type_description' => ['required'],
@@ -353,6 +354,7 @@ class TransactionsFormsController extends Controller {
 
         // validate input
         $data = $request->validate([
+            'payor' => [''],
             'coa_tagging_id' => ['required', 'exists:coa_taggings,id'],
             // 'expense_type_id' => ['required', 'exists:expense_types,id'],
             // 'expense_type_description' => ['required'],
@@ -620,6 +622,7 @@ class TransactionsFormsController extends Controller {
                 'control_no' => ['required'],
                 'released_at' => ['required', 'date'],
                 'amount_issued' => ['required', 'min:0'],
+                'payor' => [''],
                 'released_by_id' => ['required', 'exists:released_by,id']
             ]);
             

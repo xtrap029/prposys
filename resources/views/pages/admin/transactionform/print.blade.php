@@ -61,6 +61,10 @@
                                     <td class="font-weight-bold">Vendor</td>
                                     <td>{{ $transaction->payee }}</td>
                                 </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Payor</td>
+                                    <td>{{ $transaction->payor ?: 'n/a' }}</td>
+                                </tr>
                             </table>
                         </div>
                         <div class="col-md-4">

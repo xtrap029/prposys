@@ -33,7 +33,7 @@
                                 <span class="mr-3 vlign--baseline-middle">{{ $company->name }}</span> --}}
                                 
                                 <div class="row">
-                                    <div class="col-md-3 pt-3">
+                                    <div class="col-md-2 pt-3">
                                         @if ($trans_page == 'prpo')
                                         <a href="/transaction/create/pr/{{ $company->id }}" class="mx-3 vlign--baseline-middle">New PR</a>
                                         <a href="/transaction/create/po/{{ $company->id }}" class="mx-3 vlign--baseline-middle">New PO</a>
@@ -50,12 +50,17 @@
                                             </div>
                                         @endif
                                     </div>
-                                    <div class="col-md-9">
+                                    <div class="col-md-10">
                                         <form action="/transaction/{{ $trans_page }}/{{ $company->id }}" method="GET" class="input-group mt-3">
                                             <select name="status" class="form-control">
                                                 <option value="">All Status</option>
                                                 @foreach (config('global.status_filter') as $item)
                                                     <option value="{{ $item[1] }}" {{ app('request')->input('status') == $item[1] ? 'selected' : '' }}>{{ $item[0] }}</option>
+                                                @endforeach
+                                            </select>
+                                            <select name="category" class="form-control">
+                                                @foreach (config('global.trans_category_column') as $key => $item)
+                                                    <option value="{{ $item }}" {{ app('request')->input('category') == $item ? 'selected' : '' }}>{{ config('global.trans_category_label_filter')[$key] }}</option>
                                                 @endforeach
                                             </select>
                                             <select name="type" class="form-control {{ $trans_page == 'prpo' ? '' : 'd-none' }}">

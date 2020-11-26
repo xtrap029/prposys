@@ -65,6 +65,10 @@
                                         <td class="font-weight-bold">Tax Type</td>
                                         <td>{{ $transaction->form_vat_name ? $transaction->form_vat_name : $transaction->vattype->name }}</td>
                                     </tr>
+                                    <tr>
+                                        <td class="font-weight-bold">Payor</td>
+                                        <td>{{ $transaction->payor ?: 'n/a' }}</td>
+                                    </tr>
                                 </table>
                             </div>
                             <div class="col-md-5">
@@ -98,6 +102,10 @@
                                                 {{ config('global.trans_category_label')[0] }}    
                                             @endif
                                         </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold">Tax Type</td>
+                                        <td>{{ $transaction->form_vat_name ? $transaction->form_vat_name : $transaction->vattype->name }}</td>
                                     </tr>
                                 </table>
                             </div>

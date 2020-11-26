@@ -161,7 +161,12 @@
                     </div>
                 </div>
                 <div class="form-row mb-3 mt-5">
-                    <div class="col-md-9">
+                    <div class="col-md-5 {{ $transaction->is_deposit ? '' : 'd-none' }}">
+                        <label for="">Payor</label>
+                        <input type="text" name="payor" class="form-control @error('payor') is-invalid @enderror" value="{{ $transaction->payor }}" {{ $transaction->is_deposit ? 'required' : '' }}>
+                        @include('errors.inline', ['message' => $errors->first('payor')])
+                    </div>     
+                    <div class="{{ $transaction->is_deposit ? 'col-md-5' : 'col-md-9' }}">
                         <label for="">COA Tagging</label>
                         <select name="coa_tagging_id" class="form-control @error('coa_tagging_id') is-invalid @enderror" required>
                             @foreach ($coa_taggings as $item)
@@ -170,7 +175,7 @@
                         </select>
                         @include('errors.inline', ['message' => $errors->first('coa_tagging_id')])
                     </div>
-                    <div class="col-md-3">
+                    <div class="{{ $transaction->is_deposit ? 'col-md-2' : 'col-md-3' }}">
                         <label for="">Tax Type</label>
                         <select name="vat_type_id" class="form-control">
                             @foreach ($vat_types as $item)

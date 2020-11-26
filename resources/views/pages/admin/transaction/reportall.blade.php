@@ -25,7 +25,7 @@
                             {{-- <option value="pc" {{ $trans_type == "pc" ? 'selected' : '' }}>PC</option> --}}
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <label for="">Company</label>
                         <select name="company" class="form-control">
                             <option value="">All</option>
@@ -34,12 +34,20 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-md-2">
                         <label for="">Status</label>
                         <select name="status" class="form-control">
                             <option value="">All</option>
                             @foreach (config('global.status_filter_reports') as $item)
-                                <option value="{{ $item[1] }}" {{ !empty($_GET['status']) ? $_GET['status'] == $item[1] ? 'selected' : '' : '' }}>{{ $item[0] }}</option>
+                                <option value="{{ $item[1] }}" {{ !empty($_GET['status']) && $_GET['status'] == $item[1] ? 'selected' : '' }}>{{ $item[0] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="">Category</label>
+                        <select name="category" class="form-control">
+                            @foreach (config('global.trans_category_column') as $key => $item)
+                                <option value="{{ $item }}" {{ !empty($_GET['category']) && $_GET['category'] == $item ? 'selected' : '' }}>{{ config('global.trans_category_label_filter_2')[$key] }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -51,16 +59,15 @@
                         <label for="">Date To</label>
                         <input type="date" name="to" class="form-control" value="{{ !empty($_GET['to']) ? $_GET['to'] : '' }}">
                     </div>
+                </div>
+                <div class="form-row mb-3">
                     <div class="col-md-1">
-                        <label for="" class="invisible">.</label>
                         <a href="/transaction/report-all" class="btn btn-secondary btn-block">Reset</a>
                     </div>
                     <div class="col-md-1">
-                        <label for="" class="invisible">.</label>
                         <input type="submit" value="Generate" class="btn btn-primary btn-block">
                     </div>
-                    <div class="col-md-1">
-                        <label for="" class="invisible">.</label>
+                    <div class="offset-md-8 col-md-1">
                         <div class="btn-group btn-block" role="group">
                             <button type="button" class="btn btn-danger" onclick="window.print();">Print</button>
                             @if (!empty($_GET['status']) && in_array($_GET['status'], config('global.issued_cleared')))
@@ -80,7 +87,6 @@
                         </div>
                     </div>
                     <div class="col-md-1">
-                        <label for="" class="invisible">.</label>
                         <a href="{{ url()->current().'?'.http_build_query(array_merge(request()->all(),['csv' => ''])) }}" class="btn btn-success btn-block" target="_blank">CSV</a>
                     </div>
                 </div>

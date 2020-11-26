@@ -336,6 +336,10 @@
                                 <td>{{ $transaction->due_at }}</td>
                             </tr>
                             <tr>
+                                <td class="font-weight-bold w-25">Payor</td>
+                                <td>{{ $transaction->payor ?: 'n/a' }}</td>
+                            </tr>
+                            <tr>
                                 <td class="font-weight-bold w-25">COA Tagging</td>
                                 <td>{{ $transaction->coatagging->name }}</td>
                             </tr>
