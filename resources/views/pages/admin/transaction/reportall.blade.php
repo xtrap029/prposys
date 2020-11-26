@@ -147,33 +147,33 @@
                     </div>
                 @endif
 
-                <table class="table mb-0 small table-striped">
+                <table class="table mb-0 small table-sm table-striped">
                     <tr class="bg-gray font-weight-bold">
-                        <td class="text-nowrap">PO/PR #</td>
-                        <td class="text-nowrap">Company</td>
-                        <td class="text-nowrap">Project</td>
-                        <td class="text-nowrap">Purpose</td>
-                        <td class="text-nowrap">Currency</td>
-                        <td class="text-nowrap">Amount</td>
-                        <td class="text-nowrap">Date Gen.</td>
-                        <td class="text-nowrap">Trans. #</td>
-                        <td class="text-nowrap">Last Updated</td>
-                        <td class="text-nowrap">Req. By</td>
-                        <td class="text-nowrap">Status</td>
+                        <td style="min-width: 90px;">PO/PR #</td>
+                        <td>Company</td>
+                        <td>Project</td>
+                        <td>Purpose</td>
+                        <td>Currency</td>
+                        <td>Amount</td>
+                        <td>Date Gen.</td>
+                        <td>Trans. #</td>
+                        <td>Last Updated</td>
+                        <td>Req. By</td>
+                        <td>Status</td>
                     </tr>
                     @foreach ($transactions as $item)
                         <tr>
-                            <td class="text-nowrap"><h6 class="font-weight-bold">{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</h6></td>
+                            <td><h6 class="font-weight-bold">{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</h6></td>
                             <td>{{ $item->project->company->name }}</td>
                             <td>{{ $item->project->project }}</td>
                             <td>{{ $item->purpose }}</td>
-                            <td class="text-nowrap">{{ $item->currency }}</td>
-                            <td class="text-nowrap">{{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}</td>
-                            <td class="text-nowrap">{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
+                            <td>{{ $item->currency }}</td>
+                            <td>{{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}</td>
+                            <td>{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
                             <td>{{ $item->control_no }}</td>
-                            <td class="text-nowrap">{{ Carbon::parse($item->updated_at)->format('Y-m-d') }}</td>
-                            <td class="text-nowrap">{{ $item->requested->name }}</td>
-                            <td class="text-nowrap">{{ $item->status->name }}</td>
+                            <td>{{ Carbon::parse($item->updated_at)->format('Y-m-d') }}</td>
+                            <td>{{ $item->requested->name }}</td>
+                            <td>{{ $item->status->name }}</td>
                             {{-- <td class="{{ empty($_GET['status']) || $_GET['status'] == "" ? '' : 'd-none' }}">
                                 {{ $item->status->name }}
                             </td> --}}
