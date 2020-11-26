@@ -149,7 +149,7 @@
 
                 <table class="table mb-0 small table-sm table-striped">
                     <tr class="bg-gray font-weight-bold">
-                        <td style="min-width: 90px;">PO/PR #</td>
+                        <td style="min-width: 75px;">PO/PR #</td>
                         <td>Company</td>
                         <td>Project</td>
                         <td>Purpose</td>
