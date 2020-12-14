@@ -34,10 +34,10 @@
         'trans_category_label_filter' => ['All Categories', 'Deposit Transaction', 'Bills Payment', 'Human Resource'],
         'trans_category_label_filter_2' => ['All', 'Deposit Transaction', 'Bills Payment', 'Human Resource'],
         'status_filter' => [
-            ['PR/PO# Generated', '1,5'],
-            ['Form-Approval', '6'],
+            ['Generated', '1,5'],
+            ['For Approval', '6'],
             ['Issued', '4'],
-            ['Liq-Approval', '7,8'],
+            ['Liq./For Approval', '7,8'],
             ['Cleared', '9'],
             ['Cancelled', '3'],
         ],

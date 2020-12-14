@@ -44,7 +44,7 @@
                     <p>{{ $transaction->purpose }}</p>
                 </div>
             </div>
-            <form action="" method="post" enctype="multipart/form-data">
+            <form action="" method="post" enctype="multipart/form-data" class="jsPreventMultiple">
                 @csrf
                 <input type="hidden" name="key" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}">
                 <input type="hidden" name="company" value="{{ $transaction->project->company->id }}">

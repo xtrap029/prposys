@@ -760,7 +760,7 @@ class TransactionsLiquidationController extends Controller {
             })
             ->whereIn('status_id', config('global.form_issued'));
 
-        if (User::where('id', auth()->id())->first()->role_id != 1) {
+        if (!in_array(User::where('id', auth()->id())->first()->role_id, config('global.admin_subadmin'))) {
             $result = $result->where('requested_id', auth()->id());
         }
 

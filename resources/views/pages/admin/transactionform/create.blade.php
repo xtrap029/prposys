@@ -40,7 +40,7 @@
                     </tr>
                 </tbody>
             </table>
-            <form action="" method="post">
+            <form action="" method="post" class="jsPreventMultiple">
                 @csrf
                 <input type="hidden" name="key" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}">
                 <input type="hidden" name="company" value="{{ $transaction->project->company->id }}">
@@ -93,7 +93,14 @@
                                                 @endforeach
                                             </select>
                                         </td>
-                                        <td colspan="2"><input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ old('amount.0') }}" required></td>
+                                        <td colspan="2">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">{{ $transaction->currency }}</span>
+                                                </div>
+                                                <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ old('amount.0') }}" required>
+                                            </div>                                            
+                                        </td>
                                     </tr>
                                     @if (old('qty'))
                                         @foreach (old('qty') as $key => $item)
@@ -108,7 +115,14 @@
                                                             @endforeach
                                                         </select>
                                                     </td>
-                                                    <td><input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ old('amount.'.$key) }}" required></td>
+                                                    <td>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">{{ $transaction->currency }}</span>
+                                                            </div>
+                                                            <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ old('amount.'.$key) }}" required>
+                                                        </div>  
+                                                    </td>
                                                     <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
                                                 </tr>
                                             @endif
@@ -153,7 +167,14 @@
                                 @endforeach
                             </select>
                         </td>
-                        <td><input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" required></td>
+                        <td>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">{{ $transaction->currency }}</span>
+                                </div>
+                                <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" required>
+                            </div>  
+                        </td>
                         <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
                     </tr>
                 </tbody>

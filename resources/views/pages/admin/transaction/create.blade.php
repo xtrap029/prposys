@@ -20,7 +20,7 @@
     </section>
     <section class="content">
         <div class="container-fluid">
-            <form action="/transaction/create" method="post">
+            <form action="/transaction/create" method="post" class="jsPreventMultiple">
                 @csrf
                 <input type="hidden" name="trans_type" value="{{ $trans_type }}">
 
