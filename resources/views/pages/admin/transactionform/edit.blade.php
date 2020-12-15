@@ -59,9 +59,9 @@
                     <div class="col-md-2">
                         <label for="">Currency</label>
                         <select name="currency" class="form-control @error('currency') is-invalid @enderror">
-                            <option value="PHP">PHP</option> 
-                            <option value="USD">USD</option>   
-                            <option value="EUR">EUR</option>   
+                            <option value="PHP" {{ $transaction->currency == 'PHP' ? 'selected' : '' }}>PHP</option> 
+                            <option value="USD" {{ $transaction->currency == 'USD' ? 'selected' : '' }}>USD</option>   
+                            <option value="EUR" {{ $transaction->currency == 'EUR' ? 'selected' : '' }}>EUR</option>   
                         </select>
                     </div>
                     <div class="col-md-4">
