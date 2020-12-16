@@ -155,7 +155,7 @@ class TransactionsController extends Controller {
                 break;
         }
 
-        $particulars = Particulars::where('type', $trans_type)->get();
+        // $particulars = Particulars::where('type', $trans_type)->get();
         $projects = CompanyProject::where('company_id', $trans_company)->get();
         $users = User::whereNotNull('role_id')->get();
         $company = Company::where('id', $trans_company)->first();
@@ -164,7 +164,7 @@ class TransactionsController extends Controller {
             'trans_type' => $trans_type,
             'trans_company' => $trans_company,
             'trans_page' => $trans_page,
-            'particulars' => $particulars,
+            // 'particulars' => $particulars,
             'projects' => $projects,
             'users' => $users,
             'company' => $company
@@ -188,11 +188,11 @@ class TransactionsController extends Controller {
                 'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
             ];
 
-            if ($trans_type == 'pc') {
-                $validation['particulars_custom'] = ['required'];
-            } else {
-                $validation['particulars_id'] = ['required', 'exists:particulars,id'];
-            }
+            // if ($trans_type == 'pc') {
+            //     $validation['particulars_custom'] = ['required'];
+            // } else {
+            //     $validation['particulars_id'] = ['required', 'exists:particulars,id'];
+            // }
             
             $data = $request->validate($validation);
 
@@ -274,12 +274,12 @@ class TransactionsController extends Controller {
                 break;
         }
 
-        $particulars = Particulars::where('type', $transaction->trans_type)->get();
+        // $particulars = Particulars::where('type', $transaction->trans_type)->get();
         $projects = CompanyProject::where('company_id', $transaction->project->company_id)->get();
         
         return view('pages.admin.transaction.edit')->with([
             'transaction' => $transaction,
-            'particulars' => $particulars,
+            // 'particulars' => $particulars,
             'projects' => $projects,
             'trans_page' => $trans_page
         ]);
@@ -301,11 +301,11 @@ class TransactionsController extends Controller {
             'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
         ];
 
-        if ($transaction->trans_type == 'pc') {
-            $validation['particulars_custom'] = ['required'];
-        } else {
-            $validation['particulars_id'] = ['required', 'exists:particulars,id'];
-        }
+        // if ($transaction->trans_type == 'pc') {
+        //     $validation['particulars_custom'] = ['required'];
+        // } else {
+        //     $validation['particulars_id'] = ['required', 'exists:particulars,id'];
+        // }
 
         $data = $request->validate($validation);
 

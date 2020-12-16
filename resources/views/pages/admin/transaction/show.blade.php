@@ -116,30 +116,24 @@
                     </div>
                     <div>
                         <div class="row mb-3">
-                            <div class="col-md-9">
+                            {{-- <div class="col-md-9">
                                 <label for="">Particulars</label>
                                 <h5>{{ $trans_page == 'prpo' ? $transaction->particulars->name : $transaction->particulars_custom }}</h5>
-                            </div>
+                            </div> --}}
+                            <div class="col-md-9">
+                                <label for="">Project</label>
+                                <h5>{{ $transaction->project->project }}</h5>
+                            </div>   
                             <div class="col-md-3">
                                 <label for="">Amount</label>
-                            <h5>{{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}</h5>
+                                <h5>{{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}</h5>
                             </div>
                         </div>
                         <div class="row mb-3">    
                             <div class="col-md-9">
                                 <label for="">Payee Name</label>
                                 <h5>{{ $transaction->payee }}</h5>
-                            </div>                
-                            <div class="col-md-3">
-                                <label for="">Project</label>
-                                <h5>{{ $transaction->project->project }}</h5>
-                            </div>         
-                        </div>
-                        <div class="row mb-3">                
-                            <div class="col-md-9">
-                                <label for="">Purpose</label>
-                                <h6>{{ $transaction->purpose }}</h6>
-                            </div>   
+                            </div>              
                             <div class="col-md-3">
                                 <label for="">Transaction Category</label>
                                 <h5>
@@ -154,6 +148,12 @@
                                     @endif
                                 </h5>
                             </div>
+                        </div>
+                        <div class="row mb-3">                
+                            <div class="col-md-12">
+                                <label for="">Purpose</label>
+                                <h6>{{ $transaction->purpose }}</h6>
+                            </div>   
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-3">

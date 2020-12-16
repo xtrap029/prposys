@@ -25,7 +25,7 @@
                 @method('put')
 
                 <div class="form-row mb-3">
-                    <div class="col-md-6">
+                    {{-- <div class="col-md-6">
                         <label for="">Particulars</label>
                         @if ($trans_page == 'prpo')
                             <select name="particulars_id" class="form-control @error('particulars_id') is-invalid @enderror">
@@ -38,8 +38,17 @@
                             <input type="text" class="form-control @error('particulars_custom') is-invalid @enderror" name="particulars_custom" value="{{ $transaction->particulars_custom }}" required>
                             @include('errors.inline', ['message' => $errors->first('particulars_custom')])
                         @endif
+                    </div> --}}
+                    <div class="col-md-7">
+                        <label for="">Project</label>
+                        <select name="project_id" class="form-control @error('project_id') is-invalid @enderror">
+                            @foreach ($projects as $item)
+                                <option value="{{ $item->id }}" {{ $item->id == $transaction->project_id ? 'selected' : '' }}>{{ $item->project }}</option>                                        
+                            @endforeach
+                        </select>
+                        @include('errors.inline', ['message' => $errors->first('project_id')])
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <label for="">Currency</label>
                         <input type="text" class="form-control" value="{{ $transaction->currency }}" readonly>
                     </div>
@@ -50,19 +59,10 @@
                     </div>
                 </div>
                 <div class="form-row mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-8">
                         <label for="">Purpose</label>
                         <textarea name="purpose" rows="1" class="form-control @error('purpose') is-invalid @enderror" required>{{ $transaction->purpose }}</textarea>
                         @include('errors.inline', ['message' => $errors->first('purpose')])
-                    </div>
-                    <div class="col-md-2">
-                        <label for="">Project</label>
-                        <select name="project_id" class="form-control @error('project_id') is-invalid @enderror">
-                            @foreach ($projects as $item)
-                                <option value="{{ $item->id }}" {{ $item->id == $transaction->project_id ? 'selected' : '' }}>{{ $item->project }}</option>                                        
-                            @endforeach
-                        </select>
-                        @include('errors.inline', ['message' => $errors->first('project_id')])
                     </div>
                     <div class="col-md-4">
                         <label for="">Payee Name</label>

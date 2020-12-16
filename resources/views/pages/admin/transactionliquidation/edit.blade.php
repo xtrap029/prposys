@@ -58,7 +58,7 @@
                         </button>
                     </div>
                 @endif
-                <div class="jsReplicate mt-5">
+                <div class="jsReplicate jsMath mt-5">
                     <h4 class="text-center">Items</h4>
                     <table class="table bg-white">
                         <thead>
@@ -90,7 +90,14 @@
                                         <option value="0" {{ $transaction->liquidation[0]->receipt == 0 ? 'selected' : '' }}>N</option>
                                     </select>
                                 </td>
-                                <td colspan="2"><input type="number" class="form-control" name="amount[]" step="0.01" value="{{ $transaction->liquidation[0]->amount }}" required></td>
+                                <td colspan="2">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">{{ $transaction->currency }}</span>
+                                        </div>
+                                        <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ $transaction->liquidation[0]->amount }}" required>
+                                    </div>  
+                                </td>
                             </tr>
                             @foreach ($transaction->liquidation as $key => $item)
                                 @if ($key > 0)
@@ -111,12 +118,28 @@
                                                 <option value="0" {{ $item->receipt == 0 ? 'selected' : '' }}>N</option>
                                             </select>
                                         </td>
-                                        <td><input type="number" class="form-control" name="amount[]" step="0.01" value="{{ $item->amount }}" required></td>
-                                        <td><button type="button" class="btn btn-danger jsReplicate_remove"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                        <td>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">{{ $transaction->currency }}</span>
+                                                </div>
+                                                <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ $item->amount }}" required>
+                                            </div>  
+                                        </td>
+                                        <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
                                     </tr>
                                 @endif
                             @endforeach
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="7">
+                                    <div class="float-right">
+                                        Total Amount: <span class="font-weight-bold jsMath_sum jsMath_alert">0</span> / <span class="font-weight-bold jsMath_validate">{{ number_format($transaction->amount_issued, 2, '.', ',') }}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
                     <div class="text-center">
                         <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
@@ -155,7 +178,7 @@
                                             <input type="hidden" name="attachment_id_old[]" value="{{ $item->id }}">
                                         </td>
                                         <td><input type="text" name="attachment_description_old[]" class="form-control" value="{{ $item->description }}" required></td>
-                                        <td><button type="button" class="btn btn-danger jsReplicate_remove"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                        <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
                                     </tr>
                                 @endif
                             @endforeach
@@ -190,8 +213,15 @@
                                 <option value="0">N</option>
                             </select>
                         </td>
-                        <td><input type="number" class="form-control" name="amount[]" step="0.01" required></td>
-                        <td><button type="button" class="btn btn-danger jsReplicate_remove"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                        <td>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">{{ $transaction->currency }}</span>
+                                </div>
+                                <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" required>
+                            </div>  
+                        </td>
+                        <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
                     </tr>
                 </tbody>
             </table>
@@ -201,7 +231,7 @@
                     <tr class="jsReplicate_template_item">
                         <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
                         <td><input type="text" name="attachment_description[]" class="form-control" required></td>
-                        <td><button type="button" class="btn btn-danger jsReplicate_remove"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                        <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
                     </tr>
                 </tbody>
             </table>
@@ -226,6 +256,30 @@
                 })
             }
 
+            if ($('.jsMath')[0]){
+                cls_2 = '.jsMath'
+
+                $(document).on('keyup click', cls_2+'_trigger', function() {
+                    jsMatch_calc()
+                })
+
+                jsMatch_calc()
+
+                function jsMatch_calc() {
+                    sum = 0
+                    $(cls_2+'_amount').each(function() {
+                        sum += parseFloat($(this).val() != "" ? $(this).val() : 0)
+                    })
+
+                    $(cls_2+'_sum').text(sum.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+
+                    if ($(cls_2+'_sum').text() != $(cls_2+'_validate').text()) {
+                        $(cls_2+'_alert').addClass('text-danger').removeClass('text-success')
+                    } else {
+                        $(cls_2+'_alert').removeClass('text-danger').addClass('text-success')
+                    }
+                }
+            }
         })
     </script>
 @endsection

@@ -203,9 +203,36 @@
                                 <h5>{{ $transaction->project->project }}</h5>
                             </div>
                             <div class="col-md-6">
+                                <label for="">Transaction Category</label>
+                                @if ($perms['can_edit_issued'])
+                                    <form action="/transaction-form/edit-issued/{{ $transaction->id }}" method="post">
+                                        @csrf
+                                        @method('put')
+                                        <select name="trans_category" class="form-control w-50" onchange="this.form.submit()">
+                                            <option value="{{ config('global.trans_category')[0] }}" {{ $transaction->is_deposit == 0 && $transaction->is_bills == 0 && $transaction->is_hr == 0 ? 'selected' : '' }}>{{ config('global.trans_category_label')[0] }}</option>
+                                            <option value="{{ config('global.trans_category')[1] }}" {{ $transaction->is_deposit == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[1] }}</option>
+                                            <option value="{{ config('global.trans_category')[2] }}" {{ $transaction->is_bills == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[2] }}</option>
+                                            <option value="{{ config('global.trans_category')[3] }}" {{ $transaction->is_hr == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[3] }}</option>
+                                        </select>
+                                    </form>
+                                @else
+                                    <h5>
+                                        @if ($transaction->is_deposit)
+                                            {{ config('global.trans_category_label')[1] }}
+                                        @elseif ($transaction->is_bills)    
+                                            {{ config('global.trans_category_label')[2] }}
+                                        @elseif ($transaction->is_hr)    
+                                            {{ config('global.trans_category_label')[3] }}
+                                        @else
+                                            {{ config('global.trans_category_label')[0] }}    
+                                        @endif
+                                    </h5>
+                                @endif
+                            </div>
+                            {{-- <div class="col-md-6">
                                 <label for="">Particulars</label>
                                 <h5>{{ $trans_page_url == 'prpo' ? $transaction->particulars->name : $transaction->particulars_custom }}</h5>
-                            </div>                            
+                            </div>                             --}}
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
@@ -248,36 +275,9 @@
                             </div>
                         </div>
                         <div class="row mb-3">  
-                            <div class="col-md-6 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
+                            <div class="col-md-12 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
                                 <label for="">Authorized Approver</label>
                                 <h5>{{ $transaction->form_approver_id ? $transaction->formapprover->name : '' }}</h5>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="">Transaction Category</label>
-                                @if ($perms['can_edit_issued'])
-                                    <form action="/transaction-form/edit-issued/{{ $transaction->id }}" method="post">
-                                        @csrf
-                                        @method('put')
-                                        <select name="trans_category" class="form-control w-50" onchange="this.form.submit()">
-                                            <option value="{{ config('global.trans_category')[0] }}" {{ $transaction->is_deposit == 0 && $transaction->is_bills == 0 && $transaction->is_hr == 0 ? 'selected' : '' }}>{{ config('global.trans_category_label')[0] }}</option>
-                                            <option value="{{ config('global.trans_category')[1] }}" {{ $transaction->is_deposit == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[1] }}</option>
-                                            <option value="{{ config('global.trans_category')[2] }}" {{ $transaction->is_bills == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[2] }}</option>
-                                            <option value="{{ config('global.trans_category')[3] }}" {{ $transaction->is_hr == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[3] }}</option>
-                                        </select>
-                                    </form>
-                                @else
-                                    <h5>
-                                        @if ($transaction->is_deposit)
-                                            {{ config('global.trans_category_label')[1] }}
-                                        @elseif ($transaction->is_bills)    
-                                            {{ config('global.trans_category_label')[2] }}
-                                        @elseif ($transaction->is_hr)    
-                                            {{ config('global.trans_category_label')[3] }}
-                                        @else
-                                            {{ config('global.trans_category_label')[0] }}    
-                                        @endif
-                                    </h5>
-                                @endif
                             </div>
                         </div>
                         <div class="row mb-3">
