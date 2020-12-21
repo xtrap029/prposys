@@ -211,14 +211,22 @@ class TransactionsFormsController extends Controller {
                 ->first();
         }
 
-        // validate input
-        $data = $request->validate([
+        $validation = [
             'payor' => [],
             'coa_tagging_id' => ['required', 'exists:coa_taggings,id'],
             // 'expense_type_id' => ['required', 'exists:expense_types,id'],
             // 'expense_type_description' => ['required'],
             'vat_type_id' => ['required', 'exists:vat_types,id'],
-        ]);
+        ];
+
+        if ($transaction->trans_type == 'pc') {
+            $validation['particulars_custom'] = ['required'];
+        } else {
+            $validation['particulars_id_single'] = ['required', 'exists:particulars,id'];
+        }
+
+        // validate input
+        $data = $request->validate($validation);
 
         $data_desc = $request->validate([
             'qty.*' => ['required', 'min:1'],
@@ -241,6 +249,9 @@ class TransactionsFormsController extends Controller {
         }
 
         
+        $data['particulars_id'] = $data['particulars_id_single'];
+        unset($data['particulars_id_single']);
+
         $data['edit_count'] = 0;
         $data['status_id'] = 5;
         $data['updated_id'] = auth()->id();
@@ -352,8 +363,7 @@ class TransactionsFormsController extends Controller {
             return back()->with('error', __('messages.cant_edit'));
         }
 
-        // validate input
-        $data = $request->validate([
+        $validation = [
             'payor' => [''],
             'coa_tagging_id' => ['required', 'exists:coa_taggings,id'],
             // 'expense_type_id' => ['required', 'exists:expense_types,id'],
@@ -368,7 +378,19 @@ class TransactionsFormsController extends Controller {
             'due_at' => ['required', 'date'],
             'requested_id' => ['required', 'exists:users,id'],
             'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
-        ]);
+        ];
+
+        if ($transaction->trans_type == 'pc') {
+            $validation['particulars_custom'] = ['required'];
+        } else {
+            $validation['particulars_id_single'] = ['required', 'exists:particulars,id'];
+        }
+
+        // validate input
+        $data = $request->validate($validation);
+
+        $data['particulars_id'] = $data['particulars_id_single'];
+        unset($data['particulars_id_single']);
 
         $data['is_deposit'] = 0;
         $data['is_bills'] = 0;

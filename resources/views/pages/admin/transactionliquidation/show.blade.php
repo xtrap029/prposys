@@ -327,10 +327,10 @@
                                 <td class="font-weight-bold w-25">Project</td>
                                 <td>{{ $transaction->project->project }}</td>
                             </tr>
-                            {{-- <tr>
+                            <tr>
                                 <td class="font-weight-bold w-25">Particulars</td>
                                 <td>{{ $trans_page_url == 'prpo' ? $transaction->particulars->name : $transaction->particulars_custom }}</td>
-                            </tr> --}}
+                            </tr>
                             <tr>
                                 <td class="font-weight-bold w-25">Due Date</td>
                                 <td>{{ $transaction->due_at }}</td>

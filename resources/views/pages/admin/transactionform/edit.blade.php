@@ -42,10 +42,10 @@
                 @csrf
                 @method('put')
                 <div class="form-row mb-3">
-                    {{-- <div class="col-md-6">
+                    <div class="col-md-12">
                         <label for="">Particulars</label>
                         @if ($trans_page_url == 'prpo')
-                            <select name="particulars_id" class="form-control @error('particulars_id') is-invalid @enderror">
+                            <select name="particulars_id_single" class="form-control @error('particulars_id') is-invalid @enderror">
                                 @foreach ($particulars as $item)
                                     <option value="{{ $item->id }}" {{ $item->id == $transaction->particulars_id ? 'selected' : '' }}>{{ $item->name }}</option>                                        
                                 @endforeach
@@ -55,7 +55,9 @@
                             <input type="text" class="form-control @error('particulars_custom') is-invalid @enderror" name="particulars_custom" value="{{ $transaction->particulars_custom }}" required>
                             @include('errors.inline', ['message' => $errors->first('particulars_custom')])
                         @endif
-                    </div> --}}
+                    </div>
+                </div>
+                <div class="form-row mb-3">
                     <div class="col-md-7">
                         <label for="">Project</label>
                         <select name="project_id" class="form-control @error('project_id') is-invalid @enderror">

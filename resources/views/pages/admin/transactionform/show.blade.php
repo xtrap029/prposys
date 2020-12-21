@@ -229,10 +229,10 @@
                                     </h5>
                                 @endif
                             </div>
-                            {{-- <div class="col-md-6">
+                            <div class="col-md-6">
                                 <label for="">Particulars</label>
                                 <h5>{{ $trans_page_url == 'prpo' ? $transaction->particulars->name : $transaction->particulars_custom }}</h5>
-                            </div>                             --}}
+                            </div>                            
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">

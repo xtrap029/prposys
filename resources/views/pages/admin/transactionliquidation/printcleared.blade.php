@@ -49,10 +49,10 @@
                                         <td class="font-weight-bold">Vendor / Payee</td>
                                         <td>{{ $transaction->payee }}</td>
                                     </tr>
-                                    {{-- <tr>
+                                    <tr>
                                         <td class="font-weight-bold">Particulars</td>
                                         <td>{{ $transaction->particulars_custom ?: $transaction->particulars->name }}</td>
-                                    </tr> --}}
+                                    </tr>
                                     <tr>
                                         <td class="font-weight-bold">Purpose</td>
                                         <td>{{ $transaction->purpose }}</td>

@@ -45,6 +45,22 @@
                 <input type="hidden" name="key" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}">
                 <input type="hidden" name="company" value="{{ $transaction->project->company->id }}">
                 <div class="form-row mb-3">
+                    <div class="col-md-12">
+                        <label for="">Particulars</label>
+                        @if ($trans_page_url == 'prpo')
+                            <select name="particulars_id_single" class="form-control @error('particulars_id') is-invalid @enderror">
+                                @foreach ($particulars as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>                                        
+                                @endforeach
+                            </select>
+                            @include('errors.inline', ['message' => $errors->first('particulars_id')])
+                        @else
+                            <input type="text" class="form-control @error('particulars_custom') is-invalid @enderror" name="particulars_custom" required>
+                            @include('errors.inline', ['message' => $errors->first('particulars_custom')])
+                        @endif
+                    </div>
+                </div>
+                <div class="form-row mb-3">
                     <div class="col-md-5 {{ $transaction->is_deposit ? '' : 'd-none' }}">
                         <label for="">Payor</label>
                         <input type="text" name="payor" class="form-control @error('payor') is-invalid @enderror" {{ $transaction->is_deposit ? 'required' : '' }}>
