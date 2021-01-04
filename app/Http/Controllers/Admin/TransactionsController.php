@@ -199,14 +199,34 @@ class TransactionsController extends Controller {
             $data['is_deposit'] = 0;
             $data['is_bills'] = 0;
             $data['is_hr'] = 0;
-            
-            if ($data['trans_category'] == config('global.trans_category')[1]) {
-                $data['is_deposit'] = 1;
-            } else if ($data['trans_category'] == config('global.trans_category')[2]) {
-                $data['is_bills'] = 1;
-            } else if ($data['trans_category'] == config('global.trans_category')[3]) {
-                $data['is_hr'] = 1;
+            $data['is_reimbursement'] = 0;
+
+            switch ($data['trans_category']) {
+                case config('global.trans_category')[1]:
+                    $data['is_deposit'] = 1;
+                    break;
+                case config('global.trans_category')[2]:
+                    $data['is_bills'] = 1;
+                    break;
+                case config('global.trans_category')[3]:
+                    $data['is_hr'] = 1;
+                    break;
+                case config('global.trans_category')[4]:
+                    $data['is_reimbursement'] = 1;
+                    break;
+                default:
+                    break;
             }
+            
+            // if ($data['trans_category'] == config('global.trans_category')[1]) {
+            //     $data['is_deposit'] = 1;
+            // } else if ($data['trans_category'] == config('global.trans_category')[2]) {
+            //     $data['is_bills'] = 1;
+            // } else if ($data['trans_category'] == config('global.trans_category')[3]) {
+            //     $data['is_hr'] = 1;
+            // } else if ($data['trans_category'] == config('global.trans_category')[3]) {
+            //     $data['is_reimbursement'] = 1;
+            // }
 
             unset($data['trans_category']);
 
@@ -250,6 +270,7 @@ class TransactionsController extends Controller {
 
         $data['owner_id'] = auth()->id();
         $data['updated_id'] = auth()->id();
+        $data['status_prev_id'] = 1;
 
         $transaction = Transaction::create($data);
 
@@ -312,14 +333,32 @@ class TransactionsController extends Controller {
         $data['is_deposit'] = 0;
         $data['is_bills'] = 0;
         $data['is_hr'] = 0;
-        
-        if ($data['trans_category'] == config('global.trans_category')[1]) {
-            $data['is_deposit'] = 1;
-        } else if ($data['trans_category'] == config('global.trans_category')[2]) {
-            $data['is_bills'] = 1;
-        } else if ($data['trans_category'] == config('global.trans_category')[3]) {
-            $data['is_hr'] = 1;
+        $data['is_reimbursement'] = 0;
+
+        switch ($data['trans_category']) {
+            case config('global.trans_category')[1]:
+                $data['is_deposit'] = 1;
+                break;
+            case config('global.trans_category')[2]:
+                $data['is_bills'] = 1;
+                break;
+            case config('global.trans_category')[3]:
+                $data['is_hr'] = 1;
+                break;
+            case config('global.trans_category')[4]:
+                $data['is_reimbursement'] = 1;
+                break;
+            default:
+                break;
         }
+        
+        // if ($data['trans_category'] == config('global.trans_category')[1]) {
+        //     $data['is_deposit'] = 1;
+        // } else if ($data['trans_category'] == config('global.trans_category')[2]) {
+        //     $data['is_bills'] = 1;
+        // } else if ($data['trans_category'] == config('global.trans_category')[3]) {
+        //     $data['is_hr'] = 1;
+        // }
 
         unset($data['trans_category']);
 
@@ -431,8 +470,9 @@ class TransactionsController extends Controller {
             $data = $request->validate([
                 'cancellation_reason' => ['required']
             ]);
-
+            
             $data['cancellation_number'] = rand(100000000, 999999999);
+            $data['status_prev_id'] = $transaction->status_id;
             $data['status_id'] = 3;
             $data['updated_id'] = auth()->id();
             $transaction->update($data);

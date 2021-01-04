@@ -253,6 +253,7 @@ class TransactionsFormsController extends Controller {
         unset($data['particulars_id_single']);
 
         $data['edit_count'] = 0;
+        $data['status_prev_id'] = $transaction->status_id;
         $data['status_id'] = 5;
         $data['updated_id'] = auth()->id();
         
@@ -454,6 +455,7 @@ class TransactionsFormsController extends Controller {
         }
 
         if ($this->check_can_issue($transaction->id)) {
+            $data['status_prev_id'] = $transaction->status_id;
             $data['status_id'] = 5;
         }
         
@@ -513,6 +515,7 @@ class TransactionsFormsController extends Controller {
             ]);
 
             $data['cancellation_number'] = rand(100000000, 999999999);
+            $data['status_prev_id'] = $transaction->status_id;
             $data['status_id'] = 3;
             $data['updated_id'] = auth()->id();
             $transaction->update($data);
@@ -552,6 +555,7 @@ class TransactionsFormsController extends Controller {
             $data['form_amount_subtotal'] = $custom_subtotal;
             $data['form_amount_payable'] = $custom_total_payable;
 
+            $data['status_prev_id'] = $transaction->status_id;
             $data['status_id'] = 6;
             $data['updated_id'] = auth()->id();
             $transaction->update($data);
@@ -648,6 +652,7 @@ class TransactionsFormsController extends Controller {
                 'released_by_id' => ['required', 'exists:released_by,id']
             ]);
             
+            $data['status_prev_id'] = $transaction->status_id;
             $data['status_id'] = 4;
             $data['form_approver_id'] = auth()->id();
             $transaction->update($data);

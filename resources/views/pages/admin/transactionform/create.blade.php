@@ -13,7 +13,19 @@
                     </h1>
                 </div>
                 <div class="col-sm-6 text-right">
-                    <h1>Make Form</h1>
+                    <h1>
+                        @if ($transaction->is_deposit)
+                            {{ config('global.trans_category_label_make_form')[1] }}
+                        @elseif ($transaction->is_bills)    
+                            {{ config('global.trans_category_label_make_form')[2] }}
+                        @elseif ($transaction->is_hr)    
+                            {{ config('global.trans_category_label_make_form')[3] }}
+                        @elseif ($transaction->is_reimbursement)    
+                            {{ config('global.trans_category_label_make_form')[4] }}
+                        @else
+                            {{ config('global.trans_category_label_make_form')[0] }}
+                        @endif
+                    </h1>
                 </div>
             </div>
         </div>
@@ -39,6 +51,20 @@
                         <td class="text-right">{{ $transaction->currency." ".number_format($transaction->amount, 2, '.', ',') }}</td>
                     </tr>
                 </tbody>
+                @if ($transaction->is_reimbursement)
+                    <thead>
+                        <tr>
+                            <tr>
+                                <th colspan="5">Purpose</th>
+                            </tr>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="5">{{ $transaction->purpose }}</td>
+                        </tr>
+                    </tbody>
+                @endif
             </table>
             <form action="" method="post" class="jsPreventMultiple">
                 @csrf

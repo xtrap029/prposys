@@ -480,20 +480,22 @@
                                 <tr>
                                     <td colspan="6" class="py-4"></td>
                                 </tr>
-                                <tr>
-                                    <td colspan="4" class="font-weight-bold small text-right">Before VAT</td>
-                                    <td colspan="2" class="bg-white text-right">
-                                        <span class="float-left">{{ $transaction->currency }}</span>
-                                        {{ number_format($transaction->liq_before_vat, 2, '.', ',') }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="4" class="font-weight-bold small text-right">VAT (12%)</td>
-                                    <td colspan="2" class="bg-white text-right font-italic">
-                                        <span class="float-left">{{ $transaction->currency }}</span>
-                                        {{ number_format($transaction->liq_vat, 2, '.', ',') }}
-                                    </td>
-                                </tr>
+                                @if ($transaction->liq_before_vat)
+                                    <tr>
+                                        <td colspan="4" class="font-weight-bold small text-right">Before VAT</td>
+                                        <td colspan="2" class="bg-white text-right">
+                                            <span class="float-left">{{ $transaction->currency }}</span>
+                                            {{ number_format($transaction->liq_before_vat, 2, '.', ',') }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" class="font-weight-bold small text-right">VAT (12%)</td>
+                                        <td colspan="2" class="bg-white text-right font-italic">
+                                            <span class="float-left">{{ $transaction->currency }}</span>
+                                            {{ number_format($transaction->liq_vat, 2, '.', ',') }}
+                                        </td>
+                                    </tr>
+                                @endif
                                 <tr>
                                     <td colspan="4" class="font-weight-bold small text-right">Subtotal</td>
                                     <td colspan="2" class="bg-white text-right font-weight-bold">

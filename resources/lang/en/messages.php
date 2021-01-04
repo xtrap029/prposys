@@ -2,6 +2,8 @@
 
 return [
     'empty' => 'No entries yet.',
+    'not_found' => 'No entries found.',
+    'password_required' => 'User password is required to perform this action.',
     'create_success' => ' successfully saved!',
     'edit_success' => ' successfully updated!',
     'delete_success' => ' successfully deleted!',

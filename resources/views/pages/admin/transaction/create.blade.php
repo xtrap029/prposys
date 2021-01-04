@@ -108,7 +108,7 @@
                         </div>
                         <div class="card-body pb-1 row">                            
                             <div class="col-12 col-md-3">
-                                <div class="callout callout-info py-2 mx-2 row">
+                                <div class="callout py-2 mx-2 row">
                                     <div class="col-3">
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[0] }}" class="form-control m-auto outline-0" checked>
                                     </div>
@@ -119,7 +119,7 @@
                                 </div>
                             </div>
                             <div class="col-12 col-md-3">
-                                <div class="callout callout-danger py-2 mx-2 row">
+                                <div class="callout py-2 mx-2 row">
                                     <div class="col-3">
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[1] }}" class="form-control m-auto outline-0">
                                     </div>
@@ -130,7 +130,7 @@
                                 </div>
                             </div>
                             <div class="col-12 col-md-3">
-                                <div class="callout callout-success py-2 mx-2 row">
+                                <div class="callout py-2 mx-2 row">
                                     <div class="col-3">
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[2] }}" class="form-control m-auto outline-0">
                                     </div>
@@ -141,12 +141,23 @@
                                 </div>
                             </div>
                             <div class="col-12 col-md-3">
-                                <div class="callout callout-warning py-2 mx-2 row">
+                                <div class="callout py-2 mx-2 row">
                                     <div class="col-3">
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[3] }}" class="form-control m-auto outline-0">
                                     </div>
                                     <div class="col-9 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[3] }}</h6>
+                                        <p class="d-none">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-3 d-none">
+                                <div class="callout py-2 mx-2 row">
+                                    <div class="col-3">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[4] }}" class="form-control m-auto outline-0">
+                                    </div>
+                                    <div class="col-9 mt-2">
+                                        <h6 class="font-weight-bold">{{ config('global.trans_category_label')[4] }}</h6>
                                         <p class="d-none">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
                                     </div>
                                 </div>

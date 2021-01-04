@@ -241,6 +241,15 @@
                                                     </a>
                                                 </li>
                                             @endif
+                                            
+                                            @if (Auth::user()->role_id == 1)
+                                                <li class="nav-header">CONTROL PANEL</li>
+                                                <li class="nav-item">
+                                                    <a href="/control-panel/revert-status" class="nav-link {{ Route::currentRouteName() == 'revertstatus' ? 'active' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">history_edu</i><p>Revert Status</p>
+                                                    </a>
+                                                </li>
+                                            @endif
                                         </ul>
                                     </nav>
                                 </div>

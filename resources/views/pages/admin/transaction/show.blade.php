@@ -143,6 +143,8 @@
                                         {{ config('global.trans_category_label')[2] }}
                                     @elseif ($transaction->is_hr)    
                                         {{ config('global.trans_category_label')[3] }}
+                                    @elseif ($transaction->is_reimbursement)    
+                                        {{ config('global.trans_category_label')[4] }}
                                     @else
                                         {{ config('global.trans_category_label')[0] }}
                                     @endif

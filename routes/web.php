@@ -50,6 +50,13 @@ Route::middleware('auth')->group(function () {
 
             Route::get('/', $url.'@index')->name('activitylog');
         });
+
+        Route::prefix('control-panel')->group(function() {
+            $url = 'Admin\ControlPanelsController';
+
+            Route::get('/revert-status', $url.'@revert_status')->name('revertstatus');
+            Route::post('/revert-status', $url.'@revert_status_store');
+        });
     });
 
     // Access Level 1 and 2

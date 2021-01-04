@@ -263,6 +263,7 @@ class TransactionsLiquidationController extends Controller {
             $transaction->liquidation_approver_id = $data['liquidation_approver_id'];
         }
         
+        $transaction->status_prev_id = $transaction->status_id;
         $transaction->status_id = !$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr ? config('global.liquidation_generated')[0] : config('global.liquidation_cleared')[0];
         $transaction->edit_count = 0;
         $transaction->updated_id = auth()->id();
@@ -320,9 +321,13 @@ class TransactionsLiquidationController extends Controller {
         }
 
         $transaction->liq_subtotal = number_format($transaction->liquidation->sum('amount'), 2, '.', '');
-        $transaction->liq_before_vat = $transaction->liq_subtotal * 0.12;
-        $transaction->liq_vat = $transaction->liq_subtotal - $transaction->liq_before_vat;
-        $transaction->liq_balance = $transaction->liq_subtotal - $transaction->amount_issued;  
+        $transaction->liq_balance = $transaction->liq_subtotal - $transaction->amount_issued;
+
+        if ($transaction->form_vat_vat != 0 || $transaction->form_vat_wht != 0) {
+            $transaction->liq_before_vat = $transaction->liq_subtotal * 0.12;
+            $transaction->liq_vat = $transaction->liq_subtotal - $transaction->liq_before_vat;
+        }
+
 
         $approvers = User::whereIn('role_id', config('global.approver_liquidation'))->orderBy('name', 'asc')->get();
         $banks = Bank::orderBy('name', 'asc')->get();
@@ -469,7 +474,8 @@ class TransactionsLiquidationController extends Controller {
             // $data = $request->validate([
             //     'liquidation_approver_id' => ['required', 'exists:users,id']
             // ]);
-
+            
+            $data['status_prev_id'] = $transaction->status_id;
             $data['status_id'] = 8;
             $data['updated_id'] = auth()->id();
             $transaction->update($data);
@@ -507,9 +513,12 @@ class TransactionsLiquidationController extends Controller {
             ->get();
 
         $transaction->liq_subtotal = $transaction->liquidation->sum('amount');
-        $transaction->liq_before_vat = $transaction->liq_subtotal * 0.12;
-        $transaction->liq_vat = $transaction->liq_subtotal - $transaction->liq_before_vat;
-        $transaction->liq_balance = $transaction->liq_subtotal - $transaction->amount_issued;         
+        $transaction->liq_balance = $transaction->liq_subtotal - $transaction->amount_issued;
+        
+        if ($transaction->form_vat_vat != 0 || $transaction->form_vat_wht != 0) {
+            $transaction->liq_before_vat = $transaction->liq_subtotal * 0.12;
+            $transaction->liq_vat = $transaction->liq_subtotal - $transaction->liq_before_vat;
+        }
         
         $final_approver = User::where(
             'id', Settings::where('type', 'AUTHORIZED_BY')
@@ -541,6 +550,7 @@ class TransactionsLiquidationController extends Controller {
                 $data['depo_slip'] = basename($request->file('depo_slip')->store('public/attachments/deposit_slip'));
             }
 
+            $data['status_prev_id'] = $transaction->status_id;
             $data['status_id'] = 9;
             $data['liquidation_approver_id'] = auth()->id();
             $data['updated_id'] = auth()->id();
@@ -698,9 +708,13 @@ class TransactionsLiquidationController extends Controller {
                 ->get();
 
             $item->liq_subtotal = $item->liquidation->sum('amount');
-            $item->liq_before_vat = $item->liq_subtotal * 0.12;
-            $item->liq_vat = $item->liq_subtotal - $item->liq_before_vat;
             $item->liq_balance = $item->liq_subtotal - $item->amount_issued;         
+            
+            if ($item->form_vat_vat != 0 || $item->form_vat_wht != 0) {
+                $item->liq_before_vat = $item->liq_subtotal * 0.12;
+                $item->liq_vat = $item->liq_subtotal - $item->liq_before_vat;
+            }
+            
             $transaction_loop[$key] = $item;
 
         }
@@ -784,7 +798,7 @@ class TransactionsLiquidationController extends Controller {
         // check if unliquidated
         if (in_array($transaction->status_id, config('global.liquidation_generated'))) {
             // check if not admin
-            if ($user->role_id != 1) {
+            if (!in_array($user->role_id, config('global.admin_subadmin'))) {
                 // check if requestor
                 if ($user->id == $transaction->requested_id) {
                     // check if pr, not po
