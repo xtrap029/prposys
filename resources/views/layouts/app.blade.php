@@ -249,6 +249,11 @@
                                                         <i class="nav-icon material-icons icon--list">history_edu</i><p>Revert Status</p>
                                                     </a>
                                                 </li>
+                                                <li class="nav-item">
+                                                    <a href="/control-panel/force-cancel" class="nav-link {{ Route::currentRouteName() == 'forcecancel' ? 'active' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">cancel</i><p>Force Cancel</p>
+                                                    </a>
+                                                </li>
                                             @endif
                                         </ul>
                                     </nav>

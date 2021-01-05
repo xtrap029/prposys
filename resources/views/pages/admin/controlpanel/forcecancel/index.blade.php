@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Revert Status')
+@section('title', 'Force Cancel')
 
 @section('content')
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Revert Status</h1>
+                    <h1>Force Cancel</h1>
                 </div>
             </div>
         </div>
@@ -22,14 +22,17 @@
                         <h5><i class="nav-icon material-icons icon--list mr-1">warning</i> Are you sure?</h5>
                         Transaction <code>{{ app('request')->input('trans') }}</code>'s
                         status <code>{{ $transaction->status->name }}</code>
-                        will be reverted to <code>{{ $transaction->status_prev->name }}</code>.
+                        will be <code>CANCELLED</code>.
+                    </div>
+                    <div class="form-group">
+                        <textarea name="cancellation_reason" class="form-control" placeholder="Cancellation Reason" required></textarea>
                     </div>
                     <div class="form-group">
                         <input type="password" name="password" class="form-control" placeholder="{{ __('messages.password_required') }}" required>
                     </div>
                     <div class="form-group">
-                        <input type="submit" value="Revert" class="btn btn-primary">
-                        <a href="/control-panel/revert-status/" class="float-right btn btn-secondary">Cancel</a>
+                        <input type="submit" value="Force Cancel" class="btn btn-primary">
+                        <a href="/control-panel/force-cancel/" class="float-right btn btn-secondary">Cancel</a>
                     </div>
                 </form>
             @else
