@@ -7,3 +7,16 @@
         }
     }
 }
+
+.card {
+    &-search {
+        position: absolute;
+        right: 0;
+        z-index: 3;
+        top: 0;
+        margin: auto;
+        margin-top: 45px;
+        width: 100%;
+        transition: height 2s;
+    }
+}

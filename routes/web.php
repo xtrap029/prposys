@@ -18,7 +18,6 @@ Route::get('/',  function () {
 Auth::routes();
 
 Route::middleware('auth')->group(function () {
-
     Route::get('/', 'HomeController@index')->name('dashboard');
 
     // Access Level 1
@@ -103,6 +102,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/report-all/', $url.'@report_all')->name('transactionreport');
 
             Route::get('/{trans_page}/{trans_company?}', $url.'@index')->where('trans_company', '[0-9]+');
+
+            Route::post('/api-search', $url.'@api_search');
         });
 
         Route::prefix('transaction-form')->group(function () {

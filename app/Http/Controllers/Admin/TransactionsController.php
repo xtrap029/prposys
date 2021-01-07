@@ -141,6 +141,93 @@ class TransactionsController extends Controller {
         ]);
     }
 
+    public function api_search(Request $request) {
+
+        switch ($request->trans_page) {
+            case 'prpo':
+                $trans_types = ['pr', 'po'];
+            break;  
+            case 'pc':
+                $trans_types = ['pc'];
+                break;            
+            default:
+                abort(404);
+                break;
+        }
+            
+        if ($request->type != "") {
+            $type = $request->type;
+            $trans_types = [$type];
+        }
+        
+        $key = $request->s;
+        $trans_company = $request->trans_company;
+        
+        $transactions = Transaction::whereIn('trans_type', $trans_types)
+                                ->whereIn('status_id', config('global.status'))
+                                ->whereHas('project', function($query) use($trans_company) {
+                                    $query->where('company_id', $trans_company);
+                                })
+                                ->where(static function ($query) use ($key) {
+                                    $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$key."%")
+                                        ->orWhereHas('particulars', function($query) use($key) {
+                                            $query->where('name', 'like', "%{$key}%");
+                                        })
+                                        ->orWhere('particulars_custom', 'like', "%{$key}%")
+                                        ->orWhere('purpose', 'like', "%{$key}%")
+                                        ->orWhere('payee', 'like', "%{$key}%")
+                                        ->orWhereHas('coatagging', function($query) use($key) {
+                                            $query->where('name', 'like', "%{$key}%");
+                                        })
+                                        ->orWhere('expense_type_description', 'like', "%{$key}%")
+                                        ->orWhereHas('expensetype', function($query) use($key) {
+                                            $query->where('name', 'like', "%{$key}%");
+                                        })
+                                        ->orWhereHas('vattype', function($query) use($key) {
+                                            $query->where('name', 'like', "%{$key}%");
+                                        })
+                                        ->orWhereHas('vattype', function($query) use($key) {
+                                            $query->where('code', 'like', "%{$key}%");
+                                        })
+                                        ->orWhere('control_no', 'like', "%{$key}%")
+                                        ->orWhere('control_type', 'like', "%{$key}%")
+                                        ->orWhere('cancellation_reason', 'like', "%{$key}%")
+                                        ->orWhere('cancellation_number', 'like', "%{$key}%")
+                                        ->orWhere('amount_issued', 'like', str_replace(',', '', "%{$key}%"))
+                                        ->orWhere('amount_issued', '=', str_replace(',', '', $key))
+                                        ->orWhere('form_amount_payable', 'like', str_replace(',', '', "%{$key}%"))
+                                        ->orWhere('form_amount_payable', '=', str_replace(',', '', $key))
+                                        ->orWhere('amount', 'like', str_replace(',', '', "%{$key}%"))
+                                        ->orWhere('amount', '=', str_replace(',', '', $key));
+                                });
+                                
+        if ($request->status != "") $transactions = $transactions->whereIn('status_id', explode(',', $request->status));
+        if ($request->user_req != "") $transactions = $transactions->where('requested_id', $request->user_req);
+        if ($request->user_prep != "") $transactions = $transactions->where('owner_id', $request->user_prep);
+        if ($request->category != "") $transactions = $transactions->where($request->category, 1);
+
+        $transactions = $transactions->orderBy('id', 'desc')->limit(5)->get();
+
+
+        foreach ($transactions as $key => $value) {
+            $transactions[$key]->trans_seq = sprintf("%05d", $value->trans_seq);
+            $transactions[$key]->trans_type = strtoupper($value->trans_type);
+            $transactions[$key]->status_name = strtoupper($value->status->name);
+            $transactions[$key]->requested_by = $value->requested->name;
+            $transactions[$key]->amount = number_format($value->form_amount_payable ?: $value->amount, 2, '.', ',');
+            $transactions[$key]->created = Carbon::parse($value->created_at)->format('Y-m-d');
+            $transactions[$key]->released = Carbon::parse($value->released_at)->format('Y-m-d');
+            $transactions[$key]->url_view = "transaction";
+            if (in_array($value->status_id, config('global.page_form'))) {
+                $transactions[$key]->url_view .= "-form";
+            } else if (in_array($value->status_id, config('global.page_liquidation'))) {
+                $transactions[$key]->url_view .= "-liquidation";
+            }
+        }
+
+        return $transactions->toJson();
+    }
+
     public function create($trans_type, $trans_company) {
         switch ($trans_type) {
             case 'pr':

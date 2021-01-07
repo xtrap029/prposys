@@ -52,35 +52,47 @@
                                     </div>
                                     <div class="col-md-10">
                                         <form action="/transaction/{{ $trans_page }}/{{ $company->id }}" method="GET" class="input-group mt-3">
-                                            <select name="status" class="form-control">
+                                            <select name="status" class="form-control filterSearch_select">
                                                 <option value="">All Status</option>
                                                 @foreach (config('global.status_filter') as $item)
                                                     <option value="{{ $item[1] }}" {{ app('request')->input('status') == $item[1] ? 'selected' : '' }}>{{ $item[0] }}</option>
                                                 @endforeach
                                             </select>
-                                            <select name="category" class="form-control">
+                                            <select name="category" class="form-control filterSearch_select">
                                                 @foreach (config('global.trans_category_column') as $key => $item)
                                                     <option value="{{ $item }}" {{ app('request')->input('category') == $item ? 'selected' : '' }}>{{ config('global.trans_category_label_filter')[$key] }}</option>
                                                 @endforeach
                                             </select>
-                                            <select name="type" class="form-control {{ $trans_page == 'prpo' ? '' : 'd-none' }}">
+                                            <select name="type" class="form-control filterSearch_select {{ $trans_page == 'prpo' ? '' : 'd-none' }}">
                                                 <option value="">All Types</option>
                                                 <option value="pr" {{ app('request')->input('type') == 'pr' ? 'selected' : '' }}>PR</option>
                                                 <option value="po" {{ app('request')->input('type') == 'po' ? 'selected' : '' }}>PO</option>
                                             </select>
-                                            <select name="user_req" class="form-control">
+                                            <select name="user_req" class="form-control filterSearch_select">
                                                 <option value="">Requested By</option>
                                                 @foreach ($users as $item)
                                                     <option value="{{ $item->id }}" {{ app('request')->input('user_req') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                                 @endforeach
                                             </select>
-                                            <select name="user_prep" class="form-control">
+                                            <select name="user_prep" class="form-control filterSearch_select">
                                                 <option value="">Prepared By</option>
                                                 @foreach ($users as $item)
                                                     <option value="{{ $item->id }}" {{ app('request')->input('user_prep') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                                 @endforeach
                                             </select>
-                                            <input type="text" class="form-control" name="s" value="{{ app('request')->input('s') }}" placeholder="keyword here...">
+                                            <input type="text" class="form-control filterSearch_input" name="s" value="{{ app('request')->input('s') }}" autocomplete="off" placeholder="keyword here...">
+                                            <div class="d-none d-md-block">
+                                                <div class="card card-search bg-secondary font-weight-normal filterSearch_result" style="display: none">
+                                                    <div class="card-body">
+                                                        <button type="button" class="btn btn-tool float-right filterSearch_close">close</button>
+                                                        <div class="filterSearch_data row small" style="display: none">
+                                                            <table class="table mb-0 p-0">
+                                                            </table>
+                                                        </div>
+                                                        <img src="/images/loading.gif" class="filterSearch_loading thumb--sm m-auto" style="display: block">
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="input-group-append">
                                                 <button class="btn btn-primary py-0 px-2" type="submit">
                                                     <i class="material-icons mt-1">search</i>
@@ -178,4 +190,117 @@
             @endif
         </div>
     </section>
+@endsection
+
+@section('script')
+    <script type="text/javascript">
+        $(function() {
+            if ($('.filterSearch_input')[0]){
+                cls = '.filterSearch'
+
+                $(cls+'_input').keyup(delay(function() {
+                    apiSearch()
+                }, 300))
+
+                $(cls+'_select').change(delay(function() {
+                    apiSearch()
+                }, 300))
+
+                $(cls+'_close').click(function() {
+                    $(cls+'_result').fadeOut('fast')
+                })
+            }
+
+            function apiSearch() {
+                if ($(cls+'_input').val() != ''                                
+                    || $('[name=s]').val() != ''
+                    || $('[name=type]').val() != ''
+                    || $('[name=category]').val() != ''
+                    || $('[name=status]').val() != ''
+                    || $('[name=user_req]').val() != ''
+                    || $('[name=user_prep]').val() != '') {
+
+                    $(cls+'_data').hide()
+                    $(cls+'_data table').html('')
+                    $(cls+'_loading').show()
+                    $(cls+'_result').fadeIn('slow')
+                    
+                    $.ajax({
+                        url: '/transaction/api-search',
+                        type: 'POST',
+                        data: {
+                            '_token': '{{ csrf_token() }}',
+                            'trans_page': '{{ $trans_page }}',
+                            'trans_company': '{{ $company->id }}',
+                            's': $('[name=s]').val(),
+                            'type': $('[name=type]').val(),
+                            'category': $('[name=category]').val(),
+                            'status': $('[name=status]').val(),
+                            'user_req': $('[name=user_req]').val(),
+                            'user_prep': $('[name=user_prep]').val(),
+                        },
+                        success: function(res) {
+                            result = JSON.parse(res)
+
+                            $(cls+'_loading').hide()
+                            $(cls+'_data').fadeIn('slow')
+                            
+                            if (result.length > 0) {
+                                $(cls+'_data table').append('<tr class="bg-transparent border-0">'
+                                    + '<td class="border-0 py-1">PR/PO #</td>'
+                                    + '<td class="border-0 py-1">Payee</td>'
+                                    + '<td class="border-0 py-1 text-right">Currency</td>'
+                                    + '<td class="border-0 py-1 text-right">Amount</td>'
+                                    + '<td class="border-0 py-1">Date Gen.</td>'
+                                    + '<td class="border-0 py-1">Date Rel.</td>'
+                                    + '<td class="border-0 py-1">Req. By</td>'
+                                    + '<td class="border-0 py-1">Status</td>'
+                                    + '</tr>'
+                                )
+                                
+                                $.each(result, function(i, item) {
+                                    $(cls+'_data table').append('<tr class="bg-transparent border-0">'
+                                        + '<td class="border-0 py-1"><a href="/'+item.url_view+'/view/'+item.id+'" class="text-teal" target="_blank">'
+                                            + item.trans_type+'-'+item.trans_year+'-'+item.trans_seq
+                                        + '</a></td>'
+                                        + '<td class="border-0 py-1">'+item.payee+'</td>'
+                                        + '<td class="border-0 py-1 text-right">'+item.currency+'</td>'
+                                        + '<td class="border-0 py-1 text-right">'+item.amount+'</td>'
+                                        + '<td class="border-0 py-1">'+item.created+'</td>'
+                                        + '<td class="border-0 py-1">'+item.released+'</td>'
+                                        + '<td class="border-0 py-1">'+item.requested_by+'</td>'
+                                        + '<td class="border-0 py-1">'+item.status_name+'</td>'
+                                        + '</tr>'
+                                    )
+                                })
+                            } else {
+                                $(cls+'_data table').html('<tr class="bg-transparent border-0"><td class="border-0">{{ __("messages.not_found") }}</td></tr>')
+                            }
+
+
+                        },
+                        error: function() {
+                            $(cls+'_data').fadeOut('fast')
+                            $(cls+'_loading').fadeOut('fast')
+                            $(cls+'_result').fadeOut('fast')
+                        }
+                    })
+                } else {
+                    $(cls+'_result').fadeOut('fast')
+                    $(cls+'_loading').fadeOut('fast')
+                }
+            }
+
+            function delay(callback, ms) {
+                var timer = 0
+                return function() {
+                    var context = this, args = arguments;
+                    clearTimeout(timer)
+                    timer = setTimeout(function () {
+                    callback.apply(context, args)
+                    }, ms || 0)
+                };
+            }
+        })
+    </script>
 @endsection
