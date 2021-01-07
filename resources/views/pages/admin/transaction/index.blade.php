@@ -221,7 +221,6 @@
                     || $('[name=user_prep]').val() != '') {
 
                     $(cls+'_data').hide()
-                    $(cls+'_data table').html('')
                     $(cls+'_loading').show()
                     $(cls+'_result').fadeIn('slow')
                     
@@ -243,6 +242,7 @@
                             result = JSON.parse(res)
 
                             $(cls+'_loading').hide()
+                            $(cls+'_data table').html('')
                             $(cls+'_data').fadeIn('slow')
                             
                             if (result.length > 0) {
