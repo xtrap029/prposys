@@ -35,8 +35,8 @@
                     <a href="/transaction-liquidation/edit/{{ $transaction->id }}" class="btn btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
                     {{-- <a href="#_" class="btn btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-approval"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a> --}}
                     <a href="/transaction-liquidation/approval/{{ $transaction->id }}" class="btn btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a>
-                    <a href="#_" class="btn btn-danger" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print Generated {{ strtoupper($transaction->trans_type) }} Form</a>
-                    <a href="#_" class="btn btn-danger {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-liquidation/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print Liquidation</a>
+                    <a href="#_" class="btn btn-danger {{ !$transaction->is_reimbursement ? '' : 'd-none' }}" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print Generated {{ strtoupper($transaction->trans_type) }} Form</a>
+                    <a href="#_" class="btn btn-danger {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-liquidation/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print {{ !$transaction->is_reimbursement ? 'Liquidation' : 'Reimbursement' }}</a>
                     <a href="#_" class="btn btn-success {{ $perms['can_clear'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear"><i class="align-middle font-weight-bolder material-icons text-md">payments</i> Clear / Deposit</a>
                     <a href="#_" class="btn btn-primary {{ $perms['can_edit_cleared'] && $transaction->liq_balance != 0 ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear-edit"><i class="align-middle font-weight-bolder material-icons text-md">{{ !$transaction->is_bills && !$transaction->is_hr ? 'edit' : 'visibility' }}</i> {{ !$transaction->is_bills && !$transaction->is_hr ? 'Edit' : 'View' }} Deposit Info</a>
                 </div>
@@ -81,7 +81,7 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="/transaction-liquidation/clear/{{ $transaction->id }}" method="post"  enctype="multipart/form-data">
+                                    <form action="/transaction-liquidation/clear/{{ $transaction->id }}" method="post" enctype="multipart/form-data">
                                         @csrf
                                         <table class="table table-bordered">
                                             <thead>
@@ -304,6 +304,8 @@
                                         {{ config('global.trans_category_label')[2] }}
                                     @elseif ($transaction->is_hr)    
                                         {{ config('global.trans_category_label')[3] }}
+                                    @elseif ($transaction->is_reimbursement)    
+                                        {{ config('global.trans_category_label')[4] }}
                                     @else
                                         {{ config('global.trans_category_label')[0] }}    
                                     @endif
@@ -336,7 +338,7 @@
                                 <td>{{ $transaction->due_at }}</td>
                             </tr>
                             <tr>
-                                <td class="font-weight-bold w-25">Payor</td>
+                                <td class="font-weight-bold w-25">{{ !$transaction->is_reimbursement ? 'Payor' : 'Payee' }}</td>
                                 <td>{{ $transaction->payor ?: 'n/a' }}</td>
                             </tr>
                             <tr>
@@ -367,7 +369,7 @@
                                 <td class="font-weight-bold w-25">Released Amount</td>
                                 <td>{{ $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
                             </tr>
-                            @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
+                            @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr && !$transaction->is_reimbursement)
                                 <tr>
                                     <td><span class="font-weight-bold w-25">Attachments</span></td>
                                     @include('pages.admin.transactionliquidation.show-attachment')
@@ -382,7 +384,7 @@
 
                         </table> 
                     </div>
-                    <div class="row mb-3">
+                    <div class="row mb-3 {{ $transaction->is_reimbursement ? 'd-none' : '' }}">
                         <table class="table">
                             <thead>
                                 <tr>
@@ -530,15 +532,18 @@
                                 <h3 class="d-inline-block mr-3">Clearing Information</h3>
                             </div>
                             <table class="table">
-                                @if ($transaction->liq_balance != 0)
-                                    <tr>
-                                        <td>Amount {{ $transaction->liq_balance >= 0 ? 'Reimbursed' : 'Returned' }}</td>
-                                        <td class="font-weight-bold">
-                                            {{ $transaction->currency }}
-                                            {{ number_format($transaction->liq_balance >= 0 ? $transaction->liq_balance : $transaction->liq_balance*-1, 2, '.', ',') }}
-                                        </td>
-                                    </tr>
-                                    @if (!$transaction->is_bills && !$transaction->is_hr)
+                                @if ($transaction->liq_balance != 0 || $transaction->is_reimbursement)
+                                    @if (!$transaction->is_reimbursement)
+                                        <tr>
+                                            <td>Amount {{ $transaction->liq_balance >= 0 ? 'Reimbursed' : 'Returned' }}</td>
+                                            <td class="font-weight-bold">
+                                                {{ $transaction->currency }}
+                                                {{ number_format($transaction->liq_balance >= 0 ? $transaction->liq_balance : $transaction->liq_balance*-1, 2, '.', ',') }}
+                                            </td>
+                                        </tr>
+                                    @endif                                    
+                                    
+                                    @if (!$transaction->is_bills && !$transaction->is_hr && !$transaction->is_reimbursement)
                                         <tr>
                                             <td>Type</td>
                                             <td class="font-weight-bold">{{ $transaction->depo_type }}</td>
@@ -560,7 +565,8 @@
                                             <td class="font-weight-bold">{{ $transaction->depo_date }}</td>
                                         </tr>    
                                     @endif
-                                    @if (($transaction->is_deposit) && $transaction->liquidation_approver_id)
+                                    
+                                    @if ($transaction->is_deposit && $transaction->liquidation_approver_id)
                                         <tr>
                                             <td>Deposited By</td>
                                             <td class="font-weight-bold">{{ $transaction->liquidationapprover->name }}</td>

@@ -140,7 +140,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-3 d-none">
+                            <div class="col-12 col-md-3">
                                 <div class="callout py-2 mx-2 row">
                                     <div class="col-3">
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[4] }}" class="form-control m-auto outline-0"  {{ $transaction->is_reimbursement == 1 ? 'checked' : '' }}>

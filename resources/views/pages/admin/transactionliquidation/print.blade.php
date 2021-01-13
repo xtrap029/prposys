@@ -6,7 +6,7 @@
     <section class="content">
         <div class="container-fluid">
             <div class="float-right">Date Generated: <b>{{ Carbon\Carbon::now() }}</b></div>
-            <h2>{{ strtoupper($transaction->trans_type) }} Liquidation</h2>
+            <h2>{{ strtoupper($transaction->trans_type) }} {{ !$transaction->is_reimbursement ? 'Liquidation' : 'Reimbursement' }}</h2>
             <div class="row">
                 <div class="col-10">
                     <h3 class="mt-4">{{ $transaction->project->company->name }}</h3>
@@ -63,7 +63,7 @@
                                     <td>{{ $transaction->due_at }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="font-weight-bold">Payor</td>
+                                    <td class="font-weight-bold">{{ !$transaction->is_reimbursement ? 'Payor' : 'Payee' }}</td>
                                     <td>{{ $transaction->payor ?: 'n/a' }}</td>
                                 </tr>
                             </table>
