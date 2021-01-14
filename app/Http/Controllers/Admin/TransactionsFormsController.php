@@ -580,11 +580,11 @@ class TransactionsFormsController extends Controller {
 
             $validator = \Validator::make(request()->all(), []);
 
-            if ($trans_bal['amount'] < $data['amount']) {
+            if ($trans_bal['amount'] + $data['amount'] < $data['amount']) {
                 $validator->errors()->add('amount', __('messages.exceed_amount_unliq'));
             }
             
-            if ($trans_bal['count'] < 1) {
+            if ($trans_bal['count'] + 1 < 1) {
                 $validator->errors()->add('particulars_id', __('messages.exceed_count_unliq'));
             }
 
@@ -668,16 +668,16 @@ class TransactionsFormsController extends Controller {
 
             $validator = \Validator::make(request()->all(), []);
 
-            if ($trans_bal['amount'] < $data['amount']) {
+            if ($trans_bal['amount'] + $data['amount'] < $data['amount']) {
                 $validator->errors()->add('amount', __('messages.exceed_amount_unliq'));
             }
             
-            if ($trans_bal['count'] < 1) {
+            if ($trans_bal['count'] + 1 < 1) {
                 $validator->errors()->add('particulars_id', __('messages.exceed_count_unliq'));
             }
 
             if ($validator->errors()->count() > 0) {
-                return redirect('/transaction/create/'.$request->trans_type.'/'.$trans_company)
+                return redirect('/transaction/edit-reimbursement/'.$transaction->id)
                 ->withErrors($validator)
                 ->withInput();
             }

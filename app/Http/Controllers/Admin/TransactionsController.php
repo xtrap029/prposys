@@ -454,7 +454,7 @@ class TransactionsController extends Controller {
         // if not pr, not admin, amount does exceed limit
         if ($transaction->trans_type == 'pr' 
             && $transaction->requested->role_id != 1
-            && $data['amount'] - $transaction->amount > TransactionHelper::check_unliquidated_balance($transaction->requested_id)['amount']) {
+            && $data['amount'] > TransactionHelper::check_unliquidated_balance($transaction->requested_id)['amount'] + $transaction->amount) {
 
             $validator = \Validator::make(request()->all(), []);    
             $validator->errors()->add('amount', __('messages.exceed_amount_unliq'));
