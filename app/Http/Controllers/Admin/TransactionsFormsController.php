@@ -444,7 +444,7 @@ class TransactionsFormsController extends Controller {
             }
 
             if ($validator->errors()->count() > 0) {
-                return redirect('/transaction/create/'.$request->trans_type.'/'.$trans_company)
+                return redirect('/transaction-form/edit/'.$transaction->id)
                 ->withErrors($validator)
                 ->withInput();
             }
