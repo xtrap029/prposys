@@ -112,9 +112,17 @@ Route::middleware('auth')->group(function () {
             Route::get('/create', $url.'@create');
             Route::post('/create', $url.'@store');
 
+            Route::get('/create-reimbursement', $url.'@create_reimbursement');
+            Route::post('/create-reimbursement', $url.'@store_reimbursement');
+
             Route::get('/view/{transaction}', $url.'@show')->where('transaction', '[0-9]+');
+
             Route::get('/edit/{transaction}', $url.'@edit')->where('transaction', '[0-9]+');
             Route::put('/edit/{transaction}', $url.'@update')->where('transaction', '[0-9]+');
+
+            Route::get('/edit-reimbursement/{transaction}', $url.'@edit_reimbursement')->where('transaction', '[0-9]+');
+            Route::put('/edit-reimbursement/{transaction}', $url.'@update_reimbursement')->where('transaction', '[0-9]+');
+
             Route::put('/edit-issued/{transaction}', $url.'@update_issued')->where('transaction', '[0-9]+');
             Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
             Route::put('/cancel/{transaction}', $url.'@cancel')->where('transaction', '[0-9]+');

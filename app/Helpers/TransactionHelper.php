@@ -13,11 +13,16 @@ final class TransactionHelper {
 
         $transactions = Transaction::where('requested_id', $user->id)
                         ->where('trans_type', 'pr')
+                        ->where('is_reimbursement', 0)
                         ->whereIn('status_id', config('global.liquidation_cleared'))->get();
 
         $trans_liq_bal['liq_amount_sum'] = 0;
         foreach ($transactions as $value) {
-            $liq_sum = TransactionsLiquidation::where('transaction_id', $value->id)->get();
+            $liq_sum = TransactionsLiquidation::where('transaction_id', $value->id)
+                ->whereHas('transaction', function($q) {
+                    $q->where('is_reimbursement', 0);
+                })
+                ->get();
             $liq_sum = $liq_sum->sum('amount');
             $trans_liq_bal['liq_amount_sum'] += $liq_sum;
         }

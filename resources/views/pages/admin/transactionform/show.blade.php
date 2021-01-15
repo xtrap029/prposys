@@ -13,7 +13,7 @@
                 </div>
                 <div class="col-md-6 text-right mb-4">
                     <a href="/transaction-liquidation/create?company={{ $transaction->project->company_id }}&key={{ strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq) }}" class="btn btn-success {{ $perms['can_create'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Liquidate</a>
-                    <a href="/transaction-form/edit/{{ $transaction->id }}" class="btn btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
+                    <a href="/transaction-form/edit{{ $transaction->is_reimbursement ? '-reimbursement' : '' }}/{{ $transaction->id }}" class="btn btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
                     {{-- <a href="#_" class="btn btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-approval"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a> --}}
                     <a href="/transaction-form/approval/{{ $transaction->id }}" class="btn btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a>
                     <a href="#_" class="btn btn-danger {{ $perms['can_cancel'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-cancel"><i class="align-middle font-weight-bolder material-icons text-md">delete</i> Cancel</a>
@@ -105,12 +105,12 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="/transaction-form/issue/{{ $transaction->id }}" method="post">
+                                    <form action="/transaction-form/issue/{{ $transaction->id }}" method="post" enctype="multipart/form-data">
                                         @csrf
                                         @method('put')
                                         <div class="row mb-3">
                                             <div class="col-md-5">
-                                                <label for="">Type</label>
+                                                <label for="" class="font-weight-bold">Type</label>
                                                 @if ($trans_page_url == 'prpo')
                                                     <select name="control_type" class="form-control">
                                                         @foreach (config('global.control_types') as $control_type)
@@ -124,7 +124,7 @@
                                                 @endif
                                             </div>
                                             <div class="col-md-7">
-                                                <label for="">No.</label>
+                                                <label for="" class="font-weight-bold">No.</label>
                                                 @if ($trans_page_url == 'prpo')
                                                     <input type="text" name="control_no" class="form-control @error('control_no') is-invalid @enderror" required>
                                                     @include('errors.inline', ['message' => $errors->first('control_no')])
@@ -136,38 +136,45 @@
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-5">
-                                                <label for="">{{ $transaction->is_deposit ? 'Date Deposited' : 'Release Date' }}</label>
+                                                <label for="" class="font-weight-bold">{{ $transaction->is_deposit ? 'Date Deposited' : 'Release Date' }}</label>
                                                 <input type="date" class="form-control @error('released_at') is-invalid @enderror" name="released_at" required>
                                                 @include('errors.inline', ['message' => $errors->first('released_at')])
                                             </div>
-                                            @if ($transaction->is_deposit)
+                                            @if ($transaction->is_deposit || $transaction->is_reimbursement)
                                                 <div class="col-md-1">
                                                     <label class="invisible">.</label>
                                                     {{ $transaction->currency }}
                                                 </div>
                                             @endif
-                                            <div class="{{ $transaction->is_deposit ? 'col-md-6' : 'col-md-7' }}">
-                                                <label for="">Amount</label>
+                                            <div class="{{ $transaction->is_deposit || $transaction->is_reimbursement ? 'col-md-6' : 'col-md-7' }}">
+                                                <label for="" class="font-weight-bold">Amount</label>
                                                 <input type="number" class="form-control @error('amount_issued') is-invalid @enderror" name="amount_issued" step="0.01" value="{{ $transaction->amount }}" required>
                                                 @include('errors.inline', ['message' => $errors->first('amount_issued')])
                                             </div>
                                         </div>
-                                        <div class="form-row mb-3 {{ $transaction->is_deposit ? '' : 'd-none' }}">
+                                        <div class="form-row mb-3 {{ $transaction->is_deposit || $transaction->is_reimbursement ? '' : 'd-none' }}">
                                             <div class="col-md-12">
-                                                <label for="">Payor</label>
-                                                <input type="text" name="payor" class="form-control @error('payor') is-invalid @enderror" value="{{ $transaction->payor }}" {{ $transaction->is_deposit ? 'required' : '' }}>
+                                                <label for="" class="font-weight-bold">{{ $transaction->is_deposit ? 'Payor' : 'Payee' }}</label>
+                                                <input type="text" name="payor" class="form-control @error('payor') is-invalid @enderror" value="{{ $transaction->payor }}" {{ $transaction->is_deposit || $transaction->is_reimbursement ? 'required' : '' }}>
                                                 @include('errors.inline', ['message' => $errors->first('payor')])
                                             </div>
                                         </div>
                                         <div class="form-row mb-3">
                                             <div class="col-md-12">
-                                                <label for="">{{ $transaction->is_deposit ? 'Issued By' : 'Released By' }}</label>
+                                                <label for="" class="font-weight-bold">{{ $transaction->is_deposit ? 'Issued By' : 'Released By' }}</label>
                                                 <select name="released_by_id" class="form-control @error('released_by_id') is-invalid @enderror" required>
                                                     @foreach ($released_by as $item)
                                                         <option value="{{ $item->id }}">{{ $item->name }}</option>
                                                     @endforeach
                                                 </select>
                                                 @include('errors.inline', ['message' => $errors->first('released_by_id')])
+                                            </div>
+                                        </div>
+                                        <div class="form-row mb-3 {{ $transaction->is_reimbursement ? '' : 'd-none' }}">
+                                            <div class="col-md-12">
+                                                <label for="" class="font-weight-bold">Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than 5mb. )</small></label>
+                                                <input type="file" name="depo_slip" class="form-control @error('depo_slip') is-invalid @enderror" {{ $transaction->is_reimbursement ? 'required' : '' }}>
+                                                @include('errors.inline', ['message' => $errors->first('depo_slip')])
                                             </div>
                                         </div>
                                         <div class="text-center mt-2">
@@ -223,6 +230,8 @@
                                             {{ config('global.trans_category_label')[2] }}
                                         @elseif ($transaction->is_hr)    
                                             {{ config('global.trans_category_label')[3] }}
+                                        @elseif ($transaction->is_reimbursement)    
+                                            {{ config('global.trans_category_label')[4] }}
                                         @else
                                             {{ config('global.trans_category_label')[0] }}    
                                         @endif
@@ -287,6 +296,7 @@
                             </div>
                         </div>
                         <div class="row mb-3">
+                        @if (!$transaction->is_reimbursement)
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -345,10 +355,41 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        @else
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                        <th>Location/Route</th>
+                                        <th class="text-center">Receipt</th>
+                                        <th class="text-right">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($transaction->liquidation as $item)
+                                        <tr>
+                                            <td>{{ $item->date }}</td>
+                                            <td>{{ $item->expensetype->name }}</td>
+                                            <td>{{ $item->description }}</td>
+                                            <td>{{ $item->location }}</td>
+                                            <td class="text-center">{{ $item->receipt ? 'Y' : 'N' }}</td>
+                                            <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
+                                        </tr>
+                                    @endforeach
+                                    <tr>
+                                        <td colspan="4" class="font-weight-bold small text-right">Total</td>
+                                        <td colspan="2" class="bg-white text-right font-weight-bold">
+                                            <span class="float-left">{{ $transaction->currency }}</span>
+                                            {{ number_format($transaction->amount, 2, '.', ',') }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        @endif
                         </div>
-                        <div class="row mb-3">
-
-                        </div>
+                        <div class="row mb-3"></div>
                     </div>
                     @if ($transaction->status_id == 3)
                         <div class="pb-2 mt-5 mb-4 border-bottom">

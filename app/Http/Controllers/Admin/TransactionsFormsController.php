@@ -12,6 +12,7 @@ use App\ReleasedBy;
 use App\Settings;
 use App\Transaction;
 use App\TransactionsDescription;
+use App\TransactionsLiquidation;
 use App\TransactionStatus;
 use App\User;
 use App\VatType;
@@ -198,6 +199,49 @@ class TransactionsFormsController extends Controller {
         ]);
     }
 
+    public function create_reimbursement() {
+        if (empty($_GET['key']) || empty($_GET['company']) || !$this->check_can_create($_GET['key'], $_GET['company'])) {
+            return back()->with('error', __('messages.make_not_allowed'));
+        }
+
+        $company = $_GET['company'];
+        $transaction = Transaction::where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), '=', $_GET['key'])
+            ->whereHas('project', function($query) use($company) {
+                $query->where('company_id', $company);
+            })
+            ->first();
+
+        switch ($transaction->trans_type) {
+            case 'pr':
+            case 'po':
+                $trans_page = "prpo-form";
+                $trans_page_url = "prpo";
+            break;  
+            case 'pc':
+                $trans_page = "pc-form";
+                $trans_page_url = "pc";
+                break;            
+            default:
+                abort(404);
+                break;
+        }
+
+        $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orderBy('name', 'asc')->get();
+        $particulars = Particulars::where('type', $transaction->trans_type)->get();
+        $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('id', 'asc')->get();
+        $expense_types = ExpenseType::orderBy('name', 'asc')->get();
+
+        return view('pages.admin.transactionform.createreimbursement')->with([
+            'trans_page_url' => $trans_page_url,
+            'trans_page' => $trans_page,
+            'transaction' => $transaction,
+            'coa_taggings' => $coa_taggings,
+            'expense_types' => $expense_types,
+            'particulars' => $particulars,
+            'vat_types' => $vat_types
+        ]);
+    }
+
     public function store(Request $request) {
         // if can edit
         if (!$this->check_can_create($request->key, $request->company)) {
@@ -247,11 +291,74 @@ class TransactionsFormsController extends Controller {
 
             TransactionsDescription::create($attr_desc);
         }
-
         
         $data['particulars_id'] = $data['particulars_id_single'];
         unset($data['particulars_id_single']);
 
+        $data['edit_count'] = 0;
+        $data['status_prev_id'] = $transaction->status_id;
+        $data['status_id'] = 5;
+        $data['updated_id'] = auth()->id();
+        
+        $transaction->update($data);
+
+        return redirect('/transaction-form/view/'.$transaction->id);
+    }
+
+    public function store_reimbursement(Request $request) {
+        // if can edit
+        if (!$this->check_can_create($request->key, $request->company)) {
+            return back()->with('error', __('messages.cant_create'));
+        } else {
+            $company = $request->company;
+            $transaction = Transaction::where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), '=', $request->key)
+                ->whereHas('project', function($query) use($company) {
+                    $query->where('company_id', $company);
+                })
+                ->first();
+        }
+
+        $validation = [
+            'coa_tagging_id' => ['required', 'exists:coa_taggings,id'],
+        ];
+
+        if ($transaction->trans_type == 'pc') {
+            $validation['particulars_custom'] = ['required'];
+        } else {
+            $validation['particulars_id_single'] = ['required', 'exists:particulars,id'];
+        }
+
+        // validate input
+        $data = $request->validate($validation);
+
+        $data_desc = $request->validate([
+            'date.*' => ['required', 'date'],
+            'expense_type_id.*' => ['required', 'exists:expense_types,id'],
+            'description.*' => ['required'],
+            'location.*' => ['required'],
+            'receipt.*' => ['in:1,0'],
+            'amount.*' => ['required', 'min:0'],
+        ]);
+
+        $attr_desc['transaction_id'] = $transaction->id;
+        $attr_desc['owner_id'] = auth()->id();
+        $attr_desc['updated_id'] = auth()->id();
+
+        foreach ($data_desc['date'] as $key => $value) {
+            $attr_desc['date'] = $value;
+            $attr_desc['expense_type_id'] = $data_desc['expense_type_id'][$key];
+            $attr_desc['description'] = $data_desc['description'][$key];
+            $attr_desc['location'] = $data_desc['location'][$key];
+            $attr_desc['receipt'] = $data_desc['receipt'][$key];
+            $attr_desc['amount'] = $data_desc['amount'][$key];
+
+            TransactionsLiquidation::create($attr_desc);
+        }
+
+        $data['particulars_id'] = $data['particulars_id_single'];
+        unset($data['particulars_id_single']);
+
+        $data['vat_type_id'] = VatType::select('id')->orderBy('id', 'asc')->first()['id'];
         $data['edit_count'] = 0;
         $data['status_prev_id'] = $transaction->status_id;
         $data['status_id'] = 5;
@@ -358,6 +465,44 @@ class TransactionsFormsController extends Controller {
         ]);
     }
 
+    public function edit_reimbursement(Transaction $transaction) {
+        if (!$this->check_can_edit($transaction->id) && !$this->check_can_issue($transaction->id)) {
+            return back()->with('error', __('messages.cant_edit'));
+        }
+
+        switch ($transaction->trans_type) {
+            case 'pr':
+            case 'po':
+                $trans_page_url = "prpo";
+                $trans_page = "prpo-form";
+            break;  
+            case 'pc':
+                $trans_page_url = "pc";
+                $trans_page = "pc-form";
+                break;            
+            default:
+                abort(404);
+                break;
+        }
+
+        $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orderBy('name', 'asc')->get();
+        $particulars = Particulars::where('type', $transaction->trans_type)->get();
+        $projects = CompanyProject::where('company_id', $transaction->project->company_id)->get();
+        $users = User::whereNotNull('role_id')->get();
+        $expense_types = ExpenseType::orderBy('name', 'asc')->get();
+        
+        return view('pages.admin.transactionform.editreimbursement')->with([
+            'transaction' => $transaction,
+            'trans_page_url' => $trans_page_url,
+            'trans_page' => $trans_page,
+            'coa_taggings' => $coa_taggings,
+            'particulars' => $particulars,
+            'expense_types' => $expense_types,
+            'users' => $users,
+            'projects' => $projects
+        ]);
+    }
+
     public function update(Request $request, Transaction $transaction) {
         // if can edit
         if (!$this->check_can_edit($transaction->id) && !$this->check_can_issue($transaction->id)) {
@@ -435,16 +580,104 @@ class TransactionsFormsController extends Controller {
 
             $validator = \Validator::make(request()->all(), []);
 
-            if ($trans_bal['amount'] < $data['amount']) {
+            if ($trans_bal['amount'] + $data['amount'] < $data['amount']) {
                 $validator->errors()->add('amount', __('messages.exceed_amount_unliq'));
             }
             
-            if ($trans_bal['count'] < 1) {
+            if ($trans_bal['count'] + 1 < 1) {
                 $validator->errors()->add('particulars_id', __('messages.exceed_count_unliq'));
             }
 
             if ($validator->errors()->count() > 0) {
                 return redirect('/transaction-form/edit/'.$transaction->id)
+                ->withErrors($validator)
+                ->withInput();
+            }
+        }
+
+        if (User::where('id', auth()->id())->first()->role_id != 1) {
+            $data['edit_count'] = $transaction->edit_count + 1;
+        }
+
+        if ($this->check_can_issue($transaction->id)) {
+            $data['status_prev_id'] = $transaction->status_id;
+            $data['status_id'] = 5;
+        }
+        
+        $data['updated_id'] = auth()->id();
+
+        $transaction->update($data);
+
+        return redirect('/transaction-form/view/'.$transaction->id);
+    }
+
+    public function update_reimbursement(Request $request, Transaction $transaction) {
+        // if can edit
+        if (!$this->check_can_edit($transaction->id) && !$this->check_can_issue($transaction->id)) {
+            return back()->with('error', __('messages.cant_edit'));
+        }
+
+        $validation = [
+            'coa_tagging_id' => ['required', 'exists:coa_taggings,id'],
+            'amount' => ['required', 'min:0'],
+            'purpose' => ['required'],
+            'project_id' => ['required', 'exists:company_projects,id'],
+            'payee' => ['required'],
+            'currency' => ['required'],
+            'due_at' => ['required', 'date'],
+            'requested_id' => ['required', 'exists:users,id'],
+            'particulars_id_single' => ['required', 'exists:particulars,id'],
+        ];
+
+        // validate input
+        $data = $request->validate($validation);
+
+        $data['particulars_id'] = $data['particulars_id_single'];
+        unset($data['particulars_id_single']);
+
+        // validate input
+        $data_liq = $request->validate([
+            'date.*' => ['required', 'date'],
+            'expense_type_id.*' => ['required', 'exists:expense_types,id'],
+            'description.*' => ['required'],
+            'location.*' => ['required'],
+            'receipt.*' => ['in:1,0'],
+            'amount_desc.*' => ['required', 'min:0'],
+        ]);    
+
+        TransactionsLiquidation::where('transaction_id', $transaction->id)->delete();
+
+        $attr_liq['transaction_id'] = $transaction->id;
+        $attr_liq['owner_id'] = auth()->id();
+        $attr_liq['updated_id'] = auth()->id();
+
+        foreach ($data_liq['date'] as $key => $value) {
+            $attr_liq['date'] = $value;
+            $attr_liq['expense_type_id'] = $data_liq['expense_type_id'][$key];
+            $attr_liq['description'] = $data_liq['description'][$key];
+            $attr_liq['location'] = $data_liq['location'][$key];
+            $attr_liq['receipt'] = $data_liq['receipt'][$key];
+            $attr_liq['amount'] = $data_liq['amount_desc'][$key];
+
+            TransactionsLiquidation::create($attr_liq);
+        }
+
+        // if non admin requestor, validate limit applicable for pr only
+        if (User::where('id', $data['requested_id'])->first()->role_id != 1 && $transaction->trans_type == 'pr') {
+            $trans_bal = TransactionHelper::check_unliquidated_balance($data['requested_id']);
+
+            $validator = \Validator::make(request()->all(), []);
+
+            if ($trans_bal['amount'] + $data['amount'] < $data['amount']) {
+                $validator->errors()->add('amount', __('messages.exceed_amount_unliq'));
+            }
+            
+            if ($trans_bal['count'] + 1 < 1) {
+                $validator->errors()->add('particulars_id', __('messages.exceed_count_unliq'));
+            }
+
+            if ($validator->errors()->count() > 0) {
+                return redirect('/transaction/edit-reimbursement/'.$transaction->id)
                 ->withErrors($validator)
                 ->withInput();
             }
@@ -649,15 +882,27 @@ class TransactionsFormsController extends Controller {
                 'released_at' => ['required', 'date'],
                 'amount_issued' => ['required', 'min:0'],
                 'payor' => [''],
+                'depo_slip' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
                 'released_by_id' => ['required', 'exists:released_by,id']
             ]);
+
+            if ($transaction->is_reimbursement) {
+                $data['depo_slip'] = basename($request->file('depo_slip')->store('public/attachments/deposit_slip'));
+                $data['status_id'] = 9;
+            } else {
+                $data['status_id'] = 4;
+            }
             
             $data['status_prev_id'] = $transaction->status_id;
-            $data['status_id'] = 4;
             $data['form_approver_id'] = auth()->id();
             $transaction->update($data);
 
-            return back()->with('success', 'Transaction'.__('messages.issue_success'));
+            if ($transaction->is_reimbursement) {
+                return redirect('/transaction-liquidation/view/'.$transaction->id);
+            } else {
+                return back()->with('success', 'Transaction'.__('messages.issue_success'));
+            }
+            
         } else {
             return back()->with('error', __('messages.cant_issue'));
         }
@@ -780,6 +1025,7 @@ class TransactionsFormsController extends Controller {
 
     private function check_can_edit($transaction, $user = '') {
         $can_edit = true;
+        $edit_limit = 0;
 
         if (!$user) {
             $user = auth()->id();
@@ -788,9 +1034,28 @@ class TransactionsFormsController extends Controller {
 
         $transaction = Transaction::where('id', $transaction)->first();
 
-        // check if unliquidated
-        // if (in_array($transaction->status_id, config('global.generated_form'))) {
-        if (in_array($transaction->status_id, config('global.generated_form')) || ($user->role_id == 1 && in_array($transaction->status_id, config('global.form_approval')))) {
+        // if reimbursement
+        if ($transaction->is_reimbursement
+            && in_array($transaction->status_id, config('global.unliquidated'))
+            && ($user->id == $transaction->owner_id || in_array($user->role_id, config('global.admin_subadmin')))) {
+            // check if pr, not po
+            if ($transaction->trans_type != 'pc' && $user->role_id != 1) {
+                // check role limit
+                if ($user->role_id == 2) {
+                    $edit_limit = Settings::where('type', 'LIMIT_EDIT_PRPOFORM_USER_2')->first()->value;
+                } else if ($user->role_id == 3) {
+                    $edit_limit = Settings::where('type', 'LIMIT_EDIT_PRPOFORM_USER_3')->first()->value;
+                } else {
+                    $can_edit = false;
+                }
+
+                // check if role limit is enough
+                if ($transaction->edit_count >= $edit_limit) {
+                    $can_edit = false;
+                } 
+            }
+        } else if (in_array($transaction->status_id, config('global.generated_form'))
+            || ($user->role_id == 1 && in_array($transaction->status_id, config('global.form_approval')))) {
             // check if not admin
             if ($user->role_id != 1) {
                 // check if owned
@@ -851,7 +1116,8 @@ class TransactionsFormsController extends Controller {
         $transaction = Transaction::where('id', $transaction)->first();
 
         //  check if for approval
-        if (!in_array($transaction->status_id, config('global.form_approval_printing')) && !in_array($transaction->status_id, config('global.page_liquidation'))) {
+        if ((!in_array($transaction->status_id, config('global.form_approval_printing')) && !in_array($transaction->status_id, config('global.page_liquidation')))
+            || $transaction->is_reimbursement) {
             $can_print = false;
         }
 

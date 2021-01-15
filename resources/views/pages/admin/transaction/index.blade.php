@@ -260,7 +260,7 @@
                                 
                                 $.each(result, function(i, item) {
                                     $(cls+'_data table').append('<tr class="bg-transparent border-0">'
-                                        + '<td class="border-0 py-1"><a href="/'+item.url_view+'/view/'+item.id+'" class="text-teal" target="_blank">'
+                                        + '<td class="border-0 py-1"><a href="/'+item.url_view+'/view/'+item.id+'" class="text-info font-weight-bold" target="_blank">'
                                             + item.trans_type+'-'+item.trans_year+'-'+item.trans_seq
                                         + '</a></td>'
                                         + '<td class="border-0 py-1">'+item.payee+'</td>'
