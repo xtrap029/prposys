@@ -1025,6 +1025,7 @@ class TransactionsFormsController extends Controller {
 
     private function check_can_edit($transaction, $user = '') {
         $can_edit = true;
+        $edit_limit = 0;
 
         if (!$user) {
             $user = auth()->id();
@@ -1033,9 +1034,28 @@ class TransactionsFormsController extends Controller {
 
         $transaction = Transaction::where('id', $transaction)->first();
 
-        // check if unliquidated
-        // if (in_array($transaction->status_id, config('global.generated_form'))) {
-        if (in_array($transaction->status_id, config('global.generated_form')) || ($user->role_id == 1 && in_array($transaction->status_id, config('global.form_approval')))) {
+        // if reimbursement
+        if ($transaction->is_reimbursement
+            && in_array($transaction->status_id, config('global.unliquidated'))
+            && ($user->id == $transaction->owner_id || in_array($user->role_id, config('global.admin_subadmin')))) {
+            // check if pr, not po
+            if ($transaction->trans_type != 'pc' && $user->role_id != 1) {
+                // check role limit
+                if ($user->role_id == 2) {
+                    $edit_limit = Settings::where('type', 'LIMIT_EDIT_PRPOFORM_USER_2')->first()->value;
+                } else if ($user->role_id == 3) {
+                    $edit_limit = Settings::where('type', 'LIMIT_EDIT_PRPOFORM_USER_3')->first()->value;
+                } else {
+                    $can_edit = false;
+                }
+
+                // check if role limit is enough
+                if ($transaction->edit_count >= $edit_limit) {
+                    $can_edit = false;
+                } 
+            }
+        } else if (in_array($transaction->status_id, config('global.generated_form'))
+            || ($user->role_id == 1 && in_array($transaction->status_id, config('global.form_approval')))) {
             // check if not admin
             if ($user->role_id != 1) {
                 // check if owned
