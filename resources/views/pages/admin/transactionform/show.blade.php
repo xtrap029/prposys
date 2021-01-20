@@ -290,11 +290,18 @@
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <div class="col-md-11">
+                            <div class="{{ !$transaction->is_reimbursement ? 'col-md-11' : 'col-md-6' }}">
                                 <label for="">Purpose</label>
                                 <h6>{{ $transaction->purpose }}</h6>
                             </div>
+                            @if ($transaction->is_reimbursement)
+                                <div class="col-md-6">
+                                    <label for="">Attachments</label>
+                                    <h6>@include('pages.admin.transactionliquidation.show-attachment')</h6>
+                                </div>
+                            @endif
                         </div>
+                        
                         <div class="row mb-3">
                         @if (!$transaction->is_reimbursement)
                             <table class="table">

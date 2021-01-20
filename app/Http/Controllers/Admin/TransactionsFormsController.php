@@ -11,6 +11,7 @@ use App\Particulars;
 use App\ReleasedBy;
 use App\Settings;
 use App\Transaction;
+use App\TransactionsAttachment;
 use App\TransactionsDescription;
 use App\TransactionsLiquidation;
 use App\TransactionStatus;
@@ -331,6 +332,11 @@ class TransactionsFormsController extends Controller {
         // validate input
         $data = $request->validate($validation);
 
+        $data_attach = $request->validate([
+            'file.*' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'attachment_description.*' => ['required']
+        ]);
+
         $data_desc = $request->validate([
             'date.*' => ['required', 'date'],
             'expense_type_id.*' => ['required', 'exists:expense_types,id'],
@@ -353,6 +359,17 @@ class TransactionsFormsController extends Controller {
             $attr_desc['amount'] = $data_desc['amount'][$key];
 
             TransactionsLiquidation::create($attr_desc);
+        }
+
+        $attr_file['transaction_id'] = $transaction->id;
+        $attr_file['owner_id'] = auth()->id();
+        $attr_file['updated_id'] = auth()->id();
+
+        foreach ($data_attach['attachment_description'] as $key => $value) {
+            $attr_file['description'] = $value;
+            $attr_file['file'] = basename($request->file('file')[$key]->store('public/attachments/liquidation'));
+            
+            TransactionsAttachment::create($attr_file);
         }
 
         $data['particulars_id'] = $data['particulars_id_single'];
@@ -636,6 +653,13 @@ class TransactionsFormsController extends Controller {
         unset($data['particulars_id_single']);
 
         // validate input
+        $attach_liq = $request->validate([
+            'file.*' => ['mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'attachment_description_old.*' => ['required'],
+            'attachment_description.*' => ['sometimes', 'required'],
+            'attachment_id_old.*' => ['required']
+        ]);
+
         $data_liq = $request->validate([
             'date.*' => ['required', 'date'],
             'expense_type_id.*' => ['required', 'exists:expense_types,id'],
@@ -660,6 +684,43 @@ class TransactionsFormsController extends Controller {
             $attr_liq['amount'] = $data_liq['amount_desc'][$key];
 
             TransactionsLiquidation::create($attr_liq);
+        }
+
+        $desc_key = 0;
+        foreach ($transaction->attachments as $key => $value) {
+            $transaction_attachment = TransactionsAttachment::find($value->id);
+
+            // check if item is retained
+            if (in_array($value->id, $attach_liq['attachment_id_old'])) {
+                // check if item is replaced
+                if (!empty($request->file('file_old')) && array_key_exists($key, $request->file('file_old'))) {
+                    // item is replaced
+                    $transaction_attachment->file = basename($request->file('file_old')[$key]->store('public/attachments/liquidation'));        
+                    $transaction_attachment->updated_id = auth()->id();
+                }
+
+                // replace description
+                $transaction_attachment->description = $attach_liq['attachment_description_old'][$desc_key];
+                
+                // store changes
+                $transaction_attachment->save();
+                $desc_key++;
+            } else {
+                // the item is deleted
+                $transaction_attachment->delete();
+            }
+        }
+
+        $attr_file['transaction_id'] = $transaction->id;
+        $attr_file['owner_id'] = auth()->id();
+        $attr_file['updated_id'] = auth()->id();
+
+        if (array_key_exists('attachment_description', $attach_liq)) {
+            foreach ($attach_liq['attachment_description'] as $key => $value) {
+                $attr_file['description'] = $value;
+                $attr_file['file'] = basename($request->file('file')[$key]->store('public/attachments/liquidation'));
+                TransactionsAttachment::create($attr_file);
+            }
         }
 
         // if non admin requestor, validate limit applicable for pr only
@@ -850,6 +911,16 @@ class TransactionsFormsController extends Controller {
             $transactions = $transactions->whereHas('project', function($query) use($trans_company) {
                 $query->where('company_id', $trans_company);
             });
+        }
+
+        if (!empty($_GET['status'])) {
+            $trans_status = $_GET['status'];
+            $transactions = $transactions->whereIn('status_id', explode(',', $trans_status));
+        }
+
+        if (!empty($_GET['category'])) {
+            $trans_category = $_GET['category'];
+            $transactions = $transactions->where($trans_category, 1);
         }
 
         if (!empty($_GET['from'])) {
@@ -1117,7 +1188,7 @@ class TransactionsFormsController extends Controller {
 
         //  check if for approval
         if ((!in_array($transaction->status_id, config('global.form_approval_printing')) && !in_array($transaction->status_id, config('global.page_liquidation')))
-            || $transaction->is_reimbursement) {
+            && !$transaction->is_reimbursement) {
             $can_print = false;
         }
 

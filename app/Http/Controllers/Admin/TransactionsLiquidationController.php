@@ -686,6 +686,16 @@ class TransactionsLiquidationController extends Controller {
             });
         }
 
+        if (!empty($_GET['category'])) {
+            $trans_category = $_GET['category'];
+            $transactions = $transactions->where($trans_category, 1);
+        }
+
+        if (!empty($_GET['status'])) {
+            $trans_status = $_GET['status'];
+            $transactions = $transactions->whereIn('status_id', explode(',', $trans_status));
+        }
+
         if (!empty($_GET['from'])) {
             $transactions = $transactions->whereDate('created_at', '>=', $_GET['from']);
             $trans_from = $_GET['from'];

@@ -369,7 +369,7 @@
                                 <td class="font-weight-bold w-25">Released Amount</td>
                                 <td>{{ $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
                             </tr>
-                            @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr && !$transaction->is_reimbursement)
+                            @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
                                 <tr>
                                     <td><span class="font-weight-bold w-25">Attachments</span></td>
                                     @include('pages.admin.transactionliquidation.show-attachment')

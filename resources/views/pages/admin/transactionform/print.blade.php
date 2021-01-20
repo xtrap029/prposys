@@ -84,66 +84,96 @@
             </div>
             <div class="row row--print">                
                 <div class="col-12">
-                    <table class="table table-sm">
-                        <tr>
-                            <td colspan="6" class="py-3"></td>
-                        </tr>
-                        <tr class="font-weight-bold">
-                            <td>Item No.</td>                            
-                            <th>Qty</th>
-                            <th>Description</th>
-                            <th>Particulars</th>
-                            <th class="text-right">Unit Price</th>
-                            <th class="text-right">Total</th>
-                        </tr>
-                        @foreach ($transaction->transaction_description as $key => $item_desc)
+                    @if (!$transaction->is_reimbursement)
+                        <table class="table table-sm">
                             <tr>
-                                <td>{{ $key + 1 }}</td>
-                                <td>{{ $item_desc->qty }}</td>
-                                <td>{{ $item_desc->description }}</td>
-                                <td>{{ $item_desc->particulars->name }}</td>
-                                <td class="text-right">{{ number_format($item_desc->amount, 2, '.', ',') }}</td>
-                                <td class="text-right">{{ number_format($item_desc->amount * $item_desc->qty, 2, '.', ',') }}</td>
+                                <td colspan="6" class="py-3"></td>
                             </tr>
-                        @endforeach
-                        <tr class="font-weight-bold">
-                            <td colspan="2"></td>
-                            <td>{{ $transaction->form_amount_vat + $transaction->form_amount_wht == 0 ? 'Total' : 'Subtotal' }}</td>
-                            <td colspan="2"></td>
-                            <td class="text-right"><span class="float-left">{{ $transaction->currency }}</span> {{ number_format($transaction->form_amount_subtotal, 2, '.', ',') }}</td>
-                        </tr>
-                        @if ($transaction->form_amount_vat)
-                        <tr>
-                            <td colspan="2"></td>
-                            <td>VAT</td>
-                            <td colspan="2"></td>
-                            <td class="text-right"><span class="float-left">{{ $transaction->currency }}</span> {{ number_format($transaction->form_amount_vat, 2, '.', ',') }}</td>
-                        </tr>
-                        @endif
-                        @if ($transaction->form_vat_wht)
-                        <tr>
-                            <td colspan="2"></td>
-                            <td>Less Withholding Tax</td>
-                            <td>{{ $transaction->form_vat_name }}</td>
-                            <td>{{ $transaction->form_vat_wht }}%</td>
-                            <td class="text-right"><span class="float-left">{{ $transaction->currency }}</span> ({{ number_format($transaction->form_amount_wht, 2, '.', ',') }})</td>
-                        </tr>
-                        @endif
-                        @if ($transaction->form_amount_payable)
-                        <tr class="font-weight-bold">
-                            <td colspan="2"></td>
-                            <td class="font-weight-bold">Total Payable</td>
-                            <td colspan="2"></td>
-                            <td class="text-right"><span class="float-left">{{ $transaction->currency }}</span> {{ number_format($transaction->form_amount_payable, 2, '.', ',') }}</td>
-                        </tr>
-                        @endif
-                        <tr class="font-weight-bold border-top-2">
-                            <td colspan="2"></td>
-                            <td>Amount</td>
-                            <td colspan="2"></td>
-                            <td class="text-right font-weight-bold"><span class="float-left">{{ $transaction->currency }}</span> {{ number_format($transaction->form_amount_payable, 2, '.', ',') }}</td>
-                        </tr>
-                    </table>
+                            <tr class="font-weight-bold">
+                                <td>Item No.</td>                            
+                                <th>Qty</th>
+                                <th>Description</th>
+                                <th>Particulars</th>
+                                <th class="text-right">Unit Price</th>
+                                <th class="text-right">Total</th>
+                            </tr>
+                            @foreach ($transaction->transaction_description as $key => $item_desc)
+                                <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $item_desc->qty }}</td>
+                                    <td>{{ $item_desc->description }}</td>
+                                    <td>{{ $item_desc->particulars->name }}</td>
+                                    <td class="text-right">{{ number_format($item_desc->amount, 2, '.', ',') }}</td>
+                                    <td class="text-right">{{ number_format($item_desc->amount * $item_desc->qty, 2, '.', ',') }}</td>
+                                </tr>
+                            @endforeach
+                            <tr class="font-weight-bold">
+                                <td colspan="2"></td>
+                                <td>{{ $transaction->form_amount_vat + $transaction->form_amount_wht == 0 ? 'Total' : 'Subtotal' }}</td>
+                                <td colspan="2"></td>
+                                <td class="text-right"><span class="float-left">{{ $transaction->currency }}</span> {{ number_format($transaction->form_amount_subtotal, 2, '.', ',') }}</td>
+                            </tr>
+                            @if ($transaction->form_amount_vat)
+                            <tr>
+                                <td colspan="2"></td>
+                                <td>VAT</td>
+                                <td colspan="2"></td>
+                                <td class="text-right"><span class="float-left">{{ $transaction->currency }}</span> {{ number_format($transaction->form_amount_vat, 2, '.', ',') }}</td>
+                            </tr>
+                            @endif
+                            @if ($transaction->form_vat_wht)
+                            <tr>
+                                <td colspan="2"></td>
+                                <td>Less Withholding Tax</td>
+                                <td>{{ $transaction->form_vat_name }}</td>
+                                <td>{{ $transaction->form_vat_wht }}%</td>
+                                <td class="text-right"><span class="float-left">{{ $transaction->currency }}</span> ({{ number_format($transaction->form_amount_wht, 2, '.', ',') }})</td>
+                            </tr>
+                            @endif
+                            @if ($transaction->form_amount_payable)
+                            <tr class="font-weight-bold">
+                                <td colspan="2"></td>
+                                <td class="font-weight-bold">Total Payable</td>
+                                <td colspan="2"></td>
+                                <td class="text-right"><span class="float-left">{{ $transaction->currency }}</span> {{ number_format($transaction->form_amount_payable, 2, '.', ',') }}</td>
+                            </tr>
+                            @endif
+                            <tr class="font-weight-bold border-top-2">
+                                <td colspan="2"></td>
+                                <td>Amount</td>
+                                <td colspan="2"></td>
+                                <td class="text-right font-weight-bold"><span class="float-left">{{ $transaction->currency }}</span> {{ number_format($transaction->form_amount_payable, 2, '.', ',') }}</td>
+                            </tr>
+                        </table>  
+                    @else
+                        <table class="table table-sm">
+                            <tr class="font-weight-bold">
+                                <td>Pos.</td>
+                                <td>Date</td>
+                                <td>Type</td>
+                                <td>Description</td>
+                                <td>Location/Route</td>
+                                <td class="text-center">Receipt</td>
+                                <td class="text-right">Amount</td>
+                            </tr>
+                            @foreach ($transaction->liquidation as $key => $item)
+                                <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $item->date }}</td>
+                                    <td>{{ $item->expensetype->name }}</td>
+                                    <td>{{ $item->description }}</td>
+                                    <td>{{ $item->location }}</td>
+                                    <td class="text-center">{{ $item->receipt == 1 ? 'Y' : 'N' }}</td>
+                                    <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
+                                </tr>
+                            @endforeach
+                            <tr>
+                                <td colspan="5"></td>
+                                <td class="text-center font-weight-bold">{{ $transaction->currency }}</td>
+                                <td class="text-right font-weight-bold">{{ number_format($transaction->amount, 2, '.', ',') }}</td>
+                            </tr>
+                        </table>
+                    @endif
                 </div>
             </div>
             <div class="row row--print">

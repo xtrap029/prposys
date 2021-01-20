@@ -672,11 +672,13 @@ class TransactionsController extends Controller {
         if (!empty($_GET['status'])) {
             $transactions = $transactions->whereIn('status_id', explode(',', $_GET['status']));
             // $status_sel = TransactionStatus::where('id', $_GET['status'])->first()->name;
+            $trans_status = $_GET['status'];
         }
 
         if (!empty($_GET['category'])) {
             $transactions = $transactions->where($_GET['category'], 1);
             // $status_sel = TransactionStatus::where('id', $_GET['status'])->first()->name;
+            $trans_category = $_GET['category'];
         }
 
         if (!empty($_GET['from'])) {
@@ -754,6 +756,8 @@ class TransactionsController extends Controller {
                 'trans_company' => $trans_company,
                 'trans_from' => $trans_from,
                 'trans_to' => $trans_to,
+                'trans_status' => $trans_status,
+                'trans_category' => $trans_category,
             ]);
         }
     }

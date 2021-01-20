@@ -52,7 +52,7 @@
                     </tr>
                 </tbody>
             </table>
-            <form action="" method="post" class="jsPreventMultiple">
+            <form action="" method="post" enctype="multipart/form-data" class="jsPreventMultiple">
                 @csrf
                 <input type="hidden" name="key" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}">
                 <input type="hidden" name="company" value="{{ $transaction->project->company->id }}">
@@ -170,6 +170,40 @@
                             <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
                         </div>
                     </div>
+
+                    <div class="col-12 jsReplicate mt-5 pt-5">
+                        <h4 class="text-center">Attachments</h4>
+                        <div class="text-center mb-3">Attach receipts and documents here. Accepts .jpg, .png and .pdf file types, not more than 5mb each.</div>
+                        <table class="table bg-white">
+                            <thead>
+                                <tr>
+                                    <th class="w-25">File</th>
+                                    <th class="w-75">Description</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody class="jsReplicate_container">
+                                <tr>
+                                    <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
+                                    <td colspan="2"><input type="text" name="attachment_description[]" class="form-control" value="{{ old('attachment_description.0') }}" required></td>
+                                </tr>
+                                @if (old('attachment_description'))
+                                    @foreach (old('attachment_description') as $key => $item)
+                                        @if ($key > 0)
+                                            <tr>
+                                                <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
+                                                <td><input type="text" name="attachment_description[]" class="form-control" value="{{ old('attachment_description.'.$key) }}" required></td>
+                                                <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                        <div class="text-center">
+                            <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
+                        </div>
+                    </div>
                     
                     <div class="col-md-12 text-right mt-4">
                         <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="mr-3">Cancel</a>
@@ -205,6 +239,16 @@
                                 <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" required>
                             </div>  
                         </td>
+                        <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="d-none">
+                <tbody class="jsReplicate_template">
+                    <tr class="jsReplicate_template_item">
+                        <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
+                        <td><input type="text" name="attachment_description[]" class="form-control" required></td>
                         <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
                     </tr>
                 </tbody>

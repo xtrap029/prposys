@@ -76,10 +76,10 @@
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-right">
                                     <a class="dropdown-item {{ !in_array($_GET['status'], config('global.form_issued')) ? 'd-none' : '' }}" href="#"
-                                        onclick="window.open('/transaction-form/print-issued?type={{ $trans_type }}&company={{ $trans_company }}&from={{ $trans_from }}&to={{ $trans_to }}','name','width=800,height=800')">
+                                        onclick="window.open('/transaction-form/print-issued?type={{ $trans_type }}&company={{ $trans_company }}&status={{ $trans_status }}&category={{ $trans_category }}&from={{ $trans_from }}&to={{ $trans_to }}','name','width=800,height=800')">
                                         Issued Forms
                                     <a class="dropdown-item {{ !in_array($_GET['status'], config('global.liquidation_cleared')) ? 'd-none' : '' }}" href="#"
-                                        onclick="window.open('/transaction-liquidation/print-cleared?type={{ $trans_type }}&company={{ $trans_company }}&from={{ $trans_from }}&to={{ $trans_to }}','name','width=800,height=800')">
+                                        onclick="window.open('/transaction-liquidation/print-cleared?type={{ $trans_type }}&company={{ $trans_company }}&status={{ $trans_status }}&category={{ $trans_category }}&from={{ $trans_from }}&to={{ $trans_to }}','name','width=800,height=800')">
                                         Cleared Forms
                                     </a>
                                 </div>
