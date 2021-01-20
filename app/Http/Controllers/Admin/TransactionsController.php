@@ -635,6 +635,8 @@ class TransactionsController extends Controller {
         $trans_company = '';
         $trans_from = '';
         $trans_to = '';
+        $trans_status = '';
+        $trans_category = '';
 
         $transactions = Transaction::orderBy('id', 'desc');
         
