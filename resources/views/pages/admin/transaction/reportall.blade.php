@@ -16,16 +16,16 @@
         <div class="container-fluid">
             <form action="" method="get" class="no-print">
                 <div class="form-row mb-3">
-                    <div class="col-md-1">
+                    <div class="col-md-3 my-1">
                         <label for="">Type</label>
                         <select name="type" class="form-control">
                             <option value="">All</option>
-                            <option value="pr" {{ $trans_type == "pr" ? 'selected' : '' }}>PR</option>
-                            <option value="po" {{ $trans_type == "po" ? 'selected' : '' }}>PO</option>
+                            <option value="pr" {{ $trans_type == "pr" ? 'selected' : '' }}>Payment Release</option>
+                            <option value="po" {{ $trans_type == "po" ? 'selected' : '' }}>Purchase Order</option>
                             {{-- <option value="pc" {{ $trans_type == "pc" ? 'selected' : '' }}>PC</option> --}}
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6 my-1">
                         <label for="">Company</label>
                         <select name="company" class="form-control">
                             <option value="">All</option>
@@ -34,7 +34,16 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3 my-1">
+                        <label for="">Requested By</label>
+                        <select name="user_req" class="form-control">
+                            <option value="">All</option>
+                            @foreach ($users as $item)
+                                <option value="{{ $item->id }}" {{ app('request')->input('user_req') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3 my-1">
                         <label for="">Status</label>
                         <select name="status" class="form-control">
                             <option value="">All</option>
@@ -43,7 +52,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3 my-1">
                         <label for="">Category</label>
                         <select name="category" class="form-control">
                             @foreach (config('global.trans_category_column') as $key => $item)
@@ -51,18 +60,18 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3 my-1">
                         <label for="">Date From</label>
                         <input type="date" name="from" class="form-control" value="{{ !empty($_GET['from']) ? $_GET['from'] : '' }}">
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3 my-1">
                         <label for="">Date To</label>
                         <input type="date" name="to" class="form-control" value="{{ !empty($_GET['to']) ? $_GET['to'] : '' }}">
                     </div>
                 </div>
                 <div class="form-row mb-3">
                     <div class="col-md-1">
-                        <a href="/transaction/report-all" class="btn btn-secondary btn-block">Reset</a>
+                        <a href="/transaction/report-all?from={{ date('Y-m-01') }}&to={{ date('Y-m-t') }}" class="btn btn-secondary btn-block">Reset</a>
                     </div>
                     <div class="col-md-1">
                         <input type="submit" value="Generate" class="btn btn-primary btn-block">

@@ -637,6 +637,7 @@ class TransactionsController extends Controller {
         $trans_to = '';
         $trans_status = '';
         $trans_category = '';
+        $trans_req = '';
 
         $transactions = Transaction::orderBy('id', 'desc');
         
@@ -691,9 +692,15 @@ class TransactionsController extends Controller {
             $transactions = $transactions->whereDate('created_at', '<=', $_GET['to']);
             $trans_to = $_GET['to'];
         }
+        
+        if (!empty($_GET['user_req'])) {
+            $transactions = $transactions->where('requested_id', $_GET['user_req']);
+            $trans_req = $_GET['user_req'];
+        }
 
         $transactions = $transactions->get();
-
+        
+        $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
         $companies = Company::orderBy('name', 'asc')->get();
         $status = TransactionStatus::whereIn('id', config('global.status'))->orderBy('id', 'asc')->get();
 
@@ -751,6 +758,7 @@ class TransactionsController extends Controller {
         } else {
             return view('pages.admin.transaction.reportall')->with([
                 'companies' => $companies,
+                'users' => $users,
                 // 'status' => $status,
                 // 'status_sel' => $status_sel,
                 'transactions' => $transactions,
@@ -760,6 +768,7 @@ class TransactionsController extends Controller {
                 'trans_to' => $trans_to,
                 'trans_status' => $trans_status,
                 'trans_category' => $trans_category,
+                'trans_req' => $trans_req,
             ]);
         }
     }

@@ -173,7 +173,7 @@
                                                     </ul>
                                                 </li> --}}
                                                 <li class="nav-item">
-                                                    <a href="/transaction/report-all" class="nav-link {{ Route::currentRouteName() == 'transactionreport' ? 'active' : '' }}">
+                                                    <a href="/transaction/report-all?from={{ date('Y-m-01') }}&to={{ date('Y-m-t') }}" class="nav-link {{ Route::currentRouteName() == 'transactionreport' ? 'active' : '' }}">
                                                         <i class="nav-icon material-icons icon--list">assessment</i><p> REPORTS</p>
                                                     </a>
                                                 </li>
