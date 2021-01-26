@@ -44,7 +44,7 @@
                     <p>{{ $transaction->purpose }}</p>
                 </div>
             </div>
-            <form action="" method="post" enctype="multipart/form-data">
+            <form action="" method="post" enctype="multipart/form-data" id="pageForm" class="jsPreventMultiple">
                 @csrf
                 @method('put')
 
@@ -157,7 +157,7 @@
                             </tr>
                         </thead>
                         <tbody class="jsReplicate_container">
-                            <tr>
+                            <tr class="jsReplicate_template_item">
                                 <td>
                                     <a href="/storage/public/attachments/liquidation/{{ $transaction->attachments[0]->file }}" target="_blank">
                                         <i class="material-icons mr-2 align-bottom align-text-bottom">attachment</i>
@@ -165,7 +165,8 @@
                                     <input type="file" name="file_old[]" class="form-control w-75 d-inline-block overflow-hidden">
                                     <input type="hidden" name="attachment_id_old[]" value="{{ $transaction->attachments[0]->id }}">
                                 </td>
-                                <td colspan="2"><input type="text" name="attachment_description_old[]" class="form-control" value="{{ $transaction->attachments[0]->description }}" required></td>
+                                <td><input type="text" name="attachment_description_old[]" class="form-control" value="{{ $transaction->attachments[0]->description }}" required></td>
+                                <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
                             </tr>
                             @foreach ($transaction->attachments as $key => $item)
                                 @if ($key > 0)
@@ -188,7 +189,20 @@
                         <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
                     </div>
                 </div>
-                <div class="text-center mt-5 py-5 border-top">
+                <div class="mt-5 pt-5">
+                    <table class="table bg-secondary rounded">
+                        <tbody>
+                            <tr>
+                                <td class="w-25">
+                                    <div class="mb-1 font-weight-bold">Batch Upload</div>
+                                    <input type="file" name="zip" id="inputZip" class="form-control overflow-hidden" accept=".zip">
+                                </td>
+                                <td class="w-75 vlign--middle text-info">{!! __('messages.batch_upload') !!}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center py-5 border-top">
                     <a href="/transaction-liquidation/view/{{ $transaction->id }}" class="mr-3">Cancel</a>
                     <input type="submit" class="btn btn-primary" value="Save">
                 </div>
@@ -280,6 +294,16 @@
                     }
                 }
             }
+
+            $('#pageForm').submit(function() {
+                if (!$('#inputZip').val() && $("input[name='attachment_description[]']").length <= 1 && $("input[name='attachment_description_old[]']").length == 0) {
+                    alert('{{ __("messages.required_attachment") }}')
+                    setTimeout(function() {
+                        $('form.jsPreventMultiple [type="submit"]').removeAttr("disabled")
+                    }, 1000);
+                    return false
+                }
+            })
         })
     </script>
 @endsection

@@ -43662,7 +43662,7 @@ label:not(.form-check-label):not(.custom-file-label) {
 }
 
 .vlign--middle {
-  vertical-align: middle;
+  vertical-align: middle !important;
 }
 
 .vlign--top {

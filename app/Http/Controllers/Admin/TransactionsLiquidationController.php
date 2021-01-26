@@ -13,8 +13,10 @@ use App\TransactionStatus;
 use App\Settings;
 use App\User;
 use Spatie\Activitylog\Models\Activity;
+use ZanySoft\Zip\Zip;
 use Illuminate\Http\Request;
 use \DB;
+use \File;
 
 class TransactionsLiquidationController extends Controller {
     
@@ -202,7 +204,42 @@ class TransactionsLiquidationController extends Controller {
                 ->first();
         }
 
-        // validation rules
+        // liq attachment atributes
+        $attr_file['transaction_id'] = $transaction->id;
+        $attr_file['owner_id'] = auth()->id();
+        $attr_file['updated_id'] = auth()->id(); 
+
+        if ($request->file('zip')) {
+            // zip validate
+            $data = $request->validate([
+                'zip' => ['mimes:zip', 'max:10240']
+            ]);        
+            // zip store
+            $zip_name = basename($request->file('zip')->store('public/attachments/temp_zip'));
+            // zip open and extract
+            $zip_file = Zip::open('storage/public/attachments/temp_zip/'.$zip_name);
+            $zip_file->extract('storage/public/attachments/temp_uncompressed/'.$zip_name);
+            // zip close and delete
+            $zip_file->close();
+            unlink('storage/public/attachments/temp_zip/'.$zip_name);
+            // zip uncompressed fetch files
+            $zip_content = File::files('storage/public/attachments/temp_uncompressed/'.$zip_name);
+            // attr array to be used by zip and regular attachment method
+            // zip validate extensions and store
+            foreach ($zip_content as $key => $value) {
+                if (!in_array(File::extension($value), config('global.attachment_format'))) {
+                    return back()->with('error', __('messages.invalid_zip_contents'));
+                }
+    
+                // dd(File::get('storage/public/attachments/temp_uncompressed/'.$zip_name.'/'.File::basename($value)));
+                $attr_file['description'] = File::name($value);
+                $attr_file['file'] = $attr_file['description'].time().'.'.File::extension($value);
+                File::move('storage/public/attachments/temp_uncompressed/'.$zip_name.'/'.File::basename($value)
+                    , 'storage/public/attachments/liquidation/'.$attr_file['file']);
+                TransactionsAttachment::create($attr_file);
+            }
+        }
+        
         $validate = [
             'file.*' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
             'attachment_description.*' => ['required']
@@ -244,14 +281,12 @@ class TransactionsLiquidationController extends Controller {
             }
         }
 
-        $attr_file['transaction_id'] = $transaction->id;
-        $attr_file['owner_id'] = auth()->id();
-        $attr_file['updated_id'] = auth()->id();
-
-        foreach ($data['attachment_description'] as $key => $value) {
-            $attr_file['description'] = $value;
-            $attr_file['file'] = basename($request->file('file')[$key]->store('public/attachments/liquidation'));
-            TransactionsAttachment::create($attr_file);
+        if (isset($data['attachment_description'])) {
+            foreach ($data['attachment_description'] as $key => $value) {
+                $attr_file['description'] = $value;
+                $attr_file['file'] = basename($request->file('file')[$key]->store('public/attachments/liquidation'));
+                TransactionsAttachment::create($attr_file);
+            }
         }
 
         if ($transaction->is_deposit) {
@@ -378,7 +413,7 @@ class TransactionsLiquidationController extends Controller {
         // if can edit
         if (!$this->check_can_edit($transaction->id)) {
             return back()->with('error', __('messages.cant_edit'));
-        }
+        }        
 
         // validate input
         $data = $request->validate([
@@ -412,6 +447,7 @@ class TransactionsLiquidationController extends Controller {
         }
 
         $desc_key = 0;
+        $data['attachment_id_old'] = isset($data['attachment_id_old']) ? $data['attachment_id_old'] : [];
         foreach ($transaction->attachments as $key => $value) {
             $transaction_attachment = TransactionsAttachment::find($value->id);
 
@@ -436,6 +472,7 @@ class TransactionsLiquidationController extends Controller {
             }
         }
 
+        // liq attachment atributes
         $attr_file['transaction_id'] = $transaction->id;
         $attr_file['owner_id'] = auth()->id();
         $attr_file['updated_id'] = auth()->id();
@@ -444,6 +481,37 @@ class TransactionsLiquidationController extends Controller {
             foreach ($data['attachment_description'] as $key => $value) {
                 $attr_file['description'] = $value;
                 $attr_file['file'] = basename($request->file('file')[$key]->store('public/attachments/liquidation'));
+                TransactionsAttachment::create($attr_file);
+            }
+        }
+
+        if ($request->file('zip')) {
+            // zip validate
+            $data = $request->validate([
+                'zip' => ['mimes:zip', 'max:10240']
+            ]);        
+            // zip store
+            $zip_name = basename($request->file('zip')->store('public/attachments/temp_zip'));
+            // zip open and extract
+            $zip_file = Zip::open('storage/public/attachments/temp_zip/'.$zip_name);
+            $zip_file->extract('storage/public/attachments/temp_uncompressed/'.$zip_name);
+            // zip close and delete
+            $zip_file->close();
+            unlink('storage/public/attachments/temp_zip/'.$zip_name);
+            // zip uncompressed fetch files
+            $zip_content = File::files('storage/public/attachments/temp_uncompressed/'.$zip_name);
+            // attr array to be used by zip and regular attachment method
+            // zip validate extensions and store
+            foreach ($zip_content as $key => $value) {
+                if (!in_array(File::extension($value), config('global.attachment_format'))) {
+                    return back()->with('error', __('messages.invalid_zip_contents'));
+                }
+    
+                // dd(File::get('storage/public/attachments/temp_uncompressed/'.$zip_name.'/'.File::basename($value)));
+                $attr_file['description'] = File::name($value);
+                $attr_file['file'] = $attr_file['description'].time().'.'.File::extension($value);
+                File::move('storage/public/attachments/temp_uncompressed/'.$zip_name.'/'.File::basename($value)
+                    , 'storage/public/attachments/liquidation/'.$attr_file['file']);
                 TransactionsAttachment::create($attr_file);
             }
         }

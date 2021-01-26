@@ -50,5 +50,6 @@
             ['Liq./For Approval', '8'],
             ['Cleared', '9'],
             ['Cancelled', '3'],
-        ]
+        ],
+        'attachment_format' => ['jpg', 'jpeg', 'png', 'pdf'],
     ];

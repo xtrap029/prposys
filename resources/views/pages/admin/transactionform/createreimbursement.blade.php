@@ -52,7 +52,7 @@
                     </tr>
                 </tbody>
             </table>
-            <form action="" method="post" enctype="multipart/form-data" class="jsPreventMultiple">
+            <form action="" method="post" enctype="multipart/form-data" class="jsPreventMultiple" id="pageForm">
                 @csrf
                 <input type="hidden" name="key" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}">
                 <input type="hidden" name="company" value="{{ $transaction->project->company->id }}">
@@ -183,14 +183,15 @@
                                 </tr>
                             </thead>
                             <tbody class="jsReplicate_container">
-                                <tr>
+                                <tr class="jsReplicate_template_item">
                                     <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
-                                    <td colspan="2"><input type="text" name="attachment_description[]" class="form-control" value="{{ old('attachment_description.0') }}" required></td>
+                                    <td><input type="text" name="attachment_description[]" class="form-control" value="{{ old('attachment_description.0') }}" required></td>
+                                    <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
                                 </tr>
                                 @if (old('attachment_description'))
                                     @foreach (old('attachment_description') as $key => $item)
                                         @if ($key > 0)
-                                            <tr>
+                                            <tr class="jsReplicate_template_item">
                                                 <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
                                                 <td><input type="text" name="attachment_description[]" class="form-control" value="{{ old('attachment_description.'.$key) }}" required></td>
                                                 <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
@@ -203,6 +204,20 @@
                         <div class="text-center">
                             <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
                         </div>
+                    </div>
+
+                    <div class="col-md-12 mt-5 pt-5">
+                        <table class="table bg-secondary rounded">
+                            <tbody>
+                                <tr>
+                                    <td class="w-25">
+                                        <div class="mb-1 font-weight-bold">Batch Upload</div>
+                                        <input type="file" name="zip" id="inputZip" class="form-control overflow-hidden" accept=".zip">
+                                    </td>
+                                    <td class="w-75 vlign--middle text-info">{!! __('messages.batch_upload') !!}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                     
                     <div class="col-md-12 text-right mt-4">
@@ -300,6 +315,16 @@
                     }
                 }
             }
+
+            $('#pageForm').submit(function() {
+                if (!$('#inputZip').val() && $("input[name='attachment_description[]']").length <= 1) {
+                    alert('{{ __("messages.required_attachment") }}')
+                    setTimeout(function() {
+                        $('form.jsPreventMultiple [type="submit"]').removeAttr("disabled")
+                    }, 1000);
+                    return false
+                }
+            })
         })
     </script>
 @endsection

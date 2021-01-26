@@ -16,6 +16,7 @@ return [
     'leave_blank' => 'Leave blank to use default setting.',
     'invalid_access' => 'Invalid access!',
     'invalid_command' => 'Command Invalid!',
+    'invalid_zip_contents' => 'Invalid zipped file contents!',
     'cant_create' => 'You are not allowed to create the item right now.',
     'cant_edit' => 'You are not allowed to edit the item right now.',
     'cant_print' => 'You are not allowed to print the item right now.',
@@ -28,5 +29,9 @@ return [
     'approval_prompt' => 'Send for approval',
     'clear_prompt' => 'Deposit Information',
     'make_not_allowed' => 'Transaction Code not available.',
+    'required_attachment' => 'At least one attachment is required!',
     'required_amount' => 'Required amount should match total items amount.',
+    'batch_upload' => '* Accepts .zip file only (10MB max).
+        <br> * Zipped file should only have .jpg, .png or .pdf file types inside.
+        <br> * Set file names of each file inside the zipped as your desired description.'
 ];
