@@ -648,6 +648,7 @@ class TransactionsController extends Controller {
         $trans_status = '';
         $trans_category = '';
         $trans_req = '';
+        $trans_bal= '';
 
         $transactions = Transaction::orderBy('id', 'desc');
         
@@ -677,8 +678,8 @@ class TransactionsController extends Controller {
 
         if (!empty($_GET['company'])) {
             $trans_company = $_GET['company'];
-            $transactions = $transactions->whereHas('project', function($query) use($trans_company) {
-                $query->where('company_id', $trans_company);
+            $transactions = $transactions->whereDoesntHave('project', function($query) use($trans_company) {
+                $query->where('company_id', '!=', $trans_company);
             });
         }
         
@@ -706,6 +707,19 @@ class TransactionsController extends Controller {
         if (!empty($_GET['user_req'])) {
             $transactions = $transactions->where('requested_id', $_GET['user_req']);
             $trans_req = $_GET['user_req'];
+        }
+
+        if (isset($_GET['bal'])) {
+            if ($_GET['bal'] == "0" && $_GET['bal'] != "") {
+                $transactions = $transactions->whereHas('liquidation', function($query){
+                    $query->havingRaw('sum(amount) = transactions.amount_issued');
+                });
+            } else if ($_GET['bal'] == "1") {
+                $transactions = $transactions->whereHas('liquidation', function($query){
+                    $query->havingRaw('sum(amount) != transactions.amount_issued');
+                });
+            };
+            $trans_bal = $_GET['bal'];
         }
 
         $transactions = $transactions->get();
@@ -779,6 +793,7 @@ class TransactionsController extends Controller {
                 'trans_status' => $trans_status,
                 'trans_category' => $trans_category,
                 'trans_req' => $trans_req,
+                'trans_bal' => $trans_bal,
             ]);
         }
     }

@@ -25,7 +25,7 @@
                             {{-- <option value="pc" {{ $trans_type == "pc" ? 'selected' : '' }}>PC</option> --}}
                         </select>
                     </div>
-                    <div class="col-sm-6 my-1">
+                    <div class="col-sm-3 my-1">
                         <label for="">Company</label>
                         <select name="company" class="form-control">
                             <option value="">All</option>
@@ -60,6 +60,14 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="col-md-3 my-1">
+                        <label for="">Bal. & Unbal.</label>
+                        <select name="bal" class="form-control">
+                            <option value="">All</option>
+                            <option value="0" {{ app('request')->input('bal') != "" && app('request')->input('bal') == 0 ? 'selected' : '' }}>Balanced</option>
+                            <option value="1" {{ app('request')->input('bal') == 1 ? 'selected' : '' }}>Unbalanced</option>
+                        </select>
+                    </div>
                     <div class="col-sm-6 col-md-3 my-1">
                         <label for="">Date From</label>
                         <input type="date" name="from" class="form-control" value="{{ !empty($_GET['from']) ? $_GET['from'] : '' }}">
@@ -85,10 +93,10 @@
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-right">
                                     <a class="dropdown-item {{ !in_array($_GET['status'], config('global.form_issued')) ? 'd-none' : '' }}" href="#"
-                                        onclick="window.open('/transaction-form/print-issued?type={{ $trans_type }}&company={{ $trans_company }}&status={{ $trans_status }}&category={{ $trans_category }}&from={{ $trans_from }}&to={{ $trans_to }}','name','width=800,height=800')">
+                                        onclick="window.open('/transaction-form/print-issued?type={{ $trans_type }}&company={{ $trans_company }}&status={{ $trans_status }}&category={{ $trans_category }}&bal={{ $trans_bal }}&from={{ $trans_from }}&to={{ $trans_to }}','name','width=800,height=800')">
                                         Issued Forms
                                     <a class="dropdown-item {{ !in_array($_GET['status'], config('global.liquidation_cleared')) ? 'd-none' : '' }}" href="#"
-                                        onclick="window.open('/transaction-liquidation/print-cleared?type={{ $trans_type }}&company={{ $trans_company }}&status={{ $trans_status }}&category={{ $trans_category }}&from={{ $trans_from }}&to={{ $trans_to }}','name','width=800,height=800')">
+                                        onclick="window.open('/transaction-liquidation/print-cleared?type={{ $trans_type }}&company={{ $trans_company }}&status={{ $trans_status }}&category={{ $trans_category }}&bal={{ $trans_bal }}&from={{ $trans_from }}&to={{ $trans_to }}','name','width=800,height=800')">
                                         Cleared Forms
                                     </a>
                                 </div>
