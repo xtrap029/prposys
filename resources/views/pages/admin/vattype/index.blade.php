@@ -14,7 +14,7 @@
     </section>
     <section class="content">
         <div class="container-fluid">
-            <table class="table table-striped">
+            <table class="table table-striped table-responsive-md">
                 <thead>
                     <tr>
                         <th>Code</th>
@@ -31,13 +31,13 @@
                     @forelse ($vat_types as $item)
                         <tr>
                             <td>{{ strtoupper($item->code) }}</td>
-                            <td>{{ $item->name }}</td>
-                            <td class="text-right">{{ $item->vat }} %</td>
-                            <td class="text-right">{{ $item->wht }} %</td>
-                            <td class="text-right">{{ $item->is_pr ? 'YES' : 'NO' }}</td>
-                            <td class="text-right">{{ $item->is_po ? 'YES' : 'NO' }}</td>
-                            <td class="text-right">{{ $item->is_pc ? 'YES' : 'NO' }}</td>
-                            <td class="text-right">
+                            <td class="text-nowrap">{{ $item->name }}</td>
+                            <td class="text-right text-nowrap">{{ $item->vat }} %</td>
+                            <td class="text-right text-nowrap">{{ $item->wht }} %</td>
+                            <td class="text-right">{{ $item->is_pr ? 'Yes' : 'No' }}</td>
+                            <td class="text-right">{{ $item->is_po ? 'Yes' : 'No' }}</td>
+                            <td class="text-right">{{ $item->is_pc ? 'Yes' : 'No' }}</td>
+                            <td class="text-right text-nowrap">
                                 <a href="/vat-type/{{ $item->id }}/edit" class="btn btn-link btn-sm">Edit</a>
                                 <form action="/vat-type/{{ $item->id }}" method="post" class="d-inline-block">
                                     @csrf

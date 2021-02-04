@@ -66,9 +66,9 @@
                     <div class="col-md-1">
                         <label for="">Currency</label>
                         <select name="currency" class="form-control @error('currency') is-invalid @enderror">
-                            <option value="PHP" {{ $transaction->currency == 'PHP' ? 'selected' : '' }}>PHP</option> 
-                            <option value="USD" {{ $transaction->currency == 'USD' ? 'selected' : '' }}>USD</option>   
-                            <option value="EUR" {{ $transaction->currency == 'EUR' ? 'selected' : '' }}>EUR</option>   
+                            @foreach (config('global.currency') as $key => $item)
+                                <option value="{{ config('global.currency_label')[$key] }}">{{ $item }}</option>
+                            @endforeach 
                         </select>
                     </div>
                     <div class="col-md-4">

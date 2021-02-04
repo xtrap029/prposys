@@ -15,7 +15,7 @@
     <section class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6 col-lg-4">
                     <div class="card card-widget widget-user">
                         <div class="widget-user-header bg--tecc">
                             <h3 class="widget-user-username">{{ $user->name }}</h3>
@@ -42,7 +42,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-6 col-lg-8">
                     <form action="/my-account" method="post" enctype="multipart/form-data">
                         @csrf
                         @method('put')
@@ -67,8 +67,8 @@
                             <input type="file" name="avatar" class="form-control-file @error('avatar') is-invalid @enderror d-inline-block w-auto">
                             @include('errors.inline', ['message' => $errors->first('avatar')])
 
-                            <div class="float-right">
-                                <input type="submit" class="btn btn-primary float-right" value="Update"> 
+                            <div class="float-md-right py-4 py-md-0">
+                                <input type="submit" class="btn btn-primary btn-block" value="Update"> 
                             </div>
                         </div>
                     </form>

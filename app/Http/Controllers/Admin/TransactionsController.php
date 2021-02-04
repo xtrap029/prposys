@@ -46,7 +46,8 @@ class TransactionsController extends Controller {
             || !empty($_GET['category'])
             || !empty($_GET['status'])
             || !empty($_GET['user_req'])
-            || !empty($_GET['user_prep'])) {
+            || !empty($_GET['user_prep'])
+            || !empty($_GET['bal'])) {
             
             if ($_GET['type'] != "") {
                 $type = $_GET['type'];
@@ -56,10 +57,10 @@ class TransactionsController extends Controller {
             $key = $_GET['s'];
             
             $transactions = Transaction::whereIn('trans_type', $trans_types)
-                                    ->whereIn('status_id', config('global.status'))
-                                    ->whereHas('project', function($query) use($trans_company) {
-                                        $query->where('company_id', $trans_company);
-                                    })
+                                    ->whereIn('status_id', config('global.status'))                                    
+                                    ->whereDoesntHave('project', function($query) use($trans_company) {
+                                        $query->where('company_id', '!=', $trans_company);
+                                    })                            
                                     ->where(static function ($query) use ($key) {
                                         $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$key."%")
                                             ->orWhereHas('particulars', function($query) use($key) {
@@ -97,14 +98,25 @@ class TransactionsController extends Controller {
             if ($_GET['user_req'] != "") $transactions = $transactions->where('requested_id', $_GET['user_req']);
             if ($_GET['user_prep'] != "") $transactions = $transactions->where('owner_id', $_GET['user_prep']);
             if ($_GET['category'] != "") $transactions = $transactions->where($_GET['category'], 1);
+            if ($_GET['bal'] == "0" && $_GET['bal'] != "") {
+                $transactions = $transactions->whereHas('liquidation', function($query){
+                    $query->havingRaw('sum(amount) = transactions.amount_issued');
+                });
+            } else if ($_GET['bal'] == "1") {
+                $transactions = $transactions->whereHas('liquidation', function($query){
+                    $query->havingRaw('sum(amount) != transactions.amount_issued');
+                });
+            };
 
             $transactions = $transactions->orderBy('id', 'desc')->paginate(10);
+
             $transactions->appends(['s' => $_GET['s']]);
             $transactions->appends(['type' => $_GET['type']]);
             $transactions->appends(['status' => $_GET['status']]);
             $transactions->appends(['category' => $_GET['category']]);
             $transactions->appends(['user_req' => $_GET['user_req']]);
             $transactions->appends(['user_prep' => $_GET['user_prep']]);
+            $transactions->appends(['bal' => $_GET['bal']]);
         } else {
             $transactions = Transaction::whereIn('trans_type', $trans_types)
                                     ->whereIn('status_id', config('global.status'))
@@ -165,9 +177,9 @@ class TransactionsController extends Controller {
         
         $transactions = Transaction::whereIn('trans_type', $trans_types)
                                 ->whereIn('status_id', config('global.status'))
-                                ->whereHas('project', function($query) use($trans_company) {
-                                    $query->where('company_id', $trans_company);
-                                })
+                                ->whereDoesntHave('project', function($query) use($trans_company) {
+                                    $query->where('company_id', '!=', $trans_company);
+                                }) 
                                 ->where(static function ($query) use ($key) {
                                     $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$key."%")
                                         ->orWhereHas('particulars', function($query) use($key) {
@@ -205,6 +217,15 @@ class TransactionsController extends Controller {
         if ($request->user_req != "") $transactions = $transactions->where('requested_id', $request->user_req);
         if ($request->user_prep != "") $transactions = $transactions->where('owner_id', $request->user_prep);
         if ($request->category != "") $transactions = $transactions->where($request->category, 1);
+        if ($request->bal == "0" && $request->bal != "") {
+            $transactions = $transactions->whereHas('liquidation', function($query){
+                $query->havingRaw('sum(amount) = transactions.amount_issued');
+            });
+        } else if ($request->bal == "1") {
+            $transactions = $transactions->whereHas('liquidation', function($query){
+                $query->havingRaw('sum(amount) != transactions.amount_issued');
+            });
+        };
 
         $transactions = $transactions->orderBy('id', 'desc')->limit(5)->get();
 
@@ -301,19 +322,12 @@ class TransactionsController extends Controller {
                 case config('global.trans_category')[4]:
                     $data['is_reimbursement'] = 1;
                     break;
+                case config('global.trans_category')[5]:
+                    $data['is_bank'] = 1;
+                    break;
                 default:
                     break;
             }
-            
-            // if ($data['trans_category'] == config('global.trans_category')[1]) {
-            //     $data['is_deposit'] = 1;
-            // } else if ($data['trans_category'] == config('global.trans_category')[2]) {
-            //     $data['is_bills'] = 1;
-            // } else if ($data['trans_category'] == config('global.trans_category')[3]) {
-            //     $data['is_hr'] = 1;
-            // } else if ($data['trans_category'] == config('global.trans_category')[3]) {
-            //     $data['is_reimbursement'] = 1;
-            // }
 
             unset($data['trans_category']);
 
@@ -421,6 +435,7 @@ class TransactionsController extends Controller {
         $data['is_bills'] = 0;
         $data['is_hr'] = 0;
         $data['is_reimbursement'] = 0;
+        $data['is_bank'] = 0;
 
         switch ($data['trans_category']) {
             case config('global.trans_category')[1]:
@@ -435,17 +450,12 @@ class TransactionsController extends Controller {
             case config('global.trans_category')[4]:
                 $data['is_reimbursement'] = 1;
                 break;
+            case config('global.trans_category')[5]:
+                $data['is_bank'] = 1;
+                break;
             default:
                 break;
         }
-        
-        // if ($data['trans_category'] == config('global.trans_category')[1]) {
-        //     $data['is_deposit'] = 1;
-        // } else if ($data['trans_category'] == config('global.trans_category')[2]) {
-        //     $data['is_bills'] = 1;
-        // } else if ($data['trans_category'] == config('global.trans_category')[3]) {
-        //     $data['is_hr'] = 1;
-        // }
 
         unset($data['trans_category']);
 
@@ -638,6 +648,7 @@ class TransactionsController extends Controller {
         $trans_status = '';
         $trans_category = '';
         $trans_req = '';
+        $trans_bal= '';
 
         $transactions = Transaction::orderBy('id', 'desc');
         
@@ -667,8 +678,8 @@ class TransactionsController extends Controller {
 
         if (!empty($_GET['company'])) {
             $trans_company = $_GET['company'];
-            $transactions = $transactions->whereHas('project', function($query) use($trans_company) {
-                $query->where('company_id', $trans_company);
+            $transactions = $transactions->whereDoesntHave('project', function($query) use($trans_company) {
+                $query->where('company_id', '!=', $trans_company);
             });
         }
         
@@ -696,6 +707,19 @@ class TransactionsController extends Controller {
         if (!empty($_GET['user_req'])) {
             $transactions = $transactions->where('requested_id', $_GET['user_req']);
             $trans_req = $_GET['user_req'];
+        }
+
+        if (isset($_GET['bal'])) {
+            if ($_GET['bal'] == "0" && $_GET['bal'] != "") {
+                $transactions = $transactions->whereHas('liquidation', function($query){
+                    $query->havingRaw('sum(amount) = transactions.amount_issued');
+                });
+            } else if ($_GET['bal'] == "1") {
+                $transactions = $transactions->whereHas('liquidation', function($query){
+                    $query->havingRaw('sum(amount) != transactions.amount_issued');
+                });
+            };
+            $trans_bal = $_GET['bal'];
         }
 
         $transactions = $transactions->get();
@@ -769,6 +793,7 @@ class TransactionsController extends Controller {
                 'trans_status' => $trans_status,
                 'trans_category' => $trans_category,
                 'trans_req' => $trans_req,
+                'trans_bal' => $trans_bal,
             ]);
         }
     }

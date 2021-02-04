@@ -6,20 +6,23 @@
     <section class="content-header">
         <div class="container-fluid">
             <div class="form-row"> 
-                <div class="col-md-6 mb-4">
-                    <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
-                    <a data-toggle="modal" data-target="#modal-make" href="#_" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>                
-                    <a href="/transaction-form/reset/{{ $transaction->id }}" class="btn btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
+                <div class="col-sm-6 mb-2">
+                    <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="btn mb-2 btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
+                    <a data-toggle="modal" data-target="#modal-make" href="#_" class="btn mb-2 btn-default"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>                
+                    <a href="/transaction-form/reset/{{ $transaction->id }}" class="btn mb-2 btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                 </div>
-                <div class="col-md-6 text-right mb-4">
-                    <a href="/transaction-liquidation/create?company={{ $transaction->project->company_id }}&key={{ strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq) }}" class="btn btn-success {{ $perms['can_create'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Liquidate</a>
-                    <a href="/transaction-form/edit{{ $transaction->is_reimbursement ? '-reimbursement' : '' }}/{{ $transaction->id }}" class="btn btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
-                    {{-- <a href="#_" class="btn btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-approval"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a> --}}
-                    <a href="/transaction-form/approval/{{ $transaction->id }}" class="btn btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a>
-                    <a href="#_" class="btn btn-danger {{ $perms['can_cancel'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-cancel"><i class="align-middle font-weight-bolder material-icons text-md">delete</i> Cancel</a>
+                <div class="col-sm-6 text-sm-right mb-2">
+                    <a href="/transaction-liquidation/create?company={{ $transaction->project->company_id }}&key={{ strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq) }}" class="btn mb-2 btn-success {{ $perms['can_create'] ? '' : 'd-none' }}">
+                        <i class="align-middle font-weight-bolder material-icons text-md">add</i>
+                        {{ $transaction->is_bank ? 'Deposit' : 'Liquidate' }}
+                    </a>
+                    <a href="/transaction-form/edit{{ $transaction->is_reimbursement ? '-reimbursement' : '' }}/{{ $transaction->id }}" class="btn mb-2 btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
+                    {{-- <a href="#_" class="btn mb-2 btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-approval"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a> --}}
+                    <a href="/transaction-form/approval/{{ $transaction->id }}" class="btn mb-2 btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a>
+                    <a href="#_" class="btn mb-2 btn-danger {{ $perms['can_cancel'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-cancel"><i class="align-middle font-weight-bolder material-icons text-md">delete</i> Cancel</a>
                     
-                    <a href="#_" class="btn btn-danger {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print</a>
-                    <a href="#" class="btn btn-success {{ $perms['can_issue'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-issue"><i class="align-middle font-weight-bolder material-icons text-md">check</i> {{ $transaction->is_deposit ? 'Deposit Notes' : 'Issue' }}</a>
+                    <a href="#_" class="btn mb-2 btn-danger {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print</a>
+                    <a href="#" class="btn mb-2 btn-success {{ $perms['can_issue'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-issue"><i class="align-middle font-weight-bolder material-icons text-md">check</i> {{ $transaction->is_deposit ? 'Deposit Notes' : 'Issue' }}</a>
                 </div>
 
                 <div class="modal fade" id="modal-make" tabindex="-1" role="dialog" aria-hidden="true">
@@ -192,7 +195,7 @@
     <section class="content">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-8">
+                <div class="col-lg-8">
                     <div class="pb-2 mb-4 border-bottom">
                         <h1 class="d-inline-block mr-3">
                             <input type="text" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}" class="input--label" readonly>
@@ -204,12 +207,12 @@
                         </h6>
                     </div>
                     <div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
+                        <div class="row mb-0 mb-lg-4">
+                            <div class="mb-4 mb-lg-0 col-lg-6">
                                 <label for="">Project</label>
                                 <h5>{{ $transaction->project->project }}</h5>
                             </div>
-                            <div class="col-md-6">
+                            <div class="mb-4 mb-lg-0 col-lg-6">
                                 <label for="">Transaction Category</label>
                                 @if ($perms['can_edit_issued'])
                                     <form action="/transaction-form/edit-issued/{{ $transaction->id }}" method="post">
@@ -220,6 +223,7 @@
                                             <option value="{{ config('global.trans_category')[1] }}" {{ $transaction->is_deposit == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[1] }}</option>
                                             <option value="{{ config('global.trans_category')[2] }}" {{ $transaction->is_bills == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[2] }}</option>
                                             <option value="{{ config('global.trans_category')[3] }}" {{ $transaction->is_hr == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[3] }}</option>
+                                            {{-- <option value="{{ config('global.trans_category')[5] }}" {{ $transaction->is_bank == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[5] }}</option> --}}
                                         </select>
                                     </form>
                                 @else
@@ -232,77 +236,79 @@
                                             {{ config('global.trans_category_label')[3] }}
                                         @elseif ($transaction->is_reimbursement)    
                                             {{ config('global.trans_category_label')[4] }}
+                                        @elseif ($transaction->is_bank)    
+                                            {{ config('global.trans_category_label')[5] }}
                                         @else
                                             {{ config('global.trans_category_label')[0] }}    
                                         @endif
                                     </h5>
                                 @endif
                             </div>
-                            <div class="col-md-6">
+                            <div class="mb-4 mb-lg-0 col-lg-6">
                                 <label for="">Particulars</label>
                                 <h5>{{ $trans_page_url == 'prpo' ? $transaction->particulars->name : $transaction->particulars_custom }}</h5>
                             </div>                            
                         </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
+                        <div class="row mb-0 mb-lg-4">
+                            <div class="mb-4 mb-lg-0 col-lg-6">
                                 <label for="">COA Tagging</label>
                                 <h5>{{ $transaction->coatagging->name }}</h5>
                             </div>
-                            <div class="col-md-6">
+                            <div class="mb-4 mb-lg-0 col-lg-6">
                                 <label for="">Payor</label>
                                 <h5>{{ $transaction->payor ?: 'n/a' }}</h5>
                             </div>
                         </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
+                        <div class="row mb-0 mb-lg-4">
+                            <div class="mb-4 mb-lg-0 col-lg-6">
                                 <label for="">Due Date</label>
                                 <h5>{{ $transaction->due_at }}</h5>
                             </div>
-                            <div class="col-md-6">
+                            <div class="mb-4 mb-lg-0 col-lg-6">
                                 <label for="">Vendor / Payee</label>
                                 <h5>{{ $transaction->payee }}</h5>
                             </div>
                         </div>
-                        <div class="row mb-3">    
-                            <div class="col-md-6">
+                        <div class="row mb-0 mb-lg-4">    
+                            <div class="mb-4 mb-lg-0 col-lg-6">
                                 <label for="">Tax Type</label>
                                 <h5>{{ $transaction->form_vat_name && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_vat_name : $transaction->vattype->name }}</h5>
                             </div>                        
-                            <div class="col-md-6">
+                            <div class="mb-4 mb-lg-0 col-lg-6">
                                 <label for="">Prepared By</label>
                                 <h5>{{ $transaction->owner->name }}</h5>
                             </div>
                         </div>
-                        <div class="row mb-3">  
-                            <div class="col-md-6">
+                        <div class="row mb-0 mb-lg-4">  
+                            <div class="mb-4 mb-lg-0 col-lg-6">
                                 <label for="">Requested By</label>
                                 <h5>{{ $transaction->requested->name }}</h5>
                             </div>
-                            <div class="col-md-6">
+                            <div class="mb-4 mb-lg-0 col-lg-6">
                                 <label for="">Status</label>
                                 <h5>{{ $transaction->status->name }}</h5>
                             </div>
                         </div>
-                        <div class="row mb-3">  
-                            <div class="col-md-12 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
+                        <div class="row mb-0 mb-lg-4">  
+                            <div class="mb-4 mb-lg-0 col-lg-12 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
                                 <label for="">Authorized Approver</label>
                                 <h5>{{ $transaction->form_approver_id ? $transaction->formapprover->name : '' }}</h5>
                             </div>
                         </div>
-                        <div class="row mb-3">
-                            <div class="{{ !$transaction->is_reimbursement ? 'col-md-11' : 'col-md-6' }}">
+                        <div class="row mb-0 mb-lg-4">
+                            <div class="mb-4 mb-lg-0 {{ !$transaction->is_reimbursement ? 'col-lg-11' : 'col-lg-6' }}">
                                 <label for="">Purpose</label>
                                 <h6>{{ $transaction->purpose }}</h6>
                             </div>
                             @if ($transaction->is_reimbursement)
-                                <div class="col-md-6">
+                                <div class="mb-4 mb-lg-0 col-lg-6">
                                     <label for="">Attachments</label>
                                     <h6>@include('pages.admin.transactionliquidation.show-attachment')</h6>
                                 </div>
                             @endif
                         </div>
                         
-                        <div class="row mb-3">
+                        <div class="row mb-3 table-responsive">
                         @if (!$transaction->is_reimbursement)
                             <table class="table">
                                 <thead>
@@ -310,7 +316,7 @@
                                         <th>Qty</th>
                                         <th>Description</th>
                                         <th>Particulars</th>
-                                        <th class="text-right">Unit Price</th>
+                                        <th class="text-nowrap text-right">Unit Price</th>
                                         <th class="text-right">Total</th>
                                     </tr>
                                 </thead>
@@ -352,13 +358,13 @@
                                     @endif
                                     @if ($transaction->custom_vat > 0 || ($transaction->form_amount_payable && !in_array($transaction->status_id, config('global.generated_form'))))
                                     <tr class="font-weight-bold">
-                                        <td colspan="3" class="text-right">Total Payable</td>
+                                        <td colspan="3" class="text-nowrap text-right">Total Payable</td>
                                         <td colspan="2" class="text-right">{{ number_format($transaction->form_amount_payable && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_payable : $transaction->custom_total_payable, 2, '.', ',') }}</td>
                                     </tr>
                                     @endif
                                     <tr class="font-weight-bold border-top-2">
                                         <td colspan="3" class="text-right">Amount</td>
-                                        <td colspan="2" class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_payable && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_payable : $transaction->custom_total_payable, 2, '.', ',') }}</td>
+                                        <td colspan="2" class="text-nowrap text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_payable && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_payable : $transaction->custom_total_payable, 2, '.', ',') }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -409,28 +415,28 @@
                             <h3 class="d-inline-block mr-3">Issuing Details</h3>
                         </div>
                         <div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
+                            <div class="row mb-0 mb-lg-4">
+                                <div class="mb-4 mb-lg-0 col-lg-6">
                                     <label for="">Type</label>
                                     <h5>{{ $transaction->control_type }}</h5>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="mb-4 mb-lg-0 col-lg-6">
                                     <label for="">No.</label>
                                     <h5>{{ $transaction->control_no }}</h5>
                                 </div>
                             </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
+                            <div class="row mb-0 mb-lg-4">
+                                <div class="mb-4 mb-lg-0 col-lg-6">
                                     <label for="">{{ $transaction->is_deposit ? 'Date Deposited' : 'Released Date' }}</label>
                                     <h5>{{ $transaction->released_at }}</h5>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="mb-4 mb-lg-0 col-lg-6">
                                     <label for="">Amount</label>
                                     <h5>{{ $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</h5>
                                 </div>
                             </div>
-                            <div class="row mb-3">
-                                <div class="col-md-12">
+                            <div class="row mb-0 mb-lg-4">
+                                <div class="mb-4 mb-lg-0 col-lg-12">
                                     <label for="">{{ $transaction->is_deposit ? 'Issued By' : 'Released By' }}</label>
                                     <h5>{{ $transaction->releasedby->name }}</h5>
                                 </div>
@@ -438,8 +444,8 @@
                         </div>
                     @endif
                 </div>
-                <div class="col-sm-4">
-                    <div class="pb-2 text-right"><h1>History</h1></div>
+                <div class="col-lg-4">
+                    <div class="pt-4 pt-lg-0 pb-2 text-lg-right"><h1>History</h1></div>
                     <table class="table table-striped table-bordered table-sm small">
                         <tbody>
                             @foreach ($logs as $item)

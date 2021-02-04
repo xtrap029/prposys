@@ -49,6 +49,8 @@ class Transaction extends Model {
                                         'form_amount_payable',
                                         'formapprover.name',
                                         'liquidationapprover.name',
+                                        'currency_2',
+                                        'currency_2_rate',
                                         'depo_type',
                                         // 'bank.name',
                                         'bankbranch.name',
@@ -59,7 +61,9 @@ class Transaction extends Model {
                                         'status.name',
                                         'is_deposit',
                                         'is_bills',
-                                        'is_hr'
+                                        'is_hr',
+                                        'is_reimbursement',
+                                        'is_bank',
                                         ];
     protected static $logName = 'Transaction';
     protected static $logOnlyDirty = true;
@@ -122,6 +126,10 @@ class Transaction extends Model {
 
     public function liquidation() {
         return $this->hasMany(TransactionsLiquidation::class);
+    }
+
+    public function liquidation_sum() {
+        return $this->liquidation()->sum('amount');
     }
     
     public function attachments() {

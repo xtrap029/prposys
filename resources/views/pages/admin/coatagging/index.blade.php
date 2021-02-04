@@ -30,7 +30,7 @@
                                     <div class="pl-5 py-1">
                                         {{ $coatagging->name }}
                                         
-                                        <div class="d-inline-block float-right">
+                                        <div class="float-none float-sm-right">
                                             <a href="/coa-tagging/{{ $coatagging->id }}/edit" class="btn btn-link btn-sm">Edit</a>
                                             <form action="/coa-tagging/{{ $coatagging->id }}" method="post" class="d-inline-block">
                                                 @csrf

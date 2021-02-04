@@ -14,11 +14,11 @@
     </section>
     <section class="content">
         <div class="container-fluid">
-            <table class="table table-striped">
+            <table class="table table-striped table-responsive-sm">
                 <thead>
                     <tr>
                         <th>List</th>
-                        <th class="text-right">
+                        <th class="text-right text-nowrap">
                             <a href="/bank/create" class="mr-4">Create Bank</a>
                             <a href="/bank-branch/create">Create Account</a>
                         </th>
@@ -27,7 +27,7 @@
                 <tbody>
                     @forelse ($banks as $item)
                         <tr>
-                            <td>
+                            <td class="text-nowrap">
                                 <p class="font-weight-bold">{{ $item->name }}</p>
                                 <div class="pl-5 py-1">
                                     @forelse ($item->bankbranches as $branch)

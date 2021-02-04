@@ -285,7 +285,6 @@
                     $(preventClass+' [type="submit"]').attr('disabled', 'true')
                 })
             }
-            
         })
     </script>
 </body>

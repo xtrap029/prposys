@@ -16,7 +16,7 @@
         <div class="container-fluid">
             <form action="" method="get" class="no-print">
                 <div class="form-row mb-3">
-                    <div class="col-md-3 my-1">
+                    <div class="col-sm-6 col-md-3 my-1">
                         <label for="">Type</label>
                         <select name="type" class="form-control">
                             <option value="">All</option>
@@ -25,7 +25,7 @@
                             {{-- <option value="pc" {{ $trans_type == "pc" ? 'selected' : '' }}>PC</option> --}}
                         </select>
                     </div>
-                    <div class="col-md-6 my-1">
+                    <div class="col-sm-3 my-1">
                         <label for="">Company</label>
                         <select name="company" class="form-control">
                             <option value="">All</option>
@@ -34,7 +34,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3 my-1">
+                    <div class="col-sm-6 col-md-3 my-1">
                         <label for="">Requested By</label>
                         <select name="user_req" class="form-control">
                             <option value="">All</option>
@@ -43,7 +43,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3 my-1">
+                    <div class="col-sm-6 col-md-3 my-1">
                         <label for="">Status</label>
                         <select name="status" class="form-control">
                             <option value="">All</option>
@@ -61,22 +61,30 @@
                         </select>
                     </div>
                     <div class="col-md-3 my-1">
+                        <label for="">Bal. & Unbal.</label>
+                        <select name="bal" class="form-control">
+                            <option value="">All</option>
+                            <option value="0" {{ app('request')->input('bal') != "" && app('request')->input('bal') == 0 ? 'selected' : '' }}>Balanced</option>
+                            <option value="1" {{ app('request')->input('bal') == 1 ? 'selected' : '' }}>Unbalanced</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-md-3 my-1">
                         <label for="">Date From</label>
                         <input type="date" name="from" class="form-control" value="{{ !empty($_GET['from']) ? $_GET['from'] : '' }}">
                     </div>
-                    <div class="col-md-3 my-1">
+                    <div class="col-sm-6 col-md-3 my-1">
                         <label for="">Date To</label>
                         <input type="date" name="to" class="form-control" value="{{ !empty($_GET['to']) ? $_GET['to'] : '' }}">
                     </div>
                 </div>
                 <div class="form-row mb-3">
-                    <div class="col-md-1">
+                    <div class="my-1 col-sm-3 col-lg-2 col-xl-1">
                         <a href="/transaction/report-all?from={{ date('Y-m-01') }}&to={{ date('Y-m-t') }}" class="btn btn-secondary btn-block">Reset</a>
                     </div>
-                    <div class="col-md-1">
+                    <div class="my-1 col-sm-3 col-lg-2 col-xl-1">
                         <input type="submit" value="Generate" class="btn btn-primary btn-block">
                     </div>
-                    <div class="offset-md-8 col-md-1">
+                    <div class="my-1 offset-lg-4 offset-xl-8 col-sm-3 col-lg-2 col-xl-1">
                         <div class="btn-group btn-block" role="group">
                             <button type="button" class="btn btn-danger" onclick="window.print();">Print</button>
                             @if (!empty($_GET['status']) && in_array($_GET['status'], config('global.issued_cleared')))
@@ -85,17 +93,17 @@
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-right">
                                     <a class="dropdown-item {{ !in_array($_GET['status'], config('global.form_issued')) ? 'd-none' : '' }}" href="#"
-                                        onclick="window.open('/transaction-form/print-issued?type={{ $trans_type }}&company={{ $trans_company }}&status={{ $trans_status }}&category={{ $trans_category }}&from={{ $trans_from }}&to={{ $trans_to }}','name','width=800,height=800')">
+                                        onclick="window.open('/transaction-form/print-issued?type={{ $trans_type }}&company={{ $trans_company }}&status={{ $trans_status }}&category={{ $trans_category }}&bal={{ $trans_bal }}&from={{ $trans_from }}&to={{ $trans_to }}','name','width=800,height=800')">
                                         Issued Forms
                                     <a class="dropdown-item {{ !in_array($_GET['status'], config('global.liquidation_cleared')) ? 'd-none' : '' }}" href="#"
-                                        onclick="window.open('/transaction-liquidation/print-cleared?type={{ $trans_type }}&company={{ $trans_company }}&status={{ $trans_status }}&category={{ $trans_category }}&from={{ $trans_from }}&to={{ $trans_to }}','name','width=800,height=800')">
+                                        onclick="window.open('/transaction-liquidation/print-cleared?type={{ $trans_type }}&company={{ $trans_company }}&status={{ $trans_status }}&category={{ $trans_category }}&bal={{ $trans_bal }}&from={{ $trans_from }}&to={{ $trans_to }}','name','width=800,height=800')">
                                         Cleared Forms
                                     </a>
                                 </div>
                             @endif
                         </div>
                     </div>
-                    <div class="col-md-1">
+                    <div class="my-1 col-sm-3 col-lg-2 col-xl-1">
                         <a href="{{ url()->current().'?'.http_build_query(array_merge(request()->all(),['csv' => ''])) }}" class="btn btn-success btn-block" target="_blank">CSV</a>
                     </div>
                 </div>
@@ -162,7 +170,7 @@
                     </div>
                 @endif
 
-                <table class="table mb-0 small table-sm table-striped">
+                <table class="table mb-0 small table-sm table-striped table-responsive-md">
                     <tr class="bg-gray font-weight-bold">
                         <td style="min-width: 75px;">PO/PR #</td>
                         <td>Company</td>

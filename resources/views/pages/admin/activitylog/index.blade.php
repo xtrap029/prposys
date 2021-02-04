@@ -14,7 +14,7 @@
     </section>
     <section class="content">
         <div class="container-fluid">
-            <table class="table table-striped">
+            <table class="table table-striped table-responsive-sm">
                 <thead>
                     <tr>
                         <th>Action</th>
@@ -27,11 +27,11 @@
                 <tbody>
                     @forelse ($activity_logs as $item)
                         <tr>
-                            <td>{{ ucfirst($item->description) }}</td>
-                            <td>{{ $item->log_name }}</td>
-                            <td>{{ $item->causer->name }}</td>
-                            <td>{{ Carbon::parse($item->created_at)->diffInDays(Carbon::now()) >= 1 ? $item->created_at->format('Y-m-d') : $item->created_at->diffForHumans() }}</td>
-                            <td class="text-right">
+                            <td class="text-nowrap">{{ ucfirst($item->description) }}</td>
+                            <td class="text-nowrap">{{ $item->log_name }}</td>
+                            <td class="text-nowrap">{{ $item->causer->name }}</td>
+                            <td class="text-nowrap">{{ Carbon::parse($item->created_at)->diffInDays(Carbon::now()) >= 1 ? $item->created_at->format('Y-m-d') : $item->created_at->diffForHumans() }}</td>
+                            <td class="text-right text-nowrap">
                                 <a href="#_" data-toggle="modal" data-target="#modal-{{ $item->id }}"><small>More info</small></a>
                                 <div class="modal fade" id="modal-{{ $item->id }}" tabindex="-1" role="dialog" aria-hidden="true">
                                     <div class="modal-dialog modal-lg" role="document">
@@ -123,7 +123,7 @@
                     @endforelse
                 </tbody>
             </table>
-            <div class="text-center">
+            <div class="overflow-auto position-relative text-center">
                 <div class="d-inline-block">
                     {{ $activity_logs->links() }}
                 </div>

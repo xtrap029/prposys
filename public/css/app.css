@@ -43629,10 +43629,10 @@ label:not(.form-check-label):not(.custom-file-label) {
 .card-search {
   position: absolute;
   right: 0;
-  z-index: 3;
+  z-index: 4;
   top: 0;
   margin: auto;
-  margin-top: 45px;
+  margin-top: 5px;
   width: 100%;
   transition: height 2s;
 }
@@ -43714,6 +43714,10 @@ label:not(.form-check-label):not(.custom-file-label) {
 .outline-0:focus {
   outline: none;
   box-shadow: none;
+}
+
+.break-word {
+  word-break: break-word;
 }
 
 @media print {

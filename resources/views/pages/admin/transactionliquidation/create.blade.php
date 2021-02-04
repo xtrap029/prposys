@@ -58,7 +58,7 @@
                         </button>
                     </div>
                 @endif
-                @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
+                @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr && !$transaction->is_bank)
                     <div class="jsReplicate jsMath mt-5">
                         <h4 class="text-center">Items</h4>
                         <table class="table bg-white">
@@ -148,7 +148,7 @@
                             <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
                         </div>
                     </div>
-                @elseif($transaction->is_deposit)
+                @elseif($transaction->is_deposit || $transaction->is_bank)
                     <div class="row mt-5">                                            
                         <div class="col-md-3">
                             <label for="" class="font-weight-bold">Mode</label>
@@ -197,6 +197,30 @@
                             <label for="" class="font-weight-bold">Received By</label>
                             <input type="text" name="depo_received_by" class="form-control @error('depo_received_by') is-invalid @enderror" required>
                             @include('errors.inline', ['message' => $errors->first('depo_received_by')])
+                        </div>
+                    </div>
+                    <div class="row mt-3 {{ !$transaction->is_bank ? 'd-none' : '' }}">
+                        <div class="col-md-3">
+                            <label for="" class="font-weight-bold">Currency</label>
+                            <select name="currency_2" id="currencyChange" class="form-control @error('currency_2') is-invalid @enderror">
+                                @foreach (config('global.currency') as $key => $item)
+                                    <option value="{{ config('global.currency_label')[$key] }}" {{ $transaction->currency == config('global.currency_label')[$key] ? 'selected' : '' }}>{{ $item }}</option>
+                                @endforeach
+                            </select>
+                            @include('errors.inline', ['message' => $errors->first('currency_2')])
+                        </div>
+                        <div class="col-md-3">
+                            <label for="" class="font-weight-bold">FX Rate</label>
+                            <input type="number" id="currencyFx" class="form-control @error('currency_2_rate') is-invalid @enderror" step="0.01" name="currency_2_rate" value="1" readonly required>
+                            @include('errors.inline', ['message' => $errors->first('currency_2_rate')])
+                        </div>
+                        <div class="col-md-3">
+                            <label for="" class="font-weight-bold">Issued Amount (Converted)</label>
+                            <div class="pt-2">{{ $transaction->currency }} <span id="currencyAmount">{{ number_format($transaction->amount_issued, 2, '.', ',') }}</span></div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="" class="font-weight-bold">Bank Transfer Amount</label>
+                            <div class="pt-2">{{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}</div>
                         </div>
                     </div>
                 @endif
@@ -253,7 +277,7 @@
                 </div>
             </form>
 
-            @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
+            @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr && !$transaction->is_bank)
                 <table class="d-none">
                     <tbody class="jsReplicate_template">
                         <tr class="jsReplicate_template_item">
@@ -364,6 +388,21 @@
                     }, 1000);
                     return false
                 }
+            })
+
+            $('#currencyChange').change(function() {
+                if ($(this).val() != '{{ $transaction->currency }}') {
+                    $('#currencyFx').attr("readonly", false) 
+                } else {
+                    $('#currencyFx').val(1).attr("readonly", "readonly") 
+                }
+
+                $('#currencyFx').trigger('change')
+            })
+
+            $('#currencyFx').on('keyup keypress blur change', function() {
+                convertedAmt = parseFloat($(this).val() == "" ? 0 : $(this).val()) * parseFloat('{{ $transaction->amount_issued }}')
+                $('#currencyAmount').text(convertedAmt.toLocaleString())
             })
         })
     </script>

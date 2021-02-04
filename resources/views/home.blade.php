@@ -6,7 +6,7 @@
 <section class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6 col-lg-4">
                 <div class="card card-widget widget-user">
                     <div class="widget-user-header bg--tecc">
                         <h3 class="widget-user-username">{{ $user->name }}</h3>
@@ -44,7 +44,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-8 d-flex">
+            <div class="col-md-6 col-lg-8 d-flex">
                 {{-- <div class="card jsInspire w-100">
                     <div class="card-body h-100 d-table">
                         <div class="text-white d-table-cell vlign--middle text-center">
