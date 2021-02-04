@@ -70,9 +70,9 @@
                     <div class="col-md-1">
                         <label for="">Currency</label>
                         <select name="currency" class="form-control @error('currency') is-invalid @enderror">
-                            <option value="PHP" {{ $transaction->currency == 'PHP' ? 'selected' : '' }}>PHP</option> 
-                            <option value="USD" {{ $transaction->currency == 'USD' ? 'selected' : '' }}>USD</option>   
-                            <option value="EUR" {{ $transaction->currency == 'EUR' ? 'selected' : '' }}>EUR</option>   
+                            @foreach (config('global.currency') as $key => $item)
+                                <option value="{{ config('global.currency_label')[$key] }}" {{ $transaction->currency == config('global.currency_label')[$key] ? 'selected' : '' }}>{{ $item }}</option>
+                            @endforeach 
                         </select>
                     </div>
                     <div class="col-md-4">
@@ -155,6 +155,17 @@
                                     </div>
                                     <div class="col-9 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[3] }}</h6>          
+                                        <p class="d-none">Excepteur sint non proident, sunt in culpa qui mollit anim id.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-3 d-none">
+                                <div class="callout callout-success py-2 mx-2 row">
+                                    <div class="col-3">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[5] }}" class="form-control m-auto outline-0"  {{ $transaction->is_bank == 1 ? 'checked' : '' }}>
+                                    </div>
+                                    <div class="col-9 mt-2">
+                                        <h6 class="font-weight-bold">{{ config('global.trans_category_label')[5] }}</h6>          
                                         <p class="d-none">Excepteur sint non proident, sunt in culpa qui mollit anim id.</p>
                                     </div>
                                 </div>

@@ -15,6 +15,8 @@
                     {{ config('global.trans_category_label')[3] }}
                 @elseif($transaction->is_reimbursement)
                     {{ config('global.trans_category_label')[4] }}
+                @elseif($transaction->is_bank)
+                    {{ config('global.trans_category_label')[5] }}
                 @else
                     {{ $trans_page }}
                 @endif

@@ -245,26 +245,31 @@ class TransactionsLiquidationController extends Controller {
             'attachment_description.*' => ['required']
         ];
 
-        if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr) {
+        if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr && !$transaction->is_bank) {
             $validate['date.*'] = ['required', 'date'];
             $validate['expense_type_id.*'] = ['required', 'exists:expense_types,id'];
             $validate['description.*'] = ['required'];
             $validate['location.*'] = ['required'];
             $validate['receipt.*'] = ['in:1,0'];
             $validate['amount.*'] = ['required', 'min:0'];
-        } else if ($transaction->is_deposit)  {
+        } else if ($transaction->is_deposit || $transaction->is_bank)  {
             $validate['depo_type'] = ['required', 'in:'.implode(',', config('global.deposit_type'))];
             $validate['depo_bank_branch_id'] = ['required', 'exists:bank_branches,id'];
             $validate['depo_ref'] = ['required'];
             $validate['depo_date'] = ['required', 'date'];
             $validate['depo_received_by'] = [];
             $validate['liquidation_approver_id'] = ['required', 'exists:users,id'];
+            
+            if ($transaction->is_bank) {
+                $validate['currency_2'] = ['required'];
+                $validate['currency_2_rate'] = ['required', 'min:0'];
+            }
         }
 
         // validate input
         $data = $request->validate($validate);
 
-        if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr) {
+        if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr && !$transaction->is_bank) {
             $attr_liq['transaction_id'] = $transaction->id;
             $attr_liq['owner_id'] = auth()->id();
             $attr_liq['updated_id'] = auth()->id();
@@ -289,17 +294,22 @@ class TransactionsLiquidationController extends Controller {
             }
         }
 
-        if ($transaction->is_deposit) {
+        if ($transaction->is_deposit || $transaction->is_bank) {
             $transaction->depo_type = $data['depo_type'];
             $transaction->depo_bank_branch_id = $data['depo_bank_branch_id'];
             $transaction->depo_ref = $data['depo_ref'];
             $transaction->depo_date = $data['depo_date'];
             $transaction->depo_received_by = $data['depo_received_by'];
             $transaction->liquidation_approver_id = $data['liquidation_approver_id'];
+
+            if ($transaction->is_bank) {
+                $transaction->currency_2 = $data['currency_2'];
+                $transaction->currency_2_rate = $data['currency_2_rate'];
+            }
         }
         
         $transaction->status_prev_id = $transaction->status_id;
-        $transaction->status_id = !$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr ? config('global.liquidation_generated')[0] : config('global.liquidation_cleared')[0];
+        $transaction->status_id = !$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr && !$transaction->is_bank ? config('global.liquidation_generated')[0] : config('global.liquidation_cleared')[0];
         $transaction->edit_count = 0;
         $transaction->updated_id = auth()->id();
         $transaction->update();

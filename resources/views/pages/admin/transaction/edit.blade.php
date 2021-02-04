@@ -6,13 +6,13 @@
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-6">
+                <div class="col-lg-6">
                     <h1>
                         <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--xs mr-2">
                         {{ $transaction->project->company->name }}
                     </h1>
                 </div>
-                <div class="col-sm-6 text-right">
+                <div class="col-lg-6 text-right">
                     <h1>Edit {{ strtoupper($transaction->trans_type) }}</h1>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                             @include('errors.inline', ['message' => $errors->first('particulars_custom')])
                         @endif
                     </div> --}}
-                    <div class="col-md-7">
+                    <div class="col-sm-5 col-lg-7 mb-2">
                         <label for="">Project</label>
                         <select name="project_id" class="form-control @error('project_id') is-invalid @enderror">
                             @foreach ($projects as $item)
@@ -48,38 +48,38 @@
                         </select>
                         @include('errors.inline', ['message' => $errors->first('project_id')])
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-4 col-sm-2 col-lg-1 mb-2">
                         <label for="">Currency</label>
                         <input type="text" class="form-control" value="{{ $transaction->currency }}" readonly>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-8 col-sm-5 col-lg-4 mb-2">
                         <label for="">Amount</label>
                         <input type="number" class="form-control @error('amount') is-invalid @enderror" step="0.01" name="amount" value="{{ $transaction->amount }}" required>
                         @include('errors.inline', ['message' => $errors->first('amount')])
                     </div>
                 </div>
                 <div class="form-row mb-3">
-                    <div class="col-md-8">
+                    <div class="col-sm-6 col-lg-8 mb-2">
                         <label for="">Purpose</label>
                         <textarea name="purpose" rows="1" class="form-control @error('purpose') is-invalid @enderror" required>{{ $transaction->purpose }}</textarea>
                         @include('errors.inline', ['message' => $errors->first('purpose')])
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-sm-6 col-lg-4 mb-2">
                         <label for="">Payee Name</label>
                         <input type="text" class="form-control @error('payee') is-invalid @enderror" name="payee" value="{{ $transaction->payee }}" required>
                         @include('errors.inline', ['message' => $errors->first('payee')])
                     </div>
                 </div>
                 <div class="form-row mb-3">
-                    <div class="col-md-4">
+                    <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Due Date</label>
                         <input type="text" class="form-control" value="{{ $transaction->due_at }}" readonly>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Requested by</label>
                         <input type="text" class="form-control" value="{{ $transaction->requested->name }}" readonly>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Prepared by</label>
                         <h5>{{ $transaction->owner->name }}</h5>
                     </div>
@@ -96,57 +96,68 @@
                             Select Transaction Category
                         </div>
                         <div class="card-body pb-1 row">                            
-                            <div class="col-12 col-md-3">
-                                <div class="callout py-2 mx-2 row">
-                                    <div class="col-3">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[0] }}" class="form-control m-auto outline-0" {{ $transaction->is_deposit == 0 && $transaction->is_bills == 0 && $transaction->is_hr == 0 && $transaction->is_reimbursement == 0 ? 'checked' : '' }}>
+                            <div class="col-md-6 col-xl-4">
+                                <div class="callout py-1 mx-1 row">
+                                    <div class="col-2">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[0] }}" class="vlign--baseline-middle m-auto outline-0" {{ $transaction->is_deposit == 0 && $transaction->is_bills == 0 && $transaction->is_hr == 0 && $transaction->is_reimbursement == 0 ? 'checked' : '' }}>
                                     </div>
-                                    <div class="col-9 mt-2">
+                                    <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[0] }}</h6>
                                         <p class="d-none">Lorem ipsum dolor sit amet, consectetur, et dolore magna aliqua.</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-3">
-                                <div class="callout py-2 mx-2 row">
-                                    <div class="col-3">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[1] }}" class="form-control m-auto outline-0"  {{ $transaction->is_deposit == 1 ? 'checked' : '' }}>
+                            <div class="col-md-6 col-xl-4">
+                                <div class="callout py-1 mx-1 row">
+                                    <div class="col-2">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[1] }}" class="vlign--baseline-middle m-auto outline-0"  {{ $transaction->is_deposit == 1 ? 'checked' : '' }}>
                                     </div>
-                                    <div class="col-9 mt-2">
+                                    <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[1] }}</h6>
                                         <p class="d-none">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-3">
-                                <div class="callout py-2 mx-2 row">
-                                    <div class="col-3">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[2] }}" class="form-control m-auto outline-0"  {{ $transaction->is_bills == 1 ? 'checked' : '' }}>
+                            <div class="col-md-6 col-xl-4">
+                                <div class="callout py-1 mx-1 row">
+                                    <div class="col-2">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[2] }}" class="vlign--baseline-middle m-auto outline-0"  {{ $transaction->is_bills == 1 ? 'checked' : '' }}>
                                     </div>
-                                    <div class="col-9 mt-2">
+                                    <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[2] }}</h6>          
                                         <p class="d-none">Excepteur sint non proident, sunt in culpa qui mollit anim id.</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-3">
-                                <div class="callout py-2 mx-2 row">
-                                    <div class="col-3">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[3] }}" class="form-control m-auto outline-0"  {{ $transaction->is_hr == 1 ? 'checked' : '' }}>
+                            <div class="col-md-6 col-xl-4">
+                                <div class="callout py-1 mx-1 row">
+                                    <div class="col-2">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[3] }}" class="vlign--baseline-middle m-auto outline-0"  {{ $transaction->is_hr == 1 ? 'checked' : '' }}>
                                     </div>
-                                    <div class="col-9 mt-2">
+                                    <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[3] }}</h6>          
                                         <p class="d-none">Excepteur sint non proident, sunt in culpa qui mollit anim id.</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-3">
-                                <div class="callout py-2 mx-2 row">
-                                    <div class="col-3">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[4] }}" class="form-control m-auto outline-0"  {{ $transaction->is_reimbursement == 1 ? 'checked' : '' }}>
+                            <div class="col-md-6 col-xl-4">
+                                <div class="callout py-1 mx-1 row">
+                                    <div class="col-2">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[4] }}" class="vlign--baseline-middle m-auto outline-0"  {{ $transaction->is_reimbursement == 1 ? 'checked' : '' }}>
                                     </div>
-                                    <div class="col-9 mt-2">
+                                    <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[4] }}</h6>          
+                                        <p class="d-none">Excepteur sint non proident, sunt in culpa qui mollit anim id.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-xl-4 d-none">
+                                <div class="callout py-1 mx-1 row">
+                                    <div class="col-2">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[5] }}" class="vlign--baseline-middle m-auto outline-0"  {{ $transaction->is_bank == 1 ? 'checked' : '' }}>
+                                    </div>
+                                    <div class="col-10 mt-2">
+                                        <h6 class="font-weight-bold">{{ config('global.trans_category_label')[5] }}</h6>          
                                         <p class="d-none">Excepteur sint non proident, sunt in culpa qui mollit anim id.</p>
                                     </div>
                                 </div>
@@ -154,7 +165,7 @@
                         </div>
                     </div>
                     <div class="col-md-12 text-center">
-                        <div class="mt-4">
+                        <div class="my-4">
                             <a href="/transaction/view/{{ $transaction->id }}" class="mr-3">Cancel</a>
                             <input type="submit" class="btn btn-primary" value="Save">
                         </div>

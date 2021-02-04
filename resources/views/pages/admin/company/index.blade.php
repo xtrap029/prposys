@@ -14,7 +14,7 @@
     </section>
     <section class="content">
         <div class="container-fluid">
-            <table class="table table-striped">
+            <table class="table table-striped table-responsive-sm">
                 <thead>
                     <tr>
                         <th colspan="3">List</th>
@@ -25,9 +25,12 @@
                     @forelse ($companies as $item)
                         <tr>
                             <td><img src="storage/public/images/companies/{{ $item->logo }}" alt="" class="thumb thumb--xs"></td>
-                            <td class="align-middle">{{ $item->code }}</td>
-                            <td class="align-middle">{{ $item->name }}</td>
-                            <td class="align-middle text-right">
+                            <td class="align-middle text-nowrap">
+                                {{ $item->name }}
+                                <div class="text-info">{{ $item->code }}</div>
+                            </td>
+                            <td class="align-middle text-nowrap"></td>
+                            <td class="align-middle text-right text-nowrap">
                                 <a href="/company-project/{{ $item->id }}" class="btn btn-link btn-sm">Projects</a>
                                 <a href="/company/{{ $item->id }}/edit" class="btn btn-link btn-sm">Edit</a>
                                 <form action="/company/{{ $item->id }}" method="post" class="d-inline-block">
