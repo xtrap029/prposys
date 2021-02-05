@@ -6,13 +6,13 @@
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-6">
+                <div class="col-lg-6 mb-2">
                     <h1>
                         <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--xs mr-2">
                         {{ $transaction->project->company->name }}
                     </h1>
                 </div>
-                <div class="col-sm-6 text-right">
+                <div class="col-lg-6 text-lg-right mb-2">
                     <h1>Liquidate {{ strtoupper($transaction->trans_type) }}</h1>
                 </div>
             </div>
@@ -61,96 +61,98 @@
                 @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr && !$transaction->is_bank)
                     <div class="jsReplicate jsMath mt-5">
                         <h4 class="text-center">Items</h4>
-                        <table class="table bg-white">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Type</th>
-                                    <th>Description</th>
-                                    <th>Location/Route</th>
-                                    <th class="text-center">Receipt</th>
-                                    <th>Amount</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody class="jsReplicate_container">
-                                <tr>
-                                    <td><input type="date" class="form-control" name="date[]" value="{{ old('date.0') }}" required></td>
-                                    <td>
-                                        <select name="expense_type_id[]" class="form-control" required>
-                                            @foreach ($expense_types as $item)
-                                                <option value="{{ $item->id }}" {{ old('expense_type_id.0') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td><input type="text" class="form-control" name="description[]" value="{{ old('description.0') }}" required></td>
-                                    <td><input type="text" class="form-control" name="location[]" value="{{ old('location.0') }}" required></td>
-                                    <td class="text-center">
-                                        <select name="receipt[]" class="form-control">
-                                            <option value="1" {{ old('receipt.0') == 1 ? 'selected' : '' }}>Y</option>
-                                            <option value="0" {{ old('receipt.0') == 0 ? 'selected' : '' }}>N</option>
-                                        </select>
-                                    </td>
-                                    <td colspan="2">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">{{ $transaction->currency }}</span>
+                        <div class="table-responsive">
+                            <table class="table bg-white" style="min-width: 1000px">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                        <th>Location/Route</th>
+                                        <th class="text-center">Receipt</th>
+                                        <th>Amount</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="jsReplicate_container">
+                                    <tr>
+                                        <td><input type="date" class="form-control" name="date[]" value="{{ old('date.0') }}" required></td>
+                                        <td>
+                                            <select name="expense_type_id[]" class="form-control" required>
+                                                @foreach ($expense_types as $item)
+                                                    <option value="{{ $item->id }}" {{ old('expense_type_id.0') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        <td><input type="text" class="form-control" name="description[]" value="{{ old('description.0') }}" required></td>
+                                        <td><input type="text" class="form-control" name="location[]" value="{{ old('location.0') }}" required></td>
+                                        <td class="text-center">
+                                            <select name="receipt[]" class="form-control">
+                                                <option value="1" {{ old('receipt.0') == 1 ? 'selected' : '' }}>Y</option>
+                                                <option value="0" {{ old('receipt.0') == 0 ? 'selected' : '' }}>N</option>
+                                            </select>
+                                        </td>
+                                        <td colspan="2">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">{{ $transaction->currency }}</span>
+                                                </div>
+                                                <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ old('amount.0') }}" required>
+                                            </div>  
+                                        </td>
+                                    </tr>
+                                    @if (old('date'))
+                                        @foreach (old('date') as $key => $item)
+                                            @if ($key > 0)
+                                                <tr class="jsReplicate_template_item">
+                                                    <td><input type="date" class="form-control" name="date[]" value="{{ old('date.'.$key) }}" required></td>
+                                                    <td>
+                                                        <select name="expense_type_id[]" class="form-control" required>
+                                                            @foreach ($expense_types as $expense_type)
+                                                                <option value="{{ $expense_type->id }}" {{ old('expense_type_id.'.$key) == $expense_type->id ? 'selected' : '' }}>{{ $expense_type->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                    <td><input type="text" class="form-control" name="description[]" value="{{ old('description.'.$key) }}" required></td>
+                                                    <td><input type="text" class="form-control" name="location[]" value="{{ old('location.'.$key) }}" required></td>
+                                                    <td class="text-center">
+                                                        <select name="receipt[]" class="form-control">
+                                                            <option value="1" {{ old('receipt.'.$key) == 1 ? 'selected' : '' }}>Y</option>
+                                                            <option value="0" {{ old('receipt.'.$key) == 0 ? 'selected' : '' }}>N</option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">{{ $transaction->currency }}</span>
+                                                            </div>
+                                                            <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ old('amount.'.$key) }}" required>
+                                                        </div>  
+                                                    </td>
+                                                    <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                                </tr>
+                                            @endif
+                                        @endforeach
+                                    @endif
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="7">
+                                            <div class="float-right">
+                                                Total Amount: <span class="font-weight-bold jsMath_sum jsMath_alert">0</span> / <span class="font-weight-bold jsMath_validate">{{ number_format($transaction->amount_issued, 2, '.', ',') }}</span>
                                             </div>
-                                            <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ old('amount.0') }}" required>
-                                        </div>  
-                                    </td>
-                                </tr>
-                                @if (old('date'))
-                                    @foreach (old('date') as $key => $item)
-                                        @if ($key > 0)
-                                            <tr class="jsReplicate_template_item">
-                                                <td><input type="date" class="form-control" name="date[]" value="{{ old('date.'.$key) }}" required></td>
-                                                <td>
-                                                    <select name="expense_type_id[]" class="form-control" required>
-                                                        @foreach ($expense_types as $expense_type)
-                                                            <option value="{{ $expense_type->id }}" {{ old('expense_type_id.'.$key) == $expense_type->id ? 'selected' : '' }}>{{ $expense_type->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                                <td><input type="text" class="form-control" name="description[]" value="{{ old('description.'.$key) }}" required></td>
-                                                <td><input type="text" class="form-control" name="location[]" value="{{ old('location.'.$key) }}" required></td>
-                                                <td class="text-center">
-                                                    <select name="receipt[]" class="form-control">
-                                                        <option value="1" {{ old('receipt.'.$key) == 1 ? 'selected' : '' }}>Y</option>
-                                                        <option value="0" {{ old('receipt.'.$key) == 0 ? 'selected' : '' }}>N</option>
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text">{{ $transaction->currency }}</span>
-                                                        </div>
-                                                        <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ old('amount.'.$key) }}" required>
-                                                    </div>  
-                                                </td>
-                                                <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
-                                            </tr>
-                                        @endif
-                                    @endforeach
-                                @endif
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="7">
-                                        <div class="float-right">
-                                            Total Amount: <span class="font-weight-bold jsMath_sum jsMath_alert">0</span> / <span class="font-weight-bold jsMath_validate">{{ number_format($transaction->amount_issued, 2, '.', ',') }}</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                         <div class="text-center">
                             <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
                         </div>
                     </div>
                 @elseif($transaction->is_deposit || $transaction->is_bank)
-                    <div class="row mt-5">                                            
-                        <div class="col-md-3">
+                    <div class="row">                                            
+                        <div class="col-md-3 mb-2">
                             <label for="" class="font-weight-bold">Mode</label>
                             <select name="depo_type" class="depo_type form-control @error('depo_type') is-invalid @enderror" required>
                                 @foreach (config('global.deposit_type') as $item)
@@ -159,7 +161,7 @@
                             </select>
                             @include('errors.inline', ['message' => $errors->first('depo_type')])
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 mb-2">
                             <label for="" class="font-weight-bold">Type / Account #</label>
                             <select name="depo_bank_branch_id" class="form-control @error('depo_bank_branch_id') is-invalid @enderror" required>
                                 @foreach ($banks as $item)
@@ -172,14 +174,14 @@
                             </select>
                             @include('errors.inline', ['message' => $errors->first('depo_bank_branch_id')])
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-2">
                             <label for="" class="font-weight-bold">Reference Code</label>
                             <input type="text" name="depo_ref" class="depo_ref form-control @error('depo_ref') is-invalid @enderror" required>
                             @include('errors.inline', ['message' => $errors->first('depo_ref')])
                         </div>
                     </div>
-                    <div class="row mt-3">
-                        <div class="col-md-3">
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
                             <label for="" class="font-weight-bold">Deposited By</label>
                             <select name="liquidation_approver_id" class="form-control @error('liquidation_approver_id') is-invalid @enderror">
                                 @foreach ($users as $item)
@@ -188,19 +190,19 @@
                             </select>
                             @include('errors.inline', ['message' => $errors->first('requested_id')])
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 mb-2">
                             <label for="" class="font-weight-bold">Date Deposited</label>
                             <input type="date" name="depo_date" class="form-control @error('depo_date') is-invalid @enderror" required>
                             @include('errors.inline', ['message' => $errors->first('depo_date')])
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-2">
                             <label for="" class="font-weight-bold">Received By</label>
                             <input type="text" name="depo_received_by" class="form-control @error('depo_received_by') is-invalid @enderror" required>
                             @include('errors.inline', ['message' => $errors->first('depo_received_by')])
                         </div>
                     </div>
-                    <div class="row mt-3 {{ !$transaction->is_bank ? 'd-none' : '' }}">
-                        <div class="col-md-3">
+                    <div class="row {{ !$transaction->is_bank ? 'd-none' : '' }}">
+                        <div class="col-md-3 mb-2">
                             <label for="" class="font-weight-bold">Currency</label>
                             <select name="currency_2" id="currencyChange" class="form-control @error('currency_2') is-invalid @enderror">
                                 @foreach (config('global.currency') as $key => $item)
@@ -209,16 +211,16 @@
                             </select>
                             @include('errors.inline', ['message' => $errors->first('currency_2')])
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 mb-2">
                             <label for="" class="font-weight-bold">FX Rate</label>
                             <input type="number" id="currencyFx" class="form-control @error('currency_2_rate') is-invalid @enderror" step="0.01" name="currency_2_rate" value="1" readonly required>
                             @include('errors.inline', ['message' => $errors->first('currency_2_rate')])
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 mb-2">
                             <label for="" class="font-weight-bold">Issued Amount (Converted)</label>
                             <div class="pt-2">{{ $transaction->currency }} <span id="currencyAmount">{{ number_format($transaction->amount_issued, 2, '.', ',') }}</span></div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 mb-2">
                             <label for="" class="font-weight-bold">Bank Transfer Amount</label>
                             <div class="pt-2">{{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}</div>
                         </div>
@@ -227,39 +229,41 @@
                 <div class="jsReplicate mt-5 pt-5">
                     <h4 class="text-center">Attachments</h4>
                     <div class="text-center mb-3">Attach receipts and documents here. Accepts .jpg, .png and .pdf file types, not more than 5mb each.</div>
-                    <table class="table bg-white">
-                        <thead>
-                            <tr>
-                                <th class="w-25">File</th>
-                                <th class="w-75">Description</th>
-                                <th></th>
-                            </tr>
-                        </thead>                        
-                        <tbody class="jsReplicate_container">
-                            <tr class="jsReplicate_template_item">
-                                <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
-                                <td><input type="text" name="attachment_description[]" class="form-control" value="{{ old('attachment_description.0') }}" required></td>
-                                <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
-                            </tr>
-                            @if (old('attachment_description'))
-                                @foreach (old('attachment_description') as $key => $item)
-                                    @if ($key > 0)
-                                        <tr class="jsReplicate_template_item">
-                                            <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
-                                            <td><input type="text" name="attachment_description[]" class="form-control" value="{{ old('attachment_description.'.$key) }}" required></td>
-                                            <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
-                                        </tr>
-                                    @endif
-                                @endforeach
-                            @endif
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table bg-white" style="min-width: 500px">
+                            <thead>
+                                <tr>
+                                    <th class="w-25">File</th>
+                                    <th class="w-75">Description</th>
+                                    <th></th>
+                                </tr>
+                            </thead>                        
+                            <tbody class="jsReplicate_container">
+                                <tr class="jsReplicate_template_item">
+                                    <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
+                                    <td><input type="text" name="attachment_description[]" class="form-control" value="{{ old('attachment_description.0') }}" required></td>
+                                    <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                </tr>
+                                @if (old('attachment_description'))
+                                    @foreach (old('attachment_description') as $key => $item)
+                                        @if ($key > 0)
+                                            <tr class="jsReplicate_template_item">
+                                                <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
+                                                <td><input type="text" name="attachment_description[]" class="form-control" value="{{ old('attachment_description.'.$key) }}" required></td>
+                                                <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="text-center">
                         <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
                     </div>
                 </div>
-                <div class="mt-5 pt-5">
-                    <table class="table bg-secondary rounded">
+                <div class="mt-5 pt-5 table-responsive">
+                    <table class="table bg-secondary rounded" style="min-width: 1000px">
                         <tbody>
                             <tr>
                                 <td class="w-25">
@@ -271,7 +275,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="text-center py-5 border-top">
+                <div class="col-md-12 text-center text-lg-right my-5">
                     <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="mr-3">Cancel</a>
                     <input type="submit" class="btn btn-primary" value="Save">
                 </div>

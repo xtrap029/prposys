@@ -6,13 +6,13 @@
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-6">
+                <div class="col-lg-6 mb-2">
                     <h1>
                         <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--xs mr-2">
                         {{ $transaction->project->company->name }}
                     </h1>
                 </div>
-                <div class="col-sm-6 text-right">
+                <div class="col-lg-6 text-lg-right mb-2">
                     <h1>
                         @if ($transaction->is_deposit)
                             {{ config('global.trans_category_label_make_form')[1] }}
@@ -30,32 +30,34 @@
     </section>
     <section class="content">
         <div class="container-fluid">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Request No.</th>
-                        <th>Project</th>
-                        <th>Due Date</th>
-                        <th>Vendor</th>
-                        <th class="text-right">Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</td>
-                        <td>{{ $transaction->project->project }}</td>
-                        <td>{{ $transaction->due_at }}</td>
-                        <td>{{ $transaction->payee }}</td>
-                        <td class="text-right">{{ $transaction->currency." ".number_format($transaction->amount, 2, '.', ',') }}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="text-nowrap">Request No.</th>
+                            <th>Project</th>
+                            <th class="text-nowrap">Due Date</th>
+                            <th>Vendor</th>
+                            <th class="text-right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-nowrap">{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</td>
+                            <td class="text-nowrap">{{ $transaction->project->project }}</td>
+                            <td class="text-nowrap">{{ $transaction->due_at }}</td>
+                            <td class="text-nowrap">{{ $transaction->payee }}</td>
+                            <td class="text-nowrap text-right">{{ $transaction->currency." ".number_format($transaction->amount, 2, '.', ',') }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <form action="" method="post" class="jsPreventMultiple">
                 @csrf
                 <input type="hidden" name="key" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}">
                 <input type="hidden" name="company" value="{{ $transaction->project->company->id }}">
-                <div class="form-row mb-3">
-                    <div class="col-md-12">
+                <div class="form-row">
+                    <div class="col-md-12 mb-2">
                         <label for="">Particulars</label>
                         @if ($trans_page_url == 'prpo')
                             <select name="particulars_id_single" class="form-control @error('particulars_id') is-invalid @enderror">
@@ -70,13 +72,13 @@
                         @endif
                     </div>
                 </div>
-                <div class="form-row mb-3">
-                    <div class="col-md-5 {{ $transaction->is_deposit ? '' : 'd-none' }}">
+                <div class="form-row">
+                    <div class="mb-2 col-md-5 {{ $transaction->is_deposit ? '' : 'd-none' }}">
                         <label for="">Payor</label>
                         <input type="text" name="payor" class="form-control @error('payor') is-invalid @enderror" {{ $transaction->is_deposit ? 'required' : '' }}>
                         @include('errors.inline', ['message' => $errors->first('payor')])
                     </div>      
-                    <div class="{{ $transaction->is_deposit ? 'col-md-5' : 'col-md-9' }}">
+                    <div class="mb-2 {{ $transaction->is_deposit ? 'col-md-5' : 'col-md-9' }}">
                         <label for="">COA Tagging</label>
                         <select name="coa_tagging_id" class="form-control @error('coa_tagging_id') is-invalid @enderror" required>
                             @foreach ($coa_taggings as $item)
@@ -85,7 +87,7 @@
                         </select>
                         @include('errors.inline', ['message' => $errors->first('coa_tagging_id')])
                     </div>
-                    <div class="{{ $transaction->is_deposit ? 'col-md-2' : 'col-md-3' }}">
+                    <div class="mb-2 {{ $transaction->is_deposit ? 'col-md-2' : 'col-md-3' }}">
                         <label for="">Tax Type</label>
                         <select name="vat_type_id" class="form-control">
                             @foreach ($vat_types as $item)
@@ -98,83 +100,85 @@
                     <div class="col-md-12">
                         <div class="jsReplicate jsMath mt-5">
                             <h4 class="text-center">Items</h4>
-                            <table class="table bg-white">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 100px">Qty.</th>
-                                        <th>Description</th>
-                                        <th>Particulars</th>
-                                        <th>Amount</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody class="jsReplicate_container">
-                                    <tr>
-                                        <td><input type="number" min="1" step="any" class="form-control jsMath_qty jsMath_trigger" name="qty[]" value="{{ old('qty.0') ? old('qty.0') : 1 }}" required></td>
-                                        <td><input type="text" class="form-control" name="description[]" value="{{ old('description.0') }}" required></td>
-                                        <td>
-                                            <select name="particulars_id[]" class="form-control" required>
-                                                @foreach ($particulars as $item)
-                                                    <option value="{{ $item->id }}" {{ old('particulars_id.0') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                        <td colspan="2">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">{{ $transaction->currency }}</span>
+                            <div class="table-responsive">
+                                <table class="table bg-white" style="min-width:500px">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 100px">Qty.</th>
+                                            <th>Description</th>
+                                            <th>Particulars</th>
+                                            <th>Amount</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="jsReplicate_container">
+                                        <tr>
+                                            <td><input type="number" min="1" step="any" class="form-control jsMath_qty jsMath_trigger" name="qty[]" value="{{ old('qty.0') ? old('qty.0') : 1 }}" required></td>
+                                            <td><input type="text" class="form-control" name="description[]" value="{{ old('description.0') }}" required></td>
+                                            <td>
+                                                <select name="particulars_id[]" class="form-control" required>
+                                                    @foreach ($particulars as $item)
+                                                        <option value="{{ $item->id }}" {{ old('particulars_id.0') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td colspan="2">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">{{ $transaction->currency }}</span>
+                                                    </div>
+                                                    <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ old('amount.0') }}" required>
+                                                </div>                                            
+                                            </td>
+                                        </tr>
+                                        @if (old('qty'))
+                                            @foreach (old('qty') as $key => $item)
+                                                @if ($key > 0)
+                                                    <tr class="jsReplicate_template_item">
+                                                        <td><input type="number" min="1" step="any" class="form-control jsMath_qty jsMath_trigger" name="qty[]" value="{{ old('qty.'.$key) }}" required></td>
+                                                        <td><input type="text" class="form-control" name="description[]" value="{{ old('description.'.$key) }}" required></td>
+                                                        <td>
+                                                            <select name="particulars_id[]" class="form-control" required>
+                                                                @foreach ($particulars as $particulars_item)
+                                                                    <option value="{{ $particulars_item->id }}" {{ old('particulars_id.'.$key) == $particulars_item->id ? 'selected' : '' }}>{{ $particulars_item->name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text">{{ $transaction->currency }}</span>
+                                                                </div>
+                                                                <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ old('amount.'.$key) }}" required>
+                                                            </div>  
+                                                        </td>
+                                                        <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                                    </tr>
+                                                @endif
+                                            @endforeach
+                                        @endif
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="5" class="text-nowrap">
+                                                <div class="text-right float-lg-left font-weight-bold jsMath_alert">
+                                                    {{ __('messages.required_amount') }}
                                                 </div>
-                                                <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ old('amount.0') }}" required>
-                                            </div>                                            
-                                        </td>
-                                    </tr>
-                                    @if (old('qty'))
-                                        @foreach (old('qty') as $key => $item)
-                                            @if ($key > 0)
-                                                <tr class="jsReplicate_template_item">
-                                                    <td><input type="number" min="1" step="any" class="form-control jsMath_qty jsMath_trigger" name="qty[]" value="{{ old('qty.'.$key) }}" required></td>
-                                                    <td><input type="text" class="form-control" name="description[]" value="{{ old('description.'.$key) }}" required></td>
-                                                    <td>
-                                                        <select name="particulars_id[]" class="form-control" required>
-                                                            @foreach ($particulars as $particulars_item)
-                                                                <option value="{{ $particulars_item->id }}" {{ old('particulars_id.'.$key) == $particulars_item->id ? 'selected' : '' }}>{{ $particulars_item->name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </td>
-                                                    <td>
-                                                        <div class="input-group">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text">{{ $transaction->currency }}</span>
-                                                            </div>
-                                                            <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ old('amount.'.$key) }}" required>
-                                                        </div>  
-                                                    </td>
-                                                    <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
-                                                </tr>
-                                            @endif
-                                        @endforeach
-                                    @endif
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colspan="5">
-                                            <div class="float-left font-weight-bold jsMath_alert">
-                                                {{ __('messages.required_amount') }}
-                                            </div>
-                                            <div class="float-right">
-                                                Total Amount: <span class="font-weight-bold jsMath_sum jsMath_alert">0</span> / <span class="font-weight-bold jsMath_validate">{{ number_format($transaction->amount, 2, '.', ',') }}</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                                                <div class="text-nowrap text-right float-lg-right">
+                                                    Total Amount: <span class="font-weight-bold jsMath_sum jsMath_alert">0</span> / <span class="font-weight-bold jsMath_validate">{{ number_format($transaction->amount, 2, '.', ',') }}</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                             <div class="text-center">
                                 <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
                             </div>
                         </div>
                     </div>  
                     
-                    <div class="col-md-12 text-right mt-4">
+                    <div class="col-md-12 text-center text-lg-right my-5">
                         <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="mr-3">Cancel</a>
                         <input type="submit" class="btn btn-primary jsMath_submit" value="Save">
                     </div>

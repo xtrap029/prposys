@@ -6,13 +6,13 @@
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-lg-6">
+                <div class="col-lg-6 mb-2">
                     <h1>
                         <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--xs mr-2">
                         {{ $transaction->project->company->name }}
                     </h1>
                 </div>
-                <div class="col-lg-6 text-right">
+                <div class="col-lg-6 text-lg-right mb-2">
                     <h1>Edit {{ strtoupper($transaction->trans_type) }}</h1>
                 </div>
             </div>

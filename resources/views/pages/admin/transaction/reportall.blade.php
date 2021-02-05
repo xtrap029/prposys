@@ -25,7 +25,7 @@
                             {{-- <option value="pc" {{ $trans_type == "pc" ? 'selected' : '' }}>PC</option> --}}
                         </select>
                     </div>
-                    <div class="col-sm-3 my-1">
+                    <div class="col-sm-6 my-1">
                         <label for="">Company</label>
                         <select name="company" class="form-control">
                             <option value="">All</option>
@@ -78,13 +78,13 @@
                     </div>
                 </div>
                 <div class="form-row mb-3">
-                    <div class="my-1 col-sm-3 col-lg-2 col-xl-1">
+                    <div class="my-1 col-6 col-sm-3 col-lg-2 col-xl-1">
                         <a href="/transaction/report-all?from={{ date('Y-m-01') }}&to={{ date('Y-m-t') }}" class="btn btn-secondary btn-block">Reset</a>
                     </div>
-                    <div class="my-1 col-sm-3 col-lg-2 col-xl-1">
+                    <div class="my-1 col-6 col-sm-3 col-lg-2 col-xl-1">
                         <input type="submit" value="Generate" class="btn btn-primary btn-block">
                     </div>
-                    <div class="my-1 offset-lg-4 offset-xl-8 col-sm-3 col-lg-2 col-xl-1">
+                    <div class="my-1 col-6 offset-lg-4 offset-xl-8 col-sm-3 col-lg-2 col-xl-1">
                         <div class="btn-group btn-block" role="group">
                             <button type="button" class="btn btn-danger" onclick="window.print();">Print</button>
                             @if (!empty($_GET['status']) && in_array($_GET['status'], config('global.issued_cleared')))
@@ -103,7 +103,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="my-1 col-sm-3 col-lg-2 col-xl-1">
+                    <div class="my-1 col-6 col-sm-3 col-lg-2 col-xl-1">
                         <a href="{{ url()->current().'?'.http_build_query(array_merge(request()->all(),['csv' => ''])) }}" class="btn btn-success btn-block" target="_blank">CSV</a>
                     </div>
                 </div>
@@ -186,17 +186,17 @@
                     </tr>
                     @foreach ($transactions as $item)
                         <tr>
-                            <td><h6 class="font-weight-bold">{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</h6></td>
-                            <td>{{ $item->project->company->name }}</td>
-                            <td>{{ $item->project->project }}</td>
+                            <td class="text-nowrap"><h6 class="font-weight-bold">{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</h6></td>
+                            <td class="text-nowrap">{{ $item->project->company->name }}</td>
+                            <td class="text-nowrap">{{ $item->project->project }}</td>
                             <td>{{ $item->purpose }}</td>
                             <td>{{ $item->currency }}</td>
                             <td>{{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}</td>
-                            <td>{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
+                            <td class="text-nowrap">{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
                             <td style="word-break: break-all;">{{ $item->control_no }}</td>
-                            <td>{{ Carbon::parse($item->updated_at)->format('Y-m-d') }}</td>
-                            <td>{{ $item->requested->name }}</td>
-                            <td>{{ $item->status->name }}</td>
+                            <td class="text-nowrap">{{ Carbon::parse($item->updated_at)->format('Y-m-d') }}</td>
+                            <td class="text-nowrap">{{ $item->requested->name }}</td>
+                            <td class="text-nowrap">{{ $item->status->name }}</td>
                             {{-- <td class="{{ empty($_GET['status']) || $_GET['status'] == "" ? '' : 'd-none' }}">
                                 {{ $item->status->name }}
                             </td> --}}

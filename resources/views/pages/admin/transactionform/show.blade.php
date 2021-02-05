@@ -383,8 +383,8 @@
                                 <tbody>
                                     @foreach ($transaction->liquidation as $item)
                                         <tr>
-                                            <td>{{ $item->date }}</td>
-                                            <td>{{ $item->expensetype->name }}</td>
+                                            <td class="text-nowrap">{{ $item->date }}</td>
+                                            <td class="text-nowrap">{{ $item->expensetype->name }}</td>
                                             <td>{{ $item->description }}</td>
                                             <td>{{ $item->location }}</td>
                                             <td class="text-center">{{ $item->receipt ? 'Y' : 'N' }}</td>

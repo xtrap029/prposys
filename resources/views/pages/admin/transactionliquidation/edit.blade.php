@@ -6,13 +6,13 @@
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-6">
+                <div class="col-lg-6 mb-2">
                     <h1>
                         <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--xs mr-2">
                         {{ $transaction->project->company->name }}
                     </h1>
                 </div>
-                <div class="col-sm-6 text-right">
+                <div class="col-lg-6 text-lg-right mb-2">
                     <h1>Liquidate {{ strtoupper($transaction->trans_type) }}</h1>
                 </div>
             </div>
@@ -60,87 +60,89 @@
                 @endif
                 <div class="jsReplicate jsMath mt-5">
                     <h4 class="text-center">Items</h4>
-                    <table class="table bg-white">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                                <th>Location/Route</th>
-                                <th class="text-center">Receipt</th>
-                                <th>Amount</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody class="jsReplicate_container">
-                            <tr>
-                                <td><input type="date" class="form-control" name="date[]" value="{{ $transaction->liquidation[0]->date }}" required></td>
-                                <td>
-                                    <select name="expense_type_id[]" class="form-control" required>
-                                        @foreach ($expense_types as $item)
-                                            <option value="{{ $item->id }}" {{  $transaction->liquidation[0]->expense_type_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </td>
-                                <td><input type="text" class="form-control" name="description[]" value="{{  $transaction->liquidation[0]->description }}" required></td>
-                                <td><input type="text" class="form-control" name="location[]" value="{{  $transaction->liquidation[0]->location }}" required></td>
-                                <td class="text-center">
-                                    <select name="receipt[]" class="form-control">
-                                        <option value="1" {{ $transaction->liquidation[0]->receipt == 1 ? 'selected' : '' }}>Y</option>
-                                        <option value="0" {{ $transaction->liquidation[0]->receipt == 0 ? 'selected' : '' }}>N</option>
-                                    </select>
-                                </td>
-                                <td colspan="2">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">{{ $transaction->currency }}</span>
+                    <div class="table-responsive">
+                        <table class="table bg-white" style="min-width: 1000px">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th>Location/Route</th>
+                                    <th class="text-center">Receipt</th>
+                                    <th>Amount</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody class="jsReplicate_container">
+                                <tr>
+                                    <td><input type="date" class="form-control" name="date[]" value="{{ $transaction->liquidation[0]->date }}" required></td>
+                                    <td>
+                                        <select name="expense_type_id[]" class="form-control" required>
+                                            @foreach ($expense_types as $item)
+                                                <option value="{{ $item->id }}" {{  $transaction->liquidation[0]->expense_type_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-control" name="description[]" value="{{  $transaction->liquidation[0]->description }}" required></td>
+                                    <td><input type="text" class="form-control" name="location[]" value="{{  $transaction->liquidation[0]->location }}" required></td>
+                                    <td class="text-center">
+                                        <select name="receipt[]" class="form-control">
+                                            <option value="1" {{ $transaction->liquidation[0]->receipt == 1 ? 'selected' : '' }}>Y</option>
+                                            <option value="0" {{ $transaction->liquidation[0]->receipt == 0 ? 'selected' : '' }}>N</option>
+                                        </select>
+                                    </td>
+                                    <td colspan="2">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">{{ $transaction->currency }}</span>
+                                            </div>
+                                            <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ $transaction->liquidation[0]->amount }}" required>
+                                        </div>  
+                                    </td>
+                                </tr>
+                                @foreach ($transaction->liquidation as $key => $item)
+                                    @if ($key > 0)
+                                        <tr class="jsReplicate_template_item">
+                                            <td><input type="date" class="form-control" name="date[]" value="{{ $item->date }}" required></td>
+                                            <td>
+                                                <select name="expense_type_id[]" class="form-control" required>
+                                                    @foreach ($expense_types as $expense_type)
+                                                        <option value="{{ $expense_type->id }}" {{ $item->expense_type_id == $expense_type->id ? 'selected' : '' }}>{{ $expense_type->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td><input type="text" class="form-control" name="description[]" value="{{ $item->description }}" required></td>
+                                            <td><input type="text" class="form-control" name="location[]" value="{{ $item->location }}" required></td>
+                                            <td class="text-center">
+                                                <select name="receipt[]" class="form-control">
+                                                    <option value="1" {{ $item->receipt == 1 ? 'selected' : '' }}>Y</option>
+                                                    <option value="0" {{ $item->receipt == 0 ? 'selected' : '' }}>N</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">{{ $transaction->currency }}</span>
+                                                    </div>
+                                                    <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ $item->amount }}" required>
+                                                </div>  
+                                            </td>
+                                            <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                        </tr>
+                                    @endif
+                                @endforeach
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="7">
+                                        <div class="float-right">
+                                            Total Amount: <span class="font-weight-bold jsMath_sum jsMath_alert">0</span> / <span class="font-weight-bold jsMath_validate">{{ number_format($transaction->amount_issued, 2, '.', ',') }}</span>
                                         </div>
-                                        <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ $transaction->liquidation[0]->amount }}" required>
-                                    </div>  
-                                </td>
-                            </tr>
-                            @foreach ($transaction->liquidation as $key => $item)
-                                @if ($key > 0)
-                                    <tr class="jsReplicate_template_item">
-                                        <td><input type="date" class="form-control" name="date[]" value="{{ $item->date }}" required></td>
-                                        <td>
-                                            <select name="expense_type_id[]" class="form-control" required>
-                                                @foreach ($expense_types as $expense_type)
-                                                    <option value="{{ $expense_type->id }}" {{ $item->expense_type_id == $expense_type->id ? 'selected' : '' }}>{{ $expense_type->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                        <td><input type="text" class="form-control" name="description[]" value="{{ $item->description }}" required></td>
-                                        <td><input type="text" class="form-control" name="location[]" value="{{ $item->location }}" required></td>
-                                        <td class="text-center">
-                                            <select name="receipt[]" class="form-control">
-                                                <option value="1" {{ $item->receipt == 1 ? 'selected' : '' }}>Y</option>
-                                                <option value="0" {{ $item->receipt == 0 ? 'selected' : '' }}>N</option>
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">{{ $transaction->currency }}</span>
-                                                </div>
-                                                <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ $item->amount }}" required>
-                                            </div>  
-                                        </td>
-                                        <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
-                                    </tr>
-                                @endif
-                            @endforeach
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="7">
-                                    <div class="float-right">
-                                        Total Amount: <span class="font-weight-bold jsMath_sum jsMath_alert">0</span> / <span class="font-weight-bold jsMath_validate">{{ number_format($transaction->amount_issued, 2, '.', ',') }}</span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                     <div class="text-center">
                         <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
                     </div>
@@ -148,61 +150,65 @@
                 <div class="jsReplicate mt-5 pt-5">
                     <h4 class="text-center">Attachments</h4>
                     <div class="text-center mb-3">Attach receipts and documents here. Accepts .jpg, .png and .pdf file types, not more than 5mb each.</div>
-                    <table class="table bg-white">
-                        <thead>
-                            <tr>
-                                <th class="w-25">File</th>
-                                <th class="w-75">Description</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody class="jsReplicate_container">
-                            <tr class="jsReplicate_template_item">
-                                <td>
-                                    <a href="/storage/public/attachments/liquidation/{{ $transaction->attachments[0]->file }}" target="_blank">
-                                        <i class="material-icons mr-2 align-bottom align-text-bottom">attachment</i>
-                                    </a>
-                                    <input type="file" name="file_old[]" class="form-control w-75 d-inline-block overflow-hidden">
-                                    <input type="hidden" name="attachment_id_old[]" value="{{ $transaction->attachments[0]->id }}">
-                                </td>
-                                <td><input type="text" name="attachment_description_old[]" class="form-control" value="{{ $transaction->attachments[0]->description }}" required></td>
-                                <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
-                            </tr>
-                            @foreach ($transaction->attachments as $key => $item)
-                                @if ($key > 0)
-                                    <tr class="jsReplicate_template_item">
-                                        <td>
-                                            <a href="/storage/public/attachments/liquidation/{{ $item->file }}" target="_blank">
-                                                <i class="material-icons mr-2 align-bottom align-text-bottom">attachment</i>
-                                            </a>
-                                            <input type="file" name="file_old[]" class="form-control w-75 d-inline-block overflow-hidden">
-                                            <input type="hidden" name="attachment_id_old[]" value="{{ $item->id }}">
-                                        </td>
-                                        <td><input type="text" name="attachment_description_old[]" class="form-control" value="{{ $item->description }}" required></td>
-                                        <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
-                                    </tr>
-                                @endif
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table bg-white" style="min-width: 500px">
+                            <thead>
+                                <tr>
+                                    <th class="w-25">File</th>
+                                    <th class="w-75">Description</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody class="jsReplicate_container">
+                                <tr class="jsReplicate_template_item">
+                                    <td class="text-nowrap">
+                                        <a href="/storage/public/attachments/liquidation/{{ $transaction->attachments[0]->file }}" target="_blank">
+                                            <i class="material-icons mr-2 align-bottom align-text-bottom">attachment</i>
+                                        </a>
+                                        <input type="file" name="file_old[]" class="form-control w-75 d-inline-block overflow-hidden">
+                                        <input type="hidden" name="attachment_id_old[]" value="{{ $transaction->attachments[0]->id }}">
+                                    </td>
+                                    <td><input type="text" name="attachment_description_old[]" class="form-control" value="{{ $transaction->attachments[0]->description }}" required></td>
+                                    <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                </tr>
+                                @foreach ($transaction->attachments as $key => $item)
+                                    @if ($key > 0)
+                                        <tr class="jsReplicate_template_item">
+                                            <td>
+                                                <a href="/storage/public/attachments/liquidation/{{ $item->file }}" target="_blank">
+                                                    <i class="material-icons mr-2 align-bottom align-text-bottom">attachment</i>
+                                                </a>
+                                                <input type="file" name="file_old[]" class="form-control w-75 d-inline-block overflow-hidden">
+                                                <input type="hidden" name="attachment_id_old[]" value="{{ $item->id }}">
+                                            </td>
+                                            <td><input type="text" name="attachment_description_old[]" class="form-control" value="{{ $item->description }}" required></td>
+                                            <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                        </tr>
+                                    @endif
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="text-center">
                         <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
                     </div>
                 </div>
                 <div class="mt-5 pt-5">
-                    <table class="table bg-secondary rounded">
-                        <tbody>
-                            <tr>
-                                <td class="w-25">
-                                    <div class="mb-1 font-weight-bold">Batch Upload</div>
-                                    <input type="file" name="zip" id="inputZip" class="form-control overflow-hidden" accept=".zip">
-                                </td>
-                                <td class="w-75 vlign--middle text-info">{!! __('messages.batch_upload') !!}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table bg-secondary rounded" style="min-width: 1000px">
+                            <tbody>
+                                <tr>
+                                    <td class="w-25">
+                                        <div class="mb-1 font-weight-bold">Batch Upload</div>
+                                        <input type="file" name="zip" id="inputZip" class="form-control overflow-hidden" accept=".zip">
+                                    </td>
+                                    <td class="w-75 vlign--middle text-info">{!! __('messages.batch_upload') !!}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="text-center py-5 border-top">
+                <div class="col-md-12 text-center text-lg-right my-5">
                     <a href="/transaction-liquidation/view/{{ $transaction->id }}" class="mr-3">Cancel</a>
                     <input type="submit" class="btn btn-primary" value="Save">
                 </div>
