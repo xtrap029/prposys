@@ -143,14 +143,14 @@
                         <div class="card-header pb-2">
                             <h3 class="card-title">For Approval</h3>
                             <div class="card-tools">
-                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=6&category=&type=&s=&user_req=&user_prep">Show More</a>
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=6&category=&type=&s=&user_req=&user_prep&bal&bal">Show More</a>
                                 <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons text-primary">list</i>
                                 </button>                            
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=6&type=pr&s=&user_req=&user_prep">Payment Release</a>
-                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=6&type=po&s=&user_req=&user_prep">Purchase Order</a>
-                                    {{-- <a class="dropdown-item" href="transaction/pc/{{ $user->company_id }}?status=6&type=&s=&user_req=&user_prep">Petty Cash</a> --}}
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=6&type=pr&s=&user_req=&user_prep&bal">Payment Release</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=6&type=po&s=&user_req=&user_prep&bal">Purchase Order</a>
+                                    {{-- <a class="dropdown-item" href="transaction/pc/{{ $user->company_id }}?status=6&type=&s=&user_req=&user_prep&bal">Petty Cash</a> --}}
                                 </div>
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                     <i class="material-icons text-primary">arrow_drop_up</i>
@@ -194,14 +194,14 @@
                         <div class="card-header pb-2">
                             <h3 class="card-title">Liq./For Approval</h3>
                             <div class="card-tools">
-                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=7,8&category=&type=&s=&user_req=&user_prep">Show More</a>
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=7,8&category=&type=&s=&user_req=&user_prep&bal">Show More</a>
                                 <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons text-primary">list</i>
                                 </button>                            
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=pr&s=&user_req=&user_prep">Payment Release</a>
-                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=po&s=&user_req=&user_prep">Purchase Order</a>
-                                    {{-- <a class="dropdown-item" href="transaction-liquidation/pc/{{ $user->company_id }}?status=7,8&type=&s=&user_req=&user_prep">Petty Cash</a> --}}
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=pr&s=&user_req=&user_prep&bal">Payment Release</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=po&s=&user_req=&user_prep&bal">Purchase Order</a>
+                                    {{-- <a class="dropdown-item" href="transaction-liquidation/pc/{{ $user->company_id }}?status=7,8&type=&s=&user_req=&user_prep&bal">Petty Cash</a> --}}
                                 </div>
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                     <i class="material-icons text-primary">arrow_drop_up</i>
@@ -247,14 +247,14 @@
                     <div class="card-header pb-2">
                         <h3 class="card-title">Generated</h3>
                         <div class="card-tools">
-                            <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=1,5&category=&type=&s=&user_req=&user_prep">Show More</a>
+                            <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=1,5&category=&type=&s=&user_req=&user_prep&bal">Show More</a>
                             <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="material-icons text-primary">list</i>
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=1,5&type=pr&s=&user_req=&user_prep">Payment Release</a>
-                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=1,5&type=po&s=&user_req=&user_prep">Purchase Order</a>
-                                {{-- <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=1,5issued&type=&s=&user_req=&user_prep">Petty Cash</a> --}}
+                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=1,5&type=pr&s=&user_req=&user_prep&bal">Payment Release</a>
+                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=1,5&type=po&s=&user_req=&user_prep&bal">Purchase Order</a>
+                                {{-- <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=1,5issued&type=&s=&user_req=&user_prep&bal">Petty Cash</a> --}}
                             </div>
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                 <i class="material-icons text-primary">arrow_drop_up</i>
@@ -298,14 +298,14 @@
                     <div class="card-header pb-2">
                         <h3 class="card-title">Unliquidated</h3>
                         <div class="card-tools">
-                            <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=4&category=&type=&s=&user_req=&user_prep">Show More</a>
+                            <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=4&category=&type=&s=&user_req=&user_prep&bal">Show More</a>
                             <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="material-icons text-primary">list</i>
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=4&type=pr&s=&user_req=&user_prep">Payment Release</a>
-                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=4&type=po&s=&user_req=&user_prep">Purchase Order</a>
-                                {{-- <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=issued&type=&s=&user_req=&user_prep">Petty Cash</a> --}}
+                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=4&type=pr&s=&user_req=&user_prep&bal">Payment Release</a>
+                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=4&type=po&s=&user_req=&user_prep&bal">Purchase Order</a>
+                                {{-- <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=issued&type=&s=&user_req=&user_prep&bal">Petty Cash</a> --}}
                             </div>
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                 <i class="material-icons text-primary">arrow_drop_up</i>
@@ -349,13 +349,13 @@
                     <div class="card-header pb-2">
                         <h3 class="card-title">Cleared</h3>
                         <div class="card-tools">
-                            <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=9&category=&type=&s=&user_req=&user_prep">Show More</a>
+                            <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=9&category=&type=&s=&user_req=&user_prep&bal">Show More</a>
                             <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="material-icons text-primary">list</i>
                             </button>                            
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=9&type=pr&s=&user_req=&user_prep">Payment Release</a>
-                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=9&type=po&s=&user_req=&user_prep">Purchase Order</a>
+                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=9&type=pr&s=&user_req=&user_prep&bal">Payment Release</a>
+                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=9&type=po&s=&user_req=&user_prep&bal">Purchase Order</a>
                                 {{-- <a class="dropdown-item" href="transaction-liquidation/pc/{{ $user->company_id }}?status=cleared&type=&s=">Petty Cash</a> --}}
                             </div>
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -402,14 +402,14 @@
                         <div class="card-header pb-2">
                             <h3 class="card-title">Deposited</h3>
                             <div class="card-tools">
-                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=9&category=is_deposit&type=&s=&user_req=&user_prep">Show More</a>
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=9&category=is_deposit&type=&s=&user_req=&user_prep&bal">Show More</a>
                                 <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons text-primary">list</i>
                                 </button>                            
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=pr&s=&user_req=&user_prep">Payment Release</a>
-                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=po&s=&user_req=&user_prep">Purchase Order</a>
-                                    {{-- <a class="dropdown-item" href="transaction-liquidation/pc/{{ $user->company_id }}?status=7,8&type=&s=&user_req=&user_prep">Petty Cash</a> --}}
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=pr&s=&user_req=&user_prep&bal">Payment Release</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=po&s=&user_req=&user_prep&bal">Purchase Order</a>
+                                    {{-- <a class="dropdown-item" href="transaction-liquidation/pc/{{ $user->company_id }}?status=7,8&type=&s=&user_req=&user_prep&bal">Petty Cash</a> --}}
                                 </div>
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                     <i class="material-icons text-primary">arrow_drop_up</i>
