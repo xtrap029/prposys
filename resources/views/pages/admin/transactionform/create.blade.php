@@ -20,6 +20,8 @@
                             {{ config('global.trans_category_label_make_form')[2] }}
                         @elseif ($transaction->is_hr)    
                             {{ config('global.trans_category_label_make_form')[3] }}
+                        @elseif ($transaction->is_bank)    
+                            {{ config('global.trans_category_label_make_form')[5] }}
                         @else
                             {{ config('global.trans_category_label_make_form')[0] }}
                         @endif

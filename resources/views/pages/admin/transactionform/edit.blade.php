@@ -13,7 +13,19 @@
                     </h1>
                 </div>
                 <div class="col-lg-6 text-lg-right mb-2">
-                    <h1>Edit Form</h1>
+                    <h1>
+                        @if ($transaction->is_deposit)
+                            {{ config('global.trans_category_label_edit_form')[1] }}
+                        @elseif ($transaction->is_bills)    
+                            {{ config('global.trans_category_label_edit_form')[2] }}
+                        @elseif ($transaction->is_hr)    
+                            {{ config('global.trans_category_label_edit_form')[3] }}
+                        @elseif ($transaction->is_bank)    
+                            {{ config('global.trans_category_label_edit_form')[5] }}
+                        @else
+                            {{ config('global.trans_category_label_edit_form')[0] }}
+                        @endif
+                    </h1>
                 </div>
             </div>
         </div>
@@ -161,7 +173,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 col-xl-4 d-none">
+                            <div class="col-md-6 col-xl-4">
                                 <div class="callout py-1 mx-1 row">
                                     <div class="col-2">
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[5] }}" class="vlign--baseline-middle m-auto outline-0"  {{ $transaction->is_bank == 1 ? 'checked' : '' }}>

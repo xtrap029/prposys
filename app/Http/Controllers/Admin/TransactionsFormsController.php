@@ -467,6 +467,7 @@ class TransactionsFormsController extends Controller {
         }
 
         $approvers = User::whereIn('role_id', config('global.approver_form'))->orderBy('name', 'asc')->get();
+        $companies = Company::orderBy('name', 'asc')->get();
 
         return view('pages.admin.transactionform.show')->with([
             'transaction' => $transaction,
@@ -475,6 +476,7 @@ class TransactionsFormsController extends Controller {
             'trans_page_url' => $trans_page_url,
             'trans_page' => $trans_page,
             'approvers' => $approvers,
+            'companies' => $companies,
             'released_by' => $released_by
         ]);
     }
@@ -1026,13 +1028,20 @@ class TransactionsFormsController extends Controller {
                 'control_no' => ['required'],
                 'released_at' => ['required', 'date'],
                 'amount_issued' => ['required', 'min:0'],
+                'amount' => ['required', 'min:0'],
                 'payor' => [''],
                 'depo_slip' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
-                'released_by_id' => ['required', 'exists:released_by,id']
+                'released_by_id' => ['required', 'exists:released_by,id'],
+                'form_company_id' => ['required', 'exists:released_by,id'],
+                'currency_2' => ['required'],
+                'currency_2_rate' => ['required', 'min:0'],
             ]);
 
-            if ($transaction->is_reimbursement) {
+            if ($transaction->is_reimbursement || $transaction->is_bank) {
                 $data['depo_slip'] = basename($request->file('depo_slip')->store('public/attachments/deposit_slip'));
+            }
+
+            if ($transaction->is_reimbursement) {
                 $data['status_id'] = 9;
             } else {
                 $data['status_id'] = 4;

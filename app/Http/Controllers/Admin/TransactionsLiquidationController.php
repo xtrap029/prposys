@@ -261,8 +261,8 @@ class TransactionsLiquidationController extends Controller {
             $validate['liquidation_approver_id'] = ['required', 'exists:users,id'];
             
             if ($transaction->is_bank) {
-                $validate['currency_2'] = ['required'];
-                $validate['currency_2_rate'] = ['required', 'min:0'];
+                // $validate['currency_2'] = ['required'];
+                // $validate['currency_2_rate'] = ['required', 'min:0'];
             }
         }
 
@@ -303,8 +303,8 @@ class TransactionsLiquidationController extends Controller {
             $transaction->liquidation_approver_id = $data['liquidation_approver_id'];
 
             if ($transaction->is_bank) {
-                $transaction->currency_2 = $data['currency_2'];
-                $transaction->currency_2_rate = $data['currency_2_rate'];
+                // $transaction->currency_2 = $data['currency_2'];
+                // $transaction->currency_2_rate = $data['currency_2_rate'];
             }
         }
         

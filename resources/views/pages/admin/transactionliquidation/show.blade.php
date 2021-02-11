@@ -94,15 +94,15 @@
                                             <tbody>
                                                 <tr>
                                                     <td class="text-center">
-                                                        {{ $transaction->currency }}
+                                                        {{ $transaction->currency_2 ?: $transaction->currency }}
                                                         {{ number_format($transaction->amount_issued, 2, '.', ',') }}
                                                     </td>
                                                     <td class="text-center">
-                                                        {{ $transaction->currency }}
+                                                        {{ $transaction->currency_2 ?: $transaction->currency }}
                                                         {{ number_format($transaction->liq_subtotal, 2, '.', ',') }}
                                                     </td>
                                                     <td class="text-center">
-                                                        {{ $transaction->currency }}
+                                                        {{ $transaction->currency_2 ?: $transaction->currency }}
                                                         {{ number_format($transaction->liq_balance >= 0 ? $transaction->liq_balance : $transaction->liq_balance*-1, 2, '.', ',') }}
                                                     </td>
                                                 </tr>
@@ -195,15 +195,15 @@
                                             <tbody>
                                                 <tr>
                                                     <td class="text-center">
-                                                        {{ $transaction->currency }}
+                                                        {{ $transaction->currency_2 ?: $transaction->currency }}
                                                         {{ number_format($transaction->amount_issued, 2, '.', ',') }}
                                                     </td>
                                                     <td class="text-center">
-                                                        {{ $transaction->currency }}
+                                                        {{ $transaction->currency_2 ?: $transaction->currency }}
                                                         {{ number_format($transaction->liq_subtotal, 2, '.', ',') }}
                                                     </td>
                                                     <td class="text-center">
-                                                        {{ $transaction->currency }}
+                                                        {{ $transaction->currency_2 ?: $transaction->currency }}
                                                         {{ number_format($transaction->liq_balance >= 0 ? $transaction->liq_balance : $transaction->liq_balance*-1, 2, '.', ',') }}
                                                     </td>
                                                 </tr>
@@ -306,6 +306,8 @@
                                         {{ config('global.trans_category_label')[3] }}
                                     @elseif ($transaction->is_reimbursement)    
                                         {{ config('global.trans_category_label')[4] }}
+                                    @elseif ($transaction->is_bank)    
+                                        {{ config('global.trans_category_label')[5] }}
                                     @else
                                         {{ config('global.trans_category_label')[0] }}    
                                     @endif
@@ -367,7 +369,7 @@
                             </tr>
                             <tr>
                                 <td class="font-weight-bold w-25">Released Amount</td>
-                                <td>{{ $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
+                                <td>{{ $transaction->currency_2 ?: $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
                             </tr>
                             @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
                                 <tr>
@@ -445,7 +447,7 @@
                         </table>
                     </div>
                     <div class="row mb-4 table-responsive">
-                        <table class="table table-bordered {{ $transaction->is_deposit || $transaction->is_bills || $transaction->is_hr ? 'd-none' : '' }}">
+                        <table class="table table-bordered {{ $transaction->is_deposit || $transaction->is_bills || $transaction->is_hr || $transaction->is_bank ? 'd-none' : '' }}">
                             <thead>
                                 <tr>
                                     <th>Date</th>
@@ -537,7 +539,7 @@
                                         <tr>
                                             <td>Amount {{ $transaction->liq_balance >= 0 ? 'Reimbursed' : 'Returned' }}</td>
                                             <td class="font-weight-bold">
-                                                {{ $transaction->currency }}
+                                                {{ $transaction->currency_2 ?: $transaction->currency }}
                                                 {{ number_format($transaction->liq_balance >= 0 ? $transaction->liq_balance : $transaction->liq_balance*-1, 2, '.', ',') }}
                                             </td>
                                         </tr>

@@ -83,7 +83,7 @@
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold">Released Amount</td>
-                                        <td>{{ $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
+                                        <td>{{ $transaction->currency_2 ?: $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold">Transaction Category</td>
@@ -94,6 +94,8 @@
                                                 {{ config('global.trans_category_label')[2] }}
                                             @elseif ($transaction->is_hr)    
                                                 {{ config('global.trans_category_label')[3] }}
+                                            @elseif ($transaction->is_bank)    
+                                                {{ config('global.trans_category_label')[5] }}
                                             @else
                                                 {{ config('global.trans_category_label')[0] }}    
                                             @endif
@@ -109,7 +111,7 @@
                     </div>  
                 </div>
                 <div class="row row--print">
-                    @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
+                    @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr && !$transaction->is_bank)
                         <div class="col-12">
                             <table class="table table-sm mb-0">
                                 <tr class="font-weight-bold">
@@ -176,7 +178,7 @@
                                     <td colspan="4" class="font-weight-bold small text-right">Before VAT</td>
                                     <td></td>
                                     <td colspan="2" class="bg-white text-right">
-                                        <span class="float-left">{{ $transaction->currency }}</span>
+                                        <span class="float-left">{{ $transaction->currency_2 ?: $transaction->currency }}</span>
                                         {{ number_format($transaction->liq_before_vat, 2, '.', ',') }}
                                     </td>
                                 </tr>
@@ -184,7 +186,7 @@
                                     <td colspan="4" class="font-weight-bold small text-right">VAT (12%)</td>
                                     <td></td>
                                     <td colspan="2" class="bg-white text-right font-italic">
-                                        <span class="float-left">{{ $transaction->currency }}</span>
+                                        <span class="float-left">{{ $transaction->currency_2 ?: $transaction->currency }}</span>
                                         {{ number_format($transaction->liq_vat, 2, '.', ',') }}
                                     </td>
                                 </tr>
@@ -193,7 +195,7 @@
                                 <td colspan="4" class="font-weight-bold small text-right">Subtotal</td>
                                 <td></td>
                                 <td colspan="2" class="bg-white text-right font-weight-bold">
-                                    <span class="float-left">{{ $transaction->currency }}</span>
+                                    <span class="float-left">{{ $transaction->currency_2 ?: $transaction->currency }}</span>
                                     {{ number_format($transaction->liq_subtotal, 2, '.', ',') }}
                                 </td>
                             </tr>
@@ -201,7 +203,7 @@
                                 <td colspan="4" class="font-weight-bold small text-right">Less: Deposit/Payment</td>
                                 <td></td>
                                 <td colspan="2" class="bg-white text-right text-danger">
-                                    <span class="float-left">{{ $transaction->currency }}</span>
+                                    <span class="float-left">{{ $transaction->currency_2 ?: $transaction->currency }}</span>
                                     {{ number_format($transaction->amount_issued, 2, '.', ',') }}
                                 </td>
                             </tr>
@@ -209,7 +211,7 @@
                                 <td colspan="4" class="small font-weight-bold text-right">Balance</td>
                                 <td></td>
                                 <td colspan="2" class="bg-white text-right font-weight-bold">
-                                    <span class="float-left">{{ $transaction->currency }}</span>
+                                    <span class="float-left">{{ $transaction->currency_2 ?: $transaction->currency }}</span>
                                     {{ number_format($transaction->liq_balance, 2, '.', ',') }}
                                 </td>
                             </tr>
@@ -228,7 +230,7 @@
                                 <table class="table table-sm">
                                     <tr>
                                         <td>Amount {{ $transaction->liq_balance >= 0 ? 'Reimbursed' : 'Returned' }}</td>
-                                        <td class="font-weight-bold">{{ $transaction->currency }} {{ $transaction->liq_balance < 0 ? number_format($transaction->liq_balance*-1, 2, '.', ',') : $transaction->liq_balance }}</td>
+                                        <td class="font-weight-bold">{{ $transaction->currency_2 ?: $transaction->currency }} {{ $transaction->liq_balance < 0 ? number_format($transaction->liq_balance*-1, 2, '.', ',') : $transaction->liq_balance }}</td>
                                     </tr>                            
                                     <tr>
                                         <td>Date Deposited</td>
