@@ -1037,7 +1037,7 @@ class TransactionsFormsController extends Controller {
                 'currency_2_rate' => ['required', 'min:0'],
             ]);
 
-            if ($transaction->is_reimbursement || $transaction->is_bank) {
+            if (($transaction->is_reimbursement || $transaction->is_bank) && $request->file('depo_slip')) {
                 $data['depo_slip'] = basename($request->file('depo_slip')->store('public/attachments/deposit_slip'));
             }
 
