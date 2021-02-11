@@ -1032,7 +1032,7 @@ class TransactionsFormsController extends Controller {
                 'payor' => [''],
                 'depo_slip' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
                 'released_by_id' => ['required', 'exists:released_by,id'],
-                'form_company_id' => ['required', 'exists:released_by,id'],
+                'form_company_id' => ['required', 'exists:companies,id'],
                 'currency_2' => ['required'],
                 'currency_2_rate' => ['required', 'min:0'],
             ]);
