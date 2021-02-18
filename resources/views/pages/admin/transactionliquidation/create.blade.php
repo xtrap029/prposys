@@ -13,7 +13,8 @@
                     </h1>
                 </div>
                 <div class="col-lg-6 text-lg-right mb-2">
-                    <h1>Liquidate {{ strtoupper($transaction->trans_type) }}</h1>
+                    <h1>
+                        {{ $transaction->is_bank ? 'Deposit Form' : 'Liquidate '.strtoupper($transaction->trans_type) }}</h1>
                 </div>
             </div>
         </div>
@@ -67,7 +68,15 @@
                         <label for="" class="font-weight-bold">Released By</label>
                         <p>{{ $transaction->releasedby->name }}</p>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-3">
+                        <label for="" class="font-weight-bold">Debited To</label>
+                        <p>{{ $transaction->project->company->name }}</p>
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="" class="font-weight-bold">Credited To</label>
+                        <p>{{ $transaction->formcompany->name }}</p>
+                    </div>
+                    <div class="col-lg-3">
                         <label for="" class="font-weight-bold">Amount</label>
                         <p>
                             <span class="font-weight-bold">{{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}</span>
@@ -80,10 +89,12 @@
                             <span class="font-weight-bold">{{ number_format($transaction->amount_issued, 2, '.', ',') }}</span>
                         </p>
                     </div>
-                    <div class="col-lg-6">
-                        <label for="" class="font-weight-bold">Company</label>
-                        <p>{{ $transaction->formcompany->name }}</p>
-                    </div>
+                    @if ($transaction->form_service_charge && $transaction->form_service_charge > 0)
+                        <div class="col-lg-3">
+                            <label for="" class="font-weight-bold">Service Charge</label>
+                            <p>{{ number_format($transaction->form_service_charge, 2, '.', ',') }}</p>
+                        </div>
+                    @endif
                 </div>
             @endif
             <form action="" method="post" enctype="multipart/form-data" class="jsPreventMultiple" id="pageForm">
@@ -224,7 +235,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-3 mb-2">
-                            <label for="" class="font-weight-bold">Deposited By</label>
+                            <label for="" class="font-weight-bold">{{ $transaction->is_bank ? 'Processed' : 'Deposited' }} By</label>
                             <select name="liquidation_approver_id" class="form-control @error('liquidation_approver_id') is-invalid @enderror">
                                 @foreach ($users as $item)
                                     <option value="{{ $item->id }}" {{ $item->id == Auth::user()->id ? 'selected' : '' }}>{{ $item->name }}</option>                                        

@@ -6,7 +6,22 @@
     <section class="content">
         <div class="container-fluid">
             <div class="float-right">Date Generated: <b>{{ Carbon\Carbon::now() }}</b></div>
-            <h2>{{ strtoupper($transaction->trans_type) }} {{ !$transaction->is_reimbursement ? 'Liquidation' : 'Reimbursement' }}</h2>
+            <h2>
+                {{ strtoupper($transaction->trans_type) }}
+                @if ($transaction->is_deposit)
+                    {{ config('global.trans_category_label_liq_print')[1] }}
+                @elseif ($transaction->is_bills)    
+                    {{ config('global.trans_category_label_liq_print')[2] }}
+                @elseif ($transaction->is_hr)    
+                    {{ config('global.trans_category_label_liq_print')[3] }}
+                @elseif ($transaction->is_reimbursement)    
+                    {{ config('global.trans_category_label_liq_print')[4] }}
+                @elseif ($transaction->is_bank)    
+                    {{ config('global.trans_category_label_liq_print')[5] }}
+                @else
+                    {{ config('global.trans_category_label_liq_print')[0] }}
+                @endif
+            </h2>
             <div class="row">
                 <div class="col-10">
                     <h3 class="mt-4">{{ $transaction->project->company->name }}</h3>
@@ -40,7 +55,7 @@
                         </tbody>
                     </table>
                     <div class="row">
-                        <div class="col-md-7">
+                        <div class="col-6">
                             <table class="table table-sm">
                                 <tr>
                                     <td class="font-weight-bold">Project</td>
@@ -66,26 +81,6 @@
                                     <td class="font-weight-bold">{{ !$transaction->is_reimbursement ? 'Payor' : 'Payee' }}</td>
                                     <td>{{ $transaction->payor ?: 'n/a' }}</td>
                                 </tr>
-                            </table>
-                        </div>
-                        <div class="col-md-5">
-                            <table class="table table-sm">
-                                <tr>
-                                    <td class="font-weight-bold">Issue Type</td>
-                                    <td>{{ $transaction->control_type }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold">Issue No</td>
-                                    <td>{{ $transaction->control_no }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold">Released Date</td>
-                                    <td>{{ $transaction->released_at }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold">Released Amount</td>
-                                    <td>{{ $transaction->currency_2 ?: $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
-                                </tr>
                                 <tr>
                                     <td class="font-weight-bold">Transaction Category</td>
                                     <td>
@@ -105,6 +100,53 @@
                                 <tr>
                                     <td class="font-weight-bold">Tax Type</td>
                                     <td>{{ $transaction->form_vat_name ? $transaction->form_vat_name : $transaction->vattype->name }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-6">
+                            <table class="table table-sm">
+                                <tr>
+                                    <td class="font-weight-bold">Issue Type</td>
+                                    <td>{{ $transaction->control_type }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Issue No</td>
+                                    <td>{{ $transaction->control_no }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Released Date</td>
+                                    <td>{{ $transaction->released_at }}</td>
+                                </tr>
+                                @if ($transaction->is_bank)
+                                    <tr>
+                                        <td class="font-weight-bold">Released By</td>
+                                        <td>{{ $transaction->releasedby->name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold">Transferred To</td>
+                                        <td>{{ $transaction->formcompany->name }}</td>
+                                    </tr>
+                                @endif
+                                @if ($transaction->form_service_charge && $transaction->form_service_charge > 0)
+                                    <tr>
+                                        <td class="font-weight-bold">Service Charge</td>
+                                        <td>{{ number_format($transaction->form_service_charge, 2, '.', ',') }}</td>
+                                    </tr>
+                                @endif
+                                @if ($transaction->is_bank)
+                                    <tr>
+                                        <td class="font-weight-bold">Amount / FX Rate</td>
+                                        <td>
+                                            {{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}
+                                            <span class="small px-2 vlign--top">x</span>
+                                            {{ number_format($transaction->currency_2_rate, 2, '.', ',') }}
+                                            ({{ $transaction->currency_2 }})
+                                        </td>
+                                    </tr>
+                                @endif
+                                <tr>
+                                    <td class="font-weight-bold">{{ $transaction->is_bank ? 'Transferred' : 'Released' }} Amount</td>
+                                    <td>{{ $transaction->currency_2 ?: $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
                                 </tr>
                             </table>
                         </div>

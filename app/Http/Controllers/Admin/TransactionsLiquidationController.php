@@ -866,9 +866,16 @@ class TransactionsLiquidationController extends Controller {
             $result = $result->where('requested_id', auth()->id());
         }
 
+        $bank_validation = clone $result;
+
         $result = $result->count();
 
         if ($result == 0) $can_create = false;
+
+        $bank_validation = $bank_validation->where('is_bank', 1)->first();
+        if ($bank_validation && $bank_validation->project->company_id != $bank_validation->form_company_id) {
+            $can_create = false;
+        }
 
         return $can_create;
     }

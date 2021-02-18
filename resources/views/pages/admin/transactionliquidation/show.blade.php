@@ -36,7 +36,22 @@
                     {{-- <a href="#_" class="btn mb-2 btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-approval"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a> --}}
                     <a href="/transaction-liquidation/approval/{{ $transaction->id }}" class="btn mb-2 btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a>
                     <a href="#_" class="btn mb-2 btn-danger {{ !$transaction->is_reimbursement ? '' : 'd-none' }}" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print Generated {{ strtoupper($transaction->trans_type) }} Form</a>
-                    <a href="#_" class="btn mb-2 btn-danger {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-liquidation/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print {{ !$transaction->is_reimbursement ? 'Liquidation' : 'Reimbursement' }}</a>
+                    <a href="#_" class="btn mb-2 btn-danger {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-liquidation/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i>
+                        Print
+                        @if ($transaction->is_deposit)
+                            {{ config('global.trans_category_label_liq_print')[1] }}
+                        @elseif ($transaction->is_bills)    
+                            {{ config('global.trans_category_label_liq_print')[2] }}
+                        @elseif ($transaction->is_hr)    
+                            {{ config('global.trans_category_label_liq_print')[3] }}
+                        @elseif ($transaction->is_reimbursement)    
+                            {{ config('global.trans_category_label_liq_print')[4] }}
+                        @elseif ($transaction->is_bank)    
+                            {{ config('global.trans_category_label_liq_print')[5] }}
+                        @else
+                            {{ config('global.trans_category_label_liq_print')[0] }}
+                        @endif
+                    </a>
                     <a href="#_" class="btn mb-2 btn-success {{ $perms['can_clear'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear"><i class="align-middle font-weight-bolder material-icons text-md">payments</i> Clear / Deposit</a>
                     <a href="#_" class="btn mb-2 btn-primary {{ $perms['can_edit_cleared'] && $transaction->liq_balance != 0 ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear-edit"><i class="align-middle font-weight-bolder material-icons text-md">{{ !$transaction->is_bills && !$transaction->is_hr ? 'edit' : 'visibility' }}</i> {{ !$transaction->is_bills && !$transaction->is_hr ? 'Edit' : 'View' }} Deposit Info</a>
                 </div>
@@ -363,12 +378,37 @@
                                 <td class="font-weight-bold w-25">Issue No.</td>
                                 <td>{{ $transaction->control_no }}</td>
                             </tr>
+                            @if ($transaction->is_bank)
+                                <tr>
+                                    <td class="font-weight-bold w-25">Transferred To</td>
+                                    <td>{{ $transaction->formcompany->name }}</td>
+                                </tr> 
+                            @endif
                             <tr>
                                 <td class="font-weight-bold w-25">Released Date</td>
                                 <td>{{ $transaction->released_at }}</td>
                             </tr>
+                            @if ($transaction->form_service_charge && $transaction->form_service_charge > 0)
+                                <tr>
+                                    <td class="font-weight-bold w-25">Released By</td>
+                                    <td>{{ $transaction->releasedby->name }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold w-25">Service Charge</td>
+                                    <td>{{ number_format($transaction->form_service_charge, 2, '.', ',') }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold w-25">Amount FX Rate</td>
+                                    <td>
+                                        {{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}
+                                        <span class="small px-2 vlign--top">x</span>
+                                        {{ number_format($transaction->currency_2_rate, 2, '.', ',') }}
+                                        ({{ $transaction->currency_2 }})
+                                    </td>
+                                </tr>
+                            @endif
                             <tr>
-                                <td class="font-weight-bold w-25">Released Amount</td>
+                                <td class="font-weight-bold w-25">{{ $transaction->is_bank ? 'Transferred' : 'Released' }} Amount</td>
                                 <td>{{ $transaction->currency_2 ?: $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
                             </tr>
                             @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
@@ -545,7 +585,7 @@
                                         </tr>
                                     @endif                                    
                                     
-                                    @if (!$transaction->is_bills && !$transaction->is_hr && !$transaction->is_reimbursement)
+                                    @if (!$transaction->is_bills && !$transaction->is_hr && !$transaction->is_reimbursement && !$transaction->is_bank)
                                         <tr>
                                             <td>Type</td>
                                             <td class="font-weight-bold">{{ $transaction->depo_type }}</td>
@@ -583,10 +623,12 @@
                                             @include('pages.admin.transactionliquidation.show-attachment')
                                         </tr>
                                     @else
-                                        <tr>
-                                            <td>Slip Attachment</td>
-                                            <td class="font-weight-bold"><a href="/storage/public/attachments/deposit_slip/{{ $transaction->depo_slip }}" target="_blank"><i class="material-icons mr-2 align-bottom">attachment</i></a></td>
-                                        </tr>
+                                        @if ($transaction->depo_slip)
+                                            <tr>
+                                                <td>Slip Attachment</td>
+                                                <td class="font-weight-bold"><a href="/storage/public/attachments/deposit_slip/{{ $transaction->depo_slip }}" target="_blank"><i class="material-icons mr-2 align-bottom">attachment</i></a></td>
+                                            </tr>
+                                        @endif
                                     @endif
                                 @else
                                     <tr>

@@ -37,6 +37,7 @@
         'trans_category_label_filter_2' => ['All', 'Deposit Transaction', 'Bills Payment', 'Human Resource', 'Reimbursement', 'Fund Transfer'],
         'trans_category_label_make_form' => ['Make Form', 'Make Form', 'Make Form', 'Make Form', 'Reimbursement', 'Fund Transfer'],
         'trans_category_label_edit_form' => ['Edit Form', 'Edit Form', 'Edit Form', 'Edit Form', 'Edit Reimbursement', 'Edit Fund Transfer'],
+        'trans_category_label_liq_print' => ['Liquidation', 'Liquidation', 'Liquidation', 'Liquidation', 'Reimbursement', 'Deposit Form'],
         'status_filter' => [
             ['Generated', '1,5'],
             ['For Approval', '6'],

@@ -49,6 +49,7 @@ class Transaction extends Model {
                                         'form_amount_payable',
                                         'formapprover.name',
                                         'formcompany.name',
+                                        'form_service_charge',
                                         'liquidationapprover.name',
                                         'currency_2',
                                         'currency_2_rate',
