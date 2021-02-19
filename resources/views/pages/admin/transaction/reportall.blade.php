@@ -61,11 +61,12 @@
                         </select>
                     </div>
                     <div class="col-md-3 my-1">
-                        <label for="">Bal. & Unbal.</label>
+                        <label for="">Amount</label>
                         <select name="bal" class="form-control">
                             <option value="">All</option>
                             <option value="0" {{ app('request')->input('bal') != "" && app('request')->input('bal') == 0 ? 'selected' : '' }}>Balanced</option>
-                            <option value="1" {{ app('request')->input('bal') == 1 ? 'selected' : '' }}>Unbalanced</option>
+                            <option value="1" {{ app('request')->input('bal') == '1' ? 'selected' : '' }}>( + ) For Reimbursement</option>
+                            <option value="-1" {{ app('request')->input('bal') == '-1' ? 'selected' : '' }}>( - ) Return Money</option>
                         </select>
                     </div>
                     <div class="col-sm-6 col-md-3 my-1">
