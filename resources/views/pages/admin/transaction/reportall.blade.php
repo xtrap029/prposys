@@ -25,7 +25,7 @@
                             {{-- <option value="pc" {{ $trans_type == "pc" ? 'selected' : '' }}>PC</option> --}}
                         </select>
                     </div>
-                    <div class="col-sm-6 my-1">
+                    <div class="col-sm-6 col-md-3 my-1">
                         <label for="">Company</label>
                         <select name="company" class="form-control">
                             <option value="">All</option>
@@ -76,6 +76,23 @@
                     <div class="col-sm-6 col-md-3 my-1">
                         <label for="">Date To</label>
                         <input type="date" name="to" class="form-control" value="{{ !empty($_GET['to']) ? $_GET['to'] : '' }}">
+                    </div>
+                    <div class="col-sm-6 col-md-3 my-1">
+                        <label for="">Template</label>
+                        <select name="template" class="form-control">
+                            @foreach ($report_templates as $item)
+                                <option value="{{ $item->id }}"
+                                    @if (!empty($_GET['template']))
+                                        @if ($_GET['template'] == $item->id)
+                                            selected
+                                        @endif
+                                    @elseif ($item->id == 1)
+                                        selected
+                                    @endif
+                                    >{{ $item->name }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="form-row mb-3">
@@ -171,40 +188,56 @@
                     </div>
                 @endif
 
-                <table class="table mb-0 small table-sm table-striped table-responsive-md">
-                    <tr class="bg-gray font-weight-bold">
-                        <td style="min-width: 75px;">PO/PR #</td>
-                        <td>Company</td>
-                        <td>Project</td>
-                        <td>Purpose</td>
-                        <td>Currency</td>
-                        <td>Amount</td>
-                        <td>Date Gen.</td>
-                        <td>Trans. #</td>
-                        <td>Last Updated</td>
-                        <td>Req. By</td>
-                        <td>Status</td>
-                    </tr>
-                    @foreach ($transactions as $item)
-                        <tr>
-                            <td class="text-nowrap"><h6 class="font-weight-bold">{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</h6></td>
-                            <td class="text-nowrap">{{ $item->project->company->name }}</td>
-                            <td class="text-nowrap">{{ $item->project->project }}</td>
-                            <td>{{ $item->purpose }}</td>
-                            <td>{{ $item->currency }}</td>
-                            <td>{{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}</td>
-                            <td class="text-nowrap">{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
-                            <td style="word-break: break-all;">{{ $item->control_no }}</td>
-                            <td class="text-nowrap">{{ Carbon::parse($item->updated_at)->format('Y-m-d') }}</td>
-                            <td class="text-nowrap">{{ $item->requested->name }}</td>
-                            <td class="text-nowrap">{{ $item->status->name }}</td>
-                            {{-- <td class="{{ empty($_GET['status']) || $_GET['status'] == "" ? '' : 'd-none' }}">
-                                {{ $item->status->name }}
-                            </td> --}}
+                <div class="table-responsive">
+                    <table class="table mb-0 small table-sm table-striped">
+                        <tr class="bg-gray font-weight-bold">
+                            @foreach ($report_template->templatecolumn as $item)
+                                <td>{{ $item->label }}</td>
+                            @endforeach
                         </tr>
-                    @endforeach
-                    </tbody>
-                </table>
+                        @foreach ($transactions as $item)
+                            <tr>
+                                @foreach ($report_template->templatecolumn as $item_2)
+                                    <td>{{ eval($item_2->column->code) }}</td>
+                                @endforeach
+                            </tr>
+                        @endforeach
+                    </table>
+                    {{-- <table class="table mb-0 small table-sm table-striped">
+                        <tr class="bg-gray font-weight-bold">
+                            <td style="min-width: 75px;">PO/PR #</td>
+                            <td>Company</td>
+                            <td>Project</td>
+                            <td>Purpose</td>
+                            <td>Currency</td>
+                            <td>Amount</td>
+                            <td>Date Gen.</td>
+                            <td>Trans. #</td>
+                            <td>Last Updated</td>
+                            <td>Req. By</td>
+                            <td>Status</td>
+                        </tr>
+                        @foreach ($transactions as $item)
+                            <tr>
+                                <td class="text-nowrap">
+                                    <h6 class="font-weight-bold">
+                                        {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                    </h6>
+                                </td>
+                                <td class="text-nowrap">{{ $item->project->company->name }}</td>
+                                <td class="text-nowrap">{{ $item->project->project }}</td>
+                                <td>{{ $item->purpose }}</td>
+                                <td>{{ $item->currency }}</td>
+                                <td>{{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}</td>
+                                <td class="text-nowrap">{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
+                                <td style="word-break: break-all;">{{ $item->control_no }}</td>
+                                <td class="text-nowrap">{{ Carbon::parse($item->updated_at)->format('Y-m-d') }}</td>
+                                <td class="text-nowrap">{{ $item->requested->name }}</td>
+                                <td class="text-nowrap">{{ $item->status->name }}</td>
+                            </tr>
+                        @endforeach
+                    </table> --}}
+                </div>
             </div>
         </div>
     </section>
