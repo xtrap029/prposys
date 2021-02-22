@@ -162,7 +162,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 col-xl-4 d-none">
+                            <div class="col-md-6 col-xl-4">
                                 <div class="callout py-1 mx-1 row">
                                     <div class="col-2">
                                         <input type="radio" name="trans_category" value="{{ config('global.trans_category')[5] }}" class="vlign--baseline-middle m-auto outline-0">

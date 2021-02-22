@@ -13,7 +13,8 @@
                     </h1>
                 </div>
                 <div class="col-lg-6 text-lg-right mb-2">
-                    <h1>Liquidate {{ strtoupper($transaction->trans_type) }}</h1>
+                    <h1>
+                        {{ $transaction->is_bank ? 'Deposit Form' : 'Liquidate '.strtoupper($transaction->trans_type) }}</h1>
                 </div>
             </div>
         </div>
@@ -40,10 +41,62 @@
                     </tr>
                 </table>
                 <div class="col-md-6">
-                    <label for="" class="font-weight-bold">Purpose</label>
-                    <p>{{ $transaction->purpose }}</p>
+                    <div>
+                        <label for="" class="font-weight-bold">Purpose</label>
+                        <p>{{ $transaction->purpose }}</p>
+                    </div>
                 </div>
             </div>
+            @if ($transaction->is_bank)
+                <div class="row my-4 pb-3">
+                    <div class="col-12 font-weight-bold">
+                        <h5 class="pb-2 border-bottom">Issue Payment Details</h5>
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="" class="font-weight-bold">Type</label>
+                        <p>{{ $transaction->control_type }}</p>
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="" class="font-weight-bold">No.</label>
+                        <p>{{ $transaction->control_no }}</p>
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="" class="font-weight-bold">Released Date</label>
+                        <p>{{ $transaction->released_at }}</p>
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="" class="font-weight-bold">Released By</label>
+                        <p>{{ $transaction->releasedby->name }}</p>
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="" class="font-weight-bold">Debited To</label>
+                        <p>{{ $transaction->project->company->name }}</p>
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="" class="font-weight-bold">Credited To</label>
+                        <p>{{ $transaction->formcompany->name }}</p>
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="" class="font-weight-bold">Amount</label>
+                        <p>
+                            <span class="font-weight-bold">{{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}</span>
+                            to
+                            <span class="font-weight-bold">
+                                {{ $transaction->currency_2 ?: $transaction->currency }}
+                                (<span class="font-weight-bold">{{ $transaction->currency_2_rate }})
+                            </span>
+                            =
+                            <span class="font-weight-bold">{{ number_format($transaction->amount_issued, 2, '.', ',') }}</span>
+                        </p>
+                    </div>
+                    @if ($transaction->form_service_charge && $transaction->form_service_charge > 0)
+                        <div class="col-lg-3">
+                            <label for="" class="font-weight-bold">Service Charge</label>
+                            <p>{{ number_format($transaction->form_service_charge, 2, '.', ',') }}</p>
+                        </div>
+                    @endif
+                </div>
+            @endif
             <form action="" method="post" enctype="multipart/form-data" class="jsPreventMultiple" id="pageForm">
                 @csrf
                 <input type="hidden" name="key" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}">
@@ -182,7 +235,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-3 mb-2">
-                            <label for="" class="font-weight-bold">Deposited By</label>
+                            <label for="" class="font-weight-bold">{{ $transaction->is_bank ? 'Processed' : 'Deposited' }} By</label>
                             <select name="liquidation_approver_id" class="form-control @error('liquidation_approver_id') is-invalid @enderror">
                                 @foreach ($users as $item)
                                     <option value="{{ $item->id }}" {{ $item->id == Auth::user()->id ? 'selected' : '' }}>{{ $item->name }}</option>                                        
@@ -201,7 +254,7 @@
                             @include('errors.inline', ['message' => $errors->first('depo_received_by')])
                         </div>
                     </div>
-                    <div class="row {{ !$transaction->is_bank ? 'd-none' : '' }}">
+                    {{-- <div class="row {{ !$transaction->is_bank ? 'd-none' : '' }}">
                         <div class="col-md-3 mb-2">
                             <label for="" class="font-weight-bold">Currency</label>
                             <select name="currency_2" id="currencyChange" class="form-control @error('currency_2') is-invalid @enderror">
@@ -224,7 +277,7 @@
                             <label for="" class="font-weight-bold">Bank Transfer Amount</label>
                             <div class="pt-2">{{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}</div>
                         </div>
-                    </div>
+                    </div> --}}
                 @endif
                 <div class="jsReplicate mt-5 pt-5">
                     <h4 class="text-center">Attachments</h4>
@@ -394,20 +447,20 @@
                 }
             })
 
-            $('#currencyChange').change(function() {
-                if ($(this).val() != '{{ $transaction->currency }}') {
-                    $('#currencyFx').attr("readonly", false) 
-                } else {
-                    $('#currencyFx').val(1).attr("readonly", "readonly") 
-                }
+            // $('#currencyChange').change(function() {
+            //     if ($(this).val() != '{{ $transaction->currency }}') {
+            //         $('#currencyFx').attr("readonly", false) 
+            //     } else {
+            //         $('#currencyFx').val(1).attr("readonly", "readonly") 
+            //     }
 
-                $('#currencyFx').trigger('change')
-            })
+            //     $('#currencyFx').trigger('change')
+            // })
 
-            $('#currencyFx').on('keyup keypress blur change', function() {
-                convertedAmt = parseFloat($(this).val() == "" ? 0 : $(this).val()) * parseFloat('{{ $transaction->amount_issued }}')
-                $('#currencyAmount').text(convertedAmt.toLocaleString())
-            })
+            // $('#currencyFx').on('keyup keypress blur change', function() {
+            //     convertedAmt = parseFloat($(this).val() == "" ? 0 : $(this).val()) * parseFloat('{{ $transaction->amount_issued }}')
+            //     $('#currencyAmount').text(convertedAmt.toLocaleString())
+            // })
         })
     </script>
 @endsection

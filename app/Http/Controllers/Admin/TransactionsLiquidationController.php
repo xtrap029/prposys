@@ -261,8 +261,8 @@ class TransactionsLiquidationController extends Controller {
             $validate['liquidation_approver_id'] = ['required', 'exists:users,id'];
             
             if ($transaction->is_bank) {
-                $validate['currency_2'] = ['required'];
-                $validate['currency_2_rate'] = ['required', 'min:0'];
+                // $validate['currency_2'] = ['required'];
+                // $validate['currency_2_rate'] = ['required', 'min:0'];
             }
         }
 
@@ -303,8 +303,8 @@ class TransactionsLiquidationController extends Controller {
             $transaction->liquidation_approver_id = $data['liquidation_approver_id'];
 
             if ($transaction->is_bank) {
-                $transaction->currency_2 = $data['currency_2'];
-                $transaction->currency_2_rate = $data['currency_2_rate'];
+                // $transaction->currency_2 = $data['currency_2'];
+                // $transaction->currency_2_rate = $data['currency_2_rate'];
             }
         }
         
@@ -866,9 +866,16 @@ class TransactionsLiquidationController extends Controller {
             $result = $result->where('requested_id', auth()->id());
         }
 
+        $bank_validation = clone $result;
+
         $result = $result->count();
 
         if ($result == 0) $can_create = false;
+
+        $bank_validation = $bank_validation->where('is_bank', 1)->first();
+        if ($bank_validation && $bank_validation->project->company_id != $bank_validation->form_company_id) {
+            $can_create = false;
+        }
 
         return $can_create;
     }

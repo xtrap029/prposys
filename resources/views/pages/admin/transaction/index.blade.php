@@ -88,9 +88,10 @@
                     </div>
                     <div class="mb-2 col-md-4 col-xl-2">
                         <select name="bal" class="form-control filterSearch_select">
-                            <option value="">Bal. & Unbal.</option>
+                            <option value="">All Amount</option>
                             <option value="0" {{ app('request')->input('bal') != "" && app('request')->input('bal') == 0 ? 'selected' : '' }}>Balanced</option>
-                            <option value="1" {{ app('request')->input('bal') == 1 ? 'selected' : '' }}>Unbalanced</option>
+                            <option value="1" {{ app('request')->input('bal') == '1' ? 'selected' : '' }}>( + ) For Reimbursement</option>
+                            <option value="-1" {{ app('request')->input('bal') == '-1' ? 'selected' : '' }}>( - ) Return Money</option>
                         </select>
                     </div>
                     <div class="mb-2 col-md-4 col-xl-8">
@@ -99,7 +100,7 @@
                             <div class="card card-search bg-secondary font-weight-normal filterSearch_result" style="display: none">
                                 <div class="card-body">
                                     <button type="button" class="btn btn-tool float-right filterSearch_close">close</button>
-                                    <div class="filterSearch_data row small" style="display: none">
+                                    <div class="filterSearch_data row small w-100" style="display: none">
                                         <table class="table mb-0 p-0">
                                         </table>
                                     </div>
@@ -137,7 +138,7 @@
                             @forelse ($transactions as $item)
                                 <tr>
                                     <td class="text-nowrap">
-                                        <a href="/{{ $item->url_view }}/view/{{ $item->id }}">
+                                        <a href="/{{ $item->url_view }}/view/{{ $item->id }}?page={{ $transactions->currentPage() }}">
                                             {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
                                         </a>
                                     </td>

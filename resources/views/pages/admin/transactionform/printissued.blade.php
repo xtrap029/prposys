@@ -41,7 +41,7 @@
                             </tbody>
                         </table>
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-6">
                                 <table class="table table-sm">
                                     <tr>
                                         <td class="font-weight-bold">Purpose</td>
@@ -57,7 +57,7 @@
                                     </tr>
                                 </table>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-6">
                                 <table class="table table-sm">
                                     <tr>
                                         <td class="font-weight-bold">Due Date</td>
@@ -70,6 +70,47 @@
                                 </table>
                             </div>
                         </div>
+                        @if ($transaction->is_bank && $transaction->form_company_id)
+                            <div class="row">
+                                <div class="col-6">
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <td class="font-weight-bold">Transfer to</td>
+                                            <td>{{ $transaction->formcompany->name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold">Type</td>
+                                            <td>{{ $transaction->control_type }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold">No.</td>
+                                            <td>{{ $transaction->control_no }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-6">
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <td class="font-weight-bold">Service Charge</td>
+                                            <td>{{ number_format($transaction->form_service_charge, 2, '.', ',') }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold">Amount / FX Rate</td>
+                                            <td>
+                                                {{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}
+                                                <span class="small px-2 vlign--top">x</span>
+                                                {{ number_format($transaction->currency_2_rate, 2, '.', ',') }}
+                                                ({{ $transaction->currency_2 }})
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold">Transferred Amount</td>
+                                            <td>{{ $transaction->currency_2 ?: $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        @endif
                     </div>        
                 </div>
                 <div class="row row--print">                

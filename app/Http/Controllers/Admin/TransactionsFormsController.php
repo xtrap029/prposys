@@ -467,6 +467,7 @@ class TransactionsFormsController extends Controller {
         }
 
         $approvers = User::whereIn('role_id', config('global.approver_form'))->orderBy('name', 'asc')->get();
+        $companies = Company::orderBy('name', 'asc')->get();
 
         return view('pages.admin.transactionform.show')->with([
             'transaction' => $transaction,
@@ -475,6 +476,7 @@ class TransactionsFormsController extends Controller {
             'trans_page_url' => $trans_page_url,
             'trans_page' => $trans_page,
             'approvers' => $approvers,
+            'companies' => $companies,
             'released_by' => $released_by
         ]);
     }
@@ -865,6 +867,46 @@ class TransactionsFormsController extends Controller {
         return redirect('/transaction-form/view/'.$transaction->id);
     }
 
+    // function for changing company (is_bank, issued only)
+    public function update_issued_company(Request $request, Transaction $transaction) {
+        if (!$this->check_can_edit_issued($transaction->id) && $transaction->is_bank) {
+            return back()->with('error', __('messages.cant_edit'));
+        }
+
+        // validate input
+        $data = $request->validate([
+            'form_company_id' => ['required', 'exists:companies,id'],
+            'depo_slip' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
+        ]);
+
+        if ($request->file('depo_slip') && $data['form_company_id'] != $transaction->project->company_id) {
+            $data['depo_slip'] = basename($request->file('depo_slip')->store('public/attachments/deposit_slip'));
+        } else {
+            $data['depo_slip'] = "";
+        }
+
+        $data['updated_id'] = auth()->id();
+
+        $transaction->update($data);
+
+        return redirect('/transaction-form/view/'.$transaction->id);
+    }
+
+    // function for chaning status to cleared (is_bank, issued only, diff company)
+    public function update_issued_clear(Transaction $transaction) {
+        if ($transaction->is_bank && $transaction->form_company_id && $transaction->project->company_id != $transaction->form_company_id) {            
+            $data = [];
+            $data['status_prev_id'] = $transaction->status_id;
+            $data['status_id'] = config('global.liquidation_cleared')[0];
+            $data['updated_id'] = auth()->id();
+            $transaction->update($data);
+
+            return redirect('/transaction-liquidation/view/'.$transaction->id);
+        } else {
+            return back()->with('error', __('messages.cant_edit'));
+        }
+    }
+
     public function reset(Transaction $transaction) {
         $user = User::where('id', auth()->id())->first();
 
@@ -1026,13 +1068,21 @@ class TransactionsFormsController extends Controller {
                 'control_no' => ['required'],
                 'released_at' => ['required', 'date'],
                 'amount_issued' => ['required', 'min:0'],
+                'amount' => ['required', 'min:0'],
                 'payor' => [''],
                 'depo_slip' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
-                'released_by_id' => ['required', 'exists:released_by,id']
+                'released_by_id' => ['required', 'exists:released_by,id'],
+                'form_company_id' => ['required', 'exists:companies,id'],
+                'currency_2' => ['required'],
+                'currency_2_rate' => ['required', 'min:0'],
+                'form_service_charge' => ['required', 'min:0'],
             ]);
 
-            if ($transaction->is_reimbursement) {
+            if (($transaction->is_reimbursement || $transaction->is_bank) && $request->file('depo_slip')) {
                 $data['depo_slip'] = basename($request->file('depo_slip')->store('public/attachments/deposit_slip'));
+            }
+
+            if ($transaction->is_reimbursement) {
                 $data['status_id'] = 9;
             } else {
                 $data['status_id'] = 4;

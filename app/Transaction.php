@@ -48,6 +48,8 @@ class Transaction extends Model {
                                         'form_amount_wht',
                                         'form_amount_payable',
                                         'formapprover.name',
+                                        'formcompany.name',
+                                        'form_service_charge',
                                         'liquidationapprover.name',
                                         'currency_2',
                                         'currency_2_rate',
@@ -74,6 +76,10 @@ class Transaction extends Model {
 
     public function project() {
         return $this->belongsTo(CompanyProject::class)->withTrashed();
+    }
+
+    public function formcompany() {
+        return $this->belongsTo(Company::class, 'form_company_id')->withTrashed();
     }
 
     public function coatagging() {

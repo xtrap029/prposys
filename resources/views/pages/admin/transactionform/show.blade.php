@@ -7,7 +7,7 @@
         <div class="container-fluid">
             <div class="form-row"> 
                 <div class="col-sm-6 mb-2">
-                    <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}" class="btn mb-2 btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
+                    <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}{{ isset($_GET['page']) ? '?page='.$_GET['page'] : '' }}" class="btn mb-2 btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
                     <a data-toggle="modal" data-target="#modal-make" href="#_" class="btn mb-2 btn-default"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>                
                     <a href="/transaction-form/reset/{{ $transaction->id }}" class="btn mb-2 btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                 </div>
@@ -16,6 +16,13 @@
                         <i class="align-middle font-weight-bolder material-icons text-md">add</i>
                         {{ $transaction->is_bank ? 'Deposit' : 'Liquidate' }}
                     </a>
+
+                    <!-- if issued and bank and diff company-->
+                    <a href="/transaction-form/edit-issued-clear/{{ $transaction->id }}" class="btn mb-2 btn-success {{ !$perms['can_create'] && $transaction->is_bank && $transaction->form_company_id ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')">
+                        <i class="align-middle font-weight-bolder material-icons text-md">check</i>
+                        Clear Now
+                    </a>
+
                     <a href="/transaction-form/edit{{ $transaction->is_reimbursement ? '-reimbursement' : '' }}/{{ $transaction->id }}" class="btn mb-2 btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
                     {{-- <a href="#_" class="btn mb-2 btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-approval"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a> --}}
                     <a href="/transaction-form/approval/{{ $transaction->id }}" class="btn mb-2 btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a>
@@ -108,79 +115,121 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="/transaction-form/issue/{{ $transaction->id }}" method="post" enctype="multipart/form-data">
+                                    <form action="/transaction-form/issue/{{ $transaction->id }}" method="post" enctype="multipart/form-data" class="row">
                                         @csrf
                                         @method('put')
-                                        <div class="row mb-3">
-                                            <div class="col-md-5">
-                                                <label for="" class="font-weight-bold">Type</label>
-                                                @if ($trans_page_url == 'prpo')
-                                                    <select name="control_type" class="form-control">
-                                                        @foreach (config('global.control_types') as $control_type)
-                                                            <option value="{{ $control_type }}">{{ $control_type }}</option>
+                                        <div class="col-md-5 mb-2">
+                                            <label for="" class="font-weight-bold">Type</label>
+                                            @if ($trans_page_url == 'prpo')
+                                                <select name="control_type" class="form-control">
+                                                    @foreach (config('global.control_types') as $control_type)
+                                                        <option value="{{ $control_type }}">{{ $control_type }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @include('errors.inline', ['message' => $errors->first('control_type')])
+                                            @else
+                                                <h5>Petty Cash</h5>
+                                                <input type="hidden" name="control_type" value="{{ config('global.control_types_pc') }}">
+                                            @endif
+                                        </div>
+                                        <div class="col-md-7 mb-2">
+                                            <label for="" class="font-weight-bold">No.</label>
+                                            @if ($trans_page_url == 'prpo')
+                                                <input type="text" name="control_no" class="form-control @error('control_no') is-invalid @enderror" required>
+                                                @include('errors.inline', ['message' => $errors->first('control_no')])
+                                            @else
+                                                <h5>{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</h5>
+                                                <input type="hidden" name="control_no" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}">
+                                            @endif                                                
+                                        </div>
+                                        <div class="col-md-7 mb-2 {{ $transaction->is_bank ? '' : 'd-none' }}">
+                                            <label for="" class="font-weight-bold">Transfer to</label>
+                                            <select name="form_company_id" id="form_company_id" data-val="{{ $transaction->project->company->id }}" class="form-control @error('form_company_id') is-invalid @enderror" required>
+                                                @foreach ($companies as $item)
+                                                    <option value="{{ $item->id }}" {{ $transaction->project->company->id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @include('errors.inline', ['message' => $errors->first('form_company_id')])
+                                        </div>
+                                        <div class="col-md-5 mb-2">
+                                            <label for="" class="font-weight-bold">{{ $transaction->is_deposit ? 'Date Deposited' : 'Release Date' }}</label>
+                                            <input type="date" class="form-control @error('released_at') is-invalid @enderror" name="released_at" required>
+                                            @include('errors.inline', ['message' => $errors->first('released_at')])
+                                        </div>
+
+                                        <div class="col-12 mt-4 {{ $transaction->is_bank ? '' : 'd-none' }}"></div>
+                                        <div class="col-md-5 mb-2 {{ $transaction->is_bank ? '' : 'd-none' }}">
+                                            <label for="" class="font-weight-bold text-center d-block">Amount</label>
+                                            <div class="row">
+                                                <div class="col-4 pt-2 font-weight-bold">{{ $transaction->currency }}</div>
+                                                <input type="number" id="amount" class="form-control col-8 row @error('amount') is-invalid @enderror" name="amount" step="0.01" value="{{ $transaction->amount }}" readonly required>
+                                            </div>
+                                            @include('errors.inline', ['message' => $errors->first('amount')])
+                                        </div>
+                                        <div class="col-md-4 mb-2 {{ $transaction->is_bank ? '' : 'd-none' }}">
+                                            <label for="" class="font-weight-bold d-block text-center">Currency</label>
+                                            <div class="row">
+                                                <div class="col-3 font-weight-bold">x</div>
+                                                <div class="col-9">
+                                                    <select name="currency_2" id="currencyChange" class="form-control @error('currency_2') is-invalid @enderror">
+                                                        @foreach (config('global.currency') as $key => $item)
+                                                            <option value="{{ config('global.currency_label')[$key] }}" {{ $transaction->currency == config('global.currency_label')[$key] ? 'selected' : '' }}>{{ $item }}</option>
                                                         @endforeach
                                                     </select>
-                                                    @include('errors.inline', ['message' => $errors->first('control_type')])
-                                                @else
-                                                    <h5>Petty Cash</h5>
-                                                    <input type="hidden" name="control_type" value="{{ config('global.control_types_pc') }}">
-                                                @endif
-                                            </div>
-                                            <div class="col-md-7">
-                                                <label for="" class="font-weight-bold">No.</label>
-                                                @if ($trans_page_url == 'prpo')
-                                                    <input type="text" name="control_no" class="form-control @error('control_no') is-invalid @enderror" required>
-                                                    @include('errors.inline', ['message' => $errors->first('control_no')])
-                                                @else
-                                                    <h5>{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</h5>
-                                                    <input type="hidden" name="control_no" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}">
-                                                @endif                                                
-                                            </div>
+                                                </div>
+                                            </div>                                                
+                                            @include('errors.inline', ['message' => $errors->first('currency_2')])
                                         </div>
-                                        <div class="row mb-3">
-                                            <div class="col-md-5">
-                                                <label for="" class="font-weight-bold">{{ $transaction->is_deposit ? 'Date Deposited' : 'Release Date' }}</label>
-                                                <input type="date" class="form-control @error('released_at') is-invalid @enderror" name="released_at" required>
-                                                @include('errors.inline', ['message' => $errors->first('released_at')])
-                                            </div>
+                                        <div class="col-md-3 mb-2 {{ $transaction->is_bank ? '' : 'd-none' }}">
+                                            <label for="" class="font-weight-bold">FX Rate</label>
+                                            <input type="number" id="currencyFx" class="form-control @error('currency_2_rate') is-invalid @enderror" step="0.000001" name="currency_2_rate" value="1" readonly required>
+                                            @include('errors.inline', ['message' => $errors->first('currency_2_rate')])
+                                        </div>
+
+                                        @if (!$transaction->is_bank)
                                             @if ($transaction->is_deposit || $transaction->is_reimbursement)
-                                                <div class="col-md-1">
+                                                <div class="col-md-1 mb-2">
                                                     <label class="invisible">.</label>
                                                     {{ $transaction->currency }}
                                                 </div>
                                             @endif
-                                            <div class="{{ $transaction->is_deposit || $transaction->is_reimbursement ? 'col-md-6' : 'col-md-7' }}">
+                                            <div class="{{ $transaction->is_deposit || $transaction->is_reimbursement ? 'col-md-6' : 'col-md-7' }} mb-2">
                                                 <label for="" class="font-weight-bold">Amount</label>
                                                 <input type="number" class="form-control @error('amount_issued') is-invalid @enderror" name="amount_issued" step="0.01" value="{{ $transaction->amount }}" required>
                                                 @include('errors.inline', ['message' => $errors->first('amount_issued')])
                                             </div>
-                                        </div>
-                                        <div class="form-row mb-3 {{ $transaction->is_deposit || $transaction->is_reimbursement ? '' : 'd-none' }}">
-                                            <div class="col-md-12">
-                                                <label for="" class="font-weight-bold">{{ $transaction->is_deposit ? 'Payor' : 'Payee' }}</label>
-                                                <input type="text" name="payor" class="form-control @error('payor') is-invalid @enderror" value="{{ $transaction->payor }}" {{ $transaction->is_deposit || $transaction->is_reimbursement ? 'required' : '' }}>
-                                                @include('errors.inline', ['message' => $errors->first('payor')])
+                                        @else
+                                            <div class="col-12 my-2 row">
+                                                <div class="col-6 font-weight-bold">Total Amount Transferred:</div>
+                                                <input type="text" id="currencyAmount" name="amount_issued" value="{{ $transaction->amount }}" class="border-0 col-6 pr-0 text-right outline-0" readonly>
                                             </div>
+                                            <div class="col-12 mb-4"></div>
+                                        @endif
+                                        <div class="col-md-12 mb-2 {{ $transaction->is_bank ? '' : 'd-none' }}">
+                                            <label for="" class="font-weight-bold">Service Charge</label>
+                                            <input type="number" class="form-control @error('form_service_charge') is-invalid @enderror" step="0.01" name="form_service_charge" value="0" required>
+                                            @include('errors.inline', ['message' => $errors->first('form_service_charge')])
                                         </div>
-                                        <div class="form-row mb-3">
-                                            <div class="col-md-12">
-                                                <label for="" class="font-weight-bold">{{ $transaction->is_deposit ? 'Issued By' : 'Released By' }}</label>
-                                                <select name="released_by_id" class="form-control @error('released_by_id') is-invalid @enderror" required>
-                                                    @foreach ($released_by as $item)
-                                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @include('errors.inline', ['message' => $errors->first('released_by_id')])
-                                            </div>
+                                        <div class="col-md-12 mb-2 {{ $transaction->is_deposit || $transaction->is_reimbursement ? '' : 'd-none' }}">
+                                            <label for="" class="font-weight-bold">{{ $transaction->is_deposit ? 'Payor' : 'Payee' }}</label>
+                                            <input type="text" name="payor" class="form-control @error('payor') is-invalid @enderror" value="{{ $transaction->payor }}" {{ $transaction->is_deposit || $transaction->is_reimbursement ? 'required' : '' }}>
+                                            @include('errors.inline', ['message' => $errors->first('payor')])
                                         </div>
-                                        <div class="form-row mb-3 {{ $transaction->is_reimbursement ? '' : 'd-none' }}">
-                                            <div class="col-md-12">
-                                                <label for="" class="font-weight-bold">Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than 5mb. )</small></label>
-                                                <input type="file" name="depo_slip" class="form-control @error('depo_slip') is-invalid @enderror" {{ $transaction->is_reimbursement ? 'required' : '' }}>
-                                                @include('errors.inline', ['message' => $errors->first('depo_slip')])
-                                            </div>
+                                        <div class="col-md-12 mb-2">
+                                            <label for="" class="font-weight-bold">{{ $transaction->is_deposit ? 'Issued By' : 'Released By' }}</label>
+                                            <select name="released_by_id" class="form-control @error('released_by_id') is-invalid @enderror" required>
+                                                @foreach ($released_by as $item)
+                                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @include('errors.inline', ['message' => $errors->first('released_by_id')])
                                         </div>
-                                        <div class="text-center mt-2">
+                                        <div id="depo_slip" class="col-md-12 mb-2 {{ $transaction->is_reimbursement ? '' : 'd-none' }}">
+                                            <label for="" class="font-weight-bold">Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than 5mb. )</small></label>
+                                            <input type="file" name="depo_slip" class="form-control @error('depo_slip') is-invalid @enderror" {{ $transaction->is_reimbursement ? 'required' : '' }}>
+                                            @include('errors.inline', ['message' => $errors->first('depo_slip')])
+                                        </div>
+                                        <div class="col-12 text-center mt-2">
                                             <input type="submit" class="btn btn-success" value="{{ $transaction->is_deposit ? 'Save' : 'Issue Now' }}">
                                         </div>
                                     </form>
@@ -218,12 +267,12 @@
                                     <form action="/transaction-form/edit-issued/{{ $transaction->id }}" method="post">
                                         @csrf
                                         @method('put')
-                                        <select name="trans_category" class="form-control w-50" onchange="this.form.submit()">
+                                        <select name="trans_category" class="form-control w-50 mb-2" onchange="this.form.submit()">
                                             <option value="{{ config('global.trans_category')[0] }}" {{ $transaction->is_deposit == 0 && $transaction->is_bills == 0 && $transaction->is_hr == 0 ? 'selected' : '' }}>{{ config('global.trans_category_label')[0] }}</option>
                                             <option value="{{ config('global.trans_category')[1] }}" {{ $transaction->is_deposit == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[1] }}</option>
                                             <option value="{{ config('global.trans_category')[2] }}" {{ $transaction->is_bills == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[2] }}</option>
                                             <option value="{{ config('global.trans_category')[3] }}" {{ $transaction->is_hr == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[3] }}</option>
-                                            {{-- <option value="{{ config('global.trans_category')[5] }}" {{ $transaction->is_bank == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[5] }}</option> --}}
+                                            <option value="{{ config('global.trans_category')[5] }}" {{ $transaction->is_bank == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[5] }}</option>
                                         </select>
                                     </form>
                                 @else
@@ -247,7 +296,52 @@
                             <div class="mb-4 mb-lg-0 col-lg-6">
                                 <label for="">Particulars</label>
                                 <h5>{{ $trans_page_url == 'prpo' ? $transaction->particulars->name : $transaction->particulars_custom }}</h5>
-                            </div>                            
+                            </div>
+                            <!-- if fund transfer and issued status -->
+                            @if ($transaction->is_bank && in_array($transaction->status_id, config('global.form_issued')))
+                                <div class="mb-4 mb-lg-0 col-lg-6">
+                                    <label for="">Transfer to</label>
+                                    <h5>
+                                        {{ $transaction->formcompany->name }}
+                                        <a href="#" class="ml-1" data-toggle="modal" data-target="#modal-transfer-to">
+                                            <i class="align-middle material-icons small">edit</i>
+                                        </a>
+                                    </h5>
+                                    <div class="modal fade" id="modal-transfer-to" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header border-0">
+                                                    <h5 class="modal-title">Edit Transfer To</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <form action="/transaction-form/edit-issued-company/{{ $transaction->id }}" method="post" class="modal-body" enctype="multipart/form-data">
+                                                    @csrf
+                                                    @method('put')
+                                                    <div class="form-group">
+                                                        <label for="" class="font-weight-bold">Company</label>
+                                                        <select name="form_company_id" id="form_company_id" data-val="{{ $transaction->project->company->id }}" class="form-control @error('form_company_id') is-invalid @enderror" required>
+                                                            @foreach ($companies as $item)
+                                                            <option value="{{ $item->id }}" {{ $transaction->form_company_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        @include('errors.inline', ['message' => $errors->first('form_company_id')])
+                                                    </div>
+                                                    <div id="depo_slip" class="form-group {{ $transaction->project->company->id != $transaction->form_company_id ? '' : 'd-none' }}">
+                                                        <label for="" class="font-weight-bold">Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than 5mb. )</small></label>
+                                                        <input type="file" name="depo_slip" class="form-control @error('depo_slip') is-invalid @enderror" {{ $transaction->project->company->id != $transaction->form_company_id ? 'required' : '' }}>
+                                                        @include('errors.inline', ['message' => $errors->first('depo_slip')])
+                                                    </div>
+                                                    <div class="form-group text-center pt-3">
+                                                        <input type="submit" class="btn btn-success" value="Save Changes">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                      
+                            @endif
                         </div>
                         <div class="row mb-0 mb-lg-4">
                             <div class="mb-4 mb-lg-0 col-lg-6">
@@ -425,21 +519,57 @@
                                     <h5>{{ $transaction->control_no }}</h5>
                                 </div>
                             </div>
-                            <div class="row mb-0 mb-lg-4">
-                                <div class="mb-4 mb-lg-0 col-lg-6">
+                            <div class="row">
+                                <div class="mb-4 col-lg-6">
                                     <label for="">{{ $transaction->is_deposit ? 'Date Deposited' : 'Released Date' }}</label>
                                     <h5>{{ $transaction->released_at }}</h5>
                                 </div>
-                                <div class="mb-4 mb-lg-0 col-lg-6">
-                                    <label for="">Amount</label>
-                                    <h5>{{ $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</h5>
-                                </div>
-                            </div>
-                            <div class="row mb-0 mb-lg-4">
-                                <div class="mb-4 mb-lg-0 col-lg-12">
+                                <div class="mb-4 col-lg-6">
                                     <label for="">{{ $transaction->is_deposit ? 'Issued By' : 'Released By' }}</label>
                                     <h5>{{ $transaction->releasedby->name }}</h5>
+                                </div>                                
+                            </div>
+                            <div class="row">
+                                @if ($transaction->is_bank)
+                                    <div class="mb-4 col-lg-6">
+                                        <label for="">Amount / FX Rate</label>
+                                        <h5>
+                                            {{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}
+                                            <span class="small px-2 vlign--top">x</span>
+                                            {{ number_format($transaction->currency_2_rate, 2, '.', ',') }}
+                                            ({{ $transaction->currency_2 }})
+                                            <span class="small pl-2 vlign--top">=</span>
+                                        </h5>
+                                    </div>
+                                @endif
+                                <div class="mb-4 col-lg-6">
+                                    <label for="">{{ $transaction->is_bank ? 'Transferred ' : '' }}Amount</label>
+                                    <h5>{{ $transaction->currency_2 ?: $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</h5>
                                 </div>
+
+                                @if ($transaction->is_bank && $transaction->depo_slip)
+                                    <div class="mb-4 col-lg-6">
+                                        <label for="">Attachment</label>
+                                        <h5>
+                                            <a href="/storage/public/attachments/deposit_slip/{{ $transaction->depo_slip }}" target="_blank">
+                                                <i class="material-icons mr-2 align-bottom">attachment</i>
+                                            </a>
+                                        </h5>
+                                    </div>
+                                @endif
+
+                                @if ($transaction->formcompany)
+                                    <div class="mb-4 col-lg-6">
+                                        <label for="">Company</label>
+                                        <h5>{{ $transaction->formcompany->name }}</h5>
+                                    </div>
+                                @endif
+                                @if ($transaction->form_service_charge && $transaction->form_service_charge > 0)
+                                    <div class="mb-4 col-lg-6">
+                                        <label for="">Service Charge</label>
+                                        <h5>{{ number_format($transaction->form_service_charge, 2, '.', ',') }}</h5>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     @endif
@@ -548,6 +678,36 @@
 
             $('.jsCopy').mouseleave(function() {
                 $(this).attr("data-original-title","Copy to clipboard")
+            })
+
+            $('#form_company_id').change(function() {
+                if (parseInt($(this).val()) != parseInt($(this).data('val'))) {
+                    $('#depo_slip').removeClass('d-none')
+                    $('#depo_slip input').prop('required', 'true')
+                } else {
+                    $('#depo_slip').addClass('d-none')
+                    $('#depo_slip input').val('')
+                    $('#depo_slip input').removeAttr('required')
+                }
+            })
+
+            $('#currencyChange').change(function() {
+                if ($(this).val() != '{{ $transaction->currency }}') {
+                    $('#currencyFx').attr("readonly", false) 
+                } else {
+                    $('#currencyFx').val(1).attr("readonly", "readonly") 
+                }
+
+                $('#currencyFx').trigger('change')
+            })
+
+            $('#amount').on('keyup keypress blur change', function() {
+                $('#currencyFx').trigger('change')
+            })
+
+            $('#currencyFx').on('keyup keypress blur change', function() {
+                convertedAmt = parseFloat($(this).val() == "" ? 0 : $(this).val()) * parseFloat($('#amount').val())
+                $('#currencyAmount').val(convertedAmt.toFixed(2))
             })
         })
     </script>

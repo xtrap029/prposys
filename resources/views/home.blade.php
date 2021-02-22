@@ -143,7 +143,7 @@
                         <div class="card-header pb-2">
                             <h3 class="card-title">For Approval</h3>
                             <div class="card-tools">
-                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=6&category=&type=&s=&user_req=&user_prep&bal&bal">Show More</a>
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=6&category=&type=&s=&user_req=&user_prep&bal">Show More</a>
                                 <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons text-primary">list</i>
                                 </button>                            

@@ -124,6 +124,11 @@ Route::middleware('auth')->group(function () {
             Route::put('/edit-reimbursement/{transaction}', $url.'@update_reimbursement')->where('transaction', '[0-9]+');
 
             Route::put('/edit-issued/{transaction}', $url.'@update_issued')->where('transaction', '[0-9]+');
+
+            // if is_bank
+            Route::put('/edit-issued-company/{transaction}', $url.'@update_issued_company')->where('transaction', '[0-9]+');
+            Route::get('/edit-issued-clear/{transaction}', $url.'@update_issued_clear')->where('transaction', '[0-9]+');
+
             Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
             Route::put('/cancel/{transaction}', $url.'@cancel')->where('transaction', '[0-9]+');
             // Route::put('/approval/{transaction}', $url.'@approval')->where('transaction', '[0-9]+');

@@ -98,15 +98,20 @@ class TransactionsController extends Controller {
             if ($_GET['user_req'] != "") $transactions = $transactions->where('requested_id', $_GET['user_req']);
             if ($_GET['user_prep'] != "") $transactions = $transactions->where('owner_id', $_GET['user_prep']);
             if ($_GET['category'] != "") $transactions = $transactions->where($_GET['category'], 1);
+            
             if ($_GET['bal'] == "0" && $_GET['bal'] != "") {
                 $transactions = $transactions->whereHas('liquidation', function($query){
                     $query->havingRaw('sum(amount) = transactions.amount_issued');
                 });
             } else if ($_GET['bal'] == "1") {
                 $transactions = $transactions->whereHas('liquidation', function($query){
-                    $query->havingRaw('sum(amount) != transactions.amount_issued');
+                    $query->havingRaw('sum(amount) != transactions.amount_issued AND (sum(amount) - transactions.amount_issued) > 0');
                 });
-            };
+            } else if ($_GET['bal'] == "-1") {
+                $transactions = $transactions->whereHas('liquidation', function($query){
+                    $query->havingRaw('sum(amount) != transactions.amount_issued AND (sum(amount) - transactions.amount_issued) < 0');
+                });
+            }
 
             $transactions = $transactions->orderBy('id', 'desc')->paginate(10);
 
@@ -124,7 +129,6 @@ class TransactionsController extends Controller {
                                         $query->where('company_id', $trans_company);
                                     })->orderBy('id', 'desc')->paginate(10);
         }
-
 
         foreach ($transactions as $key => $value) {
             if (in_array($value->status_id, config('global.page_generated'))) {
@@ -217,15 +221,20 @@ class TransactionsController extends Controller {
         if ($request->user_req != "") $transactions = $transactions->where('requested_id', $request->user_req);
         if ($request->user_prep != "") $transactions = $transactions->where('owner_id', $request->user_prep);
         if ($request->category != "") $transactions = $transactions->where($request->category, 1);
+
         if ($request->bal == "0" && $request->bal != "") {
             $transactions = $transactions->whereHas('liquidation', function($query){
                 $query->havingRaw('sum(amount) = transactions.amount_issued');
             });
         } else if ($request->bal == "1") {
             $transactions = $transactions->whereHas('liquidation', function($query){
-                $query->havingRaw('sum(amount) != transactions.amount_issued');
+                $query->havingRaw('sum(amount) != transactions.amount_issued AND (sum(amount) - transactions.amount_issued) > 0');
             });
-        };
+        } else if ($request->bal == "-1") {
+            $transactions = $transactions->whereHas('liquidation', function($query){
+                $query->havingRaw('sum(amount) != transactions.amount_issued AND (sum(amount) - transactions.amount_issued) < 0');
+            });
+        }
 
         $transactions = $transactions->orderBy('id', 'desc')->limit(5)->get();
 
@@ -716,9 +725,14 @@ class TransactionsController extends Controller {
                 });
             } else if ($_GET['bal'] == "1") {
                 $transactions = $transactions->whereHas('liquidation', function($query){
-                    $query->havingRaw('sum(amount) != transactions.amount_issued');
+                    $query->havingRaw('sum(amount) != transactions.amount_issued AND (sum(amount) - transactions.amount_issued) > 0');
                 });
-            };
+            } else if ($_GET['bal'] == "-1") {
+                $transactions = $transactions->whereHas('liquidation', function($query){
+                    $query->havingRaw('sum(amount) != transactions.amount_issued AND (sum(amount) - transactions.amount_issued) < 0');
+                });
+            }
+
             $trans_bal = $_GET['bal'];
         }
 
