@@ -7,6 +7,7 @@
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
 @import '~admin-lte/build/scss/AdminLTE';
+@import '~fastselect/dist/fastselect.css';
 
 // Material Icon
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
@@ -23,6 +24,8 @@
 @import 'tools';
 @import 'print';
 @import 'others';
+
+@import 'vendor_fastselect';
 
 @page {
     size: auto;

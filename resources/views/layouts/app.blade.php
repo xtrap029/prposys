@@ -211,6 +211,16 @@
                                                         <i class="nav-icon material-icons icon--list">receipt</i><p>Tax Type</p>
                                                     </a>
                                                 </li>
+                                                {{-- <li class="nav-item">
+                                                    <a href="/report-column" class="nav-link {{ Route::currentRouteName() == 'reportcolumns' ? 'active' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">view_column</i><p>Report Column</p>
+                                                    </a>
+                                                </li> --}}
+                                                <li class="nav-item">
+                                                    <a href="/report-template" class="nav-link {{ Route::currentRouteName() == 'reporttemplates' ? 'active' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">extension</i><p>Report Template</p>
+                                                    </a>
+                                                </li>
                                             @endif
                                             
                                             @if (Auth::user()->role_id == 1)
