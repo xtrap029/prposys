@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Liquidate '.strtoupper($transaction->trans_type))
+@section('title', $page_title)
 
 @section('content')
     <section class="content-header">

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Make Form')
+@section('title', $page_title)
 
 @section('content')
     <section class="content-header">

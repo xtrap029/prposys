@@ -776,27 +776,24 @@ class TransactionsController extends Controller {
             fputcsv($file, $columns);
             $columns = array('');
             fputcsv($file, $columns);
-
-            $columns = array('PO/PR #', 'Company', 'Project', 'Purpose', 'Currency', 'Amount', 'Date Gen.', 'Trans. #', 'Last Updated', 'Req. By', 'Status');
             
-            $callback = function() use($transactions, $columns) {
+            $columns = [];
+            foreach ($report_template->templatecolumn as $key => $value) {
+                $columns[] = $value->label;
+            }
+            
+            $temp_column = $report_template->templatecolumn;
+            $callback = function() use($transactions, $columns, $temp_column) {
                 $file = fopen('php://output', 'w');
                 fputcsv($file, $columns);
 
                 foreach ($transactions as $item) {
-                    $row['PO/PR #'] = strtoupper($item->trans_type).'-'.$item->trans_year.'-'.sprintf('%05d',$item->trans_seq);
-                    $row['Company'] = $item->project->company->name;
-                    $row['Project'] = $item->project->project;
-                    $row['Purpose'] = $item->purpose;
-                    $row['Currency'] = $item->currency;
-                    $row['Amount'] = number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',');
-                    $row['Date Gen.'] = Carbon::parse($item->created_at)->format('Y-m-d');
-                    $row['Trans. #'] = $item->control_no;
-                    $row['Last Updated'] = Carbon::parse($item->updated_at)->format('Y-m-d');
-                    $row['Req. By'] = $item->requested->name;
-                    $row['Status'] = $item->status->name;
+                    $row = [];
+                    foreach ($temp_column as $key => $value) {
+                        $row[] = eval($value->column->code);
+                    }
 
-                    fputcsv($file, array($row['PO/PR #'], $row['Company'], $row['Project'], $row['Purpose'], $row['Currency'], $row['Amount'], $row['Date Gen.'], $row['Trans. #'], $row['Last Updated'], $row['Req. By'], $row['Status']));
+                    fputcsv($file, $row);
                 }
 
                 fclose($file);
