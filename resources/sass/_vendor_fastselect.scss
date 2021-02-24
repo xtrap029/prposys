@@ -1,0 +1,24 @@
+.fstElement {
+    @extend .rounded;
+    width: 100% !important;
+}
+
+.fstControls {
+    width: 100% !important;
+}
+
+.fstElement,
+.fstChoiceItem,
+.fstResultItem {
+    font-size: .9em;
+}
+
+.fstMultipleMode .fstQueryInput {
+    font-size: 1em;
+}
+
+.fstChoiceItem,
+.fstResultItem.fstSelected {
+    border-color: $blue !important;
+    background-color: $blue !important;
+}

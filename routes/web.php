@@ -79,6 +79,14 @@ Route::middleware('auth')->group(function () {
             Route::put('/{bank_branch}', $url.'@update')->where('bank_branch', '[0-9]+');
             Route::delete('/{bank_branch}', $url.'@destroy')->where('bank_branch', '[0-9]+');
         });
+
+        Route::prefix('report-column')->group(function () {
+            $url = 'Admin\ReportColumnsController';
+
+            Route::get('/', $url.'@index')->name('reportcolumns');
+        });
+
+        Route::resource('report-template', 'Admin\ReportTemplatesController', ['names' => ['index' => 'reporttemplates', 'create' => 'reporttemplates', 'edit' => 'reporttemplates']]);
     });
 
     // Access Level 1, 2, and 3

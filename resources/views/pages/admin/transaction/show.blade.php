@@ -14,7 +14,18 @@
                 </div>
                 <div class="col-sm-5 text-sm-right mb-2">
                     <a href="/transaction-form/create{{ $transaction->is_reimbursement ? '-reimbursement' : '' }}?company={{ $transaction->project->company_id }}&key={{ strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq) }}" class="btn mb-2 btn-success {{ $perms['can_create'] ? '' : 'd-none' }}">
-                        <i class="align-middle font-weight-bolder material-icons text-md">add</i> {{ $transaction->is_reimbursement ? 'Reimbursement' : 'Make Form' }}
+                        <i class="align-middle font-weight-bolder material-icons text-md">add</i> 
+                        @if ($transaction->is_deposit)
+                            {{ config('global.trans_category_label_make_form')[1] }}
+                        @elseif ($transaction->is_bills)    
+                            {{ config('global.trans_category_label_make_form')[2] }}
+                        @elseif ($transaction->is_hr)    
+                            {{ config('global.trans_category_label_make_form')[3] }}
+                        @elseif ($transaction->is_bank)    
+                            {{ config('global.trans_category_label_make_form')[5] }}
+                        @else
+                            {{ config('global.trans_category_label_make_form')[0] }}
+                        @endif
                     </a>
                     <a href="/transaction/edit/{{ $transaction->id }}" class="btn mb-2 btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
                     <a href="#_" class="btn mb-2 btn-danger {{ $perms['can_cancel'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-cancel"><i class="align-middle font-weight-bolder material-icons text-md">delete</i> Cancel</a>

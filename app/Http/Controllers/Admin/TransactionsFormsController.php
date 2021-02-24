@@ -192,7 +192,20 @@ class TransactionsFormsController extends Controller {
         $particulars = Particulars::where('type', $transaction->trans_type)->get();
         $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('id', 'asc')->get();
 
+        if ($transaction->is_deposit)
+            $page_title = config('global.trans_category_label_make_form')[1];
+        else if ($transaction->is_bills)
+            $page_title = config('global.trans_category_label_make_form')[2];
+        else if ($transaction->is_hr)    
+            $page_title = config('global.trans_category_label_make_form')[3];
+        else if ($transaction->is_bank)    
+            $page_title = config('global.trans_category_label_make_form')[5];
+        else
+            $page_title = config('global.trans_category_label_make_form')[0];
+
+
         return view('pages.admin.transactionform.create')->with([
+            'page_title' => $page_title,
             'trans_page_url' => $trans_page_url,
             'trans_page' => $trans_page,
             'transaction' => $transaction,
@@ -507,8 +520,20 @@ class TransactionsFormsController extends Controller {
         $particulars = Particulars::where('type', $transaction->trans_type)->get();
         $projects = CompanyProject::where('company_id', $transaction->project->company_id)->get();
         $users = User::whereNotNull('role_id')->get();
+
+        if ($transaction->is_deposit)
+            $page_title = config('global.trans_category_label_edit_form')[1];
+        else if ($transaction->is_bills)
+            $page_title = config('global.trans_category_label_edit_form')[2];
+        else if ($transaction->is_hr)    
+            $page_title = config('global.trans_category_label_edit_form')[3];
+        else if ($transaction->is_bank)    
+            $page_title = config('global.trans_category_label_edit_form')[5];
+        else
+            $page_title = config('global.trans_category_label_edit_form')[0];
         
         return view('pages.admin.transactionform.edit')->with([
+            'page_title' => $page_title,
             'transaction' => $transaction,
             'trans_page_url' => $trans_page_url,
             'trans_page' => $trans_page,

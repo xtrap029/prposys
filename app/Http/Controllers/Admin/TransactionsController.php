@@ -7,6 +7,7 @@ use App\Company;
 use App\CompanyProject;
 use App\Particulars;
 use App\ReleasedBy;
+use App\ReportTemplate;
 use App\Settings;
 use App\Transaction;
 use App\TransactionStatus;
@@ -658,6 +659,7 @@ class TransactionsController extends Controller {
         $trans_category = '';
         $trans_req = '';
         $trans_bal= '';
+        $trans_template= '';
 
         $transactions = Transaction::orderBy('id', 'desc');
         
@@ -736,11 +738,20 @@ class TransactionsController extends Controller {
             $trans_bal = $_GET['bal'];
         }
 
+        $report_template = ReportTemplate::orderBy('id', 'asc');
+        if (isset($_GET['template'])) {
+            $report_template = $report_template->where('id', $_GET['template']);
+
+            $trans_template = $_GET['template'];
+        }
+        $report_template = $report_template->first();
+
         $transactions = $transactions->get();
         
         $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
         $companies = Company::orderBy('name', 'asc')->get();
         $status = TransactionStatus::whereIn('id', config('global.status'))->orderBy('id', 'asc')->get();
+        $report_templates = ReportTemplate::orderBy('name', 'asc')->get();
 
         if (isset($_GET['csv'])) {
             $fileName = 'PRPOSYS-REPORT_'.Carbon::now().'.csv';
@@ -765,27 +776,24 @@ class TransactionsController extends Controller {
             fputcsv($file, $columns);
             $columns = array('');
             fputcsv($file, $columns);
-
-            $columns = array('PO/PR #', 'Company', 'Project', 'Purpose', 'Currency', 'Amount', 'Date Gen.', 'Trans. #', 'Last Updated', 'Req. By', 'Status');
             
-            $callback = function() use($transactions, $columns) {
+            $columns = [];
+            foreach ($report_template->templatecolumn as $key => $value) {
+                $columns[] = $value->label;
+            }
+            
+            $temp_column = $report_template->templatecolumn;
+            $callback = function() use($transactions, $columns, $temp_column) {
                 $file = fopen('php://output', 'w');
                 fputcsv($file, $columns);
 
                 foreach ($transactions as $item) {
-                    $row['PO/PR #'] = strtoupper($item->trans_type).'-'.$item->trans_year.'-'.sprintf('%05d',$item->trans_seq);
-                    $row['Company'] = $item->project->company->name;
-                    $row['Project'] = $item->project->project;
-                    $row['Purpose'] = $item->purpose;
-                    $row['Currency'] = $item->currency;
-                    $row['Amount'] = number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',');
-                    $row['Date Gen.'] = Carbon::parse($item->created_at)->format('Y-m-d');
-                    $row['Trans. #'] = $item->control_no;
-                    $row['Last Updated'] = Carbon::parse($item->updated_at)->format('Y-m-d');
-                    $row['Req. By'] = $item->requested->name;
-                    $row['Status'] = $item->status->name;
+                    $row = [];
+                    foreach ($temp_column as $key => $value) {
+                        $row[] = eval($value->column->code);
+                    }
 
-                    fputcsv($file, array($row['PO/PR #'], $row['Company'], $row['Project'], $row['Purpose'], $row['Currency'], $row['Amount'], $row['Date Gen.'], $row['Trans. #'], $row['Last Updated'], $row['Req. By'], $row['Status']));
+                    fputcsv($file, $row);
                 }
 
                 fclose($file);
@@ -794,7 +802,10 @@ class TransactionsController extends Controller {
             return response()->stream($callback, 200, $headers);
             
         } else {
+
             return view('pages.admin.transaction.reportall')->with([
+                'report_template' => $report_template,
+                'report_templates' => $report_templates,
                 'companies' => $companies,
                 'users' => $users,
                 // 'status' => $status,
@@ -808,6 +819,7 @@ class TransactionsController extends Controller {
                 'trans_category' => $trans_category,
                 'trans_req' => $trans_req,
                 'trans_bal' => $trans_bal,
+                'trans_template' => $trans_template
             ]);
         }
     }

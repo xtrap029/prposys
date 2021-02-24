@@ -182,7 +182,19 @@ class TransactionsLiquidationController extends Controller {
         $banks = Bank::orderBy('name', 'asc')->get();
         $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
 
+        if ($transaction->is_deposit)
+            $page_title = config('global.trans_category_label_create_liq')[1].' '.strtoupper($transaction->trans_type);
+        else if ($transaction->is_bills)
+            $page_title = config('global.trans_category_label_create_liq')[2].' '.strtoupper($transaction->trans_type);
+        else if ($transaction->is_hr)    
+            $page_title = config('global.trans_category_label_create_liq')[3].' '.strtoupper($transaction->trans_type);
+        else if ($transaction->is_bank)    
+            $page_title = config('global.trans_category_label_create_liq')[5];
+        else
+            $page_title = config('global.trans_category_label_create_liq')[0].' '.strtoupper($transaction->trans_type);
+
         return view('pages.admin.transactionliquidation.create')->with([
+            'page_title' => $page_title,
             'trans_page_url' => $trans_page_url,
             'trans_page' => $trans_page,
             'transaction' => $transaction,
