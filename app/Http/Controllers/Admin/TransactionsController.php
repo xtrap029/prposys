@@ -18,6 +18,7 @@ use Spatie\Activitylog\Models\Activity;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use \DB;
+use \File;
 use Carbon\Carbon;
 
 class TransactionsController extends Controller {
@@ -304,6 +305,7 @@ class TransactionsController extends Controller {
                 'due_at' => ['required', 'date'],
                 'requested_id' => ['required', 'exists:users,id'],
                 'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
+                'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
             ];
 
             // if ($trans_type == 'pc') {
@@ -313,6 +315,10 @@ class TransactionsController extends Controller {
             // }
             
             $data = $request->validate($validation);
+
+            if (($request->trans_type == 'po' || $request->trans_category == 'bp') && $request->file('soa')) {
+                $data['soa'] = basename($request->file('soa')->store('public/attachments/soa'));
+            }
 
             $data['is_deposit'] = 0;
             $data['is_bills'] = 0;
@@ -431,6 +437,7 @@ class TransactionsController extends Controller {
             'project_id' => ['required', 'exists:company_projects,id'],
             'payee' => ['required'],
             'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
+            'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
         ];
 
         // if ($transaction->trans_type == 'pc') {
@@ -440,6 +447,12 @@ class TransactionsController extends Controller {
         // }
 
         $data = $request->validate($validation);
+
+        if (($transaction->trans_type == 'po' || $request->trans_category == 'bp') && $request->file('soa')) {
+            $data['soa'] = basename($request->file('soa')->store('public/attachments/soa'));
+        } else if ($transaction->trans_type != 'po' && $request->trans_category != 'bp') {
+            $data['soa'] = '';
+        }
 
         $data['is_deposit'] = 0;
         $data['is_bills'] = 0;

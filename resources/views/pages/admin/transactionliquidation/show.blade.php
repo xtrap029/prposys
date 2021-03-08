@@ -362,6 +362,14 @@
                                 <td class="font-weight-bold w-25">COA Tagging</td>
                                 <td>{{ $transaction->coatagging->name }}</td>
                             </tr>
+                            <tr class="{{ $transaction->soa ? '' : 'd-none' }}">
+                                <td class="font-weight-bold w-25">Statement of Account</td>
+                                <td>
+                                    <a href="/storage/public/attachments/soa/{{ $transaction->soa }}" target="_blank">
+                                        <i class="material-icons mr-2 align-bottom">attachment</i>
+                                    </a>    
+                                </td>
+                            </tr>
                             <tr>
                                 <td class="font-weight-bold w-25">Vendor / Payee</td>
                                 <td>{{ $transaction->payee }}</td>

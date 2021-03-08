@@ -20,7 +20,7 @@
     </section>
     <section class="content">
         <div class="container-fluid">
-            <form action="/transaction/create" method="post" class="jsPreventMultiple">
+            <form action="/transaction/create" method="post" class="jsPreventMultiple" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="trans_type" value="{{ $trans_type }}">
 
@@ -94,6 +94,14 @@
                         <label for="">Prepared by</label>
                         <h5>{{ Auth::user()->name }}</h5>
                     </div>
+                </div>
+                <div class="form-row mb-3">
+                    <div class="col-sm-4 col-lg-4 mb-2 {{ $trans_type == 'po' ? '' : 'd-none' }}">
+                        <label for="">Statement of Account</label>
+                        <input type="file" name="soa" class="soa form_control" {{ $trans_type == 'po' ? 'required' : '' }}>
+                    </div>
+                </div>
+                <div class="form-row mb-3">
                     {{-- <div class="col-md-2">
                         <label for="">For Deposit?</label>
                         <div class="form-check">
@@ -110,7 +118,7 @@
                             <div class="col-md-6 col-xl-4">
                                 <div class="callout py-1 mx-1 row">
                                     <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[0] }}" class="vlign--baseline-middle m-auto outline-0" checked>
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[0] }}" class="trans-category vlign--baseline-middle m-auto outline-0" checked>
                                     </div>
                                     <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[0] }}</h6>
@@ -121,7 +129,7 @@
                             <div class="col-md-6 col-xl-4">
                                 <div class="callout py-1 mx-1 row">
                                     <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[1] }}" class="vlign--baseline-middle m-auto outline-0">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[1] }}" class="trans-category vlign--baseline-middle m-auto outline-0">
                                     </div>
                                     <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[1] }}</h6>
@@ -132,7 +140,7 @@
                             <div class="col-md-6 col-xl-4">
                                 <div class="callout py-1 mx-1 row">
                                     <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[2] }}" class="vlign--baseline-middle m-auto outline-0">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[2] }}" class="trans-category vlign--baseline-middle m-auto outline-0">
                                     </div>
                                     <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[2] }}</h6>          
@@ -143,7 +151,7 @@
                             <div class="col-md-6 col-xl-4">
                                 <div class="callout py-1 mx-1 row">
                                     <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[3] }}" class="vlign--baseline-middle m-auto outline-0">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[3] }}" class="trans-category vlign--baseline-middle m-auto outline-0">
                                     </div>
                                     <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[3] }}</h6>
@@ -154,7 +162,7 @@
                             <div class="col-md-6 col-xl-4">
                                 <div class="callout py-1 mx-1 row">
                                     <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[4] }}" class="vlign--baseline-middle m-auto outline-0">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[4] }}" class="trans-category vlign--baseline-middle m-auto outline-0">
                                     </div>
                                     <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[4] }}</h6>
@@ -165,7 +173,7 @@
                             <div class="col-md-6 col-xl-4">
                                 <div class="callout py-1 mx-1 row">
                                     <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[5] }}" class="vlign--baseline-middle m-auto outline-0">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[5] }}" class="trans-category vlign--baseline-middle m-auto outline-0">
                                     </div>
                                     <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[5] }}</h6>
@@ -185,4 +193,23 @@
             </form>
         </div>
     </section>
+@endsection
+
+@section('script')
+    <script type="text/javascript">
+        $(function() {
+            $('.trans-category').change(function() {
+                if ('{{ $trans_type }}' != 'po') {
+                    if ($(this).val() == 'bp') {
+                        $('.soa').parent().removeClass('d-none')
+                        $('.soa').prop('required', 'true')
+                    } else {
+                        $('.soa').parent().addClass('d-none')
+                        $('.soa').val('')
+                        $('.soa').removeAttr('required')
+                    }
+                }
+            })
+        })
+    </script>
 @endsection
