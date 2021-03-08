@@ -32,6 +32,7 @@
         'control_types_pc' => 'Petty Cash',
         'trans_category' => ['reg', 'dt', 'bp', 'hr', 'rb', 'bt'],
         'trans_category_column' => ['', 'is_deposit', 'is_bills', 'is_hr', 'is_reimbursement', 'is_bank'],
+        'trans_category_column_2' => ['is_reg', 'is_deposit', 'is_bills', 'is_hr', 'is_reimbursement', 'is_bank'],
         'trans_category_label' => ['Regular Transaction', 'Deposit Transaction', 'Bills Payment', 'Human Resource', 'Reimbursement', 'Fund Transfer'],
         'trans_category_label_filter' => ['All Categories', 'Deposit Transaction', 'Bills Payment', 'Human Resource', 'Reimbursement', 'Fund Transfer'],
         'trans_category_label_filter_2' => ['All', 'Deposit Transaction', 'Bills Payment', 'Human Resource', 'Reimbursement', 'Fund Transfer'],

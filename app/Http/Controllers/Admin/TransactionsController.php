@@ -730,8 +730,16 @@ class TransactionsController extends Controller {
             $trans_status = $_GET['status'];
         }
         if (!empty($_GET['category'])) {
-            $transactions = $transactions->where($_GET['category'], 1);
-            // $status_sel = TransactionStatus::where('id', $_GET['status'])->first()->name;
+            if ($_GET['category'] == 'is_reg') {
+                foreach (config('global.trans_category_column') as $key => $value) {
+                    if ($value != '') {
+                        $transactions = $transactions->where($value, 0);
+                    }
+                }
+            } else {
+                $transactions = $transactions->where($_GET['category'], 1);
+                // $status_sel = TransactionStatus::where('id', $_GET['status'])->first()->name;
+            }
             $trans_category = $_GET['category'];
         }
         if (!empty($_GET['from'])) {
