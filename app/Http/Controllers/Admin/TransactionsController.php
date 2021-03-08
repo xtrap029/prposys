@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Bank;
 use App\Company;
 use App\CompanyProject;
+use App\ExpenseType;
 use App\Particulars;
 use App\ReleasedBy;
 use App\ReportTemplate;
@@ -12,6 +14,7 @@ use App\Settings;
 use App\Transaction;
 use App\TransactionStatus;
 use App\User;
+use App\VatType;
 use App\Helpers\TransactionHelper;
 use App\Helpers\UserHelper;
 use Spatie\Activitylog\Models\Activity;
@@ -674,6 +677,22 @@ class TransactionsController extends Controller {
         $trans_bal= '';
         $trans_template= '';
 
+        $trans_prep = '';
+        $trans_rel = '';
+        $trans_updated = '';
+        $trans_bank = '';
+        $trans_appr_form = '';
+        $trans_due_from = '';
+        $trans_due_to = '';
+        $trans_depo_from = '';
+        $trans_depo_to = '';
+        $trans_rel_from = '';
+        $trans_rel_to = '';
+        $trans_depo_type = '';
+        $trans_vat_type = '';
+        $trans_particulars = '';
+        $trans_currency = '';
+
         $transactions = Transaction::orderBy('id', 'desc');
         
         $trans_type_csv = "All";
@@ -699,26 +718,22 @@ class TransactionsController extends Controller {
 
             $transactions = $transactions->where('trans_type', $trans_type);
         }
-
         if (!empty($_GET['company'])) {
             $trans_company = $_GET['company'];
             $transactions = $transactions->whereDoesntHave('project', function($query) use($trans_company) {
                 $query->where('company_id', '!=', $trans_company);
             });
-        }
-        
+        }        
         if (!empty($_GET['status'])) {
             $transactions = $transactions->whereIn('status_id', explode(',', $_GET['status']));
             // $status_sel = TransactionStatus::where('id', $_GET['status'])->first()->name;
             $trans_status = $_GET['status'];
         }
-
         if (!empty($_GET['category'])) {
             $transactions = $transactions->where($_GET['category'], 1);
             // $status_sel = TransactionStatus::where('id', $_GET['status'])->first()->name;
             $trans_category = $_GET['category'];
         }
-
         if (!empty($_GET['from'])) {
             $transactions = $transactions->whereDate('created_at', '>=', $_GET['from']);
             $trans_from = $_GET['from'];
@@ -727,12 +742,70 @@ class TransactionsController extends Controller {
             $transactions = $transactions->whereDate('created_at', '<=', $_GET['to']);
             $trans_to = $_GET['to'];
         }
-        
+        if (!empty($_GET['due_from'])) {
+            $transactions = $transactions->whereDate('due_at', '>=', $_GET['due_from']);
+            $trans_due_from = $_GET['due_from'];
+        }
+        if (!empty($_GET['due_to'])) {
+            $transactions = $transactions->whereDate('due_at', '<=', $_GET['due_to']);
+            $trans_due_to = $_GET['due_to'];
+        }   
+        if (!empty($_GET['depo_from'])) {
+            $transactions = $transactions->whereDate('depo_date', '>=', $_GET['depo_from']);
+            $trans_depo_from = $_GET['depo_from'];
+        }
+        if (!empty($_GET['depo_to'])) {
+            $transactions = $transactions->whereDate('depo_date', '<=', $_GET['depo_to']);
+            $trans_depo_to = $_GET['depo_to'];
+        }  
+        if (!empty($_GET['rel_from'])) {
+            $transactions = $transactions->whereDate('released_at', '>=', $_GET['rel_from']);
+            $trans_rel_from = $_GET['rel_from'];
+        }
+        if (!empty($_GET['rel_to'])) {
+            $transactions = $transactions->whereDate('released_at', '<=', $_GET['rel_to']);
+            $trans_depo_type = $_GET['rel_to'];
+        }        
         if (!empty($_GET['user_req'])) {
             $transactions = $transactions->where('requested_id', $_GET['user_req']);
             $trans_req = $_GET['user_req'];
         }
-
+        if (!empty($_GET['user_prep'])) {
+            $transactions = $transactions->where('owner_id', $_GET['user_prep']);
+            $trans_prep = $_GET['user_prep'];
+        }
+        if (!empty($_GET['user_rel'])) {
+            $transactions = $transactions->where('released_by_id', $_GET['user_rel']);
+            $trans_updated = $_GET['user_rel'];
+        }
+        if (!empty($_GET['user_updated'])) {
+            $transactions = $transactions->where('updated_id', $_GET['user_updated']);
+            $trans_prep = $_GET['user_updated'];
+        }
+        if (!empty($_GET['bank'])) {
+            $transactions = $transactions->where('depo_bank_branch_id', $_GET['bank']);
+            $trans_bank = $_GET['bank'];
+        }
+        if (!empty($_GET['user_approver_form'])) {
+            $transactions = $transactions->where('form_approver_id', $_GET['user_approver_form']);
+            $trans_appr_form = $_GET['user_approver_form'];
+        }
+        if (!empty($_GET['depo_type'])) {
+            $transactions = $transactions->where('depo_type', $_GET['depo_type']);
+            $trans_appr_form = $_GET['depo_type'];
+        }
+        if (!empty($_GET['vat_type'])) {
+            $transactions = $transactions->where('vat_type_id', $_GET['vat_type']);
+            $trans_vat_type = $_GET['vat_type'];
+        }
+        if (!empty($_GET['particulars'])) {
+            $transactions = $transactions->where('particulars_id', $_GET['particulars']);
+            $trans_particulars = $_GET['particulars'];
+        }
+        if (!empty($_GET['currency'])) {
+            $transactions = $transactions->where('currency', $_GET['currency']);
+            $trans_currency = $_GET['currency'];
+        }
         if (isset($_GET['bal'])) {
             if ($_GET['bal'] == "0" && $_GET['bal'] != "") {
                 $transactions = $transactions->whereHas('liquidation', function($query){
@@ -762,7 +835,11 @@ class TransactionsController extends Controller {
         $transactions = $transactions->get();
         
         $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
+        $particulars = Particulars::orderBy('type', 'asc')->orderBy('name', 'asc')->get();
+        $releasers = ReleasedBy::orderBy('name', 'asc')->get();
         $companies = Company::orderBy('name', 'asc')->get();
+        $banks = Bank::orderBy('name', 'asc')->get();
+        $vat_types = VatType::orderBy('name', 'asc')->get();
         $status = TransactionStatus::whereIn('id', config('global.status'))->orderBy('id', 'asc')->get();
         $report_templates = ReportTemplate::orderBy('name', 'asc')->get();
 
@@ -821,6 +898,10 @@ class TransactionsController extends Controller {
                 'report_templates' => $report_templates,
                 'companies' => $companies,
                 'users' => $users,
+                'releasers' => $releasers,
+                'banks' => $banks,
+                'vat_types' => $vat_types,
+                'particulars' => $particulars,
                 // 'status' => $status,
                 // 'status_sel' => $status_sel,
                 'transactions' => $transactions,
@@ -828,9 +909,24 @@ class TransactionsController extends Controller {
                 'trans_company' => $trans_company,
                 'trans_from' => $trans_from,
                 'trans_to' => $trans_to,
+                'trans_due_from' => $trans_due_from,
+                'trans_due_to' => $trans_due_to,
+                'trans_depo_from' => $trans_depo_from,
+                'trans_depo_to' => $trans_depo_to,
+                'trans_rel_from' => $trans_rel_from,
+                'trans_rel_to' => $trans_rel_to,
                 'trans_status' => $trans_status,
                 'trans_category' => $trans_category,
                 'trans_req' => $trans_req,
+                'trans_prep' => $trans_prep,
+                'trans_rel' => $trans_rel,
+                'trans_updated' => $trans_updated,
+                'trans_bank' => $trans_bank,
+                'trans_appr_form' => $trans_appr_form,
+                'trans_depo_type' => $trans_depo_type,
+                'trans_vat_type' => $trans_vat_type,
+                'trans_particulars' => $trans_particulars,
+                'trans_currency' => $trans_currency,
                 'trans_bal' => $trans_bal,
                 'trans_template' => $trans_template
             ]);

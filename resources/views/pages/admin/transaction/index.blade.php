@@ -89,7 +89,7 @@
                     <div class="mb-2 col-md-4 col-xl-2">
                         <select name="bal" class="form-control filterSearch_select">
                             <option value="">All Amount</option>
-                            <option value="0" {{ app('request')->input('bal') != "" && app('request')->input('bal') == 0 ? 'selected' : '' }}>Balanced</option>
+                            <option value="0" {{ app('request')->input('bal') != "" && app('request')->input('bal') == 0 ? 'selected' : '' }}>No Return</option>
                             <option value="1" {{ app('request')->input('bal') == '1' ? 'selected' : '' }}>( + ) For Reimbursement</option>
                             <option value="-1" {{ app('request')->input('bal') == '-1' ? 'selected' : '' }}>( - ) Return Money</option>
                         </select>
