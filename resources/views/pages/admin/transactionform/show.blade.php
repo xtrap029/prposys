@@ -384,7 +384,15 @@
                             </div>
                         </div>
                         <div class="row mb-0 mb-lg-4">  
-                            <div class="mb-4 mb-lg-0 col-lg-12 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
+                            <div class="mb-4 mb-lg-0 col-lg-6 {{ $transaction->soa ? '' : 'd-none' }}">
+                                <label for="">Statement of Account</label>
+                                <h5>
+                                    <a href="/storage/public/attachments/soa/{{ $transaction->soa }}" target="_blank">
+                                        <i class="material-icons mr-2 align-bottom">attachment</i>
+                                    </a>
+                                </h5>
+                            </div>
+                            <div class="mb-4 mb-lg-0 col-lg-6 {{ $transaction->form_approver_id ? '' : 'd-none' }}">
                                 <label for="">Authorized Approver</label>
                                 <h5>{{ $transaction->form_approver_id ? $transaction->formapprover->name : '' }}</h5>
                             </div>
