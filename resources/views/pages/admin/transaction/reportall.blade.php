@@ -222,12 +222,101 @@
                     </div>
                 </div>
             </div>
-            <div class="form-row mb-3">
+
+            <form action="" method="get" class="no-print" id="filter-old">
+                <div class="form-row mb-3">
+                    <div class="col-sm-6 col-md-3 my-1">
+                        <label for="">Type</label>
+                        <select name="type" class="form-control">
+                            <option value="">All</option>
+                            <option value="pr" {{ $trans_type == "pr" ? 'selected' : '' }}>Payment Release</option>
+                            <option value="po" {{ $trans_type == "po" ? 'selected' : '' }}>Purchase Order</option>
+                            {{-- <option value="pc" {{ $trans_type == "pc" ? 'selected' : '' }}>PC</option> --}}
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-md-3 my-1">
+                        <label for="">Company</label>
+                        <select name="company" class="form-control">
+                            <option value="">All</option>
+                            @foreach ($companies as $item)
+                                <option value="{{ $item->id }}" {{ !empty($trans_company) ? $trans_company == $item->id ? 'selected' : '' : '' }}>{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-md-3 my-1">
+                        <label for="">Requested By</label>
+                        <select name="user_req" class="form-control">
+                            <option value="">All</option>
+                            @foreach ($users as $item)
+                                <option value="{{ $item->id }}" {{ app('request')->input('user_req') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-md-3 my-1">
+                        <label for="">Status</label>
+                        <select name="status" class="form-control">
+                            <option value="">All</option>
+                            @foreach (config('global.status_filter_reports') as $item)
+                                <option value="{{ $item[1] }}" {{ !empty($_GET['status']) && $_GET['status'] == $item[1] ? 'selected' : '' }}>{{ $item[0] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3 my-1">
+                        <label for="">Category</label>
+                        <select name="category" class="form-control">
+                            @foreach (config('global.trans_category_column') as $key => $item)
+                                <option value="{{ $item }}" {{ !empty($_GET['category']) && $_GET['category'] == $item ? 'selected' : '' }}>{{ config('global.trans_category_label_filter_2')[$key] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3 my-1">
+                        <label for="">Amount</label>
+                        <select name="bal" class="form-control">
+                            <option value="">All</option>
+                            <option value="0" {{ app('request')->input('bal') != "" && app('request')->input('bal') == 0 ? 'selected' : '' }}>Balanced</option>
+                            <option value="1" {{ app('request')->input('bal') == '1' ? 'selected' : '' }}>( + ) For Reimbursement</option>
+                            <option value="-1" {{ app('request')->input('bal') == '-1' ? 'selected' : '' }}>( - ) Return Money</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-md-3 my-1">
+                        <label for="">Date From</label>
+                        <input type="date" name="from" class="form-control" value="{{ !empty($_GET['from']) ? $_GET['from'] : '' }}">
+                    </div>
+                    <div class="col-sm-6 col-md-3 my-1">
+                        <label for="">Date To</label>
+                        <input type="date" name="to" class="form-control" value="{{ !empty($_GET['to']) ? $_GET['to'] : '' }}">
+                    </div>
+                    <div class="col-sm-6 col-md-3 my-1">
+                        <label for="">Template</label>
+                        <select name="template" class="form-control">
+                            @foreach ($report_templates as $item)
+                                <option value="{{ $item->id }}"
+                                    @if (!empty($_GET['template']))
+                                        @if ($_GET['template'] == $item->id)
+                                            selected
+                                        @endif
+                                    @elseif ($item->id == 1)
+                                        selected
+                                    @endif
+                                    >{{ $item->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </form>
+
+
+            <div class="form-row mb-3 no-print">
                 <div class="my-1 col-6 col-sm-3 col-lg-2 col-xl-1">
+                    <a href="/transaction/report-all?from={{ date('Y-m-01') }}&to={{ date('Y-m-t') }}" class="btn btn-secondary btn-block">Reset</a>
+                </div>
+                <div class="my-1 col-6 col-sm-3 col-lg-2 col-xl-1 d-none">
                     <a data-toggle="modal" data-target="#modal-filter" href="#_" class="btn btn-secondary btn-block"><i class="align-middle font-weight-bolder material-icons text-md">filter_alt</i> Filters</a>
                 </div>
                 <div class="my-1 col-6 col-sm-3 col-lg-2 col-xl-1">
-                    <input type="submit" value="Generate" class="btn btn-primary btn-block" form="filter">
+                    {{-- <input type="submit" value="Generate" class="btn btn-primary btn-block" form="filter"> --}}
+                    <input type="submit" value="Generate" class="btn btn-primary btn-block" form="filter-old">
                 </div>
                 <div class="my-1 col-6 offset-lg-4 offset-xl-8 col-sm-3 col-lg-2 col-xl-1">
                     <div class="btn-group btn-block" role="group">
