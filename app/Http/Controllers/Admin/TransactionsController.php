@@ -102,7 +102,18 @@ class TransactionsController extends Controller {
             if ($_GET['status'] != "") $transactions = $transactions->whereIn('status_id', explode(',', $_GET['status']));
             if ($_GET['user_req'] != "") $transactions = $transactions->where('requested_id', $_GET['user_req']);
             if ($_GET['user_prep'] != "") $transactions = $transactions->where('owner_id', $_GET['user_prep']);
-            if ($_GET['category'] != "") $transactions = $transactions->where($_GET['category'], 1);
+
+            if ($_GET['category'] != "") {
+                if ($_GET['category'] == 'is_reg') {
+                    foreach (config('global.trans_category_column') as $key => $value) {
+                        if ($value != '') {
+                            $transactions = $transactions->where($value, 0);
+                        }
+                    }
+                } else {
+                    $transactions = $transactions->where($_GET['category'], 1);
+                }
+            }
             
             if ($_GET['bal'] == "0" && $_GET['bal'] != "") {
                 $transactions = $transactions->whereHas('liquidation', function($query){
@@ -225,7 +236,18 @@ class TransactionsController extends Controller {
         if ($request->status != "") $transactions = $transactions->whereIn('status_id', explode(',', $request->status));
         if ($request->user_req != "") $transactions = $transactions->where('requested_id', $request->user_req);
         if ($request->user_prep != "") $transactions = $transactions->where('owner_id', $request->user_prep);
-        if ($request->category != "") $transactions = $transactions->where($request->category, 1);
+
+        if ($request->category != "") {
+            if ($request->category == 'is_reg') {
+                foreach (config('global.trans_category_column') as $key => $value) {
+                    if ($value != '') {
+                        $transactions = $transactions->where($value, 0);
+                    }
+                }
+            } else {
+                $transactions = $transactions->where($request->category, 1);
+            }
+        }
 
         if ($request->bal == "0" && $request->bal != "") {
             $transactions = $transactions->whereHas('liquidation', function($query){
