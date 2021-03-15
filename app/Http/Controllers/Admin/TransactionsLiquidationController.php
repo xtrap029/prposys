@@ -361,6 +361,7 @@ class TransactionsLiquidationController extends Controller {
         $perms['can_print'] = $this->check_can_print($transaction->id);
         $perms['can_clear'] = $this->check_can_clear($transaction->id);
         $perms['can_edit_cleared'] = $this->check_can_clear_edit($transaction->id);
+        $perms['can_duplicate'] = $this->check_can_duplicate($transaction->id);
 
         switch ($transaction->trans_type) {
             case 'pr':
@@ -1027,5 +1028,23 @@ class TransactionsLiquidationController extends Controller {
         }
         
         return $can_clear_edit;
+    }
+
+    private function check_can_duplicate($transaction, $user = '') {
+        $can_duplicate = true;
+
+        if (!$user) {
+            $user = auth()->id();
+        }
+        $user = User::where('id', $user)->first();
+
+        $transaction = Transaction::where('id', $transaction)->first();
+
+        // check if not for approval and not designated approver
+        if (!in_array($transaction->status_id, config('global.liquidation_cleared')) || !in_array($user->role_id, config('global.admin_subadmin'))) {
+            $can_duplicate = false;
+        }
+        
+        return $can_duplicate;
     }
 }

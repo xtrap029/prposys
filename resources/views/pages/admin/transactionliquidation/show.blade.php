@@ -9,6 +9,7 @@
                 <div class="col-sm-4 mb-2">
                     <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}{{ isset($_GET['page']) ? '?page='.$_GET['page'] : '' }}" class="btn mb-2 btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
                     <a data-toggle="modal" data-target="#modal-liquidate" href="#_" class="btn mb-2 btn-default"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>
+                    <a href="/transaction/duplicate/{{ $transaction->id }}" target="_blank" class="btn mb-2 btn-default {{ $perms['can_duplicate'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i> Duplicate</a>
                     <a href="/transaction-liquidation/reset/{{ $transaction->id }}" class="btn mb-2 btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                 </div>
                 <div class="col-sm-8 text-sm-right mb-2">

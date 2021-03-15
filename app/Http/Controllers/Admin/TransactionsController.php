@@ -22,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use \DB;
 use \File;
+use \Storage;
 use Carbon\Carbon;
 
 class TransactionsController extends Controller {
@@ -349,6 +350,7 @@ class TransactionsController extends Controller {
             $data['is_bills'] = 0;
             $data['is_hr'] = 0;
             $data['is_reimbursement'] = 0;
+            $data['is_bank'] = 0;
 
             switch ($data['trans_category']) {
                 case config('global.trans_category')[1]:
@@ -417,6 +419,53 @@ class TransactionsController extends Controller {
         $transaction = Transaction::create($data);
 
         return redirect('/transaction/view/'.$transaction->id);
+    }
+
+    public function duplicate(Transaction $transaction) {
+        $new_trans = new Transaction;
+        $new_trans->trans_type = $transaction->trans_type;
+        $new_trans->currency = $transaction->currency;
+        $new_trans->amount = $transaction->amount;
+        $new_trans->purpose = $transaction->purpose;
+        $new_trans->project_id = $transaction->project_id;
+        $new_trans->payee = $transaction->payee;
+        $new_trans->due_at = $transaction->due_at;
+        $new_trans->requested_id = $transaction->requested_id;
+
+        $new_trans->is_deposit = $transaction->is_deposit;
+        $new_trans->is_bills = $transaction->is_bills;
+        $new_trans->is_hr = $transaction->is_hr;
+        $new_trans->is_reimbursement = $transaction->is_reimbursement;
+        $new_trans->is_bank = $transaction->is_bank;
+
+        if ($transaction->soa) {
+            $new_trans->soa = substr(md5(mt_rand()), 0, 7).'_'.$transaction->soa;
+            Storage::disk('public')->copy('public/attachments/soa/'.$transaction->soa, 'public/attachments/soa/'.$new_trans->soa);
+        }
+
+        $trans_company = CompanyProject::where('id', $transaction->project_id)->first()->company_id;
+
+        // generate transaction code
+        $latest_trans = Transaction::where('trans_year', now()->year)
+            ->where('trans_type', $transaction->trans_type)
+            ->whereHas('project', function($query) use($trans_company) {
+                $query->where('company_id', $trans_company);
+            })
+            ->orderBy('trans_seq', 'desc')->first();
+        $new_trans->trans_year = now()->year;
+        if($latest_trans) {
+            $new_trans->trans_seq = $latest_trans->trans_seq+1;
+        } else {
+            $new_trans->trans_seq = 1;
+        }
+
+        $new_trans->owner_id = auth()->id();
+        $new_trans->updated_id = auth()->id();
+        $new_trans->status_prev_id = 1;
+
+        $new_trans->save(); 
+
+        return redirect('/transaction/view/'.$new_trans->id)->with('success', 'Transaction'.__('messages.duplicate_success'));
     }
 
     public function edit(Transaction $transaction) {

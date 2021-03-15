@@ -12,6 +12,7 @@ return [
     'issue_success' => ' successfully issued!',
     'approval_success' => ' successfully sent for approval!',
     'reassign_success' => ' successfully reassigned!',
+    'duplicate_success' => ' successfully duplicated!',
     'clear_success' => ' successfully cleared!',
     'leave_blank' => 'Leave blank to use default setting.',
     'invalid_access' => 'Invalid access!',

@@ -87,6 +87,8 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::resource('report-template', 'Admin\ReportTemplatesController', ['names' => ['index' => 'reporttemplates', 'create' => 'reporttemplates', 'edit' => 'reporttemplates']]);
+    
+        Route::get('transaction/duplicate/{transaction}', 'Admin\TransactionsController@duplicate')->where('transaction', '[0-9]+');
     });
 
     // Access Level 1, 2, and 3
