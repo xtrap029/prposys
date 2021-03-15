@@ -43,7 +43,7 @@
                         <label for="">Project</label>
                         <select name="project_id" class="form-control @error('project_id') is-invalid @enderror">
                             @foreach ($projects as $item)
-                                <option value="{{ $item->id }}" {{ $item->id == old('project_id') ? 'selected' : '' }}>{{ $item->project }}</option>                                        
+                                <option value="{{ $item->id }}" {{ $item->id == old('project_id') ? 'selected' : (isset($_GET['project_id']) && $item->id == $_GET['project_id'] ? 'selected' : '') }}>{{ $item->project }}</option>                                        
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('project_id')])
@@ -52,40 +52,40 @@
                         <label for="">Currency</label>
                         <select name="currency" class="form-control @error('currency') is-invalid @enderror">
                             @foreach (config('global.currency') as $key => $item)
-                                <option value="{{ config('global.currency_label')[$key] }}">{{ $item }}</option>
+                                <option value="{{ config('global.currency_label')[$key] }}" {{ isset($_GET['currency']) && config('global.currency_label')[$key] == $_GET['currency'] ? 'selected' : '' }}>{{ $item }}</option>
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('currency')])
                     </div>
                     <div class="col-8 col-sm-5 col-lg-4 mb-2">
                         <label for="">Amount</label>
-                        <input type="number" class="form-control @error('amount') is-invalid @enderror" name="amount" step="0.01" value="{{ old('amount') }}" required>
+                        <input type="number" class="form-control @error('amount') is-invalid @enderror" name="amount" step="0.01" value="{{ old('amount') ?: isset($_GET['amount']) ? $_GET['amount'] : '' }}" required>
                         @include('errors.inline', ['message' => $errors->first('amount')])
                     </div>
                 </div>
                 <div class="form-row mb-3">
                     <div class="col-sm-6 col-lg-8 mb-2">
                         <label for="">Purpose</label>
-                        <textarea name="purpose" rows="1" class="form-control @error('purpose') is-invalid @enderror" required>{{ old('purpose') }}</textarea>
+                        <textarea name="purpose" rows="1" class="form-control @error('purpose') is-invalid @enderror" required>{{ old('purpose') ?: isset($_GET['purpose']) ? $_GET['purpose'] : '' }}</textarea>
                         @include('errors.inline', ['message' => $errors->first('purpose')])
                     </div>
                     <div class="col-sm-6 col-lg-4 mb-2">
                         <label for="">Payee Name</label>
-                        <input type="text" class="form-control @error('payee') is-invalid @enderror" name="payee" value="{{ old('payee') }}" required>
+                        <input type="text" class="form-control @error('payee') is-invalid @enderror" name="payee" value="{{ old('payee') ?: isset($_GET['payee']) ? $_GET['payee'] : '' }}" required>
                         @include('errors.inline', ['message' => $errors->first('payee')])
                     </div>
                 </div>
                 <div class="form-row mb-3">
                     <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Due Date</label>
-                        <input type="date" class="form-control @error('due_at') is-invalid @enderror" name="due_at" value="{{ old('due_at') }}" required>
+                        <input type="date" class="form-control @error('due_at') is-invalid @enderror" name="due_at" value="{{ old('due_at') ?: isset($_GET['due_at']) ? $_GET['due_at'] : '' }}" required>
                         @include('errors.inline', ['message' => $errors->first('due_at')])
                     </div>
                     <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Requested by</label>
                         <select name="requested_id" class="form-control @error('requested_id') is-invalid @enderror">
                             @foreach ($users as $item)
-                                <option value="{{ $item->id }}" {{ $item->id == Auth::user()->id ? 'selected' : '' }}>{{ $item->name }}</option>                                        
+                                <option value="{{ $item->id }}" {{ isset($_GET['requested_id']) && $_GET['requested_id'] == $item->id ? 'selected' : ($item->id == Auth::user()->id ? 'selected' : '') }}>{{ $item->name }}</option>                                        
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('requested_id')])
@@ -129,7 +129,7 @@
                             <div class="col-md-6 col-xl-4">
                                 <div class="callout py-1 mx-1 row">
                                     <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[1] }}" class="trans-category vlign--baseline-middle m-auto outline-0">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[1] }}" class="trans-category vlign--baseline-middle m-auto outline-0" {{ isset($_GET['is_deposit']) && $_GET['is_deposit'] == 1 ? 'checked' : '' }}>
                                     </div>
                                     <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[1] }}</h6>
@@ -140,7 +140,7 @@
                             <div class="col-md-6 col-xl-4">
                                 <div class="callout py-1 mx-1 row">
                                     <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[2] }}" class="trans-category vlign--baseline-middle m-auto outline-0">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[2] }}" class="trans-category vlign--baseline-middle m-auto outline-0" {{ isset($_GET['is_bills']) && $_GET['is_bills'] == 1 ? 'checked' : '' }}>
                                     </div>
                                     <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[2] }}</h6>          
@@ -151,7 +151,7 @@
                             <div class="col-md-6 col-xl-4">
                                 <div class="callout py-1 mx-1 row">
                                     <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[3] }}" class="trans-category vlign--baseline-middle m-auto outline-0">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[3] }}" class="trans-category vlign--baseline-middle m-auto outline-0" {{ isset($_GET['is_hr']) && $_GET['is_hr'] == 1 ? 'checked' : '' }}>
                                     </div>
                                     <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[3] }}</h6>
@@ -162,7 +162,7 @@
                             <div class="col-md-6 col-xl-4">
                                 <div class="callout py-1 mx-1 row">
                                     <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[4] }}" class="trans-category vlign--baseline-middle m-auto outline-0">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[4] }}" class="trans-category vlign--baseline-middle m-auto outline-0" {{ isset($_GET['is_reimbursement']) && $_GET['is_reimbursement'] == 1 ? 'checked' : '' }}>
                                     </div>
                                     <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[4] }}</h6>
@@ -173,7 +173,7 @@
                             <div class="col-md-6 col-xl-4">
                                 <div class="callout py-1 mx-1 row">
                                     <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[5] }}" class="trans-category vlign--baseline-middle m-auto outline-0">
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[5] }}" class="trans-category vlign--baseline-middle m-auto outline-0" {{ isset($_GET['is_bank']) && $_GET['is_bank'] == 1 ? 'checked' : '' }}>
                                     </div>
                                     <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[5] }}</h6>
@@ -210,6 +210,11 @@
                     }
                 }
             })
+
+            if ("{{ isset($_GET['is_bills']) && $_GET['is_bills'] == 1 }}" == 1) {
+                $('.soa').parent().removeClass('d-none')
+                $('.soa').prop('required', 'true')
+            }
         })
     </script>
 @endsection
