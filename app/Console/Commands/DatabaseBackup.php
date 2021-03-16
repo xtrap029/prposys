@@ -46,7 +46,7 @@ class DatabaseBackup extends Command
         $db->save();
 
         $count = DbBackup::count();
-        $to_delete_files = DbBackup::latest()->take($count)->skip(5)->get();
+        $to_delete_files = DbBackup::latest()->take($count)->skip(15)->get();
         $to_delete_data = clone $to_delete_files;
         $to_delete_data->each(function($row){ $row->delete(); });
   
