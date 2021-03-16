@@ -57,6 +57,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/revert-status', $url.'@revert_status_store');
             Route::get('/force-cancel', $url.'@force_cancel')->name('forcecancel');
             Route::post('/force-cancel', $url.'@force_cancel_store');
+
+            Route::get('/db-backups', $url.'@db_backups')->name('dbbackups');
         });
     });
 

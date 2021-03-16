@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Company;
+use App\DbBackup;
 use App\Transaction;
 use App\User;
 use Illuminate\Http\Request;
@@ -113,5 +114,13 @@ class ControlPanelsController extends Controller {
         } else {
             return back()->with('error', __('messages.invalid_access'));
         }
+    }
+
+    public function db_backups() {
+        $db = DbBackup::orderBy('id', 'asc')->get();
+
+        return view('pages.admin.controlpanel.dbbackups.index')->with([
+            'db' => $db
+        ]);
     }
 }
