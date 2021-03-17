@@ -7,9 +7,12 @@ use App\Company;
 use App\DbBackup;
 use App\Transaction;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use ZanySoft\Zip\Zip;
 use Auth;
 use \DB;
+use Illuminate\Filesystem\Filesystem;
 
 class ControlPanelsController extends Controller {
     
@@ -119,8 +122,18 @@ class ControlPanelsController extends Controller {
     public function db_backups() {
         $db = DbBackup::orderBy('id', 'asc')->get();
 
+        $file = new Filesystem;
+        $file->cleanDirectory('storage/public/db-backups-zip/');
+
         return view('pages.admin.controlpanel.dbbackups.index')->with([
             'db' => $db
         ]);
+    }
+
+    public function db_backups_zip() {
+        $zip_name = "ALL-" . Carbon::now()->format('Y-m-d') . "-" . substr(md5(mt_rand()), 0, 7);
+        Zip::create('storage/public/db-backups-zip/'.$zip_name.'.zip')->add('storage/public/db-backups/');
+
+        return \Redirect::to('storage/public/db-backups-zip/'.$zip_name.'.zip');
     }
 }

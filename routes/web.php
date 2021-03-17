@@ -59,6 +59,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/force-cancel', $url.'@force_cancel_store');
 
             Route::get('/db-backups', $url.'@db_backups')->name('dbbackups');
+            Route::get('/db-backups-zip', $url.'@db_backups_zip')->name('dbbackups');
         });
     });
 

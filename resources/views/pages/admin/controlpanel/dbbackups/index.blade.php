@@ -19,7 +19,11 @@
                     <tr>
                         <th>#</th>
                         <th>Backup Date</th>
-                        <th></th>
+                        <th class="text-right">
+                            <a href="/control-panel/db-backups-zip" target="_blank">
+                                <i class="align-middle font-weight-bolder material-icons text-md">download</i> Download All
+                            </a>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,10 +32,10 @@
                             <td>{{ $key + 1 }}</td>
                             <td>{{ date_format($item->created_at, 'F jS Y - g:ia')  }}</td>
                             <td class="text-right">                                
+                                <span class="small mr-4">({{ number_format(File::size('storage/public/db-backups/'.$item->name)/(1<<20),2)." MB" }})</span>
                                 <a href="/storage/public/db-backups/{{ $item->name }}" target="_blank">
                                     <i class="align-middle font-weight-bolder material-icons text-md">download</i> Download
                                 </a>
-                                <span class="small ml-2">({{ number_format(File::size('storage/public/db-backups/'.$item->name)/(1<<20),2)." MB" }})</span>
                             </td>
                         </tr>
                     @endforeach
