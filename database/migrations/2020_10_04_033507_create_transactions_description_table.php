@@ -17,7 +17,7 @@ class CreateTransactionsDescriptionTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('transaction_id');
             $table->tinyInteger('qty')->default('1');
-            $table->string('description');
+            $table->string('description', 500);
             $table->unsignedBigInteger('particulars_id');
             $table->decimal('amount', 10, 2);
 

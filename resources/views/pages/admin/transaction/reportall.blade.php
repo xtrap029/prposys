@@ -264,8 +264,9 @@
                     <div class="col-md-3 my-1">
                         <label for="">Category</label>
                         <select name="category" class="form-control">
-                            @foreach (config('global.trans_category_column') as $key => $item)
-                                <option value="{{ $item }}" {{ !empty($_GET['category']) && $_GET['category'] == $item ? 'selected' : '' }}>{{ config('global.trans_category_label_filter_2')[$key] }}</option>
+                            <option value="">All</option>
+                            @foreach (config('global.trans_category_column_2') as $key => $item)
+                                <option value="{{ $item }}" {{ !empty($_GET['category']) && $_GET['category'] == $item ? 'selected' : '' }}>{{ config('global.trans_category_label')[$key] }}</option>
                             @endforeach
                         </select>
                     </div>

@@ -250,6 +250,11 @@
                                                         <i class="nav-icon material-icons icon--list">history</i><p>Activity Log</p>
                                                     </a>
                                                 </li>
+                                                <li class="nav-item">
+                                                    <a href="/control-panel/db-backups" class="nav-link {{ Route::currentRouteName() == 'dbbackups' ? 'active' : '' }}">
+                                                        <i class="nav-icon material-icons icon--list">storage</i><p>Database</p>
+                                                    </a>
+                                                </li>
                                             @endif
                                             
                                             @if (Auth::user()->role_id == 1)

@@ -58,8 +58,9 @@
                     </div>
                     <div class="mb-2 col-md-4 col-xl-2">
                         <select name="category" class="form-control filterSearch_select">
-                            @foreach (config('global.trans_category_column') as $key => $item)
-                                <option value="{{ $item }}" {{ app('request')->input('category') == $item ? 'selected' : '' }}>{{ config('global.trans_category_label_filter')[$key] }}</option>
+                            <option value="">All Categories</option>
+                            @foreach (config('global.trans_category_column_2') as $key => $item)
+                                <option value="{{ $item }}" {{ app('request')->input('category') == $item ? 'selected' : '' }}>{{ config('global.trans_category_label')[$key] }}</option>
                             @endforeach
                         </select>
                     </div>

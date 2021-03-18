@@ -57,6 +57,9 @@ Route::middleware('auth')->group(function () {
             Route::post('/revert-status', $url.'@revert_status_store');
             Route::get('/force-cancel', $url.'@force_cancel')->name('forcecancel');
             Route::post('/force-cancel', $url.'@force_cancel_store');
+
+            Route::get('/db-backups', $url.'@db_backups')->name('dbbackups');
+            Route::get('/db-backups-zip', $url.'@db_backups_zip')->name('dbbackups');
         });
     });
 
@@ -87,6 +90,8 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::resource('report-template', 'Admin\ReportTemplatesController', ['names' => ['index' => 'reporttemplates', 'create' => 'reporttemplates', 'edit' => 'reporttemplates']]);
+    
+        Route::get('transaction/duplicate/{transaction}', 'Admin\TransactionsController@duplicate')->where('transaction', '[0-9]+');
     });
 
     // Access Level 1, 2, and 3
