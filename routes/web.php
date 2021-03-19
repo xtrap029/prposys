@@ -60,6 +60,7 @@ Route::middleware('auth')->group(function () {
 
             Route::get('/db-backups', $url.'@db_backups')->name('dbbackups');
             Route::get('/db-backups-zip', $url.'@db_backups_zip')->name('dbbackups');
+            Route::get('/db-backups-generate', $url.'@db_backups_generate')->name('dbbackups');
         });
     });
 

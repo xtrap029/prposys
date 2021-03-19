@@ -20,6 +20,9 @@
                         <th>#</th>
                         <th>Backup Date</th>
                         <th class="text-right">
+                            <a href="/control-panel/db-backups-generate" class="mr-3">
+                                <i class="align-middle font-weight-bolder material-icons text-md">add</i> Create Entry
+                            </a>
                             <a href="/control-panel/db-backups-zip" target="_blank">
                                 <i class="align-middle font-weight-bolder material-icons text-md">download</i> Download All
                             </a>

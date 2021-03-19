@@ -120,7 +120,6 @@ class ControlPanelsController extends Controller {
     }
 
     public function db_backups() {
-        \Artisan::call("database:backup");
         $db = DbBackup::orderBy('id', 'asc')->get();
 
         $file = new Filesystem;
@@ -136,5 +135,11 @@ class ControlPanelsController extends Controller {
         Zip::create('storage/public/db-backups-zip/'.$zip_name.'.zip')->add('storage/public/db-backups/');
 
         return \Redirect::to('storage/public/db-backups-zip/'.$zip_name.'.zip');
+    }
+
+    public function db_backups_generate() {
+        \Artisan::call("database:backup");
+
+        return redirect('/control-panel/db-backups')->with('success', 'Backup'.__('messages.create_success'));
     }
 }
