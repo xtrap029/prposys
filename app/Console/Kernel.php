@@ -24,7 +24,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('database:backup')->everyMinute();
+        $schedule->exec('php -d register_argc_argv=On /home/rbjorn2017/public_html/sequencing2/index database:backup');
+        // $schedule->command('database:backup')->everyMinute();
     }
 
     /**
