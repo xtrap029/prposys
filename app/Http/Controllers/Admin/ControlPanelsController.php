@@ -120,6 +120,7 @@ class ControlPanelsController extends Controller {
     }
 
     public function db_backups() {
+        \Artisan::call("database:backup");
         $db = DbBackup::orderBy('id', 'asc')->get();
 
         $file = new Filesystem;
