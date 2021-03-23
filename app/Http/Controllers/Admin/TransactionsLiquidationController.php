@@ -1033,17 +1033,17 @@ class TransactionsLiquidationController extends Controller {
     private function check_can_duplicate($transaction, $user = '') {
         $can_duplicate = true;
 
-        if (!$user) {
-            $user = auth()->id();
-        }
-        $user = User::where('id', $user)->first();
+        // if (!$user) {
+        //     $user = auth()->id();
+        // }
+        // $user = User::where('id', $user)->first();
 
-        $transaction = Transaction::where('id', $transaction)->first();
+        // $transaction = Transaction::where('id', $transaction)->first();
 
-        // check if not for approval and not designated approver
-        if (!in_array($transaction->status_id, config('global.liquidation_cleared')) || !in_array($user->role_id, config('global.admin_subadmin'))) {
-            $can_duplicate = false;
-        }
+        // // check if not for approval and not designated approver
+        // if (!in_array($transaction->status_id, config('global.liquidation_cleared')) || !in_array($user->role_id, config('global.admin_subadmin'))) {
+        //     $can_duplicate = false;
+        // }
         
         return $can_duplicate;
     }

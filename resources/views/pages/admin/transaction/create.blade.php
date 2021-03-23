@@ -202,7 +202,8 @@
                 if ('{{ $trans_type }}' != 'po') {
                     if ($(this).val() == 'bp') {
                         $('.soa').parent().removeClass('d-none')
-                        $('.soa').prop('required', 'true')
+                        // $('.soa').prop('required', 'true')
+                        $('.soa').removeAttr('required')
                     } else {
                         $('.soa').parent().addClass('d-none')
                         $('.soa').val('')
@@ -213,7 +214,8 @@
 
             if ("{{ isset($_GET['is_bills']) && $_GET['is_bills'] == 1 }}" == 1) {
                 $('.soa').parent().removeClass('d-none')
-                $('.soa').prop('required', 'true')
+                // $('.soa').prop('required', 'true')
+                $('.soa').removeAttr('required')
             }
         })
     </script>
