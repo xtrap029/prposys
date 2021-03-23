@@ -92,7 +92,8 @@
                                 <i class="material-icons mr-2 align-bottom">attachment</i>
                             </a>
                         @endif
-                        <input type="file" name="soa" class="soa form_control" {{ ($transaction->trans_type == 'po' || $transaction->is_bills) && !$transaction->soa ? 'required' : '' }}>
+                        {{-- <input type="file" name="soa" class="soa form_control" {{ ($transaction->trans_type == 'po' || $transaction->is_bills) && !$transaction->soa ? 'required' : '' }}> --}}
+                        <input type="file" name="soa" class="soa form_control" {{ $transaction->trans_type == 'po' && !$transaction->soa ? 'required' : '' }}>
                     </div>
                 </div>
                 <div class="form-row mb-3">
