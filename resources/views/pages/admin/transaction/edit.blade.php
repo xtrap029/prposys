@@ -196,9 +196,10 @@
                 if ('{{ $transaction->trans_type }}' != 'po') {
                     if ($(this).val() == 'bp') {
                         $('.soa').parent().removeClass('d-none')
-                        if ('{{$transaction->soa}}' == '') {
-                            $('.soa').prop('required', 'true')
-                        }
+                        // if ('{{$transaction->soa}}' == '') {
+                        //     $('.soa').prop('required', 'true')
+                        // }
+                        $('.soa').removeAttr('required')
                     } else {
                         $('.soa').parent().addClass('d-none')
                         $('.soa').val('')
