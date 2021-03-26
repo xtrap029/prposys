@@ -47,6 +47,17 @@ class TransactionsController extends Controller {
         $company = Company::where('id', $trans_company)->first();
         $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
 
+        $transactions = new Transaction;
+
+        $user_logged = User::where('id', auth()->id())->first();
+        if (!in_array($user_logged->role_id, config('global.admin_subadmin'))) {
+            $user_id = $user_logged->id;
+            $transactions = $transactions->where(static function ($query) use ($user_id) {
+                $query->where('requested_id', $user_id)
+                ->orWhere('owner_id',  $user_id);
+            });
+        }
+
         if (!empty($_GET['s'])
             || !empty($_GET['type'])
             || !empty($_GET['category'])
@@ -62,7 +73,7 @@ class TransactionsController extends Controller {
             
             $key = $_GET['s'];
             
-            $transactions = Transaction::whereIn('trans_type', $trans_types)
+            $transactions = $transactions->whereIn('trans_type', $trans_types)
                                     ->whereIn('status_id', config('global.status'))                                    
                                     ->whereDoesntHave('project', function($query) use($trans_company) {
                                         $query->where('company_id', '!=', $trans_company);
@@ -140,7 +151,7 @@ class TransactionsController extends Controller {
             $transactions->appends(['user_prep' => $_GET['user_prep']]);
             $transactions->appends(['bal' => $_GET['bal']]);
         } else {
-            $transactions = Transaction::whereIn('trans_type', $trans_types)
+            $transactions = $transactions->whereIn('trans_type', $trans_types)
                                     ->whereIn('status_id', config('global.status'))
                                     ->whereHas('project', function($query) use($trans_company) {
                                         $query->where('company_id', $trans_company);
@@ -195,8 +206,19 @@ class TransactionsController extends Controller {
         
         $key = $request->s;
         $trans_company = $request->trans_company;
+
+        $transactions = new Transaction;
+
+        $user_logged = User::where('id', auth()->id())->first();
+        if (!in_array($user_logged->role_id, config('global.admin_subadmin'))) {
+            $user_id = $user_logged->id;
+            $transactions = $transactions->where(static function ($query) use ($user_id) {
+                $query->where('requested_id', $user_id)
+                ->orWhere('owner_id',  $user_id);
+            });
+        }
         
-        $transactions = Transaction::whereIn('trans_type', $trans_types)
+        $transactions = $transactions->whereIn('trans_type', $trans_types)
                                 ->whereIn('status_id', config('global.status'))
                                 ->whereDoesntHave('project', function($query) use($trans_company) {
                                     $query->where('company_id', '!=', $trans_company);
