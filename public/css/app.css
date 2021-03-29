@@ -43946,6 +43946,10 @@ div.tooltip-inner {
   word-break: break-word;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 @media print {
   .row--print {
     page-break-inside: avoid;

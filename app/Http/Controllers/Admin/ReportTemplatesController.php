@@ -26,8 +26,8 @@ class ReportTemplatesController extends Controller {
     public function store(Request $request) {
         $data = $request->validate([
             'name' => ['required'],
-            'columns' => ['required'],
             'column_label.*' => ['required'],
+            'column_id.*' => ['required', 'exists:report_columns,id'],
         ]);
 
         $template = [];
@@ -37,7 +37,7 @@ class ReportTemplatesController extends Controller {
         $report_template = ReportTemplate::create($template);
 
         $columns = [];
-        foreach (explode (",", $data['columns']) as $key => $value) {
+        foreach ($data['column_id'] as $key => $value) {
             $columns['report_template_id'] = $report_template->id;
             $columns['report_column_id'] = $value;
             $columns['label'] = $data['column_label'][$key];
@@ -66,8 +66,8 @@ class ReportTemplatesController extends Controller {
     public function update(Request $request, ReportTemplate $report_template) {
         $data = $request->validate([
             'name' => ['required'],
-            'columns' => ['required'],
             'column_label.*' => ['required'],
+            'column_id.*' => ['required', 'exists:report_columns,id'],
         ]);
 
         $template = [];
@@ -77,7 +77,7 @@ class ReportTemplatesController extends Controller {
 
         ReportTemplatesColumn::where('report_template_id', $report_template->id)->delete();
         $columns = [];
-        foreach (explode (",", $data['columns']) as $key => $value) {
+        foreach ($data['column_id'] as $key => $value) {
             $columns['report_template_id'] = $report_template->id;
             $columns['report_column_id'] = $value;
             $columns['label'] = $data['column_label'][$key];
