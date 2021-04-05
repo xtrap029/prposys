@@ -353,7 +353,7 @@ class TransactionsLiquidationController extends Controller {
                             $query->whereIn('subject_id', $transaction_attachments);
                             $query->where('subject_type', 'App\TransactionsAttachment');
                         })
-                        ->orderBy('id', 'desc')->paginate(15)->onEachSide(1);
+                        ->orderBy('id', 'desc')->paginate(10)->onEachSide(1);
 
         $perms['can_edit'] = $this->check_can_edit($transaction->id);
         $perms['can_reset'] = $this->check_can_reset($transaction->id);

@@ -23,7 +23,7 @@
         <div class="wrapper">
 
             <!-- Navbar -->
-            <nav class="@guest @else main-header @endguest navbar navbar-expand navbar-light border-bottom-0 text-sm">
+            <nav class="@guest @else main-header @endguest navbar navbar-expand @yield('nav_class', 'navbar-light') border-bottom-0 text-sm">
                 @guest
                     <!-- Brand Logo -->
                     <a href="/" class="brand-link">
