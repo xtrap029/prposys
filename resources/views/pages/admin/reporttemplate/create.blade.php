@@ -16,22 +16,30 @@
         <div class="container-fluid">
             <form action="/report-template" method="post">
                 @csrf
-                <div class="alert alert-default-success rounded d-none" role="alert">
-                    <h4 class="alert-heading">Tutorial</h4>
-                    <hr>
-                    <p>...</p>
-                </div>
                 <div class="card">
                     <div class="card-body row">
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="">Template Name</label>
+                                <label for="">
+                                    Template Name 
+                                    <i class="align-middle material-icons small text-primary"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        data-html="true"
+                                        title="Examples: Reimbursement, Return Money, Fund Transfer">help</i>
+                                </label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required>
                                 @include('errors.inline', ['message' => $errors->first('name')])
                             </div>
-
                             <div class="form-group">
-                                <label for=""><a href="/report-column" target="_blank">Available Columns</a></label>
+                                <label for="">
+                                    <a href="/report-column" target="_blank">List of Available Fields</a>
+                                    <i class="align-middle material-icons small text-primary"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        data-html="true"
+                                        title="Please choose the desired columns of your custom<br> template. You may also remove columns by clicking the X <br>button beside the column's name.">help</i>
+                                </label>
                                 <select class="multipleSelect" multiple>
                                     @foreach ($columns as $item)
                                         <option value="{{ $item->id }}"
@@ -49,7 +57,16 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 50px"></th>
-                                        <th class="text-center font-weight-normal" style="width: 250px">Display Name</th>
+                                        <th class="text-center font-weight-normal" style="width: 250px">
+                                            Display Name
+                                            <i class="align-middle material-icons small text-primary"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                data-html="true"
+                                                title="<b>Rename your fields:</b> Just double click on the fields <br>name and rename as desired.<br><br>
+                                                    <b>Reorder your columns:</b> Just drag the <i class='material-icons icon--list text-gray'>drag_indicator</i> on the left side of<br>
+                                                    a column and move it to the desired position.">help</i>
+                                        </th>
                                         <th class="text-center font-weight-normal">Description</th>
                                     </tr>
                                 </thead>
@@ -69,7 +86,9 @@
 @section('script')
 <script type="text/javascript">
     $(function() {
-        $('.multipleSelect').fastselect()
+        $('.multipleSelect').fastselect({
+            placeholder: 'Choose your fields here'
+        })
 
         var columns = []
 
@@ -107,6 +126,8 @@
 
             columns = $(this).val()
         })
+
+        $('[data-toggle="tooltip"]').tooltip()
 
         // $('body').tooltip({
         //     selector: '.tooltipable'
