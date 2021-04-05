@@ -43,9 +43,9 @@
                                 <select class="multipleSelect" multiple>
                                     @foreach ($columns as $item)
                                         <option value="{{ $item->id }}"
-                                            data-label="{{ $item->label }}"
-                                            data-desc="{{ $item->description }}">
-                                            {{ $item->label }} [{{ $item->name }}]
+                                            data-label="{{ $item->label_2 }}"
+                                            data-desc="{{ $item->description_2 }}">
+                                            {{ $item->label_2 }} [{{ $item->name }}]
                                         </option>
                                     @endforeach
                                 </select>

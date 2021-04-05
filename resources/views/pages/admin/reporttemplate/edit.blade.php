@@ -44,11 +44,11 @@
                                 <select class="multipleSelect" multiple>
                                     @foreach ($columns as $item)
                                         <option value="{{ $item->id }}"
-                                            data-label="{{ $item->label }}"
-                                            data-desc="{{ $item->description }}"
+                                            data-label="{{ $item->label_2 }}"
+                                            data-desc="{{ $item->description_2 }}"
                                             {{ (in_array($item->id, $selected_columns)) ? 'selected' : '' }}
                                         >
-                                            {{ $item->label }} [{{ $item->name }}]
+                                            {{ $item->label_2 }} [{{ $item->name }}]
                                         </option>
                                     @endforeach
                                 </select>
@@ -85,7 +85,7 @@
                                                 required>
                                                 <input type="hidden" name="column_id[]" value="{{ $item->column->id }}" required>
                                             </td>
-                                            <td class="border-0 py-2 vlign--middle">{{ $item->column->description }}</td>
+                                            <td class="border-0 py-2 vlign--middle">{{ $item->column->description_2 }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

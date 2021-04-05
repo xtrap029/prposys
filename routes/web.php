@@ -88,6 +88,7 @@ Route::middleware('auth')->group(function () {
             $url = 'Admin\ReportColumnsController';
 
             Route::get('/', $url.'@index')->name('reportcolumns');
+            Route::put('/', $url.'@update')->name('reportcolumns');
         });
 
         Route::resource('report-template', 'Admin\ReportTemplatesController', ['names' => ['index' => 'reporttemplates', 'create' => 'reporttemplates', 'edit' => 'reporttemplates']]);
