@@ -14,7 +14,9 @@ class ReportColumn extends Model {
     use LogsActivity;
     protected static $logAttributes = [
         'label',
+        'label_2',
         'description',
+        'description_2',
         'updatedby.name'
     ];
     protected static $logName = 'Report Columns';
