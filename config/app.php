@@ -228,6 +228,8 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
         'Carbon' => 'Carbon\Carbon',
+
+        'Bread' => App\Helpers\BreadHelper::class,
     ],
 
 ];

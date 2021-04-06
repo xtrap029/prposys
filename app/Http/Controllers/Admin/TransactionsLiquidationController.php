@@ -198,6 +198,7 @@ class TransactionsLiquidationController extends Controller {
             'trans_page_url' => $trans_page_url,
             'trans_page' => $trans_page,
             'transaction' => $transaction,
+            'company' => $transaction->project->company,
             'expense_types' => $expense_types,
             'banks' => $banks,
             'users' => $users,
@@ -392,6 +393,7 @@ class TransactionsLiquidationController extends Controller {
 
         return view('pages.admin.transactionliquidation.show')->with([
             'transaction' => $transaction,
+            'company' => $transaction->project->company,
             'transaction_summary' => $transaction_summary,
             'perms' => $perms,
             'logs' => $logs,
@@ -426,6 +428,7 @@ class TransactionsLiquidationController extends Controller {
         
         return view('pages.admin.transactionliquidation.edit')->with([
             'transaction' => $transaction,
+            'company' => $transaction->project->company,
             'trans_page_url' => $trans_page_url,
             'trans_page' => $trans_page,
             'expense_types' => $expense_types
@@ -618,6 +621,7 @@ class TransactionsLiquidationController extends Controller {
 
         return view('pages.admin.transactionliquidation.print')->with([
             'transaction' => $transaction,
+            'company' => $transaction->project->company,
             'transaction_summary' => $transaction_summary,
             'trans_page' => $trans_page,
             'final_approver' => $final_approver

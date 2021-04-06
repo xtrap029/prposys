@@ -1,0 +1,48 @@
+footer {
+    @extend .border-0, .shadow-lg, .small, .py-0, .text-center, .text-lg-left;
+
+    @include media-breakpoint-down(md) {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+
+    ul {
+        @extend .text-black-50;
+        margin: 0;
+        padding: 0;
+
+        li {
+            @extend .py-2;
+            display: inline-block;
+
+            a {
+                @extend .text-black-50, .text-decoration-none;
+                text-transform: uppercase;
+
+                &:hover {
+                    @extend .text-dark;
+                }
+            }
+
+            .material-icons {
+                @extend .small, .mx-2;
+            }
+
+            &:last-child {
+                @extend .border-top-2-inherit;
+
+                a {
+                    @extend .text-dark;
+                }
+
+                .material-icons {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    & > div {
+        @extend .float-lg-right, .py-2;
+    }
+}

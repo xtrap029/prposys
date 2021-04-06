@@ -34,6 +34,7 @@ class SettingsController extends Controller {
             'AUTHORIZED_BY' => ['required', 'exists:users,id'],
             'SESSION_LIFETIME' => ['required', 'integer'],
             'SITE_LOGO' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:548'],
+            'FOOTER_LABEL' => ['required'],
         ]);
 
         if ($request->file('SITE_LOGO')) {

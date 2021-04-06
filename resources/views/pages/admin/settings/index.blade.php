@@ -179,6 +179,17 @@
                                     </div>
                                 </div>
                             @break
+                            @case('FOOTER_LABEL')
+                                <div class="form-row mb-3">
+                                    <div class="col-md-8">
+                                        <label for="">Footer Text</label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control @error('FOOTER_LABEL') is-invalid @enderror" name="FOOTER_LABEL" value="{{ $item->value }}">
+                                        @include('errors.inline', ['message' => $errors->first('FOOTER_LABEL')])
+                                    </div>
+                                </div>
+                            @break
                             @default
                     @endswitch            
                 @endforeach

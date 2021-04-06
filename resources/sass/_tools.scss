@@ -15,11 +15,25 @@
 }
 
 .border {
+    &-bottom-1-inherit {
+        border-bottom: 1px solid;
+    }
+    &-top-1-inherit {
+        border-top: 1px solid;
+    }
+
     &-bottom-2 {
         border-bottom: 2px solid gray;
     }
     &-top-2 {
         border-top: 2px solid gray;
+    }
+
+    &-bottom-2-inherit {
+        border-bottom: 2px solid;
+    }
+    &-top-2-inherit {
+        border-top: 2px solid;
     }
 }
 

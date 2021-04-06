@@ -513,7 +513,7 @@ class TransactionsController extends Controller {
         
         return view('pages.admin.transaction.edit')->with([
             'transaction' => $transaction,
-            // 'particulars' => $particulars,
+            'company' => $transaction->project->company,
             'projects' => $projects,
             'trans_page' => $trans_page
         ]);
@@ -634,6 +634,7 @@ class TransactionsController extends Controller {
 
         return view('pages.admin.transaction.show')->with([
             'transaction' => $transaction,
+            'company' => $transaction->project->company,
             'perms' => $perms,
             'logs' => $logs,
             'users' => $users,

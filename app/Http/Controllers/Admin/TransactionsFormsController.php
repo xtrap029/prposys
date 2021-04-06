@@ -209,6 +209,7 @@ class TransactionsFormsController extends Controller {
             'trans_page_url' => $trans_page_url,
             'trans_page' => $trans_page,
             'transaction' => $transaction,
+            'company' => $transaction->project->company,
             'coa_taggings' => $coa_taggings,
             'particulars' => $particulars,
             'vat_types' => $vat_types
@@ -251,6 +252,7 @@ class TransactionsFormsController extends Controller {
             'trans_page_url' => $trans_page_url,
             'trans_page' => $trans_page,
             'transaction' => $transaction,
+            'company' => $transaction->project->company,
             'coa_taggings' => $coa_taggings,
             'expense_types' => $expense_types,
             'particulars' => $particulars,
@@ -484,6 +486,7 @@ class TransactionsFormsController extends Controller {
 
         return view('pages.admin.transactionform.show')->with([
             'transaction' => $transaction,
+            'company' => $transaction->project->company,
             'perms' => $perms,
             'logs' => $logs,
             'trans_page_url' => $trans_page_url,
@@ -535,6 +538,7 @@ class TransactionsFormsController extends Controller {
         return view('pages.admin.transactionform.edit')->with([
             'page_title' => $page_title,
             'transaction' => $transaction,
+            'company' => $transaction->project->company,
             'trans_page_url' => $trans_page_url,
             'trans_page' => $trans_page,
             'coa_taggings' => $coa_taggings,
@@ -573,6 +577,7 @@ class TransactionsFormsController extends Controller {
         
         return view('pages.admin.transactionform.editreimbursement')->with([
             'transaction' => $transaction,
+            'company' => $transaction->project->company,
             'trans_page_url' => $trans_page_url,
             'trans_page' => $trans_page,
             'coa_taggings' => $coa_taggings,
@@ -1027,6 +1032,7 @@ class TransactionsFormsController extends Controller {
 
         return view('pages.admin.transactionform.print')->with([
             'transaction' => $transaction,
+            'company' => $transaction->project->company,
             'trans_page' => $trans_page,
             'final_approver' => $final_approver
         ]);
