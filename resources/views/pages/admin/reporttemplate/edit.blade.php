@@ -27,7 +27,11 @@
                                         data-toggle="tooltip"
                                         data-placement="top"
                                         data-html="true"
-                                        title="Examples: Reimbursement, Return Money, Fund Transfer">help</i>
+                                        title="
+                                            <b>Examples:</b> Reimbursement, Return Money, Fund Transfer<br><br>
+                                            Once template is saved, these chosen fields will appear<br>
+                                            as columns on the Reports table, as well as their filters.
+                                            ">help</i>
                                 </label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ $report_template->name }}" required>
                                 @include('errors.inline', ['message' => $errors->first('name')])
@@ -66,9 +70,11 @@
                                                 data-toggle="tooltip"
                                                 data-placement="top"
                                                 data-html="true"
-                                                title="<b>Rename your fields:</b> Just double click on the fields <br>name and rename as desired.<br><br>
-                                                    <b>Reorder your columns:</b> Just drag the <i class='material-icons icon--list text-gray'>drag_indicator</i> on the left side of<br>
-                                                    a column and move it to the desired position.">help</i>
+                                                title="
+                                                    <b>Reorder your columns (Note: only works on Desktop browsers):</b> <br>
+                                                    Just drag the <i class='material-icons icon--list text-gray'>drag_indicator</i> of a column and move it to the desired position. <br><br>
+                                                    <b>Rename your fields:</b> Just click on the<br> display name and rename the field as desired.
+                                                    ">help</i>
                                         </th>
                                         <th class="text-center font-weight-normal">Description</th>
                                     </tr>
