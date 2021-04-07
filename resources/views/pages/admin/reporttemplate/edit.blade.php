@@ -28,9 +28,7 @@
                                         data-placement="top"
                                         data-html="true"
                                         title="
-                                            <b>Examples:</b> Reimbursement, Return Money, Fund Transfer<br><br>
-                                            Once template is saved, these chosen fields will appear<br>
-                                            as columns on the Reports table, as well as their filters.
+                                            <b>Examples:</b> Reimbursement, Return Money, Fund Transfer
                                             ">help</i>
                                 </label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ $report_template->name }}" required>
