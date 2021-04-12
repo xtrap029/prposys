@@ -933,7 +933,7 @@ class TransactionsLiquidationController extends Controller {
                     $can_edit = false;
                 }
             }
-        } else if (in_array($transaction->status_id, config('global.liquidation_approval')) && $user->role_id == 1) {
+        } else if (in_array($transaction->status_id, config('global.liquidation_approval')) && in_array($user->role_id, config('global.admin_subadmin'))) {
             // if admin and for approval status
         } else {
             $can_edit = false;
