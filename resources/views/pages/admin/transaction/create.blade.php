@@ -59,26 +59,26 @@
                     </div>
                     <div class="col-8 col-sm-5 col-lg-4 mb-2">
                         <label for="">Amount</label>
-                        <input type="number" class="form-control @error('amount') is-invalid @enderror" name="amount" step="0.01" value="{{ old('amount') ?: isset($_GET['amount']) ? $_GET['amount'] : '' }}" required>
+                        <input type="number" class="form-control @error('amount') is-invalid @enderror" name="amount" step="0.01" value="{{ old('amount') ?: (isset($_GET['amount']) ? $_GET['amount'] : '') }}" required>
                         @include('errors.inline', ['message' => $errors->first('amount')])
                     </div>
                 </div>
                 <div class="form-row mb-3">
                     <div class="col-sm-6 col-lg-8 mb-2">
                         <label for="">Purpose</label>
-                        <textarea name="purpose" rows="1" class="form-control @error('purpose') is-invalid @enderror" required>{{ old('purpose') ?: isset($_GET['purpose']) ? $_GET['purpose'] : '' }}</textarea>
+                        <textarea name="purpose" rows="1" class="form-control @error('purpose') is-invalid @enderror" required>{{ old('purpose') ?: (isset($_GET['purpose']) ? $_GET['purpose'] : '') }}</textarea>
                         @include('errors.inline', ['message' => $errors->first('purpose')])
                     </div>
                     <div class="col-sm-6 col-lg-4 mb-2">
                         <label for="">Payee Name</label>
-                        <input type="text" class="form-control @error('payee') is-invalid @enderror" name="payee" value="{{ old('payee') ?: isset($_GET['payee']) ? $_GET['payee'] : '' }}" required>
+                        <input type="text" class="form-control @error('payee') is-invalid @enderror" name="payee" value="{{ old('payee') ?: (isset($_GET['payee']) ? $_GET['payee'] : '') }}" required>
                         @include('errors.inline', ['message' => $errors->first('payee')])
                     </div>
                 </div>
                 <div class="form-row mb-3">
                     <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Due Date</label>
-                        <input type="date" class="form-control @error('due_at') is-invalid @enderror" name="due_at" value="{{ old('due_at') ?: isset($_GET['due_at']) ? $_GET['due_at'] : '' }}" required>
+                        <input type="date" class="form-control @error('due_at') is-invalid @enderror" name="due_at" value="{{ old('due_at') ?: (isset($_GET['due_at']) ? $_GET['due_at'] : '') }}" required>
                         @include('errors.inline', ['message' => $errors->first('due_at')])
                     </div>
                     <div class="col-sm-4 col-lg-4 mb-2">
