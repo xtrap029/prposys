@@ -18,7 +18,7 @@
                     </a>
 
                     <!-- if issued and bank and diff company-->
-                    <a href="/transaction-form/edit-issued-clear/{{ $transaction->id }}" class="btn mb-2 btn-success {{ !$perms['can_create'] && $transaction->is_bank && $transaction->form_company_id ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')">
+                    <a href="/transaction-form/edit-issued-clear/{{ $transaction->id }}" class="btn mb-2 btn-success {{ !$perms['can_create'] && $transaction->is_bank && $transaction->form_company_id && !in_array($transaction->status_id, config('global.cancelled')) ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')">
                         <i class="align-middle font-weight-bolder material-icons text-md">check</i>
                         Clear Now
                     </a>

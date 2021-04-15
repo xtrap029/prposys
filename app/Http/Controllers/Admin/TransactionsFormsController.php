@@ -1209,14 +1209,17 @@ class TransactionsFormsController extends Controller {
     }
 
     private function check_can_reset($transaction, $user = '') {
-        $can_reset = true;
+        $transaction = Transaction::where('id', $transaction)->first();
+        if (in_array($transaction->status_id, config('global.cancelled'))) {
+            $can_reset = false;
+        } else {
+            $can_reset = true;
+        }
 
         if (!$user) {
             $user = auth()->id();
         }
         $user = User::where('id', $user)->first();
-
-        $transaction = Transaction::where('id', $transaction)->first();
 
         // check if reset
         if (!in_array($transaction->status_id, config('global.generated_form')) || $user->role_id != 1 || in_array($transaction->trans_type, ['pc'])) {
@@ -1227,14 +1230,17 @@ class TransactionsFormsController extends Controller {
     }
 
     private function check_can_cancel($transaction, $user = '') {
-        $can_cancel = true;
+        $transaction = Transaction::where('id', $transaction)->first();
+        if (in_array($transaction->status_id, config('global.cancelled'))) {
+            $can_cancel = false;
+        } else {
+            $can_cancel = true;
+        }
 
         if (!$user) {
             $user = auth()->id();
         }
         $user = User::where('id', $user)->first();
-
-        $transaction = Transaction::where('id', $transaction)->first();
 
         // check if unliquidated
         if (in_array($transaction->status_id, config('global.forms'))) {
@@ -1250,15 +1256,19 @@ class TransactionsFormsController extends Controller {
     }
 
     private function check_can_edit($transaction, $user = '') {
-        $can_edit = true;
+        $transaction = Transaction::where('id', $transaction)->first();
+        if (in_array($transaction->status_id, config('global.cancelled'))) {
+            $can_edit = false;
+        } else {
+            $can_edit = true;
+        }
+
         $edit_limit = 0;
 
         if (!$user) {
             $user = auth()->id();
         }
         $user = User::where('id', $user)->first();
-
-        $transaction = Transaction::where('id', $transaction)->first();
 
         // if reimbursement
         if ($transaction->is_reimbursement
@@ -1314,14 +1324,17 @@ class TransactionsFormsController extends Controller {
     }
 
     private function check_can_approval($transaction, $user = '') {
-        $can_approve = true;
+        $transaction = Transaction::where('id', $transaction)->first();
+        if (in_array($transaction->status_id, config('global.cancelled'))) {
+            $can_approve = false;
+        } else {
+            $can_approve = true;
+        }
 
         if (!$user) {
             $user = auth()->id();
         }
         $user = User::where('id', $user)->first();
-
-        $transaction = Transaction::where('id', $transaction)->first();
 
         // check if unliquidated
         if (in_array($transaction->status_id, config('global.generated_form'))) {
@@ -1343,6 +1356,7 @@ class TransactionsFormsController extends Controller {
 
         //  check if for approval
         if ((!in_array($transaction->status_id, config('global.form_approval_printing')) && !in_array($transaction->status_id, config('global.page_liquidation')))
+            && (!in_array($transaction->status_prev_id, config('global.form_approval_printing')) && !in_array($transaction->status_prev_id, config('global.page_liquidation')) && !in_array($transaction->status_id, config('global.cancelled')))
             && !$transaction->is_reimbursement) {
             $can_print = false;
         }
@@ -1351,15 +1365,18 @@ class TransactionsFormsController extends Controller {
     }
 
     private function check_can_edit_issued($transaction, $user = '') {
-        $admin_subadmin = true;
+        $transaction = Transaction::where('id', $transaction)->first();
+        if (in_array($transaction->status_id, config('global.cancelled'))) {
+            $admin_subadmin = false;
+        } else {
+            $admin_subadmin = true;
+        }
 
         if (!$user) {
             $user = auth()->id();
         }
 
         $user = User::where('id', $user)->first();
-
-        $transaction = Transaction::where('id', $transaction)->first();
 
         if (!in_array($user->role_id, config('global.admin_subadmin')) || !in_array($transaction->status_id, config('global.form_issued'))) {
             $admin_subadmin = false;
@@ -1369,14 +1386,17 @@ class TransactionsFormsController extends Controller {
     }
 
     private function check_can_issue($transaction, $user = '') {
-        $can_issue = true;
+        $transaction = Transaction::where('id', $transaction)->first();
+        if (in_array($transaction->status_id, config('global.cancelled'))) {
+            $can_issue = false;
+        } else {
+            $can_issue = true;
+        }
 
         if (!$user) {
             $user = auth()->id();
         }
         $user = User::where('id', $user)->first();
-
-        $transaction = Transaction::where('id', $transaction)->first();
 
         // check if not unliquidated and not designated approver
         // if (!in_array($transaction->status_id, config('global.form_approval')) || $user->id != $transaction->form_approver_id) {

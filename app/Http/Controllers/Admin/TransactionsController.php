@@ -166,9 +166,11 @@ class TransactionsController extends Controller {
             }
 
             $transactions[$key]->url_view = "transaction";
-            if (in_array($value->status_id, config('global.page_form'))) {
+            if (in_array($value->status_id, config('global.page_form'))
+                || (in_array($value->status_id, config('global.cancelled')) && in_array($value->status_prev_id, config('global.page_form')))) {
                 $transactions[$key]->url_view .= "-form";
-            } else if (in_array($value->status_id, config('global.page_liquidation'))) {
+            } else if (in_array($value->status_id, config('global.page_liquidation'))
+                || (in_array($value->status_id, config('global.cancelled')) && in_array($value->status_prev_id, config('global.page_liquidation')))) {
                 $transactions[$key]->url_view .= "-liquidation";
             }
         }
@@ -297,10 +299,13 @@ class TransactionsController extends Controller {
             $transactions[$key]->amount = number_format($value->form_amount_payable ?: $value->amount, 2, '.', ',');
             $transactions[$key]->created = Carbon::parse($value->created_at)->format('Y-m-d');
             $transactions[$key]->released = Carbon::parse($value->released_at)->format('Y-m-d');
+
             $transactions[$key]->url_view = "transaction";
-            if (in_array($value->status_id, config('global.page_form'))) {
+            if (in_array($value->status_id, config('global.page_form'))
+                || (in_array($value->status_id, config('global.cancelled')) && in_array($value->status_prev_id, config('global.page_form')))) {
                 $transactions[$key]->url_view .= "-form";
-            } else if (in_array($value->status_id, config('global.page_liquidation'))) {
+            } else if (in_array($value->status_id, config('global.page_liquidation'))
+                || (in_array($value->status_id, config('global.cancelled')) && in_array($value->status_prev_id, config('global.page_liquidation')))) {
                 $transactions[$key]->url_view .= "-liquidation";
             }
         }
