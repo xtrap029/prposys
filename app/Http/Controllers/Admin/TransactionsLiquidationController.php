@@ -989,7 +989,8 @@ class TransactionsLiquidationController extends Controller {
         $transaction = Transaction::where('id', $transaction)->first();
 
         //  check if for approval
-        if (!in_array($transaction->status_id, config('global.liquidation_approval')) && !in_array($transaction->status_id, config('global.liquidation_cleared'))) {
+        if (!in_array($transaction->status_id, config('global.liquidation_approval')) && !in_array($transaction->status_id, config('global.liquidation_cleared'))
+        && (!in_array($transaction->status_prev_id, config('global.liquidation_approval')) && !in_array($transaction->status_prev_id, config('global.liquidation_cleared')) && !in_array($transaction->status_id, config('global.cancelled')))) {
             $can_print = false;
         }
 
@@ -997,14 +998,17 @@ class TransactionsLiquidationController extends Controller {
     }
 
     private function check_can_clear($transaction, $user = '') {
-        $can_clear = true;
+        $transaction = Transaction::where('id', $transaction)->first();
+        if (in_array($transaction->status_id, config('global.cancelled'))) {
+            $can_clear = false;
+        } else {
+            $can_clear = true;
+        }
 
         if (!$user) {
             $user = auth()->id();
         }
         $user = User::where('id', $user)->first();
-
-        $transaction = Transaction::where('id', $transaction)->first();
 
         // check if not for approval and not designated approver
         // if (!in_array($transaction->status_id, config('global.liquidation_approval')) || $user->id != $transaction->liquidation_approver_id) {
@@ -1016,14 +1020,17 @@ class TransactionsLiquidationController extends Controller {
     }
 
     private function check_can_clear_edit($transaction, $user = '') {
-        $can_clear_edit = true;
+        $transaction = Transaction::where('id', $transaction)->first();
+        if (in_array($transaction->status_id, config('global.cancelled'))) {
+            $can_clear_edit = false;
+        } else {
+            $can_clear_edit = true;
+        }
 
         if (!$user) {
             $user = auth()->id();
         }
         $user = User::where('id', $user)->first();
-
-        $transaction = Transaction::where('id', $transaction)->first();
 
         // check if not for approval and not designated approver
         if (in_array($transaction->status_id, config('global.liquidation_cleared')) && $user->id == 1) {
