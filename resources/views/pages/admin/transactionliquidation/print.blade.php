@@ -346,3 +346,7 @@
         window.print()
     </script>
 @endsection
+
+@section('footer')
+    <div class="watermark {{ !in_array($transaction->status_id, config('global.cancelled')) ? 'd-none' : '' }}">CANCELLED</div>
+@endsection 

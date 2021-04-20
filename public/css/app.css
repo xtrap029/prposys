@@ -44018,6 +44018,28 @@ footer ul li:last-child {
   .row--print {
     page-break-inside: avoid;
   }
+
+  .watermark {
+    position: fixed;
+    font-size: 180px;
+    opacity: 5%;
+    font-weight: 900;
+    transform: rotate(40deg);
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    height: 180px;
+    line-height: 180px;
+    z-index: 2;
+  }
+}
+
+@media screen {
+  .watermark {
+    display: none;
+  }
 }
 
 .progress {
