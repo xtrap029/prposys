@@ -23,6 +23,13 @@
                                     <th>Date Requested</th>
                                     <th>Staff</th>
                                     <th>COA Tagging</th>
+                                    @if ($transaction->is_deposit
+                                        || $transaction->is_bills
+                                        || $transaction->is_hr
+                                        || $transaction->is_bank
+                                        || in_array($transaction->status_id, config('global.cancelled')))
+                                        <th>Status</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -35,6 +42,13 @@
                                     <td>{{ Carbon::parse($transaction->created_at)->format('Y-m-d') }}</td>
                                     <td>{{ $transaction->requested->name }}</td>
                                     <td>{{ $transaction->coatagging->name }}</td>
+                                    @if ($transaction->is_deposit
+                                        || $transaction->is_bills
+                                        || $transaction->is_hr
+                                        || $transaction->is_bank
+                                        || in_array($transaction->status_id, config('global.cancelled')))
+                                        <td>{{ $transaction->status->name }}</td>
+                                    @endif
                                 </tr>
                             </tbody>
                         </table>
@@ -172,7 +186,6 @@
                                         <th>Type</th>
                                         <th>Bank</th>
                                         <th>Reference Code</th>
-                                        <th>Status</th>
                                     </tr>
                                 </thead> 
                                 <tbody>
@@ -181,7 +194,6 @@
                                         <td>{{ $transaction->depo_type }}</td>
                                         <td>{{ $transaction->bankbranch ? $transaction->bankbranch->bank->name.' ('.$transaction->bankbranch->name.')' : '' }}</td>
                                         <td>{{ $transaction->depo_ref }}</td>
-                                        <td>{{ $transaction->status->name }}</td>
                                     </tr>
                                 </tbody>   
                             </table>

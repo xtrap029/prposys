@@ -39,6 +39,7 @@
                                 <th>Date Requested</th>
                                 <th>Project</th>
                                 <th>COA Tagging</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -51,6 +52,7 @@
                                 <td>{{ Carbon::parse($transaction->created_at)->format('Y-m-d') }}</td>
                                 <td>{{ $transaction->project->project }}</td>
                                 <td>{{ $transaction->coatagging->name }}</td>
+                                <td>{{ $transaction->status->name }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -291,5 +293,5 @@
 @endsection
 
 @section('footer')
-    <div class="watermark {{ !in_array($transaction->status_id, config('global.cancelled')) ? 'd-none' : '' }}">CANCELLED</div>
+    {{-- <div class="watermark {{ !in_array($transaction->status_id, config('global.cancelled')) ? 'd-none' : '' }}">CANCELLED</div> --}}
 @endsection 
