@@ -72,7 +72,7 @@
                                         <div class="row">
                                             <div class="col-md-6 form-group">
                                                 <label for="">Prepared by</label>
-                                                <select name="owner_id" class="form-control">
+                                                <select name="owner_id" class="form-control" required>
                                                     @foreach ($users as $user)
                                                         <option value="{{ $user->id }}" {{ $user->id == $transaction->owner_id ? 'selected' : '' }}>{{ $user->name }}</option>
                                                     @endforeach
@@ -80,11 +80,23 @@
                                             </div>
                                             <div class="col-md-6 form-group">
                                                 <label for="">Requested by</label>
-                                                <select name="requested_id" class="form-control">
+                                                <select name="requested_id" class="form-control" required>
                                                     @foreach ($users as $user)
                                                         <option value="{{ $user->id }}" {{ $user->id == $transaction->requested_id ? 'selected' : '' }}>{{ $user->name }}</option>
                                                     @endforeach
                                                 </select>
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label for="">Currency</label>
+                                                <select name="currency" class="form-control" required>
+                                                    @foreach (config('global.currency') as $key => $item)
+                                                        <option value="{{ config('global.currency_label')[$key] }}" {{ config('global.currency_label')[$key] == $transaction->currency ? 'selected' : '' }}>{{ $item }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label for="">Due Date</label>
+                                                <input type="date" class="form-control" name="due_at" value="{{ $transaction->due_at }}" required>
                                             </div>
                                             @if (in_array($transaction->status_id, config('global.form_issued'))
                                                 || in_array($transaction->status_id, config('global.liquidations'))
