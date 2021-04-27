@@ -237,16 +237,13 @@
                         <div class="row">
                             <div class="col-sm-6 col-md-2 my-1">
                                 <label for="">
-                                    <a href="/report-template" target="_blank">Template</a>
+                                    <a href="/report-template" target="_blank">Add/Edit Template</a>
                                 </label>
                                 <select name="template" class="form-control form-control-sm">
+                                    <option disabled {{ empty($_GET['template']) ? 'selected' : '' }}>Choose Template</option>
                                     @foreach ($report_templates as $item)
                                         <option value="{{ $item->id }}"
-                                            @if (!empty($_GET['template']))
-                                                @if ($_GET['template'] == $item->id)
-                                                    selected
-                                                @endif
-                                            @elseif ($item->id == 1)
+                                            @if (!empty($_GET['template']) && $_GET['template'] == $item->id)
                                                 selected
                                             @endif
                                             >{{ $item->name }}
