@@ -224,85 +224,95 @@
             </div>
 
             <form action="" method="get" class="no-print" id="filter-old">
-                <div class="form-row mb-3">
-                    <div class="col-sm-6 col-md-3 my-1">
-                        <label for="">Type</label>
-                        <select name="type" class="form-control">
-                            <option value="">All</option>
-                            <option value="pr" {{ $trans_type == "pr" ? 'selected' : '' }}>Payment Release</option>
-                            <option value="po" {{ $trans_type == "po" ? 'selected' : '' }}>Purchase Order</option>
-                            {{-- <option value="pc" {{ $trans_type == "pc" ? 'selected' : '' }}>PC</option> --}}
-                        </select>
+                <div class="card small">
+                    <div class="card-header bg-gray">
+                        <b>Main Filters</b>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="material-icons">arrow_drop_up</i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="col-sm-6 col-md-3 my-1">
-                        <label for="">Company</label>
-                        <select name="company" class="form-control">
-                            <option value="">All</option>
-                            @foreach ($companies as $item)
-                                <option value="{{ $item->id }}" {{ !empty($trans_company) ? $trans_company == $item->id ? 'selected' : '' : '' }}>{{ $item->name }}</option>
-                            @endforeach
-                        </select>
+                    <div class="card-body bg-gray-light">
+                        <div class="row">
+                            <div class="col-sm-6 col-md-2 my-1">
+                                <label for="">
+                                    <a href="/report-template" target="_blank">Template</a>
+                                </label>
+                                <select name="template" class="form-control form-control-sm">
+                                    @foreach ($report_templates as $item)
+                                        <option value="{{ $item->id }}"
+                                            @if (!empty($_GET['template']))
+                                                @if ($_GET['template'] == $item->id)
+                                                    selected
+                                                @endif
+                                            @elseif ($item->id == 1)
+                                                selected
+                                            @endif
+                                            >{{ $item->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-sm-6 col-md-1 my-1">
+                                <label for="">Type</label>
+                                <select name="type" class="form-control form-control-sm">
+                                    <option value="">All</option>
+                                    <option value="pr" {{ $trans_type == "pr" ? 'selected' : '' }}>PR</option>
+                                    <option value="po" {{ $trans_type == "po" ? 'selected' : '' }}>PO</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6 col-md-1 my-1">
+                                <label for="">Status</label>
+                                <select name="status" class="form-control form-control-sm">
+                                    <option value="">All</option>
+                                    @foreach (config('global.status_filter_reports') as $item)
+                                        <option value="{{ $item[1] }}" {{ !empty($_GET['status']) && $_GET['status'] == $item[1] ? 'selected' : '' }}>{{ $item[0] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-sm-6 col-md-2 my-1">
+                                <label for="">Company</label>
+                                <select name="company" class="form-control form-control-sm">
+                                    <option value="">All</option>
+                                    @foreach ($companies as $item)
+                                        <option value="{{ $item->id }}" {{ !empty($trans_company) ? $trans_company == $item->id ? 'selected' : '' : '' }}>{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2 my-1">
+                                <label for="">Category</label>
+                                <select name="category" class="form-control form-control-sm">
+                                    <option value="">All</option>
+                                    @foreach (config('global.trans_category_column_2') as $key => $item)
+                                        <option value="{{ $item }}" {{ !empty($_GET['category']) && $_GET['category'] == $item ? 'selected' : '' }}>{{ config('global.trans_category_label')[$key] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-sm-6 col-md-2 my-1">
+                                <label for="">Date From</label>
+                                <input type="date" name="from" class="form-control form-control-sm" value="{{ !empty($_GET['from']) ? $_GET['from'] : '' }}">
+                            </div>
+                            <div class="col-sm-6 col-md-2 my-1">
+                                <label for="">Date To</label>
+                                <input type="date" name="to" class="form-control form-control-sm" value="{{ !empty($_GET['to']) ? $_GET['to'] : '' }}">
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-sm-6 col-md-3 my-1">
-                        <label for="">Requested By</label>
-                        <select name="user_req" class="form-control">
-                            <option value="">All</option>
-                            @foreach ($users as $item)
-                                <option value="{{ $item->id }}" {{ app('request')->input('user_req') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                            @endforeach
-                        </select>
+                </div>
+                <div class="card small">
+                    <div class="card-header bg-gray">
+                        <b>Column Filters</b>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="material-icons">arrow_drop_up</i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="col-sm-6 col-md-3 my-1">
-                        <label for="">Status</label>
-                        <select name="status" class="form-control">
-                            <option value="">All</option>
-                            @foreach (config('global.status_filter_reports') as $item)
-                                <option value="{{ $item[1] }}" {{ !empty($_GET['status']) && $_GET['status'] == $item[1] ? 'selected' : '' }}>{{ $item[0] }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3 my-1">
-                        <label for="">Category</label>
-                        <select name="category" class="form-control">
-                            <option value="">All</option>
-                            @foreach (config('global.trans_category_column_2') as $key => $item)
-                                <option value="{{ $item }}" {{ !empty($_GET['category']) && $_GET['category'] == $item ? 'selected' : '' }}>{{ config('global.trans_category_label')[$key] }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3 my-1">
-                        <label for="">Amount</label>
-                        <select name="bal" class="form-control">
-                            <option value="">All</option>
-                            <option value="0" {{ app('request')->input('bal') != "" && app('request')->input('bal') == 0 ? 'selected' : '' }}>Balanced</option>
-                            <option value="1" {{ app('request')->input('bal') == '1' ? 'selected' : '' }}>( + ) For Reimbursement</option>
-                            <option value="-1" {{ app('request')->input('bal') == '-1' ? 'selected' : '' }}>( - ) Return Money</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-6 col-md-3 my-1">
-                        <label for="">Date From</label>
-                        <input type="date" name="from" class="form-control" value="{{ !empty($_GET['from']) ? $_GET['from'] : '' }}">
-                    </div>
-                    <div class="col-sm-6 col-md-3 my-1">
-                        <label for="">Date To</label>
-                        <input type="date" name="to" class="form-control" value="{{ !empty($_GET['to']) ? $_GET['to'] : '' }}">
-                    </div>
-                    <div class="col-sm-6 col-md-3 my-1">
-                        <label for="">Template</label>
-                        <select name="template" class="form-control">
-                            @foreach ($report_templates as $item)
-                                <option value="{{ $item->id }}"
-                                    @if (!empty($_GET['template']))
-                                        @if ($_GET['template'] == $item->id)
-                                            selected
-                                        @endif
-                                    @elseif ($item->id == 1)
-                                        selected
-                                    @endif
-                                    >{{ $item->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                    <div class="card-body bg-gray-light">
+                        <div class="row">
+                            @include('pages.admin.transaction.reportallcolumns', ['column_codes' => $column_codes])
+                        </div>
                     </div>
                 </div>
             </form>

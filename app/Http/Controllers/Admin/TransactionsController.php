@@ -941,6 +941,11 @@ class TransactionsController extends Controller {
         }
         $report_template = $report_template->first();
 
+        $column_codes = [];
+        foreach ($report_template->templatecolumn as $key => $value) {
+             $column_codes[] = $value->column->name;
+        }
+
         $transactions = $transactions->get();
         
         $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
@@ -1001,9 +1006,9 @@ class TransactionsController extends Controller {
             return response()->stream($callback, 200, $headers);
             
         } else {
-
             return view('pages.admin.transaction.reportall')->with([
                 'report_template' => $report_template,
+                'column_codes' => $column_codes,
                 'report_templates' => $report_templates,
                 'companies' => $companies,
                 'users' => $users,
