@@ -12,6 +12,7 @@
                         <input type="text"
                             value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}"
                             class="input--label text-white" readonly>
+                        <a href="#_" class="text-white vlign--top jsCopy" data-toggle="tooltip" data-placement="top" title="Copy to clipboard"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i></a>
                     </h1>
                     <span class="text-white-50">{{ $transaction->project->company->name }}</span>
                     <div class="mt-2">
@@ -37,7 +38,6 @@
                 <div class="col-lg-6 text-right mt-4">
                     <div>
                         <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}{{ isset($_GET['page']) ? '?page='.$_GET['page'] : '' }}" class="btn btn-sm btn-flat mb-2 btn-light"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
-                        <a href="#_" class="btn btn-sm btn-flat btn-light vlign--top jsCopy" data-toggle="tooltip" data-placement="top" title="Copy to clipboard"><i class="align-middle font-weight-bolder material-icons text-md">assignment</i></a>
                         <a data-toggle="modal" data-target="#modal-liquidate" href="#_" class="btn btn-sm btn-flat mb-2 btn-light"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>
                         <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}?project_id={{ $transaction->project_id }}&currency={{ $transaction->currency }}&amount={{ $transaction->amount }}&purpose={{ $transaction->purpose }}&payee={{ $transaction->payee }}&due_at={{ $transaction->due_at }}&requested_id={{ $transaction->requested_id }}&is_deposit={{ $transaction->is_deposit }}&is_bills={{ $transaction->is_bills }}&is_hr={{ $transaction->is_hr }}&is_reimbursement={{ $transaction->is_reimbursement }}&is_bank={{ $transaction->is_bank }}" target="_blank" class="btn btn-sm btn-flat mb-2 btn-light {{ $perms['can_duplicate'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i> Duplicate</a>
                         <a href="/transaction-liquidation/reset/{{ $transaction->id }}" class="btn btn-sm btn-flat mb-2 btn-light {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
