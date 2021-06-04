@@ -1,63 +1,94 @@
 @extends('layouts.app')
 
 @section('title', 'View '.strtoupper($transaction->trans_type))
+@section('nav_class', 'navbar-dark')
 
 @section('content')
-    <section class="content-header">
+    <section class="content-header bg-dark">
         <div class="container-fluid">
-            <div class="form-row"> 
-                <div class="col-sm-4 mb-2">
-                    <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}{{ isset($_GET['page']) ? '?page='.$_GET['page'] : '' }}" class="btn mb-2 btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
-                    <a data-toggle="modal" data-target="#modal-liquidate" href="#_" class="btn mb-2 btn-default"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>
-                    {{-- <a href="/transaction/duplicate/{{ $transaction->id }}" target="_blank" class="btn mb-2 btn-default {{ $perms['can_duplicate'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i> Duplicate</a> --}}
-                    <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}?project_id={{ $transaction->project_id }}&currency={{ $transaction->currency }}&amount={{ $transaction->amount }}&purpose={{ $transaction->purpose }}&payee={{ $transaction->payee }}&due_at={{ $transaction->due_at }}&requested_id={{ $transaction->requested_id }}&is_deposit={{ $transaction->is_deposit }}&is_bills={{ $transaction->is_bills }}&is_hr={{ $transaction->is_hr }}&is_reimbursement={{ $transaction->is_reimbursement }}&is_bank={{ $transaction->is_bank }}" target="_blank" class="btn mb-2 btn-default {{ $perms['can_duplicate'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i> Duplicate</a>
-                    <a href="/transaction-liquidation/reset/{{ $transaction->id }}" class="btn mb-2 btn-default {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
+            <div class="row">
+                <div class="col-lg-6">
+                    <h1 class="mb-0">
+                        <input type="text"
+                            value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}"
+                            class="input--label text-white" readonly>
+                    </h1>
+                    <span class="text-white-50">{{ $transaction->project->company->name }}</span>
+                    <div class="mt-2">
+                        <span class="badge badge-pill bg-warning p-2">
+                            @if ($transaction->is_deposit)
+                                {{ config('global.trans_category_label')[1] }}
+                            @elseif ($transaction->is_bills)    
+                                {{ config('global.trans_category_label')[2] }}
+                            @elseif ($transaction->is_hr)    
+                                {{ config('global.trans_category_label')[3] }}
+                            @elseif ($transaction->is_reimbursement)    
+                                {{ config('global.trans_category_label')[4] }}
+                            @elseif ($transaction->is_bank)    
+                                {{ config('global.trans_category_label')[5] }}
+                            @else
+                                {{ config('global.trans_category_label')[0] }}    
+                            @endif
+                        </span>
+                        <span class="badge badge-pill bg-purple p-2">{{ $transaction->status->name }}</span>
+                    </div>
                 </div>
-                <div class="col-sm-8 text-sm-right mb-2">
-                    <div class="modal fade" id="modal-liquidate" tabindex="-1" role="dialog" aria-hidden="true">
-                        <div class="modal-dialog modal-md" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header border-0">
-                                    <h5 class="modal-title">Select {{ $transaction->trans_type == 'pc' ? 'PC' : 'PR/PO' }} to Liquidate</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body text-center">
-                                    <form action="/transaction-liquidation/create" method="get">
-                                        <input type="hidden" name="company" value="{{ $transaction->project->company_id }}" required>
-                                        <input type="text" name="key" class="form-control" placeholder="{{ $transaction->trans_type == 'pc' ? 'PC' : 'PR/PO' }}-XXXX-XXXXX" required>
-                                        <input type="submit" class="btn mb-2 btn-primary mt-2" value="Check">
-                                    </form>
+    
+                <div class="col-lg-6 text-right mt-4">
+                    <div>
+                        <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}{{ isset($_GET['page']) ? '?page='.$_GET['page'] : '' }}" class="btn btn-sm btn-flat mb-2 btn-light"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
+                        <a href="#_" class="btn btn-sm btn-flat btn-light vlign--top jsCopy" data-toggle="tooltip" data-placement="top" title="Copy to clipboard"><i class="align-middle font-weight-bolder material-icons text-md">assignment</i></a>
+                        <a data-toggle="modal" data-target="#modal-liquidate" href="#_" class="btn btn-sm btn-flat mb-2 btn-light"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>
+                        <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}?project_id={{ $transaction->project_id }}&currency={{ $transaction->currency }}&amount={{ $transaction->amount }}&purpose={{ $transaction->purpose }}&payee={{ $transaction->payee }}&due_at={{ $transaction->due_at }}&requested_id={{ $transaction->requested_id }}&is_deposit={{ $transaction->is_deposit }}&is_bills={{ $transaction->is_bills }}&is_hr={{ $transaction->is_hr }}&is_reimbursement={{ $transaction->is_reimbursement }}&is_bank={{ $transaction->is_bank }}" target="_blank" class="btn btn-sm btn-flat mb-2 btn-light {{ $perms['can_duplicate'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i> Duplicate</a>
+                        <a href="/transaction-liquidation/reset/{{ $transaction->id }}" class="btn btn-sm btn-flat mb-2 btn-light {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
+                    </div>
+                    <div>
+                        <div class="modal fade text-dark" id="modal-liquidate" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog modal-md" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header border-0">
+                                        <h5 class="modal-title">Select {{ $transaction->trans_type == 'pc' ? 'PC' : 'PR/PO' }} to Liquidate</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <form action="/transaction-liquidation/create" method="get">
+                                            <input type="hidden" name="company" value="{{ $transaction->project->company_id }}" required>
+                                            <input type="text" name="key" class="form-control" placeholder="{{ $transaction->trans_type == 'pc' ? 'PC' : 'PR/PO' }}-XXXX-XXXXX" required>
+                                            <input type="submit" class="btn mb-2 btn-primary mt-2" value="Check">
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+        
+                        <a href="/transaction-liquidation/edit/{{ $transaction->id }}" class="btn mb-2 btn-sm btn-flat btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
+                        <a href="/transaction-liquidation/approval/{{ $transaction->id }}" class="btn mb-2 btn-sm btn-flat btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a>
+                        <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger {{ !$transaction->is_reimbursement ? '' : 'd-none' }}" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print Generated {{ strtoupper($transaction->trans_type) }} Form</a>
+                        <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-liquidation/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i>
+                            Print
+                            @if ($transaction->is_deposit)
+                                {{ config('global.trans_category_label_liq_print')[1] }}
+                            @elseif ($transaction->is_bills)    
+                                {{ config('global.trans_category_label_liq_print')[2] }}
+                            @elseif ($transaction->is_hr)    
+                                {{ config('global.trans_category_label_liq_print')[3] }}
+                            @elseif ($transaction->is_reimbursement)    
+                                {{ config('global.trans_category_label_liq_print')[4] }}
+                            @elseif ($transaction->is_bank)    
+                                {{ config('global.trans_category_label_liq_print')[5] }}
+                            @else
+                                {{ config('global.trans_category_label_liq_print')[0] }}
+                            @endif
+                        </a>
+                        <a href="#_" class="btn mb-2 btn-sm btn-flat btn-success {{ $perms['can_clear'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear"><i class="align-middle font-weight-bolder material-icons text-md">payments</i> Clear / Deposit</a>
+                        <a href="#_" class="btn mb-2 btn-sm btn-flat btn-primary {{ $perms['can_edit_cleared'] && $transaction->liq_balance != 0 ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear-edit"><i class="align-middle font-weight-bolder material-icons text-md">{{ !$transaction->is_bills && !$transaction->is_hr ? 'edit' : 'visibility' }}</i> {{ !$transaction->is_bills && !$transaction->is_hr ? 'Edit' : 'View' }} Deposit Info</a>
                     </div>
-
-                    <a href="/transaction-liquidation/edit/{{ $transaction->id }}" class="btn mb-2 btn-primary {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
-                    {{-- <a href="#_" class="btn mb-2 btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-approval"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a> --}}
-                    <a href="/transaction-liquidation/approval/{{ $transaction->id }}" class="btn mb-2 btn-success {{ $perms['can_approval'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a>
-                    <a href="#_" class="btn mb-2 btn-danger {{ !$transaction->is_reimbursement ? '' : 'd-none' }}" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print Generated {{ strtoupper($transaction->trans_type) }} Form</a>
-                    <a href="#_" class="btn mb-2 btn-danger {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-liquidation/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i>
-                        Print
-                        @if ($transaction->is_deposit)
-                            {{ config('global.trans_category_label_liq_print')[1] }}
-                        @elseif ($transaction->is_bills)    
-                            {{ config('global.trans_category_label_liq_print')[2] }}
-                        @elseif ($transaction->is_hr)    
-                            {{ config('global.trans_category_label_liq_print')[3] }}
-                        @elseif ($transaction->is_reimbursement)    
-                            {{ config('global.trans_category_label_liq_print')[4] }}
-                        @elseif ($transaction->is_bank)    
-                            {{ config('global.trans_category_label_liq_print')[5] }}
-                        @else
-                            {{ config('global.trans_category_label_liq_print')[0] }}
-                        @endif
-                    </a>
-                    <a href="#_" class="btn mb-2 btn-success {{ $perms['can_clear'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear"><i class="align-middle font-weight-bolder material-icons text-md">payments</i> Clear / Deposit</a>
-                    <a href="#_" class="btn mb-2 btn-primary {{ $perms['can_edit_cleared'] && $transaction->liq_balance != 0 ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear-edit"><i class="align-middle font-weight-bolder material-icons text-md">{{ !$transaction->is_bills && !$transaction->is_hr ? 'edit' : 'visibility' }}</i> {{ !$transaction->is_bills && !$transaction->is_hr ? 'Edit' : 'View' }} Deposit Info</a>
                 </div>
-                
+            </div>
+
+            <div class="text-dark">
                 @if ($perms['can_approval'])
                     <div class="modal fade" id="modal-approval" tabindex="-1" role="dialog" aria-hidden="true">
                         <div class="modal-dialog modal-md" role="document">
@@ -128,7 +159,7 @@
                                         @if (!$transaction->is_bills && !$transaction->is_hr)
                                             @if ($transaction->liq_balance != 0)
                                                 <div class="row">                                            
-                                                    <div class="mt-4 col-md-4">
+                                                    <div class="mt-4 col-lg-4">
                                                         <label for="" class="font-weight-bold">Mode</label>
                                                         <select name="depo_type" class="depo_type form-control @error('depo_type') is-invalid @enderror" required>
                                                             @foreach (config('global.deposit_type') as $item)
@@ -293,449 +324,427 @@
         </div>
     </section>
     <section class="content">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-lg-8">
-                    <div class="pb-2 border-bottom">
-                        <h1 class="d-inline-block mr-3">
-                            <input type="text" value="{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}" class="input--label" readonly>
-                            <a href="#_" class="btn btn-default vlign--top jsCopy" data-toggle="tooltip" data-placement="top" title="Copy to clipboard"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i></a>
-                        </h1>
-                        <h6 class="d-inline-block">
-                            <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" alt="" class="thumb--xxs mr-1">
-                            {{ $transaction->project->company->name }}
-                        </h6>
-                    </div>
-                    <div class="row mb-4">
-                        <table class="table col-12">
-                            <tr>
-                                <td class="font-weight-bold w-25">Status</td>
-                                <td>{{ $transaction->status->name }}</td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold w-25">Transaction Category</td>
-                                <td>
-                                    @if ($transaction->is_deposit)
-                                        {{ config('global.trans_category_label')[1] }}
-                                    @elseif ($transaction->is_bills)    
-                                        {{ config('global.trans_category_label')[2] }}
-                                    @elseif ($transaction->is_hr)    
-                                        {{ config('global.trans_category_label')[3] }}
-                                    @elseif ($transaction->is_reimbursement)    
-                                        {{ config('global.trans_category_label')[4] }}
-                                    @elseif ($transaction->is_bank)    
-                                        {{ config('global.trans_category_label')[5] }}
-                                    @else
-                                        {{ config('global.trans_category_label')[0] }}    
-                                    @endif
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold w-25">Requested by</td>
-                                <td>{{ $transaction->requested->name }}</td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold w-25">Prepared by</td>
-                                <td>{{ $transaction->owner->name }}</td>
-                            </tr>
-                            @if ($transaction->liquidation_approver_id && !$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
-                                <tr>
-                                    <td class="font-weight-bold w-25">Authorized Approver</td>
-                                    <td>{{ $transaction->liquidationapprover->name }}</td>
-                                </tr>
-                            @endif
-                            <tr>
-                                <td class="font-weight-bold w-25">Project</td>
-                                <td>{{ $transaction->project->project }}</td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold w-25">Particulars</td>
-                                <td>{{ $trans_page_url == 'prpo' ? $transaction->particulars->name : $transaction->particulars_custom }}</td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold w-25">Due Date</td>
-                                <td>{{ $transaction->due_at }}</td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold w-25">{{ !$transaction->is_reimbursement ? 'Payor' : 'Payee' }}</td>
-                                <td>{{ $transaction->payor ?: 'n/a' }}</td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold w-25">COA Tagging</td>
-                                <td>{{ $transaction->coatagging->name }}</td>
-                            </tr>
-                            <tr class="{{ $transaction->soa ? '' : 'd-none' }}">
-                                <td class="font-weight-bold w-25">Statement of Account</td>
-                                <td>
-                                    <a href="/storage/public/attachments/soa/{{ $transaction->soa }}" target="_blank">
-                                        <i class="material-icons mr-2 align-bottom">attachment</i>
-                                    </a>    
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold w-25">Vendor / Payee</td>
-                                <td>{{ $transaction->payee }}</td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold w-25">Tax Type</td>
-                                <td>{{ $transaction->form_vat_name ? $transaction->form_vat_name : $transaction->vattype->name }}</td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold w-25">Issue Type</td>
-                                <td>{{ $transaction->control_type }}</td>
-                            </tr>
-                            <tr>
-                                <td class="font-weight-bold w-25">Issue No.</td>
-                                <td>{{ $transaction->control_no }}</td>
-                            </tr>
-                            @if ($transaction->is_bank)
-                                <tr>
-                                    <td class="font-weight-bold w-25">Transferred To</td>
-                                    <td>{{ $transaction->formcompany->name }}</td>
-                                </tr> 
-                            @endif
-                            <tr>
-                                <td class="font-weight-bold w-25">Released Date</td>
-                                <td>{{ $transaction->released_at }}</td>
-                            </tr>
-                            @if ($transaction->form_service_charge && $transaction->form_service_charge > 0)
-                                <tr>
-                                    <td class="font-weight-bold w-25">Released By</td>
-                                    <td>{{ $transaction->releasedby->name }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold w-25">Service Charge</td>
-                                    <td>{{ number_format($transaction->form_service_charge, 2, '.', ',') }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="font-weight-bold w-25">Amount FX Rate</td>
-                                    <td>
-                                        {{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}
-                                        <span class="small px-2 vlign--top">x</span>
-                                        {{ number_format($transaction->currency_2_rate, 2, '.', ',') }}
-                                        ({{ $transaction->currency_2 }})
-                                    </td>
-                                </tr>
-                            @endif
-                            <tr>
-                                <td class="font-weight-bold w-25">{{ $transaction->is_bank ? 'Transferred' : 'Released' }} Amount</td>
-                                <td>{{ $transaction->currency_2 ?: $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
-                            </tr>
-                            @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
-                                <tr>
-                                    <td><span class="font-weight-bold w-25">Attachments</span></td>
-                                    @include('pages.admin.transactionliquidation.show-attachment')
-                                </tr>
-                            @endif
-                            <tr>
-                                <td colspan="2">
-                                    <span class="font-weight-bold w-25">Purpose</span>
-                                    <p>{{ $transaction->purpose }}</p>
-                                </td>
-                            </tr>
-
-                        </table> 
-                    </div>
-                    <div class="row mb-4 {{ $transaction->is_reimbursement ? 'd-none' : '' }} table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Qty</th>
-                                    <th>Description</th>
-                                    <th>Particulars</th>
-                                    <th class="text-right text-nowrap">Unit Price</th>
-                                    <th class="text-right">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($transaction->transaction_description as $item_desc)
+        <div class="container-fluid pt-3">
+            <div class="row">
+                <div class="col-lg-5">
+                    <div class="card">
+                        <div class="card-body">                                
+                            <div class="table-responsive">
+                                <table class="table">
                                     <tr>
-                                        <td>{{ $item_desc->qty }}</td>
-                                        <td>{{ $item_desc->description }}</td>
-                                        <td>{{ $item_desc->particulars->name }}</td>
-                                        <td class="text-right">{{ number_format($item_desc->amount, 2, '.', ',') }}</td>
-                                        <td class="text-right">{{ number_format($item_desc->amount * $item_desc->qty, 2, '.', ',') }}</td>
-                                    </tr>
-                                @endforeach
-                                {{-- <tr class="border-bottom-2">
-                                    <td>1</td>
-                                    <td>{{ $transaction->expense_type_description }}</td>
-                                    <td class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_unit && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_unit : $transaction->amount, 2, '.', ',') }}</td>
-                                    <td class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_unit && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_unit : $transaction->amount, 2, '.', ',') }}</td>
-                                </tr> --}}
-                                <tr class="font-weight-bold">
-                                    <td colspan="3" class="text-right">
-                                        {{ $transaction->form_amount_vat && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_vat : $transaction->vattype->vat 
-                                            + $transaction->form_amount_wht && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_wht : $transaction->vattype->wht == 0 ? 'Total' : 'Subtotal' }}
-                                    </td>
-                                    <td colspan="2" class="text-right">{{ number_format($transaction->form_amount_subtotal && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_subtotal : $transaction->custom_subtotal, 2, '.', ',') }}</td>
-                                </tr>
-                                @if ($transaction->custom_vat > 0 || ($transaction->form_amount_vat && !in_array($transaction->status_id, config('global.generated_form'))))
-                                <tr>
-                                    <td colspan="3" class="text-right">VAT</td>
-                                    <td colspan="2" class="text-right">{{ number_format($transaction->form_amount_vat && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_vat : $transaction->custom_vat, 2, '.', ',') }}</td>
-                                </tr>
-                                @endif
-                                @if ($transaction->custom_wht > 0 || ($transaction->form_vat_wht && !in_array($transaction->status_id, config('global.generated_form'))))
-                                <tr>
-                                    <td colspan="3" class="text-right text-nowrap">Less Withholding Tax</td>
-                                    <td class="text-right">{{ $transaction->form_vat_wht && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_vat_name." (".$transaction->form_vat_wht."%)" : $transaction->vattype->name." (".$transaction->vattype->wht."%)" }}</td>
-                                    <td class="text-right">({{ number_format($transaction->form_amount_wht ? $transaction->form_amount_wht : $transaction->custom_wht, 2, '.', ',') }})</td>
-                                </tr>
-                                @endif
-                                @if ($transaction->custom_vat > 0 || ($transaction->form_amount_payable && !in_array($transaction->status_id, config('global.generated_form'))))
-                                <tr class="font-weight-bold">
-                                    <td colspan="3" class="text-right text-nowrap">Total Payable</td>
-                                    <td colspan="2" class="text-right">{{ number_format($transaction->form_amount_payable && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_payable : $transaction->custom_total_payable, 2, '.', ',') }}</td>
-                                </tr>
-                                @endif
-                                <tr class="font-weight-bold border-top-2">
-                                    <td colspan="3" class="text-right">Amount</td>
-                                    <td colspan="2" class="text-right text-nowrap">{{ $transaction->currency }} {{ number_format($transaction->form_amount_payable && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_payable : $transaction->custom_total_payable, 2, '.', ',') }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="row mb-4 table-responsive">
-                        <table class="table table-bordered {{ $transaction->is_deposit || $transaction->is_bills || $transaction->is_hr || $transaction->is_bank ? 'd-none' : '' }}">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Type</th>
-                                    <th>Description</th>
-                                    <th>Location/Route</th>
-                                    <th class="text-center">Receipt</th>
-                                    <th class="text-right">Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($transaction->liquidation as $item)
-                                    <tr>
-                                        <td class="text-nowrap">{{ $item->date }}</td>
-                                        <td class="text-nowrap">{{ $item->expensetype->name }}</td>
-                                        <td>{{ $item->description }}</td>
-                                        <td>{{ $item->location }}</td>
-                                        <td class="text-center">{{ $item->receipt ? 'Y' : 'N' }}</td>
-                                        <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
-                                    </tr>
-                                @endforeach
-                                <tr>
-                                    <td colspan="6" class="py-4"></td>
-                                </tr>
-                                @foreach ($transaction_summary as $item)
-                                    <tr>
-                                        <td></td>
-                                        <td class="bg-white" colspan="5">
-                                            {{ $item->name }}
-                                            <span class="float-right">{{ number_format($item->amount, 2, '.', ',') }}</span>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                <tr>
-                                    <td colspan="6" class="py-4"></td>
-                                </tr>
-                                @if ($transaction->liq_before_vat)
-                                    <tr>
-                                        <td colspan="4" class="font-weight-bold small text-right">Before VAT</td>
-                                        <td colspan="2" class="bg-white text-right">
-                                            <span class="float-left">{{ $transaction->currency }}</span>
-                                            {{ number_format($transaction->liq_before_vat, 2, '.', ',') }}
+                                        <td class="font-weight-bold text-gray border-0">Requested By</td>
+                                        <td class="font-weight-bold border-0">
+                                            <img src="/storage/public/images/users/{{ $transaction->requested->avatar }}" class="img-circle img-size-32 mr-2">
+                                            {{ $transaction->requested->name }}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="4" class="font-weight-bold small text-right">VAT (12%)</td>
-                                        <td colspan="2" class="bg-white text-right font-italic">
-                                            <span class="float-left">{{ $transaction->currency }}</span>
-                                            {{ number_format($transaction->liq_vat, 2, '.', ',') }}
+                                        <td class="font-weight-bold text-gray">Prepared By</td>
+                                        <td class="font-weight-bold">
+                                            <img src="/storage/public/images/users/{{ $transaction->owner->avatar }}" class="img-circle img-size-32 mr-2">
+                                            {{ $transaction->owner->name }}
                                         </td>
                                     </tr>
-                                @endif
-                                <tr>
-                                    <td colspan="4" class="font-weight-bold small text-right">Subtotal</td>
-                                    <td colspan="2" class="bg-white text-right font-weight-bold">
-                                        <span class="float-left">{{ $transaction->currency }}</span>
-                                        {{ number_format($transaction->liq_subtotal, 2, '.', ',') }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="4" class="font-weight-bold small text-right">Less: Deposit/Payment</td>
-                                    <td colspan="2" class="bg-white text-right text-danger">
-                                        <span class="float-left">{{ $transaction->currency }}</span>
-                                        {{ number_format($transaction->amount_issued, 2, '.', ',') }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="4" class="small font-weight-bold text-right">Balance</td>
-                                    <td colspan="2" class="bg-white text-right font-weight-bold">
-                                        <span class="float-left">{{ $transaction->currency }}</span>
-                                        {{ number_format($transaction->liq_balance, 2, '.', ',') }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="6" class="small text-right">
-                                        <span>(+) For Reimbursement / (-) Return Money</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        @if (in_array($transaction->status_id, config('global.liquidation_cleared')))
-                            <div class="pb-2 mt-4 mb-2">
-                                <h3 class="d-inline-block mr-3">Clearing Information</h3>
-                            </div>
-                            <table class="table">
-                                @if ($transaction->liq_balance != 0 || $transaction->is_reimbursement)
-                                    @if (!$transaction->is_reimbursement)
+                                    @if ($transaction->liquidation_approver_id && !$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
                                         <tr>
-                                            <td>Amount {{ $transaction->liq_balance >= 0 ? 'Reimbursed' : 'Returned' }}</td>
+                                            <td class="font-weight-bold text-gray">Auth. Approver</td>
                                             <td class="font-weight-bold">
-                                                {{ $transaction->currency_2 ?: $transaction->currency }}
-                                                {{ number_format($transaction->liq_balance >= 0 ? $transaction->liq_balance : $transaction->liq_balance*-1, 2, '.', ',') }}
+                                                <img src="/storage/public/images/users/{{ $transaction->liquidationapprover->avatar }}" class="img-circle img-size-32 mr-2">
+                                                {{ $transaction->liquidationapprover->name }}
                                             </td>
                                         </tr>
-                                    @endif                                    
-                                    
-                                    @if (!$transaction->is_bills && !$transaction->is_hr && !$transaction->is_reimbursement && !$transaction->is_bank)
-                                        <tr>
-                                            <td>Type</td>
-                                            <td class="font-weight-bold">{{ $transaction->depo_type }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Bank</td>
-                                            <td class="font-weight-bold">{{ $transaction->bankbranch->bank->name }} ({{ $transaction->bankbranch->name }})</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Reference Code</td>
-                                            <td class="font-weight-bold">{{ $transaction->depo_ref }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Received By</td>
-                                            <td class="font-weight-bold">{{ $transaction->depo_received_by }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Date Deposited</td>
-                                            <td class="font-weight-bold">{{ $transaction->depo_date }}</td>
-                                        </tr>    
                                     @endif
-                                    
-                                    @if ($transaction->is_deposit && $transaction->liquidation_approver_id)
-                                        <tr>
-                                            <td>Deposited By</td>
-                                            <td class="font-weight-bold">{{ $transaction->liquidationapprover->name }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Attachments</td>
-                                            @include('pages.admin.transactionliquidation.show-attachment')
-                                        </tr>
-                                    @elseif($transaction->is_bills || $transaction->is_hr)
-                                        <tr>
-                                            <td>Attachments</td>
-                                            @include('pages.admin.transactionliquidation.show-attachment')
-                                        </tr>
-                                    @else
-                                        @if ($transaction->depo_slip)
-                                            <tr>
-                                                <td>Slip Attachment</td>
-                                                <td class="font-weight-bold"><a href="/storage/public/attachments/deposit_slip/{{ $transaction->depo_slip }}" target="_blank"><i class="material-icons mr-2 align-bottom">attachment</i></a></td>
-                                            </tr>
-                                        @endif
-                                    @endif
-                                @else
                                     <tr>
-                                        <td colspan="2">No deposit information.</td>
+                                        <td class="font-weight-bold text-gray">Project</td>
+                                        <td class="font-weight-bold">
+                                            <img src="/storage/public/images/companies/{{ $transaction->project->company->logo }}" class="img-circle img-size-32 mr-2">
+                                            {{ $transaction->project->project }}
+                                        </td>
                                     </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-gray">Due By</td>
+                                        <td class="font-weight-bold">{{ $transaction->due_at }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-gray">Particulars</td>
+                                        <td class="font-weight-bold">{{ $trans_page_url == 'prpo' ? $transaction->particulars->name : $transaction->particulars_custom }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-gray">{{ !$transaction->is_reimbursement ? 'Payor' : 'Payee' }}</td>
+                                        <td class="font-weight-bold">{{ $transaction->payor ?: 'n/a' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-gray">COA Tagging</td>
+                                        <td class="font-weight-bold">{{ $transaction->coatagging->name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-gray">Vendor / Payee</td>
+                                        <td class="font-weight-bold">{{ $transaction->payee }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-gray">Tax Type</td>
+                                        <td class="font-weight-bold">{{ $transaction->form_vat_name ? $transaction->form_vat_name : $transaction->vattype->name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-gray">Issue Type</td>
+                                        <td class="font-weight-bold">{{ $transaction->control_type }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-gray">Issue No.</td>
+                                        <td class="font-weight-bold">{{ $transaction->control_no }}</td>
+                                    </tr>
+                                    @if ($transaction->is_bank)
+                                        <tr>
+                                            <td class="font-weight-bold text-gray">Transferred To</td>
+                                            <td class="font-weight-bold">{{ $transaction->formcompany->name }}</td>
+                                        </tr> 
+                                    @endif
+                                    <tr>
+                                        <td class="font-weight-bold text-gray">Released Date</td>
+                                        <td class="font-weight-bold">{{ $transaction->released_at }}</td>
+                                    </tr>
+                                    @if ($transaction->form_service_charge && $transaction->form_service_charge > 0)
+                                        <tr>
+                                            <td class="font-weight-bold text-gray">Released By</td>
+                                            <td class="font-weight-bold">{{ $transaction->releasedby->name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold text-gray">Service Charge</td>
+                                            <td class="font-weight-bold">{{ number_format($transaction->form_service_charge, 2, '.', ',') }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold text-gray">Amount FX Rate</td>
+                                            <td class="font-weight-bold">
+                                                {{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}
+                                                <span class="small px-2 vlign--top">x</span>
+                                                {{ number_format($transaction->currency_2_rate, 2, '.', ',') }}
+                                                ({{ $transaction->currency_2 }})
+                                            </td>
+                                        </tr>
+                                    @endif
+                                    <tr>
+                                        <td class="font-weight-bold text-gray">{{ $transaction->is_bank ? 'Transferred' : 'Released' }} Amount</td>
+                                        <td class="font-weight-bold">{{ $transaction->currency_2 ?: $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <span class="font-weight-bold text-gray">Purpose</span>
+                                            <p class="mb-0">{{ $transaction->purpose }}</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                                @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
+                                    @include('pages.admin.transactionliquidation.show-attachment-2')
                                 @endif
-                                
-                            </table>
-                        @endif
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="pt-4 pt-lg-0 pb-2 text-lg-right"><h1>History</h1></div>
-                    <table class="table table-striped table-bordered table-sm small">
-                        <tbody>
-                            @foreach ($logs as $item)
-                                <tr>
-                                    <td>
-                                        <a href="#_" data-toggle="modal" data-target="#modal-{{ $item->id }}">
-                                            @if ($item->description == 'created')
-                                                <i class="align-middle font-weight-bolder material-icons text-md">add</i>
-                                            @else
-                                                <i class="align-middle font-weight-bolder material-icons text-md">edit</i>
-                                            @endif
-                                        </a>
-                                        <div class="modal fade" id="modal-{{ $item->id }}" tabindex="-1" role="dialog" aria-hidden="true">
-                                            <div class="modal-dialog modal-lg" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header border-0">
-                                                        <h5 class="modal-title">
-                                                            {{ ucfirst($item->description) }} {{ Carbon::parse($item->created_at)->diffInDays(Carbon::now()) >= 1 ? $item->created_at->format('Y-m-d') : $item->created_at->diffForHumans() }}
-                                                        </h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        @switch($item->description)
-                                                            @case('created')
-                                                                <table class="table table-sm table-bordered">
-                                                                    <thead class="bg-gradient-gray">
-                                                                        <tr>
-                                                                            <th></th>
-                                                                            <th>Value</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        @foreach ($item->changes['attributes'] as $key => $attribute)
-                                                                            <tr>
-                                                                                <td class="font-weight-bold">{{ ucwords($key) }}</td>
-                                                                                <td>{{ $attribute }}</td>
-                                                                            </tr>
-                                                                        @endforeach
-                                                                    </tbody>
-                                                                </table>
-                                                                @break
-                                                            @case('updated')
-                                                                    <table class="table table-sm table-bordered">
-                                                                        <thead class="bg-gradient-gray">
-                                                                            <tr>
-                                                                                <th></th>
-                                                                                <th>From</th>
-                                                                                <th>To</th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            @foreach ($item->changes['old'] as $key => $attribute)
-                                                                                <tr>
-                                                                                    <td class="font-weight-bold">{{ ucwords($key) }}</td>
-                                                                                    <td>{{ $attribute }}</td>
-                                                                                    <td>{{ $item->changes['attributes'][$key] }}</td>
-                                                                                </tr>
-                                                                            @endforeach
-                                                                        </tbody>
-                                                                    </table>
-                                                                @break
-                                                            @default                                                    
-                                                        @endswitch
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>{{ $item->log_name }}</td>
-                                    <td>{{ $item->causer->name }}</td>
-                                    <td class="text-right">{{ Carbon::parse($item->created_at)->diffInDays(Carbon::now()) >= 1 ? $item->created_at->format('Y-m-d') : $item->created_at->diffForHumans() }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    <div class="text-center">
-                        <div class="d-inline-block">
-                            {{ $logs->links() }}
+                                <a class="btn btn-app p-2 {{ $transaction->soa ? '' : 'd-none' }}" href="/storage/public/attachments/soa/{{ $transaction->soa }}" target="_blank">
+                                    <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
+                                    <p class="text-dark">SOA</p>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>        
+                <div class="col-lg-7">
+                    @if (!$transaction->is_reimbursement)
+                        <div class="card">
+                            <div class="card-body table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Qty</th>
+                                            <th>Description</th>
+                                            <th>Particulars</th>
+                                            <th class="text-right text-nowrap">Unit Price</th>
+                                            <th class="text-right">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($transaction->transaction_description as $item_desc)
+                                            <tr>
+                                                <td>{{ $item_desc->qty }}</td>
+                                                <td>{{ $item_desc->description }}</td>
+                                                <td>{{ $item_desc->particulars->name }}</td>
+                                                <td class="text-right">{{ number_format($item_desc->amount, 2, '.', ',') }}</td>
+                                                <td class="text-right">{{ number_format($item_desc->amount * $item_desc->qty, 2, '.', ',') }}</td>
+                                            </tr>
+                                        @endforeach
+                                        <tr class="font-weight-bold">
+                                            <td colspan="3" class="text-right">
+                                                {{ $transaction->form_amount_vat && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_vat : $transaction->vattype->vat 
+                                                    + $transaction->form_amount_wht && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_wht : $transaction->vattype->wht == 0 ? 'Total' : 'Subtotal' }}
+                                            </td>
+                                            <td colspan="2" class="text-right">{{ number_format($transaction->form_amount_subtotal && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_subtotal : $transaction->custom_subtotal, 2, '.', ',') }}</td>
+                                        </tr>
+                                        @if ($transaction->custom_vat > 0 || ($transaction->form_amount_vat && !in_array($transaction->status_id, config('global.generated_form'))))
+                                        <tr>
+                                            <td colspan="3" class="text-right">VAT</td>
+                                            <td colspan="2" class="text-right">{{ number_format($transaction->form_amount_vat && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_vat : $transaction->custom_vat, 2, '.', ',') }}</td>
+                                        </tr>
+                                        @endif
+                                        @if ($transaction->custom_wht > 0 || ($transaction->form_vat_wht && !in_array($transaction->status_id, config('global.generated_form'))))
+                                        <tr>
+                                            <td colspan="3" class="text-right text-nowrap">Less Withholding Tax</td>
+                                            <td class="text-right">{{ $transaction->form_vat_wht && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_vat_name." (".$transaction->form_vat_wht."%)" : $transaction->vattype->name." (".$transaction->vattype->wht."%)" }}</td>
+                                            <td class="text-right">({{ number_format($transaction->form_amount_wht ? $transaction->form_amount_wht : $transaction->custom_wht, 2, '.', ',') }})</td>
+                                        </tr>
+                                        @endif
+                                        @if ($transaction->custom_vat > 0 || ($transaction->form_amount_payable && !in_array($transaction->status_id, config('global.generated_form'))))
+                                        <tr class="font-weight-bold">
+                                            <td colspan="3" class="text-right text-nowrap">Total Payable</td>
+                                            <td colspan="2" class="text-right">{{ number_format($transaction->form_amount_payable && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_payable : $transaction->custom_total_payable, 2, '.', ',') }}</td>
+                                        </tr>
+                                        @endif
+                                        <tr class="font-weight-bold border-top-2">
+                                            <td colspan="3" class="text-right">Amount</td>
+                                            <td colspan="2" class="text-right text-nowrap">{{ $transaction->currency }} {{ number_format($transaction->form_amount_payable && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_payable : $transaction->custom_total_payable, 2, '.', ',') }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endif  
+                    <div class="card">
+                        <div class="card-body table-responsive">
+                            <table class="table table-bordered {{ $transaction->is_deposit || $transaction->is_bills || $transaction->is_hr || $transaction->is_bank ? 'd-none' : '' }}">
+                                <thead>
+                                    <tr class="border-top">
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                        <th>Location/Route</th>
+                                        <th class="text-center">Receipt</th>
+                                        <th class="text-right">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($transaction->liquidation as $item)
+                                        <tr>
+                                            <td class="text-nowrap">{{ $item->date }}</td>
+                                            <td class="text-nowrap">{{ $item->expensetype->name }}</td>
+                                            <td>{{ $item->description }}</td>
+                                            <td>{{ $item->location }}</td>
+                                            <td class="text-center">{{ $item->receipt ? 'Y' : 'N' }}</td>
+                                            <td class="text-right">{{ number_format($item->amount, 2, '.', ',') }}</td>
+                                        </tr>
+                                    @endforeach
+                                    <tr>
+                                        <td colspan="6" class="py-4"></td>
+                                    </tr>
+                                    @foreach ($transaction_summary as $item)
+                                        <tr>
+                                            <td></td>
+                                            <td class="bg-white" colspan="5">
+                                                {{ $item->name }}
+                                                <span class="float-right">{{ number_format($item->amount, 2, '.', ',') }}</span>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    <tr>
+                                        <td colspan="6" class="py-4"></td>
+                                    </tr>
+                                    @if ($transaction->liq_before_vat)
+                                        <tr>
+                                            <td colspan="4" class="font-weight-bold small text-right">Before VAT</td>
+                                            <td colspan="2" class="bg-white text-right">
+                                                <span class="float-left">{{ $transaction->currency }}</span>
+                                                {{ number_format($transaction->liq_before_vat, 2, '.', ',') }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" class="font-weight-bold small text-right">VAT (12%)</td>
+                                            <td colspan="2" class="bg-white text-right font-italic">
+                                                <span class="float-left">{{ $transaction->currency }}</span>
+                                                {{ number_format($transaction->liq_vat, 2, '.', ',') }}
+                                            </td>
+                                        </tr>
+                                    @endif
+                                    <tr>
+                                        <td colspan="4" class="font-weight-bold small text-right">Subtotal</td>
+                                        <td colspan="2" class="bg-white text-right font-weight-bold">
+                                            <span class="float-left">{{ $transaction->currency }}</span>
+                                            {{ number_format($transaction->liq_subtotal, 2, '.', ',') }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" class="font-weight-bold small text-right">Less: Deposit/Payment</td>
+                                        <td colspan="2" class="bg-white text-right text-danger">
+                                            <span class="float-left">{{ $transaction->currency }}</span>
+                                            {{ number_format($transaction->amount_issued, 2, '.', ',') }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" class="small font-weight-bold text-right">Balance</td>
+                                        <td colspan="2" class="bg-white text-right font-weight-bold">
+                                            <span class="float-left">{{ $transaction->currency }}</span>
+                                            {{ number_format($transaction->liq_balance, 2, '.', ',') }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="6" class="small text-right">
+                                            <span>(+) For Reimbursement / (-) Return Money</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>                  
+                </div>
+                @if (in_array($transaction->status_id, config('global.liquidation_cleared')))
+                    <div class="col-lg-5">
+                        <div class="card">
+                            <div class="card-body table-responsive">
+                                <h5>Clearing Information</h5>
+                                <table class="table my-3">
+                                    @if ($transaction->liq_balance != 0 || $transaction->is_reimbursement)
+                                        @if (!$transaction->is_reimbursement)
+                                            <tr>
+                                                <td class="border-0 font-weight-bold text-gray">Amt. {{ $transaction->liq_balance >= 0 ? 'Reimbursed' : 'Returned' }}</td>
+                                                <td class="border-0 font-weight-bold">
+                                                    {{ $transaction->currency_2 ?: $transaction->currency }}
+                                                    {{ number_format($transaction->liq_balance >= 0 ? $transaction->liq_balance : $transaction->liq_balance*-1, 2, '.', ',') }}
+                                                </td>
+                                            </tr>
+                                        @endif                                    
+                                        
+                                        @if (!$transaction->is_bills && !$transaction->is_hr && !$transaction->is_reimbursement && !$transaction->is_bank)
+                                            <tr>
+                                                <td class="font-weight-bold text-gray">Type</td>
+                                                <td class="font-weight-bold">{{ $transaction->depo_type }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="font-weight-bold text-gray">Bank</td>
+                                                <td class="font-weight-bold">{{ $transaction->bankbranch->bank->name }} ({{ $transaction->bankbranch->name }})</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="font-weight-bold text-gray">Reference Code</td>
+                                                <td class="font-weight-bold">{{ $transaction->depo_ref }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="font-weight-bold text-gray">Received By</td>
+                                                <td class="font-weight-bold">{{ $transaction->depo_received_by }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="font-weight-bold text-gray">Date Deposited</td>
+                                                <td class="font-weight-bold">{{ $transaction->depo_date }}</td>
+                                            </tr>    
+                                        @endif
+                                        
+                                        @if ($transaction->is_deposit && $transaction->liquidation_approver_id)
+                                            <tr>
+                                                <td class="font-weight-bold text-gray">Deposited By</td>
+                                                <td class="font-weight-bold">{{ $transaction->liquidationapprover->name }}</td>
+                                            </tr>
+                                        @endif
+                                    @else
+                                        <tr>
+                                            <td colspan="2">No deposit information.</td>
+                                        </tr>
+                                    @endif                                    
+                                </table>
+                                @if (($transaction->is_deposit && $transaction->liquidation_approver_id)
+                                    || ($transaction->is_bills || $transaction->is_hr))
+                                    @include('pages.admin.transactionliquidation.show-attachment-2')
+                                @endif
+                                @if ($transaction->depo_slip)
+                                    <a class="btn btn-app p-2" href="/storage/public/attachments/deposit_slip/{{ $transaction->depo_slip }}" target="_blank">
+                                        <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
+                                        <p class="text-dark">Slip</p>
+                                    </a>
+                                @endif                                
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                <div class="col-lg-5">
+                    <div class="card">
+                        <div class="card-body table-responsive">
+                            <h5>History</h5>
+                            <table class="table table-striped table-bordered table-sm small my-3">
+                                <tbody>
+                                    @foreach ($logs as $item)
+                                        <tr>
+                                            <td>
+                                                <a href="#_" data-toggle="modal" data-target="#modal-{{ $item->id }}">
+                                                    @if ($item->description == 'created')
+                                                        <i class="align-middle font-weight-bolder material-icons text-md">add</i>
+                                                    @else
+                                                        <i class="align-middle font-weight-bolder material-icons text-md">edit</i>
+                                                    @endif
+                                                </a>
+                                                <div class="modal fade" id="modal-{{ $item->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header border-0">
+                                                                <h5 class="modal-title">
+                                                                    {{ ucfirst($item->description) }} {{ Carbon::parse($item->created_at)->diffInDays(Carbon::now()) >= 1 ? $item->created_at->format('Y-m-d') : $item->created_at->diffForHumans() }}
+                                                                </h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                @switch($item->description)
+                                                                    @case('created')
+                                                                        <table class="table table-sm table-bordered">
+                                                                            <thead class="bg-gradient-gray">
+                                                                                <tr>
+                                                                                    <th></th>
+                                                                                    <th>Value</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                @foreach ($item->changes['attributes'] as $key => $attribute)
+                                                                                    <tr>
+                                                                                        <td class="font-weight-bold">{{ ucwords($key) }}</td>
+                                                                                        <td>{{ $attribute }}</td>
+                                                                                    </tr>
+                                                                                @endforeach
+                                                                            </tbody>
+                                                                        </table>
+                                                                        @break
+                                                                    @case('updated')
+                                                                            <table class="table table-sm table-bordered">
+                                                                                <thead class="bg-gradient-gray">
+                                                                                    <tr>
+                                                                                        <th></th>
+                                                                                        <th>From</th>
+                                                                                        <th>To</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    @foreach ($item->changes['old'] as $key => $attribute)
+                                                                                        <tr>
+                                                                                            <td class="font-weight-bold">{{ ucwords($key) }}</td>
+                                                                                            <td>{{ $attribute }}</td>
+                                                                                            <td>{{ $item->changes['attributes'][$key] }}</td>
+                                                                                        </tr>
+                                                                                    @endforeach
+                                                                                </tbody>
+                                                                            </table>
+                                                                        @break
+                                                                    @default                                                    
+                                                                @endswitch
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>{{ $item->log_name }}</td>
+                                            <td>{{ $item->causer->name }}</td>
+                                            <td class="text-right">{{ Carbon::parse($item->created_at)->diffInDays(Carbon::now()) >= 1 ? $item->created_at->format('Y-m-d') : $item->created_at->diffForHumans() }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            <div class="text-center">
+                                <div class="d-inline-block small">
+                                    {{ $logs->links() }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 @endsection
