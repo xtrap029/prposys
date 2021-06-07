@@ -225,7 +225,7 @@ class TransactionsLiquidationController extends Controller {
         if ($request->file('zip')) {
             // zip validate
             $data = $request->validate([
-                'zip' => ['mimes:zip', 'max:10240']
+                'zip' => ['mimes:zip', 'max:40000']
             ]);        
             // zip store
             $zip_name = basename($request->file('zip')->store('public/attachments/temp_zip'));
@@ -514,7 +514,7 @@ class TransactionsLiquidationController extends Controller {
         if ($request->file('zip')) {
             // zip validate
             $data = $request->validate([
-                'zip' => ['mimes:zip', 'max:10240']
+                'zip' => ['mimes:zip', 'max:40000']
             ]);        
             // zip store
             $zip_name = basename($request->file('zip')->store('public/attachments/temp_zip'));
