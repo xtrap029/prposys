@@ -294,6 +294,9 @@
                                 <label for="">Date To</label>
                                 <input type="date" name="to" class="form-control form-control-sm" value="{{ !empty($_GET['to']) ? $_GET['to'] : '' }}">
                             </div>
+                            <div class="col-12 mt-3 mb-1">
+                                <input type="text" class="form-control" name="s" value="{{ app('request')->input('s') }}" autocomplete="off" placeholder="keyword here...">
+                            </div>
                         </div>
                     </div>
                 </div>

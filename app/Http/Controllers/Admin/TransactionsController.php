@@ -778,6 +778,8 @@ class TransactionsController extends Controller {
         $trans_bal= '';
         $trans_template= '';
 
+        $trans_s= '';
+
         $trans_prep = '';
         $trans_rel = '';
         $trans_updated = '';
@@ -795,6 +797,43 @@ class TransactionsController extends Controller {
         $trans_currency = '';
 
         $transactions = Transaction::orderBy('id', 'desc');
+
+        if (!empty($_GET['s'])) {
+            $trans_s = $_GET['s'];
+
+            $transactions = $transactions->where(static function ($query) use ($trans_s) {
+                                        $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$trans_s."%")
+                                            ->orWhereHas('particulars', function($query) use($trans_s) {
+                                                $query->where('name', 'like', "%{$trans_s}%");
+                                            })
+                                            ->orWhere('particulars_custom', 'like', "%{$trans_s}%")
+                                            ->orWhere('purpose', 'like', "%{$trans_s}%")
+                                            ->orWhere('payee', 'like', "%{$trans_s}%")
+                                            ->orWhereHas('coatagging', function($query) use($trans_s) {
+                                                $query->where('name', 'like', "%{$trans_s}%");
+                                            })
+                                            ->orWhere('expense_type_description', 'like', "%{$trans_s}%")
+                                            ->orWhereHas('expensetype', function($query) use($trans_s) {
+                                                $query->where('name', 'like', "%{$trans_s}%");
+                                            })
+                                            ->orWhereHas('vattype', function($query) use($trans_s) {
+                                                $query->where('name', 'like', "%{$trans_s}%");
+                                            })
+                                            ->orWhereHas('vattype', function($query) use($trans_s) {
+                                                $query->where('code', 'like', "%{$trans_s}%");
+                                            })
+                                            ->orWhere('control_no', 'like', "%{$trans_s}%")
+                                            ->orWhere('control_type', 'like', "%{$trans_s}%")
+                                            ->orWhere('cancellation_reason', 'like', "%{$trans_s}%")
+                                            ->orWhere('cancellation_number', 'like', "%{$trans_s}%")
+                                            ->orWhere('amount_issued', 'like', str_replace(',', '', "%{$trans_s}%"))
+                                            ->orWhere('amount_issued', '=', str_replace(',', '', $trans_s))
+                                            ->orWhere('form_amount_payable', 'like', str_replace(',', '', "%{$trans_s}%"))
+                                            ->orWhere('form_amount_payable', '=', str_replace(',', '', $trans_s))
+                                            ->orWhere('amount', 'like', str_replace(',', '', "%{$trans_s}%"))
+                                            ->orWhere('amount', '=', str_replace(',', '', $trans_s));
+                                    });
+        }
         
         $trans_type_csv = "All";
         if (!empty($_GET['type'])) {
@@ -1042,7 +1081,8 @@ class TransactionsController extends Controller {
                 'trans_particulars' => $trans_particulars,
                 'trans_currency' => $trans_currency,
                 'trans_bal' => $trans_bal,
-                'trans_template' => $trans_template
+                'trans_template' => $trans_template,
+                'trans_s' => $trans_s
             ]);
         }
     }
