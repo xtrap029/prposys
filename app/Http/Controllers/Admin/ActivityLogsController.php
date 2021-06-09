@@ -9,8 +9,18 @@ use Illuminate\Http\Request;
 class ActivityLogsController extends Controller {
     
     public function index() {
+        $activity = Activity::orderBy('id', 'desc');
+        
+        if (!empty($_GET['log_name']) && $_GET['log_name'] != "") $activity = $activity->where('log_name', $_GET['log_name']);
+
+        $activity = $activity->paginate(10);
+        if (!empty($_GET['log_name'])) $activity->appends(['log_name' => $_GET['log_name']]);
+
+        $log_name = Activity::select('log_name')->distinct('log_name')->get();
+
         return view('pages.admin.activitylog.index')->with([
-            'activity_logs' => Activity::orderBy('id', 'desc')->paginate(10)
+            'log_name' => $log_name,
+            'activity_logs' => $activity
         ]);
     }
 }

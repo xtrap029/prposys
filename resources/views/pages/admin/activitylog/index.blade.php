@@ -6,8 +6,18 @@
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-6">
+                <div class="col-sm-8">
                     <h1>Activity Log</h1>
+                </div>
+                <div class="col-sm-4 mt-2 mt-sm-0">
+                    <form method="get">
+                        <select name="log_name" class="form-control" onchange="this.form.submit()">
+                            <option value="">All</option>
+                            @foreach ($log_name as $item)
+                                <option value="{{ $item->log_name }}" {{ app('request')->input('log_name') == $item->log_name ? 'selected' : '' }}>{{ $item->log_name }}</option>
+                            @endforeach
+                        </select>
+                    </form>
                 </div>
             </div>
         </div>
