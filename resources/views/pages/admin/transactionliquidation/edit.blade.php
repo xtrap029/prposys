@@ -79,7 +79,7 @@
                                     <td>
                                         <select name="project_id[]" class="form-control" required>
                                             @foreach ($projects as $item)
-                                                <option value="{{ $item->id }}" {{  $transaction->liquidation[0]->project_id == $item->id ? 'selected' : '' }}>{{ $item->project }}</option>
+                                                <option value="{{ $item->id }}" {{  $transaction->liquidation[0]->project_id == $item->id ? 'selected' : strtolower($item->project) == "none" ? 'selected' : '' }}>{{ $item->project }}</option>
                                             @endforeach
                                         </select>
                                     </td>
@@ -114,7 +114,7 @@
                                             <td>
                                                 <select name="project_id[]" class="form-control" required>
                                                     @foreach ($projects as $project)
-                                                        <option value="{{ $project->id }}" {{ $item->project_id == $project->id ? 'selected' : '' }}>{{ $project->project }}</option>
+                                                        <option value="{{ $project->id }}" {{ $item->project_id == $project->id ? 'selected' : strtolower($item->project) == "none" ? 'selected' : '' }}>{{ $project->project }}</option>
                                                     @endforeach
                                                 </select>
                                             </td>
@@ -235,7 +235,7 @@
                         <td>
                             <select name="project_id[]" class="form-control" required>
                                 @foreach ($projects as $item)
-                                    <option value="{{ $item->id }}">{{ $item->project }}</option>
+                                    <option value="{{ $item->id }}" {{ strtolower($item->project) == "none" ? 'selected' : '' }}>{{ $item->project }}</option>
                                 @endforeach
                             </select>
                         </td>
