@@ -119,6 +119,7 @@
                                 <thead>
                                     <tr>
                                         <th>Date</th>
+                                        <th>Project</th>
                                         <th>Type</th>
                                         <th>Description</th>
                                         <th>Location/Route</th>
@@ -130,6 +131,13 @@
                                 <tbody class="jsReplicate_container">
                                     <tr>
                                         <td><input type="date" class="form-control" name="date[]" value="{{ old('date.0') }}" required></td>
+                                        <td>
+                                            <select name="project_id[]" class="form-control" required>
+                                                @foreach ($projects as $item)
+                                                    <option value="{{ $item->id }}" {{ old('project_id.0') == $item->id ? 'selected' : '' }}>{{ $item->project }}</option>
+                                                @endforeach
+                                            </select>
+                                        </td>
                                         <td>
                                             <select name="expense_type_id[]" class="form-control" required>
                                                 @foreach ($expense_types as $item)
@@ -159,6 +167,13 @@
                                             @if ($key > 0)
                                                 <tr class="jsReplicate_template_item">
                                                     <td><input type="date" class="form-control" name="date[]" value="{{ old('date.'.$key) }}" required></td>
+                                                    <td>
+                                                        <select name="project_id[]" class="form-control" required>
+                                                            @foreach ($projects as $project)
+                                                                <option value="{{ $project->id }}" {{ old('project_id.'.$key) == $project->id ? 'selected' : '' }}>{{ $project->project }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
                                                     <td>
                                                         <select name="expense_type_id[]" class="form-control" required>
                                                             @foreach ($expense_types as $expense_type)
@@ -339,6 +354,13 @@
                     <tbody class="jsReplicate_template">
                         <tr class="jsReplicate_template_item">
                             <td><input type="date" class="form-control" name="date[]" required></td>
+                            <td>
+                                <select name="project_id[]" class="form-control" required>
+                                    @foreach ($projects as $item)
+                                        <option value="{{ $item->id }}">{{ $item->project }}</option>
+                                    @endforeach
+                                </select>
+                            </td>
                             <td>
                                 <select name="expense_type_id[]" class="form-control" required>
                                     @foreach ($expense_types as $item)

@@ -509,6 +509,7 @@
                                 <thead>
                                     <tr class="border-top">
                                         <th>Date</th>
+                                        <th>Project</th>
                                         <th>Type</th>
                                         <th>Description</th>
                                         <th>Location/Route</th>
@@ -520,6 +521,7 @@
                                     @foreach ($transaction->liquidation as $item)
                                         <tr>
                                             <td class="text-nowrap">{{ $item->date }}</td>
+                                            <td class="text-nowrap">{{ $item->project_id ? $item->project->project : 'n/a' }}</td>
                                             <td class="text-nowrap">{{ $item->expensetype->name }}</td>
                                             <td>{{ $item->description }}</td>
                                             <td>{{ $item->location }}</td>

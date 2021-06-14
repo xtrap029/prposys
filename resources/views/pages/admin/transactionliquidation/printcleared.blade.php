@@ -158,6 +158,7 @@
                                 <tr class="font-weight-bold">
                                     <td>Pos.</td>
                                     <td>Date</td>
+                                    <td>Project</td>
                                     <td>Type</td>
                                     <td>Description</td>
                                     <td>Location/Route</td>
@@ -168,6 +169,7 @@
                                     <tr>
                                         <td>{{ $key + 1 }}</td>
                                         <td>{{ $item->date }}</td>
+                                        <td>{{ $item->project_id ? $item->project->project : 'n/a' }}</td>
                                         <td>{{ $item->expensetype->name }}</td>
                                         <td>{{ $item->description }}</td>
                                         <td>{{ $item->location }}</td>

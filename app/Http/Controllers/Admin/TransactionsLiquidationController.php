@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Bank;
 use App\Company;
+use App\CompanyProject;
 use App\ExpenseType;
 use App\Transaction;
 use App\TransactionsAttachment;
@@ -181,6 +182,7 @@ class TransactionsLiquidationController extends Controller {
         $expense_types = ExpenseType::orderBy('name', 'asc')->get();
         $banks = Bank::orderBy('name', 'asc')->get();
         $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
+        $projects = CompanyProject::where('company_id', $transaction->project->company->id)->orderBy('project', 'asc')->get();
 
         if ($transaction->is_deposit)
             $page_title = config('global.trans_category_label_create_liq')[1].' '.strtoupper($transaction->trans_type);
@@ -201,6 +203,7 @@ class TransactionsLiquidationController extends Controller {
             'company' => $transaction->project->company,
             'expense_types' => $expense_types,
             'banks' => $banks,
+            'projects' => $projects,
             'users' => $users,
         ]);
     }
@@ -260,6 +263,7 @@ class TransactionsLiquidationController extends Controller {
 
         if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr && !$transaction->is_bank) {
             $validate['date.*'] = ['required', 'date'];
+            $validate['project_id.*'] = ['required', 'exists:company_projects,id'];
             $validate['expense_type_id.*'] = ['required', 'exists:expense_types,id'];
             $validate['description.*'] = ['required'];
             $validate['location.*'] = ['required'];
@@ -289,6 +293,7 @@ class TransactionsLiquidationController extends Controller {
 
             foreach ($data['date'] as $key => $value) {
                 $attr_liq['date'] = $value;
+                $attr_liq['project_id'] = $data['project_id'][$key];
                 $attr_liq['expense_type_id'] = $data['expense_type_id'][$key];
                 $attr_liq['description'] = $data['description'][$key];
                 $attr_liq['location'] = $data['location'][$key];
@@ -425,12 +430,14 @@ class TransactionsLiquidationController extends Controller {
         }
 
         $expense_types = ExpenseType::orderBy('name', 'asc')->get();
+        $projects = CompanyProject::where('company_id', $transaction->project->company->id)->orderBy('project', 'asc')->get();
         
         return view('pages.admin.transactionliquidation.edit')->with([
             'transaction' => $transaction,
             'company' => $transaction->project->company,
             'trans_page_url' => $trans_page_url,
             'trans_page' => $trans_page,
+            'projects' => $projects,
             'expense_types' => $expense_types
         ]);
     }
@@ -444,6 +451,7 @@ class TransactionsLiquidationController extends Controller {
         // validate input
         $data = $request->validate([
             'date.*' => ['required', 'date'],
+            'project_id.*' => ['required', 'exists:company_projects,id'],
             'expense_type_id.*' => ['required', 'exists:expense_types,id'],
             'description.*' => ['required'],
             'location.*' => ['required'],
@@ -463,6 +471,7 @@ class TransactionsLiquidationController extends Controller {
 
         foreach ($data['date'] as $key => $value) {
             $attr_liq['date'] = $value;
+            $attr_liq['project_id'] = $data['project_id'][$key];
             $attr_liq['expense_type_id'] = $data['expense_type_id'][$key];
             $attr_liq['description'] = $data['description'][$key];
             $attr_liq['location'] = $data['location'][$key];

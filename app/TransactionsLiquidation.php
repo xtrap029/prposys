@@ -17,6 +17,7 @@ class TransactionsLiquidation extends Model {
                                         'transaction.trans_year',
                                         'transaction.trans_seq',
                                         'date',
+                                        'project.project',
                                         'expensetype.name',
                                         'description',
                                         'location',
@@ -32,5 +33,9 @@ class TransactionsLiquidation extends Model {
 
     public function expensetype() {
         return $this->belongsTo(ExpenseType::class, 'expense_type_id');
+    }
+
+    public function project() {
+        return $this->belongsTo(CompanyProject::class, 'project_id');
     }
 }
