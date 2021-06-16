@@ -65,6 +65,7 @@
                             <thead>
                                 <tr>
                                     <th>Date</th>
+                                    <th>Project</th>
                                     <th>Type</th>
                                     <th>Description</th>
                                     <th>Location/Route</th>

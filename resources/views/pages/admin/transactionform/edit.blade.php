@@ -130,7 +130,7 @@
                             </a>
                         @endif
                         {{-- <input type="file" name="soa" class="soa form_control" {{ ($transaction->trans_type == 'po' || $transaction->is_bills) && !$transaction->soa ? 'required' : '' }}> --}}
-                        <input type="file" name="soa" class="soa form_control" {{ $transaction->trans_type == 'po' && !$transaction->soa ? 'required' : '' }}>
+                        <input type="file" name="soa" class="soa form_control d-block" {{ $transaction->trans_type == 'po' && !$transaction->soa ? 'required' : '' }}>
                     </div>
                 </div>
                 <div class="form-row">
