@@ -43,7 +43,7 @@
                         <label for="">Project</label>
                         <select name="project_id" class="form-control @error('project_id') is-invalid @enderror">
                             @foreach ($projects as $item)
-                                <option value="{{ $item->id }}" {{ $item->id == old('project_id') ? 'selected' : (isset($_GET['project_id']) && $item->id == $_GET['project_id'] ? 'selected' : '') }}>{{ $item->project }}</option>                                        
+                                <option value="{{ $item->id }}" {{ $item->id == old('project_id') ? 'selected' : (isset($_GET['project_id']) && $item->id == $_GET['project_id'] ? 'selected' : strtolower($item->project) == "none" ? 'selected' : '') }}>{{ $item->project }}</option>                                        
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('project_id')])

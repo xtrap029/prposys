@@ -189,8 +189,8 @@ class TransactionsFormsController extends Controller {
         }
 
         $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orderBy('name', 'asc')->get();
-        $particulars = Particulars::where('type', $transaction->trans_type)->get();
-        $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('id', 'asc')->get();
+        $particulars = Particulars::where('type', $transaction->trans_type)->orderBy('name', 'asc')->get();
+        $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('name', 'asc')->get();
 
         if ($transaction->is_deposit)
             $page_title = config('global.trans_category_label_make_form')[1];
@@ -244,8 +244,8 @@ class TransactionsFormsController extends Controller {
         }
 
         $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orderBy('name', 'asc')->get();
-        $particulars = Particulars::where('type', $transaction->trans_type)->get();
-        $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('id', 'asc')->get();
+        $particulars = Particulars::where('type', $transaction->trans_type)->orderBy('name', 'asc')->get();
+        $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('name', 'asc')->get();
         $expense_types = ExpenseType::orderBy('name', 'asc')->get();
 
         return view('pages.admin.transactionform.createreimbursement')->with([
@@ -519,10 +519,10 @@ class TransactionsFormsController extends Controller {
 
         $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orderBy('name', 'asc')->get();
         // $expense_types = ExpenseType::orderBy('name', 'asc')->get();
-        $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('id', 'asc')->get();
-        $particulars = Particulars::where('type', $transaction->trans_type)->get();
-        $projects = CompanyProject::where('company_id', $transaction->project->company_id)->get();
-        $users = User::whereNotNull('role_id')->get();
+        $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('name', 'asc')->get();
+        $particulars = Particulars::where('type', $transaction->trans_type)->orderBy('name', 'asc')->get();
+        $projects = CompanyProject::where('company_id', $transaction->project->company_id)->orderBy('project', 'asc')->get();
+        $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
 
         if ($transaction->is_deposit)
             $page_title = config('global.trans_category_label_edit_form')[1];
@@ -609,6 +609,7 @@ class TransactionsFormsController extends Controller {
             'due_at' => ['required', 'date'],
             'requested_id' => ['required', 'exists:users,id'],
             'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
+            'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
         ];
 
         if ($transaction->trans_type == 'pc') {
@@ -619,6 +620,12 @@ class TransactionsFormsController extends Controller {
 
         // validate input
         $data = $request->validate($validation);
+
+        if (($transaction->trans_type == 'po' || $request->trans_category == 'bp') && $request->file('soa')) {
+            $data['soa'] = basename($request->file('soa')->store('public/attachments/soa'));
+        } else if ($transaction->trans_type != 'po' && $request->trans_category != 'bp') {
+            $data['soa'] = '';
+        }
 
         $data['particulars_id'] = $data['particulars_id_single'];
         unset($data['particulars_id_single']);

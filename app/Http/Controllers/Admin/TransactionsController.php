@@ -328,8 +328,8 @@ class TransactionsController extends Controller {
         }
 
         // $particulars = Particulars::where('type', $trans_type)->get();
-        $projects = CompanyProject::where('company_id', $trans_company)->get();
-        $users = User::whereNotNull('role_id')->get();
+        $projects = CompanyProject::where('company_id', $trans_company)->orderBy('project', 'asc')->get();
+        $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
         $company = Company::where('id', $trans_company)->first();
 
         return view('pages.admin.transaction.create')->with([
@@ -514,7 +514,7 @@ class TransactionsController extends Controller {
         }
 
         // $particulars = Particulars::where('type', $transaction->trans_type)->get();
-        $projects = CompanyProject::where('company_id', $transaction->project->company_id)->get();
+        $projects = CompanyProject::where('company_id', $transaction->project->company_id)->orderBy('project', 'asc')->get();
         
         return view('pages.admin.transaction.edit')->with([
             'transaction' => $transaction,

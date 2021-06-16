@@ -52,7 +52,7 @@
                     </tbody>
                 </table>
             </div>
-            <form action="" method="post">
+            <form action="" method="post" enctype="multipart/form-data">
                 @csrf
                 @method('put')
                 <div class="form-row">
@@ -121,6 +121,16 @@
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('requested_id')])
+                    </div>
+                    <div class="col-md-6 mb-2 {{ $transaction->trans_type == 'po' || $transaction->is_bills ? '' : 'd-none' }}">
+                        <label for="">Statement of Account</label>
+                        @if ($transaction->soa)
+                            <a href="/storage/public/attachments/soa/{{ $transaction->soa }}" target="_blank" class="vlign--top ml-1">
+                                <i class="material-icons mr-2 align-bottom">attachment</i>
+                            </a>
+                        @endif
+                        {{-- <input type="file" name="soa" class="soa form_control" {{ ($transaction->trans_type == 'po' || $transaction->is_bills) && !$transaction->soa ? 'required' : '' }}> --}}
+                        <input type="file" name="soa" class="soa form_control" {{ $transaction->trans_type == 'po' && !$transaction->soa ? 'required' : '' }}>
                     </div>
                 </div>
                 <div class="form-row">
