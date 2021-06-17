@@ -221,15 +221,27 @@
             <div class="row row--print">
                 <div class="col-12">
                     <table class="table table-sm">
-                        @foreach ($transaction_summary as $item)
+                        <tr><td colspan="7" class="py-3"></td></tr>
+                        @foreach ($transaction_summary as $index => $item)
                             <tr>
-                                <td colspan="2"></td>
+                                <td colspan="2" class="{{ $index == 0 ? 'font-weight-bold text-right pr-5' : '' }}">{{ $index == 0 ? 'Type' : '' }}</td>
                                 <td colspan="5">
                                     {{ $item->name }}
                                     <span class="float-right">{{ number_format($item->amount, 2, '.', ',') }}</span>
                                 </td>
                             </tr>
                         @endforeach
+                        <tr class="{{ count($transaction_summary_proj) == 0 ? 'd-none' : '' }}"><td colspan="7" class="py-3"></td></tr>
+                        @foreach ($transaction_summary_proj as $index => $item)
+                            <tr>
+                                <td colspan="2" class="{{ $index == 0 ? 'font-weight-bold text-right pr-5' : '' }}">{{ $index == 0 ? 'Project' : '' }}</td>
+                                <td colspan="5">
+                                    {{ $item->project }}
+                                    <span class="float-right">{{ number_format($item->amount, 2, '.', ',') }}</span>
+                                </td>
+                            </tr>
+                        @endforeach
+                        <tr><td colspan="7" class="py-3"></td></tr>
                         @if ($transaction->liq_before_vat)
                             <tr>
                                 <td colspan="4" class="font-weight-bold small text-right">Before VAT</td>

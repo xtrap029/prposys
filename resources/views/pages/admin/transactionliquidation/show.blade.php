@@ -530,30 +530,42 @@
                                         </tr>
                                     @endforeach
                                     <tr>
-                                        <td colspan="6" class="py-4"></td>
+                                        <td colspan="7" class="py-4"></td>
                                     </tr>
-                                    @foreach ($transaction_summary as $item)
+                                    @foreach ($transaction_summary as $index => $item)
                                         <tr>
-                                            <td></td>
-                                            <td class="bg-white" colspan="5">
+                                            <td class="{{ $index == 0 ? 'font-weight-bold' : '' }}">{{ $index == 0 ? 'Type' : '' }}</td>
+                                            <td class="bg-white" colspan="6">
                                                 {{ $item->name }}
                                                 <span class="float-right">{{ number_format($item->amount, 2, '.', ',') }}</span>
                                             </td>
                                         </tr>
                                     @endforeach
+                                    <tr class="{{ count($transaction_summary_proj) == 0 ? 'd-none' : '' }}">
+                                        <td colspan="7" class="py-4"></td>
+                                    </tr>
+                                    @foreach ($transaction_summary_proj as $index => $item)
+                                        <tr>
+                                            <td class="{{ $index == 0 ? 'font-weight-bold' : '' }}">{{ $index == 0 ? 'Project' : '' }}</td>
+                                            <td class="bg-white" colspan="6">
+                                                {{ $item->project }}
+                                                <span class="float-right">{{ number_format($item->amount, 2, '.', ',') }}</span>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                     <tr>
-                                        <td colspan="6" class="py-4"></td>
+                                        <td colspan="7" class="py-4"></td>
                                     </tr>
                                     @if ($transaction->liq_before_vat)
                                         <tr>
-                                            <td colspan="4" class="font-weight-bold small text-right">Before VAT</td>
+                                            <td colspan="5" class="font-weight-bold small text-right">Before VAT</td>
                                             <td colspan="2" class="bg-white text-right">
                                                 <span class="float-left">{{ $transaction->currency }}</span>
                                                 {{ number_format($transaction->liq_before_vat, 2, '.', ',') }}
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="4" class="font-weight-bold small text-right">VAT (12%)</td>
+                                            <td colspan="5" class="font-weight-bold small text-right">VAT (12%)</td>
                                             <td colspan="2" class="bg-white text-right font-italic">
                                                 <span class="float-left">{{ $transaction->currency }}</span>
                                                 {{ number_format($transaction->liq_vat, 2, '.', ',') }}
@@ -561,28 +573,28 @@
                                         </tr>
                                     @endif
                                     <tr>
-                                        <td colspan="4" class="font-weight-bold small text-right">Subtotal</td>
+                                        <td colspan="5" class="font-weight-bold small text-right">Subtotal</td>
                                         <td colspan="2" class="bg-white text-right font-weight-bold">
                                             <span class="float-left">{{ $transaction->currency }}</span>
                                             {{ number_format($transaction->liq_subtotal, 2, '.', ',') }}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="4" class="font-weight-bold small text-right">Less: Deposit/Payment</td>
+                                        <td colspan="5" class="font-weight-bold small text-right">Less: Deposit/Payment</td>
                                         <td colspan="2" class="bg-white text-right text-danger">
                                             <span class="float-left">{{ $transaction->currency }}</span>
                                             {{ number_format($transaction->amount_issued, 2, '.', ',') }}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="4" class="small font-weight-bold text-right">Balance</td>
+                                        <td colspan="5" class="small font-weight-bold text-right">Balance</td>
                                         <td colspan="2" class="bg-white text-right font-weight-bold">
                                             <span class="float-left">{{ $transaction->currency }}</span>
                                             {{ number_format($transaction->liq_balance, 2, '.', ',') }}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="6" class="small text-right">
+                                        <td colspan="7" class="small text-right">
                                             <span>(+) For Reimbursement / (-) Return Money</span>
                                         </td>
                                     </tr>

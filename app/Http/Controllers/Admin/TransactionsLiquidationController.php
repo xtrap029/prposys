@@ -347,6 +347,13 @@ class TransactionsLiquidationController extends Controller {
             ->orderBy('expense_types.name', 'asc')
             ->get();
 
+        $transaction_summary_proj = TransactionsLiquidation::select(DB::raw('sum(amount) as amount'), 'company_projects.project as project')
+            ->join('company_projects', 'transactions_liquidation.project_id', '=', 'company_projects.id')
+            ->where('transaction_id', $transaction->id)
+            ->groupBy('company_projects.project')
+            ->orderBy('company_projects.project', 'asc')
+            ->get();
+
         $logs = Activity::where(function($query) use ($transaction_id){
                             $query->where('subject_id', $transaction_id);
                             $query->where('subject_type', 'App\Transaction');
@@ -400,6 +407,7 @@ class TransactionsLiquidationController extends Controller {
             'transaction' => $transaction,
             'company' => $transaction->project->company,
             'transaction_summary' => $transaction_summary,
+            'transaction_summary_proj' => $transaction_summary_proj,
             'perms' => $perms,
             'logs' => $logs,
             'trans_page_url' => $trans_page_url,
@@ -615,6 +623,13 @@ class TransactionsLiquidationController extends Controller {
             ->orderBy('expense_types.name', 'asc')
             ->get();
 
+        $transaction_summary_proj = TransactionsLiquidation::select(DB::raw('sum(amount) as amount'), 'company_projects.project as project')
+            ->join('company_projects', 'transactions_liquidation.project_id', '=', 'company_projects.id')
+            ->where('transaction_id', $transaction->id)
+            ->groupBy('company_projects.project')
+            ->orderBy('company_projects.project', 'asc')
+            ->get();
+
         $transaction->liq_subtotal = $transaction->liquidation->sum('amount');
         $transaction->liq_balance = $transaction->liq_subtotal - $transaction->amount_issued;
         
@@ -632,6 +647,7 @@ class TransactionsLiquidationController extends Controller {
             'transaction' => $transaction,
             'company' => $transaction->project->company,
             'transaction_summary' => $transaction_summary,
+            'transaction_summary_proj' => $transaction_summary_proj,
             'trans_page' => $trans_page,
             'final_approver' => $final_approver
         ]);
@@ -813,12 +829,20 @@ class TransactionsLiquidationController extends Controller {
 
         $transaction_loop = [];
         $transaction_summary_loop = [];
+        $transaction_summary_proj_loop = [];
         foreach ($transactions as $key => $item) {
             $transaction_summary_loop[$key] = TransactionsLiquidation::select(DB::raw('sum(amount) as amount'), 'expense_types.name as name')
                 ->join('expense_types', 'transactions_liquidation.expense_type_id', '=', 'expense_types.id')
                 ->where('transaction_id', $item->id)
                 ->groupBy('expense_types.name')
                 ->orderBy('expense_types.name', 'asc')
+                ->get();
+
+            $transaction_summary_proj_loop[$key] = TransactionsLiquidation::select(DB::raw('sum(amount) as amount'), 'company_projects.project as project')
+                ->join('company_projects', 'transactions_liquidation.project_id', '=', 'company_projects.id')
+                ->where('transaction_id', $item->id)
+                ->groupBy('company_projects.project')
+                ->orderBy('company_projects.project', 'asc')
                 ->get();
 
             $item->liq_subtotal = $item->liquidation->sum('amount');
@@ -835,6 +859,7 @@ class TransactionsLiquidationController extends Controller {
 
         $transactions = $transaction_loop;
         $transactions_summary = $transaction_summary_loop;
+        $transactions_summary_proj = $transaction_summary_proj_loop;
 
         $final_approver = User::where(
             'id', Settings::where('type', 'AUTHORIZED_BY')
@@ -844,6 +869,7 @@ class TransactionsLiquidationController extends Controller {
         return view('pages.admin.transactionliquidation.printcleared')->with([
             'transactions' => $transactions,
             'transactions_summary' => $transactions_summary,
+            'transactions_summary_proj' => $transactions_summary_proj,
             'final_approver' => $final_approver
         ]);
     }
