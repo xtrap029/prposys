@@ -1,5 +1,6 @@
 <footer class="main-footer no-print">
-    <div>{{ (new \App\Helpers\BreadHelper)->footer_label() }}
+    <div>
+        {{ (new \App\Helpers\BreadHelper)->footer_label() }}
     </div>
     <ul>
         <li><a href="/">HOME</a> <i class="material-icons">chevron_right</i></li>

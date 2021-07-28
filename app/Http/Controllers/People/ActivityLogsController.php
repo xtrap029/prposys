@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\People;
 
 use Spatie\Activitylog\Models\Activity;
 use App\Http\Controllers\Controller;
@@ -18,7 +18,7 @@ class ActivityLogsController extends Controller {
 
         $log_name = Activity::select('log_name')->distinct('log_name')->get();
 
-        return view('pages.admin.activitylog.index')->with([
+        return view('pages.people.activitylog.index')->with([
             'log_name' => $log_name,
             'activity_logs' => $activity
         ]);

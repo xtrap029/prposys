@@ -42,7 +42,7 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
-        $user->company_id = $request->company_id;
-        $user->update();
+        // $user->company_id = $request->company_id;
+        // $user->update();
     }
 }

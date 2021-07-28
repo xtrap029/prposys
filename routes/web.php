@@ -18,10 +18,16 @@ Route::get('/',  function () {
 Auth::routes();
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', 'HomeController@index')->name('dashboard');
-
+    Route::get('/', 'Main\ChooseAppController@index')->name('chooseapp');
+    
+    Route::get('/sequence-dashboard', 'Admin\DashboardController@index')->name('sequence-dashboard');
+    Route::get('/people-dashboard', 'People\DashboardController@index')->name('people-dashboard');
+    
     // Access Level 1
     Route::middleware('checkRole:1')->group(function () {
+
+        // Sequence
+
         Route::resource('user', 'Admin\UsersController', ['names' => ['index' => 'user', 'create' => 'user', 'edit' => 'user']]);
         Route::resource('role', 'Admin\RolesController', ['names' => ['index' => 'role', 'create' => 'role', 'edit' => 'role']]);
         Route::resource('company', 'Admin\CompanyController', ['names' => ['index' => 'company', 'create' => 'company', 'edit' => 'company']]);
@@ -42,13 +48,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/{company}', $url.'@store')->where('company', '[0-9]+');
             Route::put('/{companyProject}', $url.'@update')->where('companyProject', '[0-9]+');
             Route::delete('/{companyProject}', $url.'@destroy')->where('companyProject', '[0-9]+');
-        });
-
-        Route::prefix('activity-log')->group(function () {
-            $url = 'Admin\ActivityLogsController';
-
-            Route::get('/', $url.'@index')->name('activitylog');
-        });
+        });        
 
         Route::prefix('control-panel')->group(function() {
             $url = 'Admin\ControlPanelsController';
@@ -57,11 +57,26 @@ Route::middleware('auth')->group(function () {
             Route::post('/revert-status', $url.'@revert_status_store');
             Route::get('/force-cancel', $url.'@force_cancel')->name('forcecancel');
             Route::post('/force-cancel', $url.'@force_cancel_store');
-
-            Route::get('/db-backups', $url.'@db_backups')->name('dbbackups');
-            Route::get('/db-backups-zip', $url.'@db_backups_zip')->name('dbbackups');
-            Route::get('/db-backups-generate', $url.'@db_backups_generate')->name('dbbackups');
         });
+
+        // People
+
+        Route::prefix('people-settings')->group(function () {
+            $url = 'People\SettingsController';
+
+            Route::get('/', $url.'@index')->name('people-settings');
+            Route::post('/', $url.'@update')->name('people-settings');
+        });
+
+        Route::prefix('activity-log')->group(function () {
+            $url = 'People\ActivityLogsController';
+
+            Route::get('/', $url.'@index')->name('activitylog');
+        });
+
+        Route::get('/db-backups', 'People\DBBackupsController@db_backups')->name('dbbackups');
+        Route::get('/db-backups-zip', 'People\DBBackupsController@db_backups_zip')->name('dbbackups');
+        Route::get('/db-backups-generate', 'People\DBBackupsController@db_backups_generate')->name('dbbackups');
     });
 
     // Access Level 1 and 2

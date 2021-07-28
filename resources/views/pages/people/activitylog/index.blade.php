@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app-people')
 
 @section('title', 'Activity Log')
 
@@ -108,7 +108,7 @@
                                                         @case('App\Particular')                     <?php $view_url = '/particular/'.$item->subject_id.'/edit'; ?> @break
                                                         @case('App\ReleasedBy')                     <?php $view_url = '/released-by/'.$item->subject_id.'/edit'; ?> @break
                                                         @case('App\Role')                           <?php $view_url = '/role/'.$item->subject_id.'/edit'; ?> @break
-                                                        @case('App\Settings')                       <?php $view_url = '/settings'; ?> @break
+                                                        @case('App\Settings')                       <?php $view_url = '/people-settings'; ?> @break
                                                         @case('App\Transaction')                    <?php $view_url = '/transaction/view/'.$item->subject_id; ?> @break
                                                         @case('App\TransactionsAttachment')         <?php $view_url = '/transaction-liquidation/finder-attachment/'.$item->subject_id; ?> @break
                                                         @case('App\TransactionsDescription')        <?php $view_url = '#'; ?> @break

@@ -43848,6 +43848,119 @@ label:not(.form-check-label):not(.custom-file-label) {
   border-color: #0076A8;
 }
 
+.sidebar--tecc .nav-pills .nav-link:not(.active):hover {
+  color: #0076A8;
+}
+
+.sidebar--tecc.sidebar--indigo .nav-sidebar > .nav-item > .nav-link.active {
+  background-color: #6574cd;
+}
+
+.sidebar--tecc.sidebar--indigo .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+  border-color: #6574cd;
+}
+
+.sidebar--tecc.sidebar--indigo .nav-pills .nav-link:not(.active):hover {
+  color: #6574cd;
+}
+
+.sidebar--tecc.sidebar--purple .nav-sidebar > .nav-item > .nav-link.active {
+  background-color: #9561e2;
+}
+
+.sidebar--tecc.sidebar--purple .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+  border-color: #9561e2;
+}
+
+.sidebar--tecc.sidebar--purple .nav-pills .nav-link:not(.active):hover {
+  color: #9561e2;
+}
+
+.sidebar--tecc.sidebar--pink .nav-sidebar > .nav-item > .nav-link.active {
+  background-color: #f66d9b;
+}
+
+.sidebar--tecc.sidebar--pink .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+  border-color: #f66d9b;
+}
+
+.sidebar--tecc.sidebar--pink .nav-pills .nav-link:not(.active):hover {
+  color: #f66d9b;
+}
+
+.sidebar--tecc.sidebar--red .nav-sidebar > .nav-item > .nav-link.active {
+  background-color: #e3342f;
+}
+
+.sidebar--tecc.sidebar--red .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+  border-color: #e3342f;
+}
+
+.sidebar--tecc.sidebar--red .nav-pills .nav-link:not(.active):hover {
+  color: #e3342f;
+}
+
+.sidebar--tecc.sidebar--orange .nav-sidebar > .nav-item > .nav-link.active {
+  background-color: #f6993f;
+}
+
+.sidebar--tecc.sidebar--orange .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+  border-color: #f6993f;
+}
+
+.sidebar--tecc.sidebar--orange .nav-pills .nav-link:not(.active):hover {
+  color: #f6993f;
+}
+
+.sidebar--tecc.sidebar--yellow .nav-sidebar > .nav-item > .nav-link.active {
+  background-color: #ffed4a;
+  color: #000;
+}
+
+.sidebar--tecc.sidebar--yellow .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+  border-color: #ffed4a;
+}
+
+.sidebar--tecc.sidebar--yellow .nav-pills .nav-link:not(.active):hover {
+  color: #ffed4a;
+}
+
+.sidebar--tecc.sidebar--green .nav-sidebar > .nav-item > .nav-link.active {
+  background-color: #38c172;
+}
+
+.sidebar--tecc.sidebar--green .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+  border-color: #38c172;
+}
+
+.sidebar--tecc.sidebar--green .nav-pills .nav-link:not(.active):hover {
+  color: #38c172;
+}
+
+.sidebar--tecc.sidebar--teal .nav-sidebar > .nav-item > .nav-link.active {
+  background-color: #4dc0b5;
+}
+
+.sidebar--tecc.sidebar--teal .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+  border-color: #4dc0b5;
+}
+
+.sidebar--tecc.sidebar--teal .nav-pills .nav-link:not(.active):hover {
+  color: #4dc0b5;
+}
+
+.sidebar--tecc.sidebar--cyan .nav-sidebar > .nav-item > .nav-link.active {
+  background-color: #6cb2eb;
+}
+
+.sidebar--tecc.sidebar--cyan .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+  border-color: #6cb2eb;
+}
+
+.sidebar--tecc.sidebar--cyan .nav-pills .nav-link:not(.active):hover {
+  color: #6cb2eb;
+}
+
 .sidebar--tecc .nav-treeview > .nav-item > .nav-link.active,
 .sidebar--tecc .nav-treeview > .nav-item > .nav-link.active:hover {
   background-color: rgba(0, 0, 0, 0.1);
@@ -44053,6 +44166,46 @@ footer ul li:last-child {
 
 .progress-bar--danger {
   background-color: #e3342f !important;
+}
+
+select > option.option--blue {
+  background-color: #0076A8;
+}
+
+select > option.option--indigo {
+  background-color: #6574cd;
+}
+
+select > option.option--purple {
+  background-color: #9561e2;
+}
+
+select > option.option--pink {
+  background-color: #f66d9b;
+}
+
+select > option.option--red {
+  background-color: #e3342f;
+}
+
+select > option.option--orange {
+  background-color: #f6993f;
+}
+
+select > option.option--yellow {
+  background-color: #ffed4a;
+}
+
+select > option.option--green {
+  background-color: #38c172;
+}
+
+select > option.option--teal {
+  background-color: #4dc0b5;
+}
+
+select > option.option--cyan {
+  background-color: #6cb2eb;
 }
 
 @media (max-width: 991.98px) {

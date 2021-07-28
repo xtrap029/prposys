@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Sequencing')</title>
+    <title>@yield('title', 'Sequence')</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -18,6 +18,8 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+    @yield('style')
 </head>
 <body class="@guest @else sidebar-mini layout-footer-fixed @endguest">
     <div class="wrapper">
@@ -28,22 +30,39 @@
                 <!-- Brand Logo -->
                 <a href="/" class="brand-link">
                     <img src="{{ config('global.site_icon') }}" alt="" class="brand-image" style="opacity: .8">
-                    @guest @else <span class="brand-text font-weight-light">{{ config('app.name', 'Sequencing') }}</span> @endguest
+                    @guest @else <span class="brand-text font-weight-light">{{ config('app.name', 'Sequence') }}</span> @endguest
                 </a>
             @else
                 <!-- Left navbar links -->
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link" data-widget="pushmenu" href="#"><i class="material-icons icon--list">menu</i></a>
-                    </li>
+                    </li>                    
                 </ul>
                 <!-- Right navbar links -->
                 <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <div class="dropdown show">
+                            <a class="nav-link pr-2 btn text-gray outline-0" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="nav-icon material-icons icon--list">apps</i>
+                            </a>
+                          
+                            <div class="dropdown-menu mt-2" aria-labelledby="dropdownMenuLink">
+                                <a class="dropdown-item px-3" href="{{ config('global.dashboard_leaves') }}">
+                                    <img src="{{ config('global.site_icon_leaves') }}" alt="" class="img-size-32 mr-2">
+                                    Leaves
+                                </a>
+                                <a class="dropdown-item px-3" href="{{ config('global.dashboard_people') }}">
+                                    <img src="{{ config('global.site_icon_people') }}" alt="" class="img-size-32 mr-2">
+                                    People
+                                </a>
+                            </div>
+                        </div>
+                    </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link" href="{{ route('logout') }}"
+                        <a class="nav-link pl-2" href="{{ route('logout') }}"
                             onclick="event.preventDefault();
                             document.getElementById('logout-form').submit();">
-                            {{ __('Logout') }}
                             <i class="nav-icon material-icons icon--list ml-1">exit_to_app</i>
                         </a>
 
@@ -59,11 +78,11 @@
         @guest  
         @else
             <!-- Main Sidebar Container -->
-            <aside class="main-sidebar elevation-4 sidebar--tecc">
+            <aside class="main-sidebar elevation-4 sidebar--tecc sidebar--{{ config('global.site_color') }}">
                 <!-- Brand Logo -->
                 <a href="/" class="brand-link navbar-white">
-                    <img src="{{ config('global.site_icon') }}" alt="" class="brand-image" style="opacity: .8">
-                    <span class="brand-text font-weight-light">{{ config('app.name', 'Sequencing') }}</span>
+                    <img src="{{ config('global.site_icon') }}" alt="" class="brand-image">
+                    <span class="brand-text font-weight-light">{{ config('app.name', 'Sequence') }}</span>
                 </a>
         
                 <!-- Sidebar -->
@@ -78,7 +97,7 @@
                                             <img src="/storage/public/images/users/{{ Auth::user()->avatar }}" class="img-circle mt-2" alt="User Image">
                                         </div>
                                         <div class="info">
-                                            <a href="/my-account" class="d-block">{{ Auth::user()->name }}</a>
+                                            <a href="/my-account" class="d-block" target="_blank">{{ Auth::user()->name }}</a>
                                             <span class="small text-secondary font-weight-bold">{{ Auth::user()->role->name }}</span>
                                         </div>
                                     @endguest
@@ -88,7 +107,7 @@
                                 <nav class="mt-2">
                                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                                         <li class="nav-item">
-                                            <a href="/" class="nav-link {{ Route::currentRouteName() == 'dashboard' ? 'active' : '' }}">
+                                            <a href="{{ config('global.dashboard_sequence') }}" class="nav-link {{ Route::currentRouteName() == 'sequence-dashboard' ? 'active' : '' }}">
                                                 <i class="nav-icon material-icons icon--list">dashboard</i><p>Dashboard</p>
                                             </a>
                                         </li>
@@ -99,79 +118,6 @@
                                                     <i class="nav-icon material-icons icon--list">toll</i><p>Transactions</p>
                                                 </a>
                                             </li>
-                                            {{-- <li class="nav-header">TRANSACTION</li>
-                                            <li class="nav-item">
-                                                <a href="/transaction/prpo/{{ Auth::user()->company_id }}" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc', 'prpo-form', 'pc-form', 'prpo-liquidation', 'pc-liquidation']) ? 'active' : '' : '' }}">
-                                                    <i class="nav-icon material-icons icon--list">list_alt</i>
-                                                    <p>Gen. / Summary</p>
-                                                </a>
-                                            </li> --}}
-                                            {{-- <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc']) ? 'menu-open' : '' : '' }}">
-                                                <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc']) ? 'active' : '' : '' }}">
-                                                    <i class="nav-icon material-icons icon--list">list_alt</i>
-                                                    <p>Gen. / Summary</p>
-                                                </a>
-                                                <ul class="nav nav-treeview">
-                                                    <li class="nav-item">
-                                                        <a href="/transaction/prpo/{{ Auth::user()->company_id }}" class="nav-link ml-1 pl-5 {{ isset($trans_page) ? $trans_page == 'prpo' ? 'active' : '' : '' }}">
-                                                            <p>Pr / Po</p>
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a href="/transaction/pc/{{ Auth::user()->company_id }}" class="nav-link ml-1 pl-5 {{ isset($trans_page) ? $trans_page == 'pc' ? 'active' : '' : '' }}">
-                                                            <p>Petty Cash</p>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </li> --}}
-                                            {{-- <li class="nav-item">
-                                                <a href="/transaction-form/prpo/{{ Auth::user()->company_id }}" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo-form', 'pc-form']) ? 'active' : '' : '' }}">
-                                                    <i class="nav-icon material-icons icon--list">list_alt</i>
-                                                    <p>Make Forms / Issued</p>
-                                                </a>
-                                            </li> --}}
-                                            {{-- <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo-form', 'pc-form']) ? 'menu-open' : '' : '' }}">
-                                                <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo-form', 'pc-form']) ? 'active' : '' : '' }}">
-                                                    <i class="nav-icon material-icons icon--list">list_alt</i>
-                                                    <p>Make Forms / Issued</p>
-                                                </a>
-                                                <ul class="nav nav-treeview">
-                                                    <li class="nav-item">
-                                                        <a href="/transaction-form/prpo/{{ Auth::user()->company_id }}" class="nav-link ml-1 pl-5 {{ isset($trans_page) ? $trans_page == 'prpo-form' ? 'active' : '' : '' }}">
-                                                            <p>Pr / Po</p>
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a href="/transaction-form/pc/{{ Auth::user()->company_id }}" class="nav-link ml-1 pl-5 {{ isset($trans_page) ? $trans_page == 'pc-form' ? 'active' : '' : '' }}">
-                                                            <p>Petty Cash</p>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </li> --}}
-                                            {{-- <li class="nav-item">
-                                                <a href="/transaction-liquidation/prpo/{{ Auth::user()->company_id }}" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo-liquidation', 'pc-liquidation']) ? 'active' : '' : '' }}">
-                                                    <i class="nav-icon material-icons icon--list">list_alt</i>
-                                                    <p>Clearing / Liq.</p>
-                                                </a>
-                                            </li> --}}
-                                            {{-- <li class="nav-item has-treeview {{ isset($trans_page) ? in_array($trans_page, ['prpo-liquidation', 'pc-liquidation']) ? 'menu-open' : '' : '' }}">
-                                                <a href="#" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo-liquidation', 'pc-liquidation']) ? 'active' : '' : '' }}">
-                                                    <i class="nav-icon material-icons icon--list">list_alt</i>
-                                                    <p>Clearing / Liq.</p>
-                                                </a>
-                                                <ul class="nav nav-treeview">
-                                                    <li class="nav-item">
-                                                        <a href="/transaction-liquidation/prpo/{{ Auth::user()->company_id }}" class="nav-link ml-1 pl-5 {{ isset($trans_page) ? $trans_page == 'prpo-liquidation' ? 'active' : '' : '' }}">
-                                                            <p>Pr / Po</p>
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a href="/transaction-liquidation/pc/{{ Auth::user()->company_id }}" class="nav-link ml-1 pl-5 {{ isset($trans_page) ? $trans_page == 'pc-liquidation' ? 'active' : '' : '' }}">
-                                                            <p>Petty Cash</p>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </li> --}}
                                             <li class="nav-item">
                                                 <a href="/transaction/report-all?from={{ date('Y-m-01') }}&to={{ date('Y-m-t') }}" class="nav-link {{ Route::currentRouteName() == 'transactionreport' ? 'active' : '' }}">
                                                     <i class="nav-icon material-icons icon--list">assessment</i><p> REPORTS</p>
@@ -243,16 +189,6 @@
                                             <li class="nav-item">
                                                 <a href="/settings" class="nav-link {{ Route::currentRouteName() == 'settings' ? 'active' : '' }}">
                                                     <i class="nav-icon material-icons icon--list">settings</i><p>Settings</p>
-                                                </a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="/activity-log" class="nav-link {{ Route::currentRouteName() == 'activitylog' ? 'active' : '' }}">
-                                                    <i class="nav-icon material-icons icon--list">history</i><p>Activity Log</p>
-                                                </a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="/control-panel/db-backups" class="nav-link {{ Route::currentRouteName() == 'dbbackups' ? 'active' : '' }}">
-                                                    <i class="nav-icon material-icons icon--list">storage</i><p>Database</p>
                                                 </a>
                                             </li>
                                         @endif

@@ -1,0 +1,34 @@
+select {
+    & > option {
+        &.option--blue {
+            background-color: $blue;
+        }
+        &.option--indigo {
+            background-color: $indigo;
+        }
+        &.option--purple {
+            background-color: $purple;
+        }
+        &.option--pink {
+            background-color: $pink;
+        }
+        &.option--red {
+            background-color: $red;
+        }
+        &.option--orange {
+            background-color: $orange;
+        }
+        &.option--yellow {
+            background-color: $yellow;
+        }
+        &.option--green {
+            background-color: $green;
+        }
+        &.option--teal {
+            background-color: $teal;
+        }
+        &.option--cyan {
+            background-color: $cyan;
+        }
+    }
+}

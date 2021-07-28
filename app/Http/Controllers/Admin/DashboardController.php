@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use Spatie\Activitylog\Models\Activity;
+use App\Http\Controllers\Controller;
 use App\Company;
 use App\Transaction;
 use App\User;
 use App\Helpers\TransactionHelper;
 
-class HomeController extends Controller {
+class DashboardController extends Controller {
 
     public function index() {
         $user = User::where('id', auth()->id())->first();
@@ -91,7 +92,7 @@ class HomeController extends Controller {
         // $stats['liquidation'] = Transaction::where('trans_type', '!=', 'pc')->whereIn('status_id', config('global.liquidations'))->where('requested_id', auth()->id())->count();
         $stats['cleared'] = Transaction::where('trans_type', '!=', 'pc')->whereIn('status_id', config('global.liquidation_cleared'))->where('requested_id', auth()->id())->count();
 
-        return view('home')->with([
+        return view('pages.admin.dashboard.index')->with([
             'user' => $user,
             'companies' => $companies,
             'generated' => $generated,
