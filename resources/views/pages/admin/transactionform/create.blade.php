@@ -63,6 +63,7 @@
                         <label for="">Particulars</label>
                         @if ($trans_page_url == 'prpo')
                             <select name="particulars_id_single" class="form-control @error('particulars_id') is-invalid @enderror">
+                                <option value="">- Select -</option>
                                 @foreach ($particulars as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>                                        
                                 @endforeach
