@@ -60,6 +60,7 @@
                         <label for="">Particulars</label>
                         @if ($trans_page_url == 'prpo')
                             <select name="particulars_id_single" class="form-control @error('particulars_id') is-invalid @enderror">
+                                <option value="">- Select -</option>
                                 @foreach ($particulars as $item)
                                     <option value="{{ $item->id }}" {{ $item->id == $transaction->particulars_id ? 'selected' : '' }}>{{ $item->name }}</option>                                        
                                 @endforeach
@@ -243,6 +244,7 @@
                                                 <td><input type="text" class="form-control" name="description[]" value="{{ $transaction->transaction_description[0]->description }}" required></td>
                                                 <td>
                                                     <select name="particulars_id[]" class="form-control" required>
+                                                        <option value="">- Select -</option>
                                                         @foreach ($particulars as $item)
                                                         <option value="{{ $item->id }}" {{ $transaction->transaction_description[0]->particulars_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                                         @endforeach
@@ -263,6 +265,7 @@
                                                 <td><input type="text" class="form-control" name="description[]" value="{{ old('description.0') }}" required></td>
                                                 <td>
                                                     <select name="particulars_id[]" class="form-control" required>
+                                                        <option value="">- Select -</option>
                                                         @foreach ($particulars as $item)
                                                             <option value="{{ $item->id }}" {{ old('particulars_id.0') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                                         @endforeach
@@ -285,6 +288,7 @@
                                                     <td><input type="text" class="form-control" name="description[]" value="{{ $item->description }}" required></td>
                                                     <td>
                                                         <select name="particulars_id[]" class="form-control" required>
+                                                            <option value="">- Select -</option>
                                                             @foreach ($particulars as $particulars_item)
                                                                 <option value="{{ $particulars_item->id }}" {{ $item->particulars_id == $particulars_item->id ? 'selected' : '' }}>{{ $particulars_item->name }}</option>
                                                             @endforeach
@@ -337,6 +341,7 @@
                         <td><input type="text" class="form-control" name="description[]" required></td>
                         <td>
                             <select name="particulars_id[]" class="form-control" required>
+                                <option value="">- Select -</option>
                                 @foreach ($particulars as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                                 @endforeach

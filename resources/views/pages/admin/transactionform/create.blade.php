@@ -120,6 +120,7 @@
                                             <td><input type="text" class="form-control" name="description[]" value="{{ old('description.0') }}" required></td>
                                             <td>
                                                 <select name="particulars_id[]" class="form-control" required>
+                                                    <option value="">- Select -</option>
                                                     @foreach ($particulars as $item)
                                                         <option value="{{ $item->id }}" {{ old('particulars_id.0') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                                     @endforeach
@@ -142,6 +143,7 @@
                                                         <td><input type="text" class="form-control" name="description[]" value="{{ old('description.'.$key) }}" required></td>
                                                         <td>
                                                             <select name="particulars_id[]" class="form-control" required>
+                                                                <option value="">- Select -</option>
                                                                 @foreach ($particulars as $particulars_item)
                                                                     <option value="{{ $particulars_item->id }}" {{ old('particulars_id.'.$key) == $particulars_item->id ? 'selected' : '' }}>{{ $particulars_item->name }}</option>
                                                                 @endforeach
@@ -195,6 +197,7 @@
                         <td><input type="text" class="form-control" name="description[]" required></td>
                         <td>
                             <select name="particulars_id[]" class="form-control" required>
+                                <option value="">- Select -</option>
                                 @foreach ($particulars as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                                 @endforeach
