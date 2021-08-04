@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app-people')
 
 @section('title', 'Edit User')
 
@@ -31,7 +31,7 @@
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="leaves-tab" data-toggle="tab" href="#leaves" role="tab" aria-controls="contact" aria-selected="false">Leaves</a>
                     </li>
-                  </ul>
+                </ul>
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active m-4" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                         <div class="form-group">

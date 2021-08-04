@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\People;
 
 use App\Http\Controllers\Controller;
 use App\Company;
+use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -14,10 +15,12 @@ class MyAccountController extends Controller {
     public function index() {
         $companies = Company::orderBy('name', 'asc')->get();
         $user = User::where('id', auth()->id())->first();
+        $roles = Role::orderBy('id', 'desc')->get();
 
-        return view('pages.admin.myaccount.index')->with([
+        return view('pages.people.myaccount.index')->with([
             'companies' => $companies,
-            'user' => $user
+            'user' => $user,
+            'roles' => $roles
         ]);
     }
 

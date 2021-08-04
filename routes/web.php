@@ -22,13 +22,13 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/sequence-dashboard', 'Admin\DashboardController@index')->name('sequence-dashboard');
     Route::get('/people-dashboard', 'People\DashboardController@index')->name('people-dashboard');
+    Route::get('/leaves-dashboard', 'Leaves\DashboardController@index')->name('leaves-dashboard');
     
     // Access Level 1
     Route::middleware('checkRole:1')->group(function () {
 
         // Sequence
 
-        Route::resource('user', 'Admin\UsersController', ['names' => ['index' => 'user', 'create' => 'user', 'edit' => 'user']]);
         Route::resource('role', 'Admin\RolesController', ['names' => ['index' => 'role', 'create' => 'role', 'edit' => 'role']]);
         Route::resource('company', 'Admin\CompanyController', ['names' => ['index' => 'company', 'create' => 'company', 'edit' => 'company']]);
 
@@ -61,6 +61,8 @@ Route::middleware('auth')->group(function () {
 
         // People
 
+        Route::resource('user', 'People\UsersController', ['names' => ['index' => 'user', 'create' => 'user', 'edit' => 'user']]);
+        
         Route::prefix('people-settings')->group(function () {
             $url = 'People\SettingsController';
 
@@ -113,8 +115,8 @@ Route::middleware('auth')->group(function () {
 
     // Access Level 1, 2, and 3
     Route::middleware('checkRole:1|2|3')->group(function () {
-        Route::get('my-account', 'Admin\MyAccountController@index')->name('myaccount');
-        Route::put('my-account', 'Admin\MyAccountController@update')->name('myaccount');
+        
+        // Sequence
 
         Route::prefix('transaction')->group(function () {
             $url = 'Admin\TransactionsController';
@@ -194,5 +196,10 @@ Route::middleware('auth')->group(function () {
 
             // Route::get('/{trans_page}/{trans_company?}', $url.'@index')->where('trans_company', '[0-9]+');
         });
+
+        // People
+
+        Route::get('my-account', 'People\MyAccountController@index')->name('myaccount');
+        Route::put('my-account', 'People\MyAccountController@update')->name('myaccount');
     });
 });

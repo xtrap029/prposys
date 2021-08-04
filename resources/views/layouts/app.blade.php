@@ -172,11 +172,6 @@
                                         @if (Auth::user()->role_id == 1)
                                             <li class="nav-header">ADMINISTRATOR</li>
                                             <li class="nav-item">
-                                                <a href="/user" class="nav-link {{ Route::currentRouteName() == 'user' ? 'active' : '' }}">
-                                                    <i class="nav-icon material-icons icon--list">face</i><p>User</p>
-                                                </a>
-                                            </li>
-                                            <li class="nav-item">
                                                 <a href="/role" class="nav-link {{ Route::currentRouteName() == 'role' ? 'active' : '' }}">
                                                     <i class="nav-icon material-icons icon--list">lock</i><p>Role</p>
                                                 </a>

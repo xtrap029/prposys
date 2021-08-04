@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'People')</title>
+    <title>@yield('title', 'Leaves')</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -29,8 +29,8 @@
             @guest
                 <!-- Brand Logo -->
                 <a href="/" class="brand-link">
-                    <img src="{{ config('global.site_icon_people') }}" alt="" class="brand-image" style="opacity: .8">
-                    @guest @else <span class="brand-text font-weight-light">{{ config('app.name', 'People') }}</span> @endguest
+                    <img src="{{ config('global.site_icon_leaves') }}" alt="" class="brand-image" style="opacity: .8">
+                    @guest @else <span class="brand-text font-weight-light">{{ config('app.name', 'Leaves') }}</span> @endguest
                 </a>
             @else
                 <!-- Left navbar links -->
@@ -52,9 +52,9 @@
                                     <img src="{{ config('global.site_icon') }}" alt="" class="img-size-32 mr-2">
                                     Sequence
                                 </a>
-                                <a class="dropdown-item px-3" href="{{ config('global.dashboard_leaves') }}">
-                                    <img src="{{ config('global.site_icon_leaves') }}" alt="" class="img-size-32 mr-2">
-                                    Leaves
+                                <a class="dropdown-item px-3" href="{{ config('global.dashboard_people') }}">
+                                    <img src="{{ config('global.site_icon_people') }}" alt="" class="img-size-32 mr-2">
+                                    People
                                 </a>
                             </div>
                         </div>
@@ -78,11 +78,11 @@
         @guest  
         @else
             <!-- Main Sidebar Container -->
-            <aside class="main-sidebar elevation-4 sidebar--tecc sidebar--{{ config('global.site_color_people') }}">
+            <aside class="main-sidebar elevation-4 sidebar--tecc sidebar--{{ config('global.site_color_leaves') }}">
                 <!-- Brand Logo -->
                 <a href="/" class="brand-link navbar-white">
-                    <img src="{{ config('global.site_icon_people') }}" alt="" class="brand-image">
-                    <span class="brand-text font-weight-light">People</span>
+                    <img src="{{ config('global.site_icon_leaves') }}" alt="" class="brand-image">
+                    <span class="brand-text font-weight-light">Leaves</span>
                 </a>
         
                 <!-- Sidebar -->
@@ -107,34 +107,10 @@
                                 <nav class="mt-2">
                                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                                         <li class="nav-item">
-                                            <a href="{{ config('global.dashboard_people') }}" class="nav-link {{ Route::currentRouteName() == 'people-dashboard' ? 'active' : '' }}">
+                                            <a href="{{ config('global.dashboard_leaves') }}" class="nav-link {{ Route::currentRouteName() == 'leaves-dashboard' ? 'active' : '' }}">
                                                 <i class="nav-icon material-icons icon--list">dashboard</i><p>Dashboard</p>
                                             </a>
                                         </li>
-                                        
-                                        @if (Auth::user()->role_id == 1)
-                                            <li class="nav-header">ADMINISTRATOR</li>
-                                            <li class="nav-item">
-                                                <a href="/user" class="nav-link {{ Route::currentRouteName() == 'user' ? 'active' : '' }}">
-                                                    <i class="nav-icon material-icons icon--list">face</i><p>User</p>
-                                                </a>
-                                            </li>                                            
-                                            <li class="nav-item">
-                                                <a href="/people-settings" class="nav-link {{ Route::currentRouteName() == 'people-settings' ? 'active' : '' }}">
-                                                    <i class="nav-icon material-icons icon--list">settings</i><p>Settings</p>
-                                                </a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="/activity-log" class="nav-link {{ Route::currentRouteName() == 'activitylog' ? 'active' : '' }}">
-                                                    <i class="nav-icon material-icons icon--list">history</i><p>Activity Log</p>
-                                                </a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="/db-backups" class="nav-link {{ Route::currentRouteName() == 'dbbackups' ? 'active' : '' }}">
-                                                    <i class="nav-icon material-icons icon--list">storage</i><p>Database</p>
-                                                </a>
-                                            </li>
-                                        @endif
                                     </ul>
                                 </nav>
                             </div>
