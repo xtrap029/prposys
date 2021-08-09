@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\People;
 
 use App\Company;
 use App\Role;
@@ -23,7 +23,7 @@ class UsersController extends Controller {
         // $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
         // $users_inactive = User::whereNull('role_id')->orderBy('name', 'asc')->get();
         
-        return view('pages.admin.users.index')->with([
+        return view('pages.people.users.index')->with([
             'users' => $users,
             // 'users_inactive' => $users_inactive
         ]);
@@ -33,7 +33,7 @@ class UsersController extends Controller {
         $companies = Company::orderBy('name', 'asc')->get();
         $roles = Role::orderBy('id', 'desc')->get();
 
-        return view('pages.admin.users.create')->with([
+        return view('pages.people.users.create')->with([
             'companies' => $companies,
             'roles' => $roles
         ]);
@@ -71,7 +71,7 @@ class UsersController extends Controller {
         $roles = Role::orderBy('id', 'desc')->get();
         $companies = Company::orderBy('name', 'asc')->get();
 
-        return view('pages.admin.users.edit')->with([
+        return view('pages.people.users.edit')->with([
             'user' => $user,
             'roles' => $roles,
             'companies' => $companies

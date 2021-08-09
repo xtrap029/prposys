@@ -1,4 +1,4 @@
-@section('title', 'People')
+@section('title', 'Leaves')
 
 @include('layouts.sections.head')
 
@@ -8,12 +8,12 @@
         @include('layouts.sections.nav')
         
         <!-- Main Sidebar Container -->
-        <aside class="main-sidebar elevation-4 sidebar--tecc sidebar--{{ config('global.site_color_people') }}">
+        <aside class="main-sidebar elevation-4 sidebar--tecc sidebar--{{ config('global.site_color_leaves') }}">
             
             <div class="dropdown show">
                 <a class="brand-link navbar-white" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img src="{{ config('global.site_icon_people') }}" alt="" class="brand-image">
-                    <span class="brand-text font-weight-light">People</span>
+                    <img src="{{ config('global.site_icon_leaves') }}" alt="" class="brand-image">
+                    <span class="brand-text font-weight-light">Leaves</span>
                     <i class="nav-icon material-icons icon--list ml-5 pl-4 text-gray">arrow_drop_down</i>
                 </a>
                 <div class="dropdown-menu w-100 border-0 shadow" aria-labelledby="dropdownMenuLink">
@@ -21,9 +21,9 @@
                         <i class="icon--list m-1 material-icons nav-icon">apps</i>
                         <div class="d-inline-block mb-1 ml-2">All</div>
                     </a>
-                    <a class="dropdown-item px-3" href="{{ config('global.dashboard_leaves') }}">
-                        <img src="{{ config('global.site_icon_leaves') }}" alt="" class="img-size-32 mr-2">
-                        Leaves
+                    <a class="dropdown-item px-3" href="{{ config('global.dashboard_people') }}">
+                        <img src="{{ config('global.site_icon_people') }}" alt="" class="img-size-32 mr-2">
+                        People
                     </a>
                     <a class="dropdown-item px-3" href="{{ config('global.dashboard_sequence') }}">
                         <img src="{{ config('global.site_icon') }}" alt="" class="img-size-32 mr-2">
@@ -51,34 +51,10 @@
                             <nav class="mt-2">
                                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                                     <li class="nav-item">
-                                        <a href="{{ config('global.dashboard_people') }}" class="nav-link {{ Route::currentRouteName() == 'people-dashboard' ? 'active' : '' }}">
+                                        <a href="{{ config('global.dashboard_leaves') }}" class="nav-link {{ Route::currentRouteName() == 'leaves-dashboard' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">dashboard</i><p>Dashboard</p>
                                         </a>
                                     </li>
-                                    
-                                    @if (Auth::user()->role_id == 1)
-                                        <li class="nav-header">ADMINISTRATOR</li>
-                                        <li class="nav-item">
-                                            <a href="/user" class="nav-link {{ Route::currentRouteName() == 'user' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">face</i><p>User</p>
-                                            </a>
-                                        </li>                                            
-                                        <li class="nav-item">
-                                            <a href="/people-settings" class="nav-link {{ Route::currentRouteName() == 'people-settings' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">settings</i><p>Settings</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/activity-log" class="nav-link {{ Route::currentRouteName() == 'activitylog' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">history</i><p>Activity Log</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/db-backups" class="nav-link {{ Route::currentRouteName() == 'dbbackups' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">storage</i><p>Database</p>
-                                            </a>
-                                        </li>
-                                    @endif
                                 </ul>
                             </nav>
                         </div>
@@ -92,7 +68,7 @@
             @include('flashmessage')                
             @yield('content')
         </div>
-        
+
         @include('shared.admin.bread')
     </div>
     <!-- </div> -->

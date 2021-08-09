@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app-people')
 
 @section('title', 'Edit User')
 
@@ -31,16 +31,20 @@
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="leaves-tab" data-toggle="tab" href="#leaves" role="tab" aria-controls="contact" aria-selected="false">Leaves</a>
                     </li>
-                  </ul>
+                </ul>
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active m-4" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                         <div class="form-group">
-                            <label for="">Name</label>
+                            <label for="">Full Name</label>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ $user->name }}" required>
                             @include('errors.inline', ['message' => $errors->first('name')])
                         </div>
                     </div>
                     <div class="tab-pane fade m-4" id="account" role="tabpanel" aria-labelledby="account-tab">
+                        <div class="form-group">
+                            <label for="">Email Address</label>
+                            <span class="font-weight-bold ml-3">{{ $user->email }}</span>
+                        </div>
                         <div class="form-group">
                             <label for="avatar" class="d-block">Avatar</label>
                             <img src="/storage/public/images/users/{{ $user->avatar }}" alt="" class="thumb thumb--sm img-thumbnail">
