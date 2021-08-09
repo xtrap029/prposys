@@ -38,7 +38,7 @@
                             <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required>
                             @include('errors.inline', ['message' => $errors->first('name')])
                         </div>
-                        <div class="form-row">
+                        {{-- <div class="form-row">
                             <div class="form-group col-lg-4">
                                 <label for="">Date of Birth</label>
                                 <input type="date" class="form-control @error('e_dob') is-invalid @enderror" name="name" value="{{ old('e_dob') }}" required>
@@ -49,7 +49,7 @@
                                 <input type="date" class="form-control @error('e_dob') is-invalid @enderror" name="name" value="{{ old('e_dob') }}" required>
                                 @include('errors.inline', ['message' => $errors->first('e_dob')])
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="tab-pane fade m-4" id="account" role="tabpanel" aria-labelledby="account-tab">
                         <div class="form-group">
