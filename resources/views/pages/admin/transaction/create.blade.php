@@ -99,7 +99,7 @@
                     {{-- ALLOw ALL CATEGORIES --}}
                     {{-- <div class="col-sm-4 col-lg-4 mb-2 {{ $trans_type == 'po' ? '' : 'd-none' }}"> --}}
                     <div class="col-sm-4 col-lg-4 mb-2">
-                        <label for="">Statement of Account</label>
+                        <label for="">Statement of Account/Invoice/Form</label>
                         <input type="file" name="soa" class="soa form_control" {{ $trans_type == 'po' ? 'required' : '' }}>
                     </div>
                 </div>
