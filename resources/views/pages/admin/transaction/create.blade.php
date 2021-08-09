@@ -96,7 +96,9 @@
                     </div>
                 </div>
                 <div class="form-row mb-3">
-                    <div class="col-sm-4 col-lg-4 mb-2 {{ $trans_type == 'po' ? '' : 'd-none' }}">
+                    {{-- ALLOw ALL CATEGORIES --}}
+                    {{-- <div class="col-sm-4 col-lg-4 mb-2 {{ $trans_type == 'po' ? '' : 'd-none' }}"> --}}
+                    <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Statement of Account</label>
                         <input type="file" name="soa" class="soa form_control" {{ $trans_type == 'po' ? 'required' : '' }}>
                     </div>
@@ -202,11 +204,11 @@
                 if ('{{ $trans_type }}' != 'po') {
                     if ($(this).val() == 'bp') {
                         $('.soa').parent().removeClass('d-none')
-                        // $('.soa').prop('required', 'true')
                         $('.soa').removeAttr('required')
                     } else {
-                        $('.soa').parent().addClass('d-none')
-                        $('.soa').val('')
+                        // ALLOW ALL CATEGORIES
+                        // $('.soa').parent().addClass('d-none')
+                        // $('.soa').val('')
                         $('.soa').removeAttr('required')
                     }
                 }
@@ -214,7 +216,6 @@
 
             if ("{{ isset($_GET['is_bills']) && $_GET['is_bills'] == 1 }}" == 1) {
                 $('.soa').parent().removeClass('d-none')
-                // $('.soa').prop('required', 'true')
                 $('.soa').removeAttr('required')
             }
         })

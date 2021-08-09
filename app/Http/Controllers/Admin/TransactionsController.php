@@ -369,7 +369,9 @@ class TransactionsController extends Controller {
             
             $data = $request->validate($validation);
 
-            if (($request->trans_type == 'po' || $request->trans_category == 'bp') && $request->file('soa')) {
+            // ALLOW ALL CATEGORIES
+            // if (($request->trans_type == 'po' || $request->trans_category == 'bp') && $request->file('soa')) {
+            if ($request->file('soa')) {
                 $data['soa'] = basename($request->file('soa')->store('public/attachments/soa'));
             }
 
@@ -549,7 +551,9 @@ class TransactionsController extends Controller {
 
         $data = $request->validate($validation);
 
-        if (($transaction->trans_type == 'po' || $request->trans_category == 'bp') && $request->file('soa')) {
+        // ALLOW ALL CATEGORIES
+        // if (($transaction->trans_type == 'po' || $request->trans_category == 'bp') && $request->file('soa')) {
+        if ($request->file('soa')) {
             $data['soa'] = basename($request->file('soa')->store('public/attachments/soa'));
         } else if ($transaction->trans_type != 'po' && $request->trans_category != 'bp') {
             $data['soa'] = '';
