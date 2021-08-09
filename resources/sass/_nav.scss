@@ -16,6 +16,145 @@
         border-color: $blue;
     }
 
+    & .nav-pills .nav-link:not(.active):hover {
+        color: $blue;
+    }
+
+    // &.sidebar--blue {}
+
+    &.sidebar--indigo {
+        & .nav-sidebar > .nav-item > .nav-link.active {
+            background-color: $indigo;
+        }
+
+        & .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+            border-color: $indigo;
+        }
+
+        & .nav-pills .nav-link:not(.active):hover {
+            color: $indigo;
+        }
+    }
+    
+    &.sidebar--purple {
+        & .nav-sidebar > .nav-item > .nav-link.active {
+            background-color: $purple;
+        }
+
+        & .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+            border-color: $purple;
+        }
+
+        
+        & .nav-pills .nav-link:not(.active):hover {
+            color: $purple;
+        }
+    }
+
+    &.sidebar--pink {
+        & .nav-sidebar > .nav-item > .nav-link.active {
+            background-color: $pink;
+        }
+
+        & .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+            border-color: $pink;
+        }
+
+        
+        & .nav-pills .nav-link:not(.active):hover {
+            color: $pink;
+        }
+    }
+
+    &.sidebar--red {
+        & .nav-sidebar > .nav-item > .nav-link.active {
+            background-color: $red;
+        }
+
+        & .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+            border-color: $red;
+        }
+
+        
+        & .nav-pills .nav-link:not(.active):hover {
+            color: $red;
+        }
+    }
+
+    &.sidebar--orange {
+        & .nav-sidebar > .nav-item > .nav-link.active {
+            background-color: $orange;
+        }
+
+        & .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+            border-color: $orange;
+        }
+
+        
+        & .nav-pills .nav-link:not(.active):hover {
+            color: $orange;
+        }
+    }
+
+    &.sidebar--yellow {
+        & .nav-sidebar > .nav-item > .nav-link.active {
+            background-color: $yellow;
+            color: $black;
+        }
+
+        & .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+            border-color: $yellow;
+        }
+        
+        & .nav-pills .nav-link:not(.active):hover {
+            color: $yellow;
+        }
+    }
+
+    &.sidebar--green {
+        & .nav-sidebar > .nav-item > .nav-link.active {
+            background-color: $green;
+        }
+
+        & .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+            border-color: $green;
+        }
+
+        
+        & .nav-pills .nav-link:not(.active):hover {
+            color: $green;
+        }
+    }
+
+    &.sidebar--teal {
+        & .nav-sidebar > .nav-item > .nav-link.active {
+            background-color: $teal;
+        }
+
+        & .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+            border-color: $teal;
+        }
+
+        
+        & .nav-pills .nav-link:not(.active):hover {
+            color: $teal;
+        }
+    }
+
+    &.sidebar--cyan {
+        & .nav-sidebar > .nav-item > .nav-link.active {
+            background-color: $cyan;
+        }
+
+        & .nav-sidebar.nav-legacy > .nav-item > .nav-link.active {
+            border-color: $cyan;
+        }
+        
+        & .nav-pills .nav-link:not(.active):hover {
+            color: $cyan;
+        }
+    }
+
     & .nav-treeview > .nav-item > .nav-link.active,
     & .nav-treeview > .nav-item > .nav-link.active:hover {
         background-color: rgba(0, 0, 0, 0.1);

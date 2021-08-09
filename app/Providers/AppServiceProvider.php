@@ -26,5 +26,12 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
         config(['global.site_icon' => '/storage/public/images/site settings/'.\App\Settings::where('type', 'SITE_LOGO')->first()->value]);
+        config(['global.site_color' => \App\Settings::where('type', 'SITE_COLOR')->first()->value]);
+
+        config(['global.site_icon_people' => '/storage/public/images/site settings/'.\App\Settings::where('type', 'SITE_LOGO_PEOPLE')->first()->value]);
+        config(['global.site_color_people' => \App\Settings::where('type', 'SITE_COLOR_PEOPLE')->first()->value]);
+
+        config(['global.site_icon_leaves' => '/storage/public/images/site settings/'.\App\Settings::where('type', 'SITE_LOGO_LEAVES')->first()->value]);
+        config(['global.site_color_leaves' => \App\Settings::where('type', 'SITE_COLOR_LEAVES')->first()->value]);
     }
 }

@@ -85,7 +85,9 @@
                     </div>
                 </div>
                 <div class="form-row mb-3">
-                    <div class="col-sm-4 col-lg-4 mb-2 {{ $transaction->trans_type == 'po' || $transaction->is_bills ? '' : 'd-none' }}">
+                    {{-- ALLOW ALL CATEGORIES --}}
+                    {{-- <div class="col-sm-4 col-lg-4 mb-2 {{ $transaction->trans_type == 'po' || $transaction->is_bills ? '' : 'd-none' }}"> --}}
+                    <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Statement of Account</label>
                         @if ($transaction->soa)
                             <a href="/storage/public/attachments/soa/{{ $transaction->soa }}" target="_blank" class="vlign--top ml-1">
@@ -202,8 +204,9 @@
                         // }
                         $('.soa').removeAttr('required')
                     } else {
-                        $('.soa').parent().addClass('d-none')
-                        $('.soa').val('')
+                        // ALLOW ALL CATEGORIES
+                        // $('.soa').parent().addClass('d-none')
+                        // $('.soa').val('')
                         $('.soa').removeAttr('required')
                     }
                 }

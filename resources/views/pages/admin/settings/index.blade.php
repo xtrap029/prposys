@@ -42,6 +42,7 @@
                                 </div>
                             @break
                             @case('LIMIT_EDIT_GENPR_USER_2')
+                                <hr>
                                 <div class="mb-3"><b>User Changes Limit</b></div>
                                 <div class="form-row mb-3">
                                     <div class="col-sm-6 col-md-4">
@@ -131,23 +132,8 @@
                                     </div>
                                 </div>
                             @break
-                            @case('SESSION_LIFETIME')
-                                <div class="mb-3"><b>Main</b></div>
-
-                                <div class="form-row mb-3">
-                                    <div class="col-sm-6 col-md-4">
-                                        <label for="">Auto Logout if Inactive</label>
-                                    </div>
-                                    <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 align-self-end">
-                                        <label for="">Minutes</label>
-                                    </div>
-                                    <div class="col-6 col-sm-3 col-md-4">
-                                        <input type="number" class="form-control @error('SESSION_LIFETIME') is-invalid @enderror" name="SESSION_LIFETIME" value="{{ $item->value }}">
-                                        @include('errors.inline', ['message' => $errors->first('SESSION_LIFETIME')])
-                                    </div>
-                                </div>
-                            @break
                             @case('AUTHORIZED_BY')
+                                <hr>
                                 <div class="form-row mb-3">
                                     <div class="col-sm-6 col-md-4">
                                         <label for="">Final Authorized</label>
@@ -158,38 +144,13 @@
                                     <div class="col-6 col-sm-3 col-md-4">
                                         <select name="AUTHORIZED_BY" class="form-control @error('AUTHORIZED_BY') is-invalid @enderror">
                                             @foreach ($users as $user)
-                                            <option value="{{ $user->id }}" {{ $user->id == $item->value ? 'selected' : '' }}>{{ $user->name }}</option>
+                                                <option value="{{ $user->id }}" {{ $user->id == $item->value ? 'selected' : '' }}>{{ $user->name }}</option>
                                             @endforeach
                                         </select>
                                         @include('errors.inline', ['message' => $errors->first('AUTHORIZED_BY')])
                                     </div>
                                 </div>
-                            @break
-                            @case('SITE_LOGO')
-                                <div class="form-row mb-3">
-                                    <div class="col-6 col-sm-8">
-                                        <label for="">
-                                            Site Logo
-                                            <div class="small">Image with 500kb max size</div>
-                                        </label>                                        
-                                    </div>
-                                    <div class="col-6 col-sm-4">
-                                        <input type="file" name="SITE_LOGO" class="form-control-file @error('SITE_LOGO') is-invalid @enderror d-inline-block mt-2">
-                                        @include('errors.inline', ['message' => $errors->first('SITE_LOGO')])
-                                    </div>
-                                </div>
-                            @break
-                            @case('FOOTER_LABEL')
-                                <div class="form-row mb-3">
-                                    <div class="col-md-8">
-                                        <label for="">Footer Text</label>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <input type="text" class="form-control @error('FOOTER_LABEL') is-invalid @enderror" name="FOOTER_LABEL" value="{{ $item->value }}">
-                                        @include('errors.inline', ['message' => $errors->first('FOOTER_LABEL')])
-                                    </div>
-                                </div>
-                            @break
+                            @break                  
                             @default
                     @endswitch            
                 @endforeach
