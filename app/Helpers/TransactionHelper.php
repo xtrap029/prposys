@@ -36,6 +36,7 @@ final class TransactionHelper {
 
         return $trans_liq_bal;
     }
+
     public static function check_unliquidated_balance($user) {
         $user = User::where('id', $user)->first();
 

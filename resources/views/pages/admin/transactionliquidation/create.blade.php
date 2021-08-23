@@ -230,7 +230,7 @@
                             @include('errors.inline', ['message' => $errors->first('depo_type')])
                         </div>
                         <div class="col-md-3 mb-2">
-                            <label for="" class="font-weight-bold">Type / Account #</label>
+                            <label for="" class="font-weight-bold">Received from</label>
                             <select name="depo_bank_branch_id" class="form-control @error('depo_bank_branch_id') is-invalid @enderror" required>
                                 @foreach ($banks as $item)
                                     <optgroup label="{{ $item->name }}">

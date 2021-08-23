@@ -73,4 +73,15 @@
             'teal',
             'cyan',
         ],
+        'category_colors' => [
+            ['Regular', 'yellow'],
+            ['Deposit', 'green'],
+            ['Bills', 'blue'],
+            ['HR', 'violet'],
+            ['Reimbursement', 'red'],
+            ['Fund', 'Purple'],
+        ],
+        'gender' => ['Male', 'Female'],
+        'civil_status' => ['Single', 'Married', 'Widowed', 'Separated'],
+        'employment_status' => ['Regular', 'Probationary'],
     ];

@@ -15,99 +15,149 @@
     <section class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-6 col-lg-4 d-none">
-                    <div class="card card-widget widget-user">
-                        <div class="widget-user-header bg--tecc">
-                            <h3 class="widget-user-username">{{ $user->name }}</h3>
-                            <h5 class="widget-user-desc">{{ $user->role->name }}</h5>
+                <div class="col-12">
+                    <h5 class="mb-4 text-right">Employment</h5>
+                    <div class="form-row">
+                        <div class="form-group border p-2 mb-0 col-lg-4">
+                            <label for="" class="text-gray">Employee Number</label>
+                            <h6>{{ $user->e_emp_no }}</h6>
                         </div>
-                        <div class="widget-user-image">
-                            <img class="img-circle elevation-2" src="/storage/public/images/users/{{ $user->avatar }}" alt="User Avatar">
+                        <div class="form-group border p-2 mb-0 col-lg-8">
+                            <label for="" class="text-gray">Employee Name</label>
+                            <h6>{{ $user->name }}</h6>
                         </div>
-                        <div class="card-footer bg-white">
-                            <div class="row">
-                                <div class="col-sm-6 border-right">
-                                    <div class="description-block">
-                                        <h5 class="description-header">Email</h5>
-                                        <span>{{ $user->email }}</span>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="description-block">
-                                        <h5 class="description-header">Joined</h5>
-                                        <span>{{ Carbon::parse($user->created_at)->diffInDays(Carbon::now()) >= 1 ? $user->created_at->format('Y-m-d') : $user->created_at->diffForHumans() }}</span>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="form-group border p-2 mb-0 col-lg-4">
+                            <label for="" class="text-gray">Hire Date</label>
+                            <h6>{{ $user->e_hire_date }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-lg-4">
+                            <label for="" class="text-gray">Employment Status</label>
+                            <h6>{{ $user->e_emp_status }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-lg-4">
+                            <label for="">Regularization Date</label>
+                            <h6>{{ $user->e_reg_date }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-lg-6">
+                            <label for="" class="text-gray">Position / Title</label>
+                            <h6>{{ $user->e_position }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-lg-6">
+                            <label for="">Rank</label>
+                            <h6>{{ $user->e_rank }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-lg-6">
+                            <label for="" class="text-gray">Department</label>
+                            <h6>{{ $user->e_department }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-lg-6">
+                            <label for="" class="text-gray">Payroll Account Number</label>
+                            <h6>{{ $user->e_payroll }}</h6>
                         </div>
                     </div>
-                </div>
-                <div class="col-12 mt-2">
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="home" aria-selected="true">Profile</a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="account-tab" data-toggle="tab" href="#account" role="tab" aria-controls="profile" aria-selected="false">Account</a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="sequence-tab" data-toggle="tab" href="#sequence" role="tab" aria-controls="contact" aria-selected="false">Sequence</a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="leaves-tab" data-toggle="tab" href="#leaves" role="tab" aria-controls="contact" aria-selected="false">Leaves</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content" id="myTabContent">
-                        <div class="tab-pane fade show active m-4" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                            <div class="form-group">
-                                <label for="">Name</label>
-                                <h5 class="font-weight-bold">{{ $user->name }}</h5>
-                            </div>
+
+                    <h5 class="my-4 text-right">Personal</h5>
+                    <div class="form-row">
+                        <div class="form-group border p-2 mb-0 col-lg-4">
+                            <label for="" class="text-gray">Date of Birth</label>
+                            <h6>{{ $user->e_dob }}</h6>
                         </div>
-                        <div class="tab-pane fade m-4" id="account" role="tabpanel" aria-labelledby="account-tab">
-                            <form action="/my-account" method="post" enctype="multipart/form-data">
-                                @csrf
-                                @method('put')
-                                <div class="form-group">
-                                    <label for="avatar" class="d-block">Avatar</label>
-                                    <img src="/storage/public/images/users/{{ $user->avatar }}" alt="" class="thumb thumb--sm img-thumbnail">
-                                    <input type="file" name="avatar" class="form-control-file @error('avatar') is-invalid @enderror d-inline-block w-auto">
-                                    @include('errors.inline', ['message' => $errors->first('avatar')])
-                                </div>
-                                <div class="form-group">
-                                    <label for="">Change Password</label>
-                                    <input type="password" class="form-control @error('password') is-invalid @enderror" name="password">
-                                    @include('errors.inline', ['message' => $errors->first('password')])
-                                </div>
-                                <div class="form-group">
-                                    <label for="">Confirm Change Password</label>
-                                    <input type="password" class="form-control" name="password_confirmation">
-                                </div>
-                                <div class="form-group">
-                                    <input type="submit" class="btn btn-primary float-right" value="Update">
-                                </div>
-                            </form>
+                        <div class="form-group border p-2 mb-0 col-lg-4">
+                            <label for="" class="text-gray">Gender</label>
+                            <h6>{{ $user->e_gender }}</h6>
                         </div>
-                        <div class="tab-pane fade m-4" id="sequence" role="tabpanel" aria-labelledby="sequence-tab">
-                            <div class="form-group mb-5">
-                                <label for="">Role</label>
-                                <h5 class="font-weight-bold">{{ $user->role->name }}</h5>
-                            </div>
-                            <div class="form-group mb-5">
-                                <label for="">Default Company</label>
-                                <h5 class="font-weight-bold">{{ $user->company->name }}</h5>
-                            </div>
-                            <div class="form-group mb-5">
-                                <label for="">Unliquidated PR amount limit</label>
-                                <h5 class="font-weight-bold">{{ $user->LIMIT_UNLIQUIDATEDPR_AMOUNT }}</h5>
-                            </div>
-                            <div class="form-group mb-5">
-                                <label for="">Unliquidated PR transactions limit</label>
-                                <h5 class="font-weight-bold">{{ $user->LIMIT_UNLIQUIDATEDPR_COUNT }}</h5>
-                            </div>
+                        <div class="form-group border p-2 mb-0 col-lg-4">
+                            <label for="" class="text-gray">Civil Status</label>
+                            <h6>{{ $user->e_civil }}</h6>
                         </div>
-                        <div class="tab-pane fade m-4" id="leaves" role="tabpanel" aria-labelledby="leaves-tab">...</div>
-                    </div>  
+                        <div class="form-group border p-2 mb-0 col-12">
+                            <label for="" class="text-gray">Mailing Address</label>
+                            <h6>{{ $user->e_mail_address }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-lg-6">
+                            <label for="" class="text-gray">Contact Number</label>
+                            <h6>{{ $user->e_contact }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-lg-6">
+                            <label for="" class="text-gray">Personal Email</label>
+                            <h6>{{ $user->e_email }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-lg-6">
+                            <label for="" class="text-gray">Emergency Contact Person</label>
+                            <h6>{{ $user->e_emergency_name }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-lg-6">
+                            <label for="" class="text-gray">Emergency Contact Number</label>
+                            <h6>{{ $user->e_emergency_contact }}</h6>
+                        </div>
+                    </div>
+
+                    <h5 class="my-4 text-right">Government</h5>
+                    <div class="form-row">
+                        <div class="form-group border p-2 mb-0 col-lg-3">
+                            <label for="" class="text-gray">TIN</label>
+                            <h6>{{ $user->e_tin }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-lg-3">
+                            <label for="" class="text-gray">SSS</label>
+                            <h6>{{ $user->e_sss }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-lg-3">
+                            <label for="" class="text-gray">PHIC</label>
+                            <h6>{{ $user->e_phic }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-lg-3">
+                            <label for="" class="text-gray">HMDF</label>
+                            <h6>{{ $user->e_hmdf }}</h6>
+                        </div>                            
+                    </div>
+
+                    <h5 class="my-4 text-right">Account</h5>
+                    <form action="/my-account" method="post" enctype="multipart/form-data" class="form-row">
+                        @csrf
+                        @method('put')
+                        <div class="form-group border p-2 mb-0 col-lg-6">
+                            <label for="avatar" class="d-block text-gray">Avatar</label>
+                            <img src="/storage/public/images/users/{{ $user->avatar }}" alt="" class="thumb thumb--sm img-thumbnail">
+                            <input type="file" name="avatar" class="form-control-file @error('avatar') is-invalid @enderror d-inline-block w-auto">
+                            @include('errors.inline', ['message' => $errors->first('avatar')])
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-lg-6">
+                            <label for="" class="text-gray">Change Password</label>
+                            <input type="password" class="form-control mb-3 @error('password') is-invalid @enderror" name="password">
+                            @include('errors.inline', ['message' => $errors->first('password')])
+                            <label for="" class="text-gray">Confirm Change Password</label>
+                            <input type="password" class="form-control" name="password_confirmation">
+                        </div>
+                        <div class="form-group p-2 mb-0 col-lg-12 text-center">
+                            <input type="submit" class="btn btn-primary btn-sm" value="Update">
+                        </div>
+                    </form> 
+                    
+                    <h5 class="my-4 text-right">Sequence</h5>
+                    <div class="form-row">
+                        <div class="form-group border p-2 mb-0 col-lg-6">
+                            <label for="" class="text-gray">Role</label>
+                            <h6>{{ $user->role->name }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-lg-6">
+                            <label for="" class="text-gray">Default Company</label>
+                            <h6>{{ $user->company->name }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-lg-6">
+                            <label for="" class="text-gray">Unliquidated PR amount limit</label>
+                            <h6>{{ $user->LIMIT_UNLIQUIDATEDPR_AMOUNT }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-lg-6">
+                            <label for="" class="text-gray">Unliquidated PR transactions limit</label>
+                            <h6>{{ $user->LIMIT_UNLIQUIDATEDPR_COUNT }}</h6>
+                        </div>                          
+                    </div>
+
+                    <h5 class="my-4 text-right">Leaves</h5>
+                    <div class="form-row">
+                        <div class="form-group col-12">...</div>
+                    </div>
                 </div>
             </div>
         </div>

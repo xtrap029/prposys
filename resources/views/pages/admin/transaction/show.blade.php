@@ -4,6 +4,7 @@
 @section('nav_class', 'navbar-dark')
 
 @section('content')
+    <?php $config_confidential = (Auth::user()->id != $transaction->owner_id && $transaction->is_confidential == 1); ?>
     <section class="content-header bg-dark">
         <div class="container-fluid">
             <div class="row"> 
@@ -196,7 +197,13 @@
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Amount</td>
-                                        <td class="font-weight-bold">{{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}</td>
+                                        <td class="font-weight-bold">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}
+                                            @endif
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Payee Name</td>
@@ -205,7 +212,13 @@
                                     <tr>
                                         <td colspan="2">
                                             <span class="font-weight-bold text-gray">Purpose</span>
-                                            <p class="mb-0">{{ $transaction->purpose }}</p>
+                                            <p class="mb-0">
+                                                @if ($config_confidential)
+                                                    -
+                                                @else
+                                                    {{ $transaction->purpose }}
+                                                @endif
+                                            </p>
                                         </td>
                                     </tr>
                                 </table>
@@ -237,13 +250,23 @@
                                     @foreach ($logs as $item)
                                         <tr>
                                             <td>
-                                                <a href="#_" data-toggle="modal" data-target="#modal-{{ $item->id }}">
-                                                    @if ($item->description == 'created')
-                                                        <i class="align-middle font-weight-bolder material-icons text-md">add</i>
-                                                    @else
-                                                        <i class="align-middle font-weight-bolder material-icons text-md">edit</i>
-                                                    @endif
-                                                </a>
+                                                @if ($config_confidential)
+                                                    <span class="text-secondary">
+                                                        @if ($item->description == 'created')
+                                                            <i class="align-middle font-weight-bolder material-icons text-md">add</i>
+                                                        @else
+                                                            <i class="align-middle font-weight-bolder material-icons text-md">edit</i>
+                                                        @endif
+                                                    </span>
+                                                @else
+                                                    <a href="#_" data-toggle="modal" data-target="#modal-{{ $item->id }}">
+                                                        @if ($item->description == 'created')
+                                                            <i class="align-middle font-weight-bolder material-icons text-md">add</i>
+                                                        @else
+                                                            <i class="align-middle font-weight-bolder material-icons text-md">edit</i>
+                                                        @endif
+                                                    </a>
+                                                @endif
                                                 <div class="modal fade" id="modal-{{ $item->id }}" tabindex="-1" role="dialog" aria-hidden="true">
                                                     <div class="modal-dialog modal-lg" role="document">
                                                         <div class="modal-content">

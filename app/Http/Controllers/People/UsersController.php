@@ -49,6 +49,26 @@ class UsersController extends Controller {
             'company_id' =>  ['required', 'exists:companies,id'],
             'LIMIT_UNLIQUIDATEDPR_AMOUNT' => ['nullable', 'integer'],
             'LIMIT_UNLIQUIDATEDPR_COUNT' => ['nullable', 'integer'],
+            'e_emp_no' => ['nullable'],
+            'e_hire_date' => ['nullable', 'date'],
+            'e_emp_status' => ['nullable'],
+            'e_reg_date' => ['nullable', 'date'],
+            'e_position' => ['nullable'],
+            'e_rank' => ['nullable'],
+            'e_department' => ['nullable'],
+            'e_payroll' => ['nullable'],
+            'e_dob' => ['nullable'],
+            'e_gender' => ['nullable'],
+            'e_civil' => ['nullable'],
+            'e_mail_address' => ['nullable'],
+            'e_contact' => ['nullable'],
+            'e_email' => ['nullable', 'email'],
+            'e_emergency_name' => ['nullable'],
+            'e_emergency_contact' => ['nullable'],
+            'e_tin' => ['nullable'],
+            'e_sss' => ['nullable'],
+            'e_phic' => ['nullable'],
+            'e_hmdf' => ['nullable'],
         ]);
 
         $data['avatar'] = basename($request->file('avatar')->store('public/images/users'));
@@ -62,6 +82,26 @@ class UsersController extends Controller {
             'company_id' => $data['company_id'],
             'LIMIT_UNLIQUIDATEDPR_AMOUNT' => $data['LIMIT_UNLIQUIDATEDPR_AMOUNT'],
             'LIMIT_UNLIQUIDATEDPR_COUNT' => $data['LIMIT_UNLIQUIDATEDPR_COUNT'],
+            'e_emp_no' => $data['e_emp_no'],
+            'e_hire_date' => $data['e_hire_date'],
+            'e_emp_status' => $data['e_emp_status'],
+            'e_reg_date' => $data['e_reg_date'],
+            'e_position' => $data['e_position'],
+            'e_rank' => $data['e_rank'],
+            'e_department' => $data['e_department'],
+            'e_payroll' => $data['e_payroll'],
+            'e_dob' => $data['e_dob'],
+            'e_gender' => $data['e_gender'],
+            'e_civil' => $data['e_civil'],
+            'e_mail_address' => $data['e_mail_address'],
+            'e_contact' => $data['e_contact'],
+            'e_email' => $data['e_email'],
+            'e_emergency_name' => $data['e_emergency_name'],
+            'e_emergency_contact' => $data['e_emergency_contact'],
+            'e_tin' => $data['e_tin'],
+            'e_sss' => $data['e_sss'],
+            'e_phic' => $data['e_phic'],
+            'e_hmdf' => $data['e_hmdf'],
         ]);
 
         return redirect('/user')->with('success', 'User'.__('messages.create_success'));
@@ -84,8 +124,29 @@ class UsersController extends Controller {
             'company_id' =>  ['required', 'exists:companies,id'],
             'name' => ['required', 'string', 'max:255'],
             'avatar' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'is_smt' => ['boolean'],
             'LIMIT_UNLIQUIDATEDPR_AMOUNT' => ['nullable', 'integer'],
             'LIMIT_UNLIQUIDATEDPR_COUNT' => ['nullable', 'integer'],
+            'e_emp_no' => ['nullable'],
+            'e_hire_date' => ['nullable', 'date'],
+            'e_emp_status' => ['nullable'],
+            'e_reg_date' => ['nullable', 'date'],
+            'e_position' => ['nullable'],
+            'e_rank' => ['nullable'],
+            'e_department' => ['nullable'],
+            'e_payroll' => ['nullable'],
+            'e_dob' => ['nullable'],
+            'e_gender' => ['nullable'],
+            'e_civil' => ['nullable'],
+            'e_mail_address' => ['nullable'],
+            'e_contact' => ['nullable'],
+            'e_email' => ['nullable', 'email'],
+            'e_emergency_name' => ['nullable'],
+            'e_emergency_contact' => ['nullable'],
+            'e_tin' => ['nullable'],
+            'e_sss' => ['nullable'],
+            'e_phic' => ['nullable'],
+            'e_hmdf' => ['nullable'],
         ];
 
         if ($request->password) {
@@ -93,6 +154,10 @@ class UsersController extends Controller {
         }
 
         $data = $request->validate($validation_rules);
+
+        if (!$request->is_smt) {
+            $data['is_smt'] = 0;
+        }
 
         if ($request->file('avatar')) {
             Storage::delete('public/images/companies/' . $user->avatar);

@@ -4,6 +4,7 @@
 @section('nav_class', 'navbar-dark')
 
 @section('content')
+    <?php $config_confidential = (Auth::user()->id != $transaction->owner_id && $transaction->is_confidential == 1); ?>
     <section class="content-header bg-dark">
         <div class="container-fluid">
             <div class="row">
@@ -131,7 +132,7 @@
                                 <div class="modal-body">
                                     <form action="/transaction-liquidation/clear/{{ $transaction->id }}" method="post" enctype="multipart/form-data">
                                         @csrf
-                                        <table class="table table-bordered">
+                                        <table class="table table-bordered {{ $config_confidential ? 'd-none' : '' }}">
                                             <thead>
                                                 <tr>
                                                     <th class="text-center">Total Advanced</th>
@@ -169,7 +170,7 @@
                                                         @include('errors.inline', ['message' => $errors->first('depo_type')])
                                                     </div>
                                                     <div class="mt-4 col-md-8">
-                                                        <label for="" class="font-weight-bold">Type / Account #</label>
+                                                        <label for="" class="font-weight-bold">Received from</label>
                                                         <select name="depo_bank_branch_id" class="form-control @error('depo_bank_branch_id') is-invalid @enderror" required>
                                                             @foreach ($banks as $item)
                                                                 <optgroup label="{{ $item->name }}">
@@ -232,7 +233,7 @@
                                     <form action="/transaction-liquidation/clear/{{ $transaction->id }}" method="post"  enctype="multipart/form-data">
                                         @csrf
                                         @method('put')
-                                        <table class="table table-bordered">
+                                        <table class="table table-bordered {{ $config_confidential ? 'd-none' : '' }}">
                                             <thead>
                                                 <tr>
                                                     <th class="text-center">Total Advanced</th>
@@ -410,26 +411,48 @@
                                         </tr>
                                         <tr>
                                             <td class="font-weight-bold text-gray">Service Charge</td>
-                                            <td class="font-weight-bold">{{ number_format($transaction->form_service_charge, 2, '.', ',') }}</td>
+                                            <td class="font-weight-bold">
+                                                @if ($config_confidential)
+                                                    -
+                                                @else
+                                                    {{ number_format($transaction->form_service_charge, 2, '.', ',') }}
+                                                @endif
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td class="font-weight-bold text-gray">Amount FX Rate</td>
                                             <td class="font-weight-bold">
-                                                {{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}
-                                                <span class="small px-2 vlign--top">x</span>
-                                                {{ number_format($transaction->currency_2_rate, 2, '.', ',') }}
-                                                ({{ $transaction->currency_2 }})
+                                                @if ($config_confidential)
+                                                    -
+                                                @else
+                                                    {{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}
+                                                    <span class="small px-2 vlign--top">x</span>
+                                                    {{ number_format($transaction->currency_2_rate, 2, '.', ',') }}
+                                                    ({{ $transaction->currency_2 }})
+                                                @endif
                                             </td>
                                         </tr>
                                     @endif
                                     <tr>
                                         <td class="font-weight-bold text-gray">{{ $transaction->is_bank ? 'Transferred' : 'Released' }} Amount</td>
-                                        <td class="font-weight-bold">{{ $transaction->currency_2 ?: $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
+                                        <td class="font-weight-bold">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $transaction->currency_2 ?: $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}
+                                            @endif
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">
                                             <span class="font-weight-bold text-gray">Purpose</span>
-                                            <p class="mb-0">{{ $transaction->purpose }}</p>
+                                            <p class="mb-0">
+                                                @if ($config_confidential)
+                                                    -
+                                                @else
+                                                    {{ $transaction->purpose }}
+                                                @endif
+                                            </p>
                                         </td>
                                     </tr>
                                 </table>
@@ -444,7 +467,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-7">
+                <div class="col-lg-7 {{ $config_confidential ? 'd-none' : '' }}">
                     @if (!$transaction->is_reimbursement)
                         <div class="card">
                             <div class="card-body table-responsive">
@@ -614,8 +637,12 @@
                                             <tr>
                                                 <td class="border-0 font-weight-bold text-gray">Amt. {{ $transaction->liq_balance >= 0 ? 'Reimbursed' : 'Returned' }}</td>
                                                 <td class="border-0 font-weight-bold">
-                                                    {{ $transaction->currency_2 ?: $transaction->currency }}
-                                                    {{ number_format($transaction->liq_balance >= 0 ? $transaction->liq_balance : $transaction->liq_balance*-1, 2, '.', ',') }}
+                                                    @if ($config_confidential)
+                                                        -
+                                                    @else
+                                                        {{ $transaction->currency_2 ?: $transaction->currency }}
+                                                        {{ number_format($transaction->liq_balance >= 0 ? $transaction->liq_balance : $transaction->liq_balance*-1, 2, '.', ',') }}
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @endif                                    
@@ -678,13 +705,23 @@
                                     @foreach ($logs as $item)
                                         <tr>
                                             <td>
-                                                <a href="#_" data-toggle="modal" data-target="#modal-{{ $item->id }}">
-                                                    @if ($item->description == 'created')
-                                                        <i class="align-middle font-weight-bolder material-icons text-md">add</i>
-                                                    @else
-                                                        <i class="align-middle font-weight-bolder material-icons text-md">edit</i>
-                                                    @endif
-                                                </a>
+                                                @if ($config_confidential)
+                                                    <span class="text-secondary">
+                                                        @if ($item->description == 'created')
+                                                            <i class="align-middle font-weight-bolder material-icons text-md">add</i>
+                                                        @else
+                                                            <i class="align-middle font-weight-bolder material-icons text-md">edit</i>
+                                                        @endif
+                                                    </span>
+                                                @else
+                                                    <a href="#_" data-toggle="modal" data-target="#modal-{{ $item->id }}">
+                                                        @if ($item->description == 'created')
+                                                            <i class="align-middle font-weight-bolder material-icons text-md">add</i>
+                                                        @else
+                                                            <i class="align-middle font-weight-bolder material-icons text-md">edit</i>
+                                                        @endif
+                                                    </a>
+                                                @endif
                                                 <div class="modal fade" id="modal-{{ $item->id }}" tabindex="-1" role="dialog" aria-hidden="true">
                                                     <div class="modal-dialog modal-lg" role="document">
                                                         <div class="modal-content">

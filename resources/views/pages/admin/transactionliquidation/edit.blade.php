@@ -3,6 +3,7 @@
 @section('title', 'Edit Liquidated '.strtoupper($transaction->trans_type))
 
 @section('content')
+    <?php $config_confidential = (Auth::user()->id != $transaction->owner_id && $transaction->is_confidential == 1); ?>
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -41,7 +42,13 @@
                 </table>
                 <div class="col-md-6">
                     <label for="" class="font-weight-bold">Purpose</label>
-                    <p>{{ $transaction->purpose }}</p>
+                    <p>
+                        @if ($config_confidential)
+                            -
+                        @else
+                            {{ $transaction->purpose }}
+                        @endif
+                    </p>
                 </div>
             </div>
             <form action="" method="post" enctype="multipart/form-data" id="pageForm" class="jsPreventMultiple">
@@ -58,7 +65,7 @@
                         </button>
                     </div>
                 @endif
-                <div class="jsReplicate jsMath mt-5">
+                <div class="jsReplicate jsMath mt-5 {{ $config_confidential ? 'd-none' : '' }}">
                     <h4 class="text-center">Items</h4>
                     <div class="table-responsive">
                         <table class="table bg-white" style="min-width: 1000px">
@@ -149,7 +156,7 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="7">
+                                    <td colspan="8">
                                         <div class="float-right">
                                             Total Amount: <span class="font-weight-bold jsMath_sum jsMath_alert">0</span> / <span class="font-weight-bold jsMath_validate">{{ number_format($transaction->amount_issued, 2, '.', ',') }}</span>
                                         </div>

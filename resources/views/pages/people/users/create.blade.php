@@ -33,27 +33,143 @@
                 </ul>
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active m-4" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                        <div class="form-group">
-                            <label for="">Full Name</label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required>
-                            @include('errors.inline', ['message' => $errors->first('name')])
+                        <h5 class="mb-4 text-right">Employment</h5>
+                        <div class="form-row">
+                            <div class="form-group col-lg-4">
+                                <label for="">Employee Number</label>
+                                <input type="text" class="form-control @error('e_emp_no') is-invalid @enderror" name="e_emp_no" value="{{ old('e_emp_no') }}">
+                                @include('errors.inline', ['message' => $errors->first('e_emp_no')])
+                            </div>
+                            <div class="form-group col-lg-8">
+                                <label for="">Employee Name</label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required>
+                                @include('errors.inline', ['message' => $errors->first('name')])
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <label for="">Hire Date</label>
+                                <input type="date" class="form-control @error('e_hire_date') is-invalid @enderror" name="e_hire_date" value="{{ old('e_hire_date') }}">
+                                @include('errors.inline', ['message' => $errors->first('e_hire_date')])
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <label for="">Employment Status</label>
+                                <select name="e_emp_status" class="form-control @error('e_emp_status') is-invalid @enderror">
+                                    @foreach (config('global.employment_status') as $status)
+                                        <option value="{{ $status }}" {{ old('e_emp_status') == $status ? 'selected' : '' }}>{{ $status }}</option>                                        
+                                    @endforeach
+                                </select>
+                                @include('errors.inline', ['message' => $errors->first('e_emp_status')])
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <label for="">Regularization Date</label>
+                                <input type="date" class="form-control @error('e_reg_date') is-invalid @enderror" name="e_reg_date" value="{{ old('e_reg_date') }}">
+                                @include('errors.inline', ['message' => $errors->first('e_reg_date')])
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label for="">Position / Title</label>
+                                <input type="text" class="form-control @error('e_position') is-invalid @enderror" name="e_position" value="{{ old('e_position') }}">
+                                @include('errors.inline', ['message' => $errors->first('e_position')])
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label for="">Rank</label>
+                                <input type="text" class="form-control @error('e_rank') is-invalid @enderror" name="e_rank" value="{{ old('e_rank') }}">
+                                @include('errors.inline', ['message' => $errors->first('e_rank')])
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label for="">Department</label>
+                                <input type="text" class="form-control @error('e_department') is-invalid @enderror" name="e_department" value="{{ old('e_department') }}">
+                                @include('errors.inline', ['message' => $errors->first('e_department')])
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label for="">Payroll Account Number</label>
+                                <input type="text" class="form-control @error('e_payroll') is-invalid @enderror" name="e_payroll" value="{{ old('e_payroll') }}">
+                                @include('errors.inline', ['message' => $errors->first('e_payroll')])
+                            </div>
                         </div>
-                        {{-- <div class="form-row">
+                        <hr class="mb-4">
+
+                        <h5 class="mb-4 text-right">Personal</h5>
+                        <div class="form-row">
                             <div class="form-group col-lg-4">
                                 <label for="">Date of Birth</label>
-                                <input type="date" class="form-control @error('e_dob') is-invalid @enderror" name="name" value="{{ old('e_dob') }}" required>
+                                <input type="date" class="form-control @error('e_dob') is-invalid @enderror" name="e_dob" value="{{ old('e_dob') }}">
                                 @include('errors.inline', ['message' => $errors->first('e_dob')])
                             </div>
                             <div class="form-group col-lg-4">
                                 <label for="">Gender</label>
-                                <input type="date" class="form-control @error('e_dob') is-invalid @enderror" name="name" value="{{ old('e_dob') }}" required>
-                                @include('errors.inline', ['message' => $errors->first('e_dob')])
+                                <select name="e_gender" class="form-control @error('e_gender') is-invalid @enderror">
+                                    @foreach (config('global.gender') as $gender)
+                                        <option value="{{ $gender }}" {{ old('e_gender') == $gender ? 'selected' : '' }}>{{ $gender }}</option>                                        
+                                    @endforeach
+                                </select>
+                                @include('errors.inline', ['message' => $errors->first('e_gender')])
                             </div>
-                        </div> --}}
+                            <div class="form-group col-lg-4">
+                                <label for="">Civil Status</label>
+                                <select name="e_civil" class="form-control @error('e_civil') is-invalid @enderror">
+                                    @foreach (config('global.civil_status') as $status)
+                                        <option value="{{ $status }}" {{ old('e_civil') == $status ? 'selected' : '' }}>{{ $status }}</option>                                        
+                                    @endforeach
+                                </select>
+                                @include('errors.inline', ['message' => $errors->first('e_civil')])
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="">Mailing Address</label>
+                                <input type="text" class="form-control @error('e_mail_address') is-invalid @enderror" name="e_mail_address" value="{{ old('e_mail_address') }}">
+                                @include('errors.inline', ['message' => $errors->first('e_mail_address')])
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label for="">Contact Number</label>
+                                <input type="text" class="form-control @error('e_contact') is-invalid @enderror" name="e_contact" value="{{ old('e_contact') }}">
+                                @include('errors.inline', ['message' => $errors->first('e_contact')])
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label for="">Personal Email</label>
+                                <input type="email" class="form-control @error('e_email') is-invalid @enderror" name="e_email" value="{{ old('e_email') }}">
+                                @include('errors.inline', ['message' => $errors->first('e_email')])
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label for="">Emergency Contact Person</label>
+                                <input type="text" class="form-control @error('e_emergency_name') is-invalid @enderror" name="e_emergency_name" value="{{ old('e_emergency_name') }}">
+                                @include('errors.inline', ['message' => $errors->first('e_emergency_name')])
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label for="">Emergency Contact Number</label>
+                                <input type="text" class="form-control @error('e_emergency_contact') is-invalid @enderror" name="e_emergency_contact" value="{{ old('e_emergency_contact') }}">
+                                @include('errors.inline', ['message' => $errors->first('e_emergency_contact')])
+                            </div>
+                        </div>
+
+                        <hr class="mb-4">
+
+                        <h5 class="mb-4 text-right">Government</h5>
+                        <div class="form-row">
+                            <div class="form-group col-lg-3">
+                                <label for="">TIN</label>
+                                <input type="text" class="form-control @error('e_tin') is-invalid @enderror" name="e_tin" value="{{ old('e_tin') }}">
+                                @include('errors.inline', ['message' => $errors->first('e_tin')])
+                            </div>
+                            <div class="form-group col-lg-3">
+                                <label for="">SSS</label>
+                                <input type="text" class="form-control @error('e_sss') is-invalid @enderror" name="e_sss" value="{{ old('e_sss') }}">
+                                @include('errors.inline', ['message' => $errors->first('e_sss')])
+                            </div>
+                            <div class="form-group col-lg-3">
+                                <label for="">PHIC</label>
+                                <input type="text" class="form-control @error('e_phic') is-invalid @enderror" name="e_phic" value="{{ old('e_phic') }}">
+                                @include('errors.inline', ['message' => $errors->first('e_phic')])
+                            </div>
+                            <div class="form-group col-lg-3">
+                                <label for="">HMDF</label>
+                                <input type="text" class="form-control @error('e_hmdf') is-invalid @enderror" name="e_hmdf" value="{{ old('e_hmdf') }}">
+                                @include('errors.inline', ['message' => $errors->first('e_hmdf')])
+                            </div>                            
+                        </div>
                     </div>
+
+
                     <div class="tab-pane fade m-4" id="account" role="tabpanel" aria-labelledby="account-tab">
                         <div class="form-group">
-                            <label for="">Email Address</label>
+                            <label for="">Account Email</label>
                             <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required>
                             @include('errors.inline', ['message' => $errors->first('email')])
                         </div>
@@ -72,6 +188,9 @@
                             <input type="password" class="form-control" name="password_confirmation" required>
                         </div>
                     </div>
+
+
+
                     <div class="tab-pane fade m-4" id="sequence" role="tabpanel" aria-labelledby="sequence-tab">
                         <div class="form-group mb-3">
                             <label for="">Role</label>
@@ -112,9 +231,12 @@
                             </div>
                         </div>
                     </div>
+
+
+
                     <div class="tab-pane fade m-4" id="leaves" role="tabpanel" aria-labelledby="leaves-tab">...</div>
                 </div>    
-                <div class="m-4">
+                <div class="m-4 pb-5">
                     <a href="/user">Cancel</a>
                     <input type="submit" class="btn btn-primary float-right" value="Save">
                 </div>

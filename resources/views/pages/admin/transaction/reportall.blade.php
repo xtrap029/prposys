@@ -421,6 +421,7 @@
                             @endforeach
                         </tr>
                         @foreach ($transactions as $item)
+                            <?php $config_confidential = (Auth::user()->id != $item->owner_id && $item->is_confidential == 1); ?>
                             <tr>
                                 @foreach ($report_template->templatecolumn as $item_2)
                                     <td>{{ eval($item_2->column->code) }}</td>
@@ -428,40 +429,6 @@
                             </tr>
                         @endforeach
                     </table>
-                    {{-- <table class="table mb-0 small table-sm table-striped">
-                        <tr class="bg-gray font-weight-bold">
-                            <td style="min-width: 75px;">PO/PR #</td>
-                            <td>Company</td>
-                            <td>Project</td>
-                            <td>Purpose</td>
-                            <td>Currency</td>
-                            <td>Amount</td>
-                            <td>Date Gen.</td>
-                            <td>Trans. #</td>
-                            <td>Last Updated</td>
-                            <td>Req. By</td>
-                            <td>Status</td>
-                        </tr>
-                        @foreach ($transactions as $item)
-                            <tr>
-                                <td class="text-nowrap">
-                                    <h6 class="font-weight-bold">
-                                        {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
-                                    </h6>
-                                </td>
-                                <td class="text-nowrap">{{ $item->project->company->name }}</td>
-                                <td class="text-nowrap">{{ $item->project->project }}</td>
-                                <td>{{ $item->purpose }}</td>
-                                <td>{{ $item->currency }}</td>
-                                <td>{{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}</td>
-                                <td class="text-nowrap">{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
-                                <td style="word-break: break-all;">{{ $item->control_no }}</td>
-                                <td class="text-nowrap">{{ Carbon::parse($item->updated_at)->format('Y-m-d') }}</td>
-                                <td class="text-nowrap">{{ $item->requested->name }}</td>
-                                <td class="text-nowrap">{{ $item->status->name }}</td>
-                            </tr>
-                        @endforeach
-                    </table> --}}
                 </div>
             </div>
         </div>

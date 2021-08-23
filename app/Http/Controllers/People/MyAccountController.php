@@ -26,7 +26,7 @@ class MyAccountController extends Controller {
 
     public function update(Request $request) {
         $validation_rules = [
-            'company_id' =>  ['required', 'exists:companies,id'],
+            // 'company_id' =>  ['required', 'exists:companies,id'],
             'avatar' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
         ];
 

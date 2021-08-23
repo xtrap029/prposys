@@ -3,6 +3,7 @@
 @section('title', 'Print Form')
 
 @section('content')
+    <?php $config_confidential = (Auth::user()->id != $transaction->owner_id && $transaction->is_confidential == 1); ?>
     <section class="content">
         <div class="container-fluid">
             <div class="float-right">Date Generated: <b>{{ Carbon\Carbon::now() }}</b></div>
@@ -61,7 +62,13 @@
                             <table class="table table-sm">
                                 <tr>
                                     <td class="font-weight-bold">Purpose</td>
-                                    <td>{{ $transaction->purpose }}</td>
+                                    <td>
+                                        @if ($config_confidential)
+                                            -
+                                        @else
+                                            {{ $transaction->purpose }}
+                                        @endif
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold">Vendor</td>
@@ -108,20 +115,36 @@
                                 <table class="table table-sm">
                                     <tr>
                                         <td class="font-weight-bold">Service Charge</td>
-                                        <td>{{ number_format($transaction->form_service_charge, 2, '.', ',') }}</td>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ number_format($transaction->form_service_charge, 2, '.', ',') }}
+                                            @endif
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold">Amount / FX Rate</td>
                                         <td>
-                                            {{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}
-                                            <span class="small px-2 vlign--top">x</span>
-                                            {{ number_format($transaction->currency_2_rate, 2, '.', ',') }}
-                                            ({{ $transaction->currency_2 }})
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}
+                                                <span class="small px-2 vlign--top">x</span>
+                                                {{ number_format($transaction->currency_2_rate, 2, '.', ',') }}
+                                                ({{ $transaction->currency_2 }})
+                                            @endif
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold">Transferred Amount</td>
-                                        <td>{{ $transaction->currency_2 ?: $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $transaction->currency_2 ?: $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}
+                                            @endif
+                                        </td>
                                     </tr>
                                 </table>
                             </div>
@@ -129,7 +152,7 @@
                     @endif
                 </div>
             </div>
-            <div class="row row--print">                
+            <div class="row row--print {{ $config_confidential ? 'd-none' : '' }}">                
                 <div class="col-12">
                     @if (!$transaction->is_reimbursement)
                         <table class="table table-sm">

@@ -3,6 +3,7 @@
 @section('title', 'Edit '.strtoupper($transaction->trans_type))
 
 @section('content')
+    <?php $config_confidential = (Auth::user()->id != $transaction->owner_id && $transaction->is_confidential == 1); ?>
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -50,18 +51,18 @@
                     </div>
                     <div class="col-4 col-sm-2 col-lg-1 mb-2">
                         <label for="">Currency</label>
-                        <input type="text" class="form-control" value="{{ $transaction->currency }}" readonly>
+                        <input type="text" class="form-control {{ $config_confidential ? 'd-none' : '' }}" value="{{ $transaction->currency }}" readonly>
                     </div>
                     <div class="col-8 col-sm-5 col-lg-4 mb-2">
                         <label for="">Amount</label>
-                        <input type="number" class="form-control @error('amount') is-invalid @enderror" step="0.01" name="amount" value="{{ $transaction->amount }}" required>
+                        <input type="number" class="form-control @error('amount') is-invalid @enderror {{ $config_confidential ? 'd-none' : '' }}" step="0.01" name="amount" value="{{ $transaction->amount }}" required>
                         @include('errors.inline', ['message' => $errors->first('amount')])
                     </div>
                 </div>
                 <div class="form-row mb-3">
                     <div class="col-sm-6 col-lg-8 mb-2">
                         <label for="">Purpose</label>
-                        <textarea name="purpose" rows="1" class="form-control @error('purpose') is-invalid @enderror" required>{{ $transaction->purpose }}</textarea>
+                        <textarea name="purpose" rows="1" class="form-control @error('purpose') is-invalid @enderror {{ $config_confidential ? 'd-none' : '' }}" required>{{ $transaction->purpose }}</textarea>
                         @include('errors.inline', ['message' => $errors->first('purpose')])
                     </div>
                     <div class="col-sm-6 col-lg-4 mb-2">

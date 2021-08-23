@@ -95,7 +95,14 @@
                             <option value="-1" {{ app('request')->input('bal') == '-1' ? 'selected' : '' }}>( - ) Return Money</option>
                         </select>
                     </div>
-                    <div class="mb-2 col-md-4 col-xl-8">
+                    <div class="mb-2 col-md-4 col-xl-2 {{ Auth::user()->is_smt ? '' : 'd-none' }}">
+                        <select name="is_confidential" class="form-control filterSearch_select">
+                            <option value="">All Visibility</option>
+                            <option value="0" {{ app('request')->input('is_confidential') == '0' ? 'selected' : '' }}>Not Confidential</option>
+                            <option value="1" {{ app('request')->input('is_confidential') == '1' ? 'selected' : '' }}>Confidential</option>
+                        </select>
+                    </div>
+                    <div class="mb-2 col-md-4 {{ Auth::user()->is_smt ? 'col-xl-6' : 'col-xl-8' }}">
                         <input type="text" class="form-control filterSearch_input" name="s" value="{{ app('request')->input('s') }}" autocomplete="off" placeholder="keyword here...">
                         <div class="d-none d-md-block position-relative">
                             <div class="card card-search bg-secondary font-weight-normal filterSearch_result" style="display: none">
@@ -137,58 +144,58 @@
                         </thead>
                         <tbody>
                             @forelse ($transactions as $item)
+                                <?php $config_confidential = (Auth::user()->id != $item->owner_id && $item->is_confidential == 1); ?>
                                 <tr>
                                     <td class="text-nowrap">
-                                        <a href="/{{ $item->url_view }}/view/{{ $item->id }}?page={{ $transactions->currentPage() }}">
-                                            {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
-                                        </a>
+                                        <div>
+                                            <a href="/{{ $item->url_view }}/view/{{ $item->id }}?page={{ $transactions->currentPage() }}">
+                                                {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                            </a>
+                                        </div>
+                                        @if (Auth::user()->is_smt)
+                                            <a href="/transaction/toggle-visibility/{{ $item->id }}" class="mr-1" onclick="return confirm('Toggle visibility?');">
+                                                @if ($item->is_confidential == 0)
+                                                    <i class="material-icons font-weight-bold text-xl text-gray vlign--middle" title="Visible">toggle_off</i>
+                                                @else
+                                                    <i class="material-icons font-weight-bold text-xl text-danger vlign--middle" title="Hidden">toggle_on</i>
+                                                @endif
+                                            </a>                                            
+                                        @endif
+                                        @if ($item->is_deposit) <span class="badge badge-pill py-1 px-2 mt-2 small bg-green">Deposit Transaction</span>
+                                        @elseif ($item->is_bills) <span class="badge badge-pill py-1 px-2 mt-2 small bg-blue">Bills Payment</span>
+                                        @elseif ($item->is_hr) <span class="badge badge-pill py-1 px-2 mt-2 small bg-violet">Human Resource</span>
+                                        @elseif ($item->is_reimbursement) <span class="badge badge-pill py-1 px-2 mt-2 small bg-pink">Reimbursement</span>
+                                        @elseif ($item->is_bank) <span class="badge badge-pill py-1 px-2 mt-2 small bg-purple">Fund Transfer</span>
+                                        @else <span class="badge badge-pill py-1 px-2 mt-2 small bg-yellow">Regular Transaction</span>
+                                        @endif
                                     </td>
                                     <td>{{ $item->payee }}</td>
-                                    <td>{{ $item->purpose }}</td>
-                                    <td class="text-center">{{ $item->currency }}</td>
-                                    <td class="text-right text-nowrap">{{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}</td>
+                                    <td>
+                                        @if ($config_confidential)
+                                            -
+                                        @else
+                                            {{ $item->purpose }}
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if ($config_confidential)
+                                            -
+                                        @else
+                                            {{ $item->currency }}
+                                        @endif
+                                    </td>
+                                    <td class="text-right text-nowrap">
+                                        @if ($config_confidential)
+                                            -
+                                        @else
+                                            {{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}
+                                        @endif                                        
+                                    </td>
                                     <td class="text-nowrap">{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
                                     <td class="break-word">{{ $item->control_no }}</td>
                                     <td class="text-nowrap">{{ Carbon::parse($item->released_at)->format('Y-m-d') }}</td>
                                     <td class="text-nowrap">{{ $item->requested->name }}</td>
                                     <td class="text-nowrap">{{ $item->status->name }}</td>
-                                    {{-- <td> --}}
-                                        {{-- <div class="dropdown show dropleft">
-                                            <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <i class="material-icons text-lg">apps</i>
-                                            </a>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                                <a class="dropdown-item" href="/{{ $item->url_view }}/view/{{ $item->id }}">View</a>  
-                                                <a class="dropdown-item {{ $item->can_edit ? '' : 'd-none' }}" href="/transaction/edit/{{ $item->id }}">Edit</a>  
-                                                <a class="dropdown-item {{ $item->can_cancel ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-cancel-{{ $item->id }}" href="#_">Cancel</a>  
-                                                <div class="dropdown-divider {{ $item->can_reset ? '' : 'd-none' }}"></div>
-                                                <a class="dropdown-item {{ $item->can_reset ? '' : 'd-none' }}" href="/transaction/reset/{{ $item->id }}" onclick="return confirm('Are you sure?')">Renew Edit Limit</a>
-                                            </div>
-                                        </div> --}}
-
-                                        @if ($item->can_cancel)
-                                            {{-- <div class="modal fade" id="modal-cancel-{{ $item->id }}" tabindex="-1" role="dialog" aria-hidden="true">
-                                                <div class="modal-dialog modal-md" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header border-0">
-                                                            <h5 class="modal-title">{{ __('messages.cancel_prompt') }}</h5>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body text-center">
-                                                            <form action="/transaction/cancel/{{ $item->id }}" method="post">
-                                                                @csrf
-                                                                @method('put')
-                                                                <textarea name="cancellation_reason" class="form-control @error('cancellation_reason') is-invalid @enderror" rows="3" placeholder="Cancellation Reason" required></textarea>
-                                                                <input type="submit" class="btn btn-danger mt-2" value="Cancel Now">
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div> --}}
-                                        @endif
-                                    {{-- </td> --}}
                                 </tr>
                             @empty
                                 <tr>
@@ -230,6 +237,7 @@
             function apiSearch() {
                 if ($(cls+'_input').val() != ''                                
                     || $('[name=s]').val() != ''
+                    || $('[name=is_confidential]').val() != ''
                     || $('[name=type]').val() != ''
                     || $('[name=category]').val() != ''
                     || $('[name=status]').val() != ''
@@ -249,6 +257,7 @@
                             'trans_page': '{{ $trans_page }}',
                             'trans_company': '{{ $company->id }}',
                             's': $('[name=s]').val(),
+                            'is_confidential': $('[name=is_confidential]').val(),
                             'type': $('[name=type]').val(),
                             'category': $('[name=category]').val(),
                             'status': $('[name=status]').val(),
@@ -277,13 +286,15 @@
                                 )
                                 
                                 $.each(result, function(i, item) {
+                                    config_confidential = "{{ Auth::user()->id }}" != item.owner_id && item.is_confidential
+
                                     $(cls+'_data table').append('<tr class="bg-transparent border-0">'
                                         + '<td class="border-0 py-1"><a href="/'+item.url_view+'/view/'+item.id+'" class="text-info font-weight-bold" target="_blank">'
                                             + item.trans_type+'-'+item.trans_year+'-'+item.trans_seq
                                         + '</a></td>'
                                         + '<td class="border-0 py-1">'+item.payee+'</td>'
-                                        + '<td class="border-0 py-1 text-right">'+item.currency+'</td>'
-                                        + '<td class="border-0 py-1 text-right">'+item.amount+'</td>'
+                                        + '<td class="border-0 py-1 text-right">'+(config_confidential ? "-" : item.currency)+'</td>'
+                                        + '<td class="border-0 py-1 text-right">'+(config_confidential ? "-" : item.amount)+'</td>'
                                         + '<td class="border-0 py-1">'+item.created+'</td>'
                                         + '<td class="border-0 py-1">'+item.released+'</td>'
                                         + '<td class="border-0 py-1">'+item.requested_by+'</td>'

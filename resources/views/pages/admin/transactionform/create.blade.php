@@ -3,6 +3,7 @@
 @section('title', $page_title)
 
 @section('content')
+    <?php $config_confidential = (Auth::user()->id != $transaction->owner_id && $transaction->is_confidential == 1); ?>
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -49,7 +50,13 @@
                             <td class="text-nowrap">{{ $transaction->project->project }}</td>
                             <td class="text-nowrap">{{ $transaction->due_at }}</td>
                             <td class="text-nowrap">{{ $transaction->payee }}</td>
-                            <td class="text-nowrap text-right">{{ $transaction->currency." ".number_format($transaction->amount, 2, '.', ',') }}</td>
+                            <td class="text-nowrap text-right">
+                                @if ($config_confidential)
+                                    -
+                                @else
+                                    {{ $transaction->currency." ".number_format($transaction->amount, 2, '.', ',') }}
+                                @endif
+                            </td>
                         </tr>
                     </tbody>
                 </table>

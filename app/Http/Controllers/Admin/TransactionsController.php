@@ -59,6 +59,7 @@ class TransactionsController extends Controller {
         }
 
         if (!empty($_GET['s'])
+            || !empty($_GET['is_confidential'])
             || !empty($_GET['type'])
             || !empty($_GET['category'])
             || !empty($_GET['status'])
@@ -114,6 +115,7 @@ class TransactionsController extends Controller {
             if ($_GET['status'] != "") $transactions = $transactions->whereIn('status_id', explode(',', $_GET['status']));
             if ($_GET['user_req'] != "") $transactions = $transactions->where('requested_id', $_GET['user_req']);
             if ($_GET['user_prep'] != "") $transactions = $transactions->where('owner_id', $_GET['user_prep']);
+            if ($_GET['is_confidential'] != "") $transactions = $transactions->where('is_confidential', $_GET['is_confidential']);
 
             if ($_GET['category'] != "") {
                 if ($_GET['category'] == 'is_reg') {
@@ -150,6 +152,7 @@ class TransactionsController extends Controller {
             $transactions->appends(['user_req' => $_GET['user_req']]);
             $transactions->appends(['user_prep' => $_GET['user_prep']]);
             $transactions->appends(['bal' => $_GET['bal']]);
+            $transactions->appends(['is_confidential' => $_GET['is_confidential']]);
         } else {
             $transactions = $transactions->whereIn('trans_type', $trans_types)
                                     ->whereIn('status_id', config('global.status'))
@@ -261,6 +264,7 @@ class TransactionsController extends Controller {
         if ($request->status != "") $transactions = $transactions->whereIn('status_id', explode(',', $request->status));
         if ($request->user_req != "") $transactions = $transactions->where('requested_id', $request->user_req);
         if ($request->user_prep != "") $transactions = $transactions->where('owner_id', $request->user_prep);
+        if ($request->is_confidential != "") $transactions = $transactions->where('is_confidential', $request->is_confidential);
 
         if ($request->category != "") {
             if ($request->category == 'is_reg') {
@@ -718,6 +722,18 @@ class TransactionsController extends Controller {
         }
     }
 
+    public function toggle_confidential($id) {
+        if (User::where('id', auth()->id())->first()->is_smt) {
+            $is_confidential = Transaction::where('id', $id)->first()->is_confidential;
+            $transaction = Transaction::where('id', $id)->first();
+            $transaction->is_confidential = $is_confidential == 1 ? 0 : 1;
+            $transaction->save();
+            return back()->with('success', 'Transaction'.__('messages.edit_success'));            
+        } else {
+            return back()->with('error', __('messages.invalid_command'));
+        }
+    }
+
     public function report() {
         switch ($_GET['type']) {
             case 'pr':
@@ -1035,6 +1051,7 @@ class TransactionsController extends Controller {
                 fputcsv($file, $columns);
 
                 foreach ($transactions as $item) {
+                    $config_confidential = (Auth::user()->id != $item->owner_id && $item->is_confidential == 1);
                     $row = [];
                     foreach ($temp_column as $key => $value) {
                         $row[] = eval($value->column->code);
@@ -1059,8 +1076,6 @@ class TransactionsController extends Controller {
                 'banks' => $banks,
                 'vat_types' => $vat_types,
                 'particulars' => $particulars,
-                // 'status' => $status,
-                // 'status_sel' => $status_sel,
                 'transactions' => $transactions,
                 'trans_type' => $trans_type,
                 'trans_company' => $trans_company,

@@ -16,7 +16,35 @@ class User extends Authenticatable {
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'role_id', 'avatar', 'company_id', 'LIMIT_UNLIQUIDATEDPR_AMOUNT', 'LIMIT_UNLIQUIDATEDPR_COUNT',
+        'name',
+        'email',
+        'password',
+        'role_id',
+        'avatar',
+        'company_id',
+        'is_smt',
+        'LIMIT_UNLIQUIDATEDPR_AMOUNT',
+        'LIMIT_UNLIQUIDATEDPR_COUNT',
+        'e_emp_no',
+        'e_hire_date',
+        'e_emp_status',
+        'e_reg_date',
+        'e_position',
+        'e_rank',
+        'e_department',
+        'e_payroll',
+        'e_dob',
+        'e_gender',
+        'e_civil',
+        'e_mail_address',
+        'e_contact',
+        'e_email',
+        'e_emergency_name',
+        'e_emergency_contact',
+        'e_tin',
+        'e_sss',
+        'e_phic',
+        'e_hmdf',
     ];
 
     /**
@@ -38,7 +66,36 @@ class User extends Authenticatable {
     ];
 
     use LogsActivity;
-    protected static $logAttributes = ['name', 'email', 'avatar', 'role.name', 'company.name', 'LIMIT_UNLIQUIDATEDPR_AMOUNT', 'LIMIT_UNLIQUIDATEDPR_COUNT'];
+    protected static $logAttributes = [
+        'name',
+        'email',
+        'avatar',
+        'role.name',
+        'company.name',
+        'is_smt',
+        'LIMIT_UNLIQUIDATEDPR_AMOUNT',
+        'LIMIT_UNLIQUIDATEDPR_COUNT',
+        'e_emp_no',
+        'e_hire_date',
+        'e_emp_status',
+        'e_reg_date',
+        'e_position',
+        'e_rank',
+        'e_department',
+        'e_payroll',
+        'e_dob',
+        'e_gender',
+        'e_civil',
+        'e_mail_address',
+        'e_contact',
+        'e_email',
+        'e_emergency_name',
+        'e_emergency_contact',
+        'e_tin',
+        'e_sss',
+        'e_phic',
+        'e_hmdf',
+    ];
     protected static $logName = 'User';
     protected static $logOnlyDirty = true;
 

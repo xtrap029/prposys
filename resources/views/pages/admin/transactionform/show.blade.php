@@ -4,6 +4,7 @@
 @section('nav_class', 'navbar-dark')
 
 @section('content')
+    <?php $config_confidential = (Auth::user()->id != $transaction->owner_id && $transaction->is_confidential == 1); ?>
     <section class="content-header bg-dark">
         <div class="container-fluid">
             <div class="row"> 
@@ -188,8 +189,8 @@
                                                 @include('errors.inline', ['message' => $errors->first('released_at')])
                                             </div>
     
-                                            <div class="col-12 mt-4 {{ $transaction->is_bank ? '' : 'd-none' }}"></div>
-                                            <div class="col-md-5 mb-2 {{ $transaction->is_bank ? '' : 'd-none' }}">
+                                            <div class="col-12 mt-4 {{ $transaction->is_bank ? '' : 'd-none' }} {{ $config_confidential ? 'd-none' : '' }}"></div>
+                                            <div class="col-md-5 mb-2 {{ $transaction->is_bank ? '' : 'd-none' }} {{ $config_confidential ? 'd-none' : '' }}">
                                                 <label for="" class="font-weight-bold text-center d-block">Amount</label>
                                                 <div class="row">
                                                     <div class="col-4 pt-2 font-weight-bold">{{ $transaction->currency }}</div>
@@ -197,7 +198,7 @@
                                                 </div>
                                                 @include('errors.inline', ['message' => $errors->first('amount')])
                                             </div>
-                                            <div class="col-md-4 mb-2 {{ $transaction->is_bank ? '' : 'd-none' }}">
+                                            <div class="col-md-4 mb-2 {{ $transaction->is_bank ? '' : 'd-none' }} {{ $config_confidential ? 'd-none' : '' }}">
                                                 <label for="" class="font-weight-bold d-block text-center">Currency</label>
                                                 <div class="row">
                                                     <div class="col-3 font-weight-bold">x</div>
@@ -211,7 +212,7 @@
                                                 </div>                                                
                                                 @include('errors.inline', ['message' => $errors->first('currency_2')])
                                             </div>
-                                            <div class="col-md-3 mb-2 {{ $transaction->is_bank ? '' : 'd-none' }}">
+                                            <div class="col-md-3 mb-2 {{ $transaction->is_bank ? '' : 'd-none' }} {{ $config_confidential ? 'd-none' : '' }}">
                                                 <label for="" class="font-weight-bold">FX Rate</label>
                                                 <input type="number" id="currencyFx" class="form-control @error('currency_2_rate') is-invalid @enderror" step="0.000001" name="currency_2_rate" value="1" readonly required>
                                                 @include('errors.inline', ['message' => $errors->first('currency_2_rate')])
@@ -224,19 +225,19 @@
                                                         {{ $transaction->currency }}
                                                     </div>
                                                 @endif
-                                                <div class="{{ $transaction->is_deposit || $transaction->is_reimbursement ? 'col-md-6' : 'col-md-7' }} mb-2">
+                                                <div class="{{ $transaction->is_deposit || $transaction->is_reimbursement ? 'col-md-6' : 'col-md-7' }} mb-2 {{ $config_confidential ? 'd-none' : '' }}">
                                                     <label for="" class="font-weight-bold">Amount</label>
                                                     <input type="number" class="form-control @error('amount_issued') is-invalid @enderror" name="amount_issued" step="0.01" value="{{ $transaction->amount }}" required>
                                                     @include('errors.inline', ['message' => $errors->first('amount_issued')])
                                                 </div>
                                             @else
-                                                <div class="col-12 my-2 row">
+                                                <div class="col-12 my-2 row {{ $config_confidential ? 'd-none' : '' }}">
                                                     <div class="col-6 font-weight-bold">Total Amount Transferred:</div>
                                                     <input type="text" id="currencyAmount" name="amount_issued" value="{{ $transaction->amount }}" class="border-0 col-6 pr-0 text-right outline-0" readonly>
                                                 </div>
                                                 <div class="col-12 mb-4"></div>
                                             @endif
-                                            <div class="col-md-12 mb-2 {{ $transaction->is_bank ? '' : 'd-none' }}">
+                                            <div class="col-md-12 mb-2 {{ $transaction->is_bank ? '' : 'd-none' }} {{ $config_confidential ? 'd-none' : '' }}">
                                                 <label for="" class="font-weight-bold">Service Charge</label>
                                                 <input type="number" class="form-control @error('form_service_charge') is-invalid @enderror" step="0.01" name="form_service_charge" value="0" required>
                                                 @include('errors.inline', ['message' => $errors->first('form_service_charge')])
@@ -402,7 +403,13 @@
                                     <tr>
                                         <td colspan="2">
                                             <span class="font-weight-bold text-gray">Purpose</span>
-                                            <p class="mb-0">{{ $transaction->purpose }}</p>
+                                            <p class="mb-0">
+                                                @if ($config_confidential)
+                                                    -
+                                                @else
+                                                    {{ $transaction->purpose }}
+                                                @endif
+                                            </p>
                                         </td>
                                     </tr>
                                 </table>
@@ -417,7 +424,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-7">                        
+                <div class="col-lg-7 {{ $config_confidential ? 'd-none' : '' }}">                        
                     <div class="card">
                         <div class="card-body table-responsive">
                             @if (!$transaction->is_reimbursement)
@@ -441,12 +448,6 @@
                                                 <td class="text-right">{{ number_format($item_desc->amount * $item_desc->qty, 2, '.', ',') }}</td>
                                             </tr>
                                         @endforeach
-                                        {{-- <tr class="border-bottom-2">
-                                            <td>1</td>
-                                            <td>{{ $transaction->expense_type_description }}</td>
-                                            <td class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_unit && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_unit : $transaction->amount, 2, '.', ',') }}</td>
-                                            <td class="text-right">{{ $transaction->currency }} {{ number_format($transaction->form_amount_unit && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_unit : $transaction->amount, 2, '.', ',') }}</td>
-                                        </tr> --}}
                                         <tr class="font-weight-bold">
                                             <td colspan="3" class="text-right">
                                                 {{ $transaction->form_amount_vat && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_vat : $transaction->vattype->vat 
@@ -538,7 +539,7 @@
                                         <td class="font-weight-bold">{{ $transaction->releasedby->name }}</td>
                                     </tr>                    
                                     @if ($transaction->is_bank)        
-                                        <tr>
+                                        <tr class="{{ $config_confidential ? 'd-none' : '' }}">
                                             <td class="font-weight-bold text-gray">Amount / FX Rate</td>
                                             <td class="font-weight-bold">
                                                 {{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}
@@ -548,7 +549,7 @@
                                             </td>
                                         </tr>  
                                     @endif   
-                                    <tr>
+                                    <tr class="{{ $config_confidential ? 'd-none' : '' }}">
                                         <td class="font-weight-bold text-gray">{{ $transaction->is_bank ? 'Transferred ' : '' }}Amount</td>
                                         <td class="font-weight-bold">{{ $transaction->currency_2 ?: $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
                                     </tr>  
@@ -559,7 +560,7 @@
                                         </tr>
                                     @endif
                                     @if ($transaction->form_service_charge && $transaction->form_service_charge > 0)
-                                        <tr>
+                                        <tr class="{{ $config_confidential ? 'd-none' : '' }}">
                                             <td class="font-weight-bold text-gray">Service Charge</td>
                                             <td class="font-weight-bold">{{ number_format($transaction->form_service_charge, 2, '.', ',') }}</td>
                                         </tr>
@@ -595,13 +596,23 @@
                                     @foreach ($logs as $item)
                                         <tr>
                                             <td>
-                                                <a href="#_" data-toggle="modal" data-target="#modal-{{ $item->id }}">
-                                                    @if ($item->description == 'created')
-                                                        <i class="align-middle font-weight-bolder material-icons text-md">add</i>
-                                                    @else
-                                                        <i class="align-middle font-weight-bolder material-icons text-md">edit</i>
-                                                    @endif
-                                                </a>
+                                                @if ($config_confidential)
+                                                    <span class="text-secondary">
+                                                        @if ($item->description == 'created')
+                                                            <i class="align-middle font-weight-bolder material-icons text-md">add</i>
+                                                        @else
+                                                            <i class="align-middle font-weight-bolder material-icons text-md">edit</i>
+                                                        @endif
+                                                    </span>
+                                                @else
+                                                    <a href="#_" data-toggle="modal" data-target="#modal-{{ $item->id }}">
+                                                        @if ($item->description == 'created')
+                                                            <i class="align-middle font-weight-bolder material-icons text-md">add</i>
+                                                        @else
+                                                            <i class="align-middle font-weight-bolder material-icons text-md">edit</i>
+                                                        @endif
+                                                    </a>
+                                                @endif
                                                 <div class="modal fade" id="modal-{{ $item->id }}" tabindex="-1" role="dialog" aria-hidden="true">
                                                     <div class="modal-dialog modal-lg" role="document">
                                                         <div class="modal-content">

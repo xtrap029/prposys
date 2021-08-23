@@ -3,6 +3,7 @@
 @section('title', 'Print Liquidation')
 
 @section('content')
+    <?php $config_confidential = (Auth::user()->id != $transaction->owner_id && $transaction->is_confidential == 1); ?>
     <section class="content">
         <div class="container-fluid">
             <div class="float-right">Date Generated: <b>{{ Carbon\Carbon::now() }}</b></div>
@@ -85,7 +86,13 @@
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold">Purpose</td>
-                                    <td>{{ $transaction->purpose }}</td>
+                                    <td>
+                                        @if ($config_confidential)
+                                            -
+                                        @else
+                                            {{ $transaction->purpose }}
+                                        @endif
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold">Due Date</td>
@@ -144,23 +151,39 @@
                                 @if ($transaction->form_service_charge && $transaction->form_service_charge > 0)
                                     <tr>
                                         <td class="font-weight-bold">Service Charge</td>
-                                        <td>{{ number_format($transaction->form_service_charge, 2, '.', ',') }}</td>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ number_format($transaction->form_service_charge, 2, '.', ',') }}
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endif
                                 @if ($transaction->is_bank)
                                     <tr>
                                         <td class="font-weight-bold">Amount / FX Rate</td>
                                         <td>
-                                            {{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}
-                                            <span class="small px-2 vlign--top">x</span>
-                                            {{ number_format($transaction->currency_2_rate, 2, '.', ',') }}
-                                            ({{ $transaction->currency_2 }})
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}
+                                                <span class="small px-2 vlign--top">x</span>
+                                                {{ number_format($transaction->currency_2_rate, 2, '.', ',') }}
+                                                ({{ $transaction->currency_2 }})
+                                            @endif
                                         </td>
                                     </tr>
                                 @endif
                                 <tr>
                                     <td class="font-weight-bold">{{ $transaction->is_bank ? 'Transferred' : 'Released' }} Amount</td>
-                                    <td>{{ $transaction->currency_2 ?: $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}</td>
+                                    <td>
+                                        @if ($config_confidential)
+                                            -
+                                        @else
+                                            {{ $transaction->currency_2 ?: $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}
+                                        @endif
+                                    </td>
                                 </tr>
                             </table>
                         </div>
@@ -169,7 +192,7 @@
             </div>
             <div class="row row--print">
                 @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr && !$transaction->is_bank)
-                    <div class="col-12">
+                    <div class="col-12 {{ $config_confidential ? 'd-none' : '' }}">
                         <table class="table table-sm mb-0">
                             <tr class="font-weight-bold">
                                 <td>Pos.</td>
@@ -218,7 +241,7 @@
                     </div>
                 @endif
             </div>
-            <div class="row row--print">
+            <div class="row row--print {{ $config_confidential ? 'd-none' : '' }}">
                 <div class="col-12">
                     <table class="table table-sm">
                         <tr><td colspan="7" class="py-3"></td></tr>

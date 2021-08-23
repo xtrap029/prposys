@@ -3,6 +3,7 @@
 @section('title', 'Edit Form')
 
 @section('content')
+    <?php $config_confidential = (Auth::user()->id != $transaction->owner_id && $transaction->is_confidential == 1); ?>
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -47,7 +48,13 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="5">{{ $transaction->purpose }}</td>
+                            <td colspan="5">
+                                @if ($config_confidential)
+                                    -
+                                @else
+                                    {{ $transaction->purpose }}
+                                @endif
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -65,7 +72,7 @@
                         </select>
                         @include('errors.inline', ['message' => $errors->first('project_id')])
                     </div>
-                    <div class="col-md-1 mb-2">
+                    <div class="col-md-1 mb-2 {{ $config_confidential ? 'd-none' : '' }}">
                         <label for="">Currency</label>
                         <select name="currency" class="form-control @error('currency') is-invalid @enderror">
                             @foreach (config('global.currency') as $key => $item)
@@ -73,14 +80,14 @@
                             @endforeach 
                         </select>
                     </div>
-                    <div class="col-md-4 mb-2">
+                    <div class="col-md-4 mb-2 {{ $config_confidential ? 'd-none' : '' }}">
                         <label for="">Amount</label>
                         <input type="number" class="form-control jsMath_trigger jsMath_validate_source @error('amount') is-invalid @enderror" step="0.01" name="amount" value="{{ $transaction->amount }}" required>
                         @include('errors.inline', ['message' => $errors->first('amount')])
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="col-md-8 mb-2">
+                    <div class="col-md-8 mb-2 {{ $config_confidential ? 'd-none' : '' }}">
                         <label for="">Purpose</label>
                         <textarea name="purpose" rows="1" class="form-control @error('purpose') is-invalid @enderror" required>{{ $transaction->purpose }}</textarea>
                         @include('errors.inline', ['message' => $errors->first('purpose')])
@@ -132,7 +139,7 @@
                         @include('errors.inline', ['message' => $errors->first('coa_tagging_id')])
                     </div>
 
-                    <div class="col-md-12">
+                    <div class="col-md-12 {{ $config_confidential ? 'd-none' : '' }}">
                         <div class="jsReplicate jsMath mt-5">
                             <h4 class="text-center">Items</h4>
                             <div class="table-responsive">

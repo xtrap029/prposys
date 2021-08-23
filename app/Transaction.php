@@ -66,6 +66,7 @@ class Transaction extends Model {
                                         'is_hr',
                                         'is_reimbursement',
                                         'is_bank',
+                                        'is_confidential',
                                         'soa',
                                         ];
     protected static $logName = 'Transaction';

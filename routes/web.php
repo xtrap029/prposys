@@ -132,6 +132,7 @@ Route::middleware('auth')->group(function () {
             // Route::get('/report/', $url.'@report')->middleware('checkRole:1|2');
             Route::put('/edit-company/', $url.'@update_company')->name('transaction');
             Route::get('/report-all/', $url.'@report_all')->name('transactionreport');
+            Route::get('/toggle-visibility/{id}', $url.'@toggle_confidential')->name('transaction');
 
             Route::get('/{trans_page}/{trans_company?}', $url.'@index')->where('trans_company', '[0-9]+')->name('transaction');
 
