@@ -49,7 +49,7 @@ class DatabaseBackup extends Command
         $to_delete_files = DbBackup::latest()->take($count)->skip(15)->get();
         $to_delete_data = clone $to_delete_files;
         $to_delete_data->each(function($row){ $row->delete(); });
-  
+        // print(storage_path());
         $command = "mysqldump --user=" . env('DB_USERNAME') ." --password=" . env('DB_PASSWORD') . " --host=" . env('DB_HOST') . " " . env('DB_DATABASE') . "  | gzip > " . storage_path() . "/app/public/public/db-backups/" . $filename;
   
         $returnVar = NULL;

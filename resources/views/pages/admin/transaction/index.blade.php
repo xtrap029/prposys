@@ -163,7 +163,7 @@
                                         @endif
                                         @if ($item->is_deposit) <span class="badge badge-pill py-1 px-2 mt-2 small bg-green">Deposit Transaction</span>
                                         @elseif ($item->is_bills) <span class="badge badge-pill py-1 px-2 mt-2 small bg-blue">Bills Payment</span>
-                                        @elseif ($item->is_hr) <span class="badge badge-pill py-1 px-2 mt-2 small bg-violet">Human Resource</span>
+                                        @elseif ($item->is_hr) <span class="badge badge-pill py-1 px-2 mt-2 small bg-orange">Human Resource</span>
                                         @elseif ($item->is_reimbursement) <span class="badge badge-pill py-1 px-2 mt-2 small bg-pink">Reimbursement</span>
                                         @elseif ($item->is_bank) <span class="badge badge-pill py-1 px-2 mt-2 small bg-purple">Fund Transfer</span>
                                         @else <span class="badge badge-pill py-1 px-2 mt-2 small bg-yellow">Regular Transaction</span>

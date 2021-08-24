@@ -60,6 +60,7 @@ class TransactionsController extends Controller {
 
         if (!empty($_GET['s'])
             || !empty($_GET['is_confidential'])
+            || (isset($_GET['is_confidential']) && $_GET['is_confidential'] != "")
             || !empty($_GET['type'])
             || !empty($_GET['category'])
             || !empty($_GET['status'])
