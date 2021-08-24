@@ -1023,7 +1023,6 @@ class TransactionsController extends Controller {
                 "Content-type"        => "application/csv; charset=utf-8",
                 "Content-Disposition" => "attachment; filename=\"foo.csv\"",
                 "Pragma"              => "no-cache",
-                "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
                 "Expires"             => "0"
             );
 
