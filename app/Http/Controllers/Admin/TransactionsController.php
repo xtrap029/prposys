@@ -1021,7 +1021,7 @@ class TransactionsController extends Controller {
             $fileName = 'PRPOSYS-REPORT_'.Carbon::now().'.csv';
             $headers = array(
                 "Content-type"        => "application/csv; charset=utf-8",
-                "Content-Disposition" => "attachment; filename=dataaaa.csv",
+                "Content-Disposition" => "attachment; filename=\"foo.csv\"",
                 "Pragma"              => "no-cache",
                 "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
                 "Expires"             => "0"
