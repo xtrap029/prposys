@@ -1038,8 +1038,8 @@ class TransactionsController extends Controller {
             //     User::where('id', auth()->id())->first()->name,
             //     Carbon::now());
             // fputcsv($file, $columns);
-            $columns = array('');
-            fputcsv($file, $columns);
+            // $columns = array('');
+            // fputcsv($file, $columns);
             
             $columns = [];
             foreach ($report_template->templatecolumn as $key => $value) {
