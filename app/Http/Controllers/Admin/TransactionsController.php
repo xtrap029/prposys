@@ -1020,7 +1020,7 @@ class TransactionsController extends Controller {
         if (isset($_GET['csv'])) {
             $fileName = 'PRPOSYS-REPORT_'.Carbon::now().'.csv';
             $headers = array(
-                "Content-type"        => "text/csv",
+                "Content-type"        => "text/csv; charset=utf-8",
                 "Content-Disposition" => "attachment; filename=$fileName",
                 "Pragma"              => "no-cache",
                 "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
