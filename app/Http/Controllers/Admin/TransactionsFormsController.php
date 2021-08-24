@@ -1012,7 +1012,7 @@ class TransactionsFormsController extends Controller {
         }
     }
 
-    public function print (Transaction $transaction) {
+    public function print(Transaction $transaction) {
         if (!$this->check_can_print($transaction->id)) {
             return back()->with('error', __('messages.cant_print'));
         }
@@ -1045,7 +1045,7 @@ class TransactionsFormsController extends Controller {
         ]);
     }
 
-    public function print_issued () {
+    public function print_issued() {
         $trans_company = '';
         $trans_from = '';
         $trans_to = '';

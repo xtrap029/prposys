@@ -1052,7 +1052,7 @@ class TransactionsController extends Controller {
                 fputcsv($file, $columns);
 
                 foreach ($transactions as $item) {
-                    $config_confidential = (Auth::user()->id != $item->owner_id && $item->is_confidential == 1);
+                    $config_confidential = (auth()->user()->id != $item->owner_id && $item->is_confidential == 1);
                     $row = [];
                     foreach ($temp_column as $key => $value) {
                         $row[] = eval($value->column->code);
