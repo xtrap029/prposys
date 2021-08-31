@@ -107,7 +107,7 @@
                             <h6>{{ $user->e_phic }}</h6>
                         </div>
                         <div class="form-group border p-2 mb-0 col-lg-3">
-                            <label for="" class="text-gray">HMDF</label>
+                            <label for="" class="text-gray">HDMF</label>
                             <h6>{{ $user->e_hmdf }}</h6>
                         </div>                            
                     </div>

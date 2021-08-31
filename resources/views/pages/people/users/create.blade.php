@@ -159,7 +159,7 @@
                                 @include('errors.inline', ['message' => $errors->first('e_phic')])
                             </div>
                             <div class="form-group col-lg-3">
-                                <label for="">HMDF</label>
+                                <label for="">HDMF</label>
                                 <input type="text" class="form-control @error('e_hmdf') is-invalid @enderror" name="e_hmdf" value="{{ old('e_hmdf') }}">
                                 @include('errors.inline', ['message' => $errors->first('e_hmdf')])
                             </div>                            
