@@ -443,6 +443,14 @@
                                             @endif
                                         </td>
                                     </tr>
+                                    @if (Auth::user()->is_smt)
+                                        <tr>
+                                            <td class="font-weight-bold text-gray">Is Confidential?</td>
+                                            <td class="font-weight-bold">
+                                                {{ $transaction->is_confidential ? 'Yes' : 'No' }}
+                                            </td>
+                                        </tr>
+                                    @endif
                                     <tr>
                                         <td colspan="2">
                                             <span class="font-weight-bold text-gray">Purpose</span>
