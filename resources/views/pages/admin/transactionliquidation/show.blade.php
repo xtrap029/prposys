@@ -456,13 +456,16 @@
                                         </td>
                                     </tr>
                                 </table>
-                                @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
-                                    @include('pages.admin.transactionliquidation.show-attachment-2')
+                                @if ($config_confidential)
+                                @else
+                                    @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
+                                        @include('pages.admin.transactionliquidation.show-attachment-2')
+                                    @endif
+                                    <a class="btn btn-app p-2 {{ $transaction->soa ? '' : 'd-none' }}" href="/storage/public/attachments/soa/{{ $transaction->soa }}" target="_blank">
+                                        <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
+                                        <p class="text-dark">SOA</p>
+                                    </a>
                                 @endif
-                                <a class="btn btn-app p-2 {{ $transaction->soa ? '' : 'd-none' }}" href="/storage/public/attachments/soa/{{ $transaction->soa }}" target="_blank">
-                                    <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
-                                    <p class="text-dark">SOA</p>
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -682,16 +685,19 @@
                                         </tr>
                                     @endif                                    
                                 </table>
-                                @if (($transaction->is_deposit && $transaction->liquidation_approver_id)
-                                    || ($transaction->is_bills || $transaction->is_hr))
-                                    @include('pages.admin.transactionliquidation.show-attachment-2')
+                                @if ($config_confidential)
+                                @else
+                                    @if (($transaction->is_deposit && $transaction->liquidation_approver_id)
+                                        || ($transaction->is_bills || $transaction->is_hr))
+                                        @include('pages.admin.transactionliquidation.show-attachment-2')
+                                    @endif
+                                    @if ($transaction->depo_slip)
+                                        <a class="btn btn-app p-2" href="/storage/public/attachments/deposit_slip/{{ $transaction->depo_slip }}" target="_blank">
+                                            <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
+                                            <p class="text-dark">Slip</p>
+                                        </a>
+                                    @endif                                
                                 @endif
-                                @if ($transaction->depo_slip)
-                                    <a class="btn btn-app p-2" href="/storage/public/attachments/deposit_slip/{{ $transaction->depo_slip }}" target="_blank">
-                                        <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
-                                        <p class="text-dark">Slip</p>
-                                    </a>
-                                @endif                                
                             </div>
                         </div>
                     </div>

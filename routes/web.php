@@ -79,6 +79,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/db-backups', 'People\DBBackupsController@db_backups')->name('dbbackups');
         Route::get('/db-backups-zip', 'People\DBBackupsController@db_backups_zip')->name('dbbackups');
         Route::get('/db-backups-generate', 'People\DBBackupsController@db_backups_generate')->name('dbbackups');
+
+        // Leaves
+
+        Route::prefix('leaves-settings')->group(function () {
+            $url = 'Leaves\SettingsController';
+
+            Route::get('/', $url.'@index')->name('leaves-settings');
+            Route::post('/', $url.'@update')->name('leaves-settings');
+        });
     });
 
     // Access Level 1 and 2

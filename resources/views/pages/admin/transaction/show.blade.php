@@ -209,6 +209,16 @@
                                         <td class="font-weight-bold text-gray">Payee Name</td>
                                         <td class="font-weight-bold">{{ $transaction->payee }}</td>
                                     </tr>
+                                    @if (Auth::user()->is_smt)
+                                        <tr>
+                                            <td colspan="2">
+                                                <span class="font-weight-bold text-gray">Is Confidential</span>
+                                                <p class="mb-0">
+                                                    {{ $transaction->is_confidential ? 'Yes' : 'No' }}
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    @endif
                                     <tr>
                                         <td colspan="2">
                                             <span class="font-weight-bold text-gray">Purpose</span>
@@ -222,10 +232,13 @@
                                         </td>
                                     </tr>
                                 </table>
-                                <a class="btn btn-app p-2 {{ $transaction->soa ? '' : 'd-none' }}" href="/storage/public/attachments/soa/{{ $transaction->soa }}" target="_blank">
-                                    <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
-                                    <p class="text-dark">SOA</p>
-                                </a>
+                                @if ($config_confidential)
+                                @else
+                                    <a class="btn btn-app p-2 {{ $transaction->soa ? '' : 'd-none' }}" href="/storage/public/attachments/soa/{{ $transaction->soa }}" target="_blank">
+                                        <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
+                                        <p class="text-dark">SOA</p>
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </div>

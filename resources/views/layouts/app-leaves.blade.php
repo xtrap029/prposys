@@ -55,6 +55,14 @@
                                             <i class="nav-icon material-icons icon--list">dashboard</i><p>Dashboard</p>
                                         </a>
                                     </li>
+                                    @if (Auth::user()->role_id == 1)
+                                        <li class="nav-header">ADMINISTRATOR</li>                          
+                                        <li class="nav-item">
+                                            <a href="/leaves-settings" class="nav-link {{ Route::currentRouteName() == 'leaves-settings' ? 'active' : '' }}">
+                                                <i class="nav-icon material-icons icon--list">settings</i><p>Settings</p>
+                                            </a>
+                                        </li>
+                                    @endif
                                 </ul>
                             </nav>
                         </div>

@@ -102,6 +102,13 @@
                         <label for="">Statement of Account/Invoice/Form</label>
                         <input type="file" name="soa" class="soa form_control" {{ $trans_type == 'po' ? 'required' : '' }}>
                     </div>
+                    <div class="col-sm-4 col-lg-4 mb-2 {{ Auth::user()->is_smt ? '' : 'd-none' }}">             
+                        <label for="">Is Confidential?</label>
+                        <select name="is_confidential" class="form-control">
+                            <option value="0" selected>No</option>
+                            <option value="1">Yes</option>
+                        </select>                        
+                    </div>
                 </div>
                 <div class="form-row mb-3">
                     {{-- <div class="col-md-2">

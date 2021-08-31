@@ -364,6 +364,7 @@ class TransactionsController extends Controller {
                 'requested_id' => ['required', 'exists:users,id'],
                 'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
                 'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
+                'is_confidential' => ['required', 'between:0,1'],
             ];
 
             // if ($trans_type == 'pc') {
