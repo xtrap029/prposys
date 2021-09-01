@@ -124,7 +124,6 @@ class UsersController extends Controller {
             'company_id' =>  ['required', 'exists:companies,id'],
             'name' => ['required', 'string', 'max:255'],
             'avatar' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'is_smt' => ['boolean'],
             'LIMIT_UNLIQUIDATEDPR_AMOUNT' => ['nullable', 'integer'],
             'LIMIT_UNLIQUIDATEDPR_COUNT' => ['nullable', 'integer'],
             'e_emp_no' => ['nullable'],
@@ -154,10 +153,6 @@ class UsersController extends Controller {
         }
 
         $data = $request->validate($validation_rules);
-
-        if (!$request->is_smt) {
-            $data['is_smt'] = 0;
-        }
 
         if ($request->file('avatar')) {
             Storage::delete('public/images/companies/' . $user->avatar);

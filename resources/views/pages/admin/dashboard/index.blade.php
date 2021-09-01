@@ -10,7 +10,7 @@
                 <div class="card card-widget widget-user">
                     <div class="widget-user-header bg--tecc">
                         <h3 class="widget-user-username">{{ $user->name }}</h3>
-                        <h5 class="widget-user-desc">{{ $user->role->name }}</h5>
+                        <h6 class="widget-user-desc">{{ $user->role->name }} {{ $user->is_smt ? ' - SMT' : '' }}</h6>
                     </div>
                     <div class="widget-user-image">
                         <img class="img-circle elevation-2" src="/storage/public/images/users/{{ $user->avatar }}" alt="User Avatar">
@@ -170,14 +170,24 @@
                                     </tr>
                                 </thead>
                                 @foreach ($for_issue as $item)
-                                    <?php $config_confidential = (Auth::user()->id != $item->owner_id && $item->is_confidential == 1); ?>
+                                    <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
                                     <tr>
                                         <td>
-                                            <a href="transaction-form/view/{{ $item->id }}">
+                                            @if ($config_confidential)
                                                 {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
-                                            </a>
+                                            @else
+                                                <a href="transaction-form/view/{{ $item->id }}">
+                                                    {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                                </a>
+                                            @endif
                                         </td>
-                                        <td>{{ $item->payee }}</td>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->payee }}
+                                            @endif
+                                        </td>
                                         <td>
                                             @if ($config_confidential)
                                                 -
@@ -193,7 +203,13 @@
                                             @endif
                                         </td>
                                         <td class="text-center">-</td>
-                                        <td class="text-center">{{ $item->due_at }}</td>
+                                        <td class="text-center">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->due_at }}
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endforeach
                             </table>
@@ -234,14 +250,24 @@
                                     </tr>
                                 </thead>
                                 @foreach ($for_clearing as $item)
-                                    <?php $config_confidential = (Auth::user()->id != $item->owner_id && $item->is_confidential == 1); ?>
+                                    <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
                                     <tr>
                                         <td>
-                                            <a href="transaction-liquidation/view/{{ $item->id }}">
+                                            @if ($config_confidential)
                                                 {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
-                                            </a>
+                                            @else
+                                                <a href="transaction-liquidation/view/{{ $item->id }}">
+                                                    {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                                </a>
+                                            @endif
                                         </td>
-                                        <td>{{ $item->payee }}</td>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->payee }}
+                                            @endif
+                                        </td>
                                         <td>
                                             @if ($config_confidential)
                                                 -
@@ -256,8 +282,20 @@
                                                 {{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}
                                             @endif
                                         </td>
-                                        <td>{{ $item->control_no }}</td>
-                                        <td class="text-center">{{ $item->released_at }}</td>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->control_no }}
+                                            @endif    
+                                        </td>
+                                        <td class="text-center">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->released_at }}
+                                            @endif    
+                                        </td>
                                     </tr>
                                 @endforeach
                             </table>
@@ -300,14 +338,24 @@
                                 </tr>
                             </thead>
                             @foreach ($generated as $item)
-                                <?php $config_confidential = (Auth::user()->id != $item->owner_id && $item->is_confidential == 1); ?>
+                                <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
                                 <tr>
                                     <td>
-                                        <a href="transaction/view/{{ $item->id }}">
+                                        @if ($config_confidential)
                                             {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
-                                        </a>
+                                        @else
+                                            <a href="transaction/view/{{ $item->id }}">
+                                                {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                            </a>
+                                        @endif
                                     </td>
-                                    <td>{{ $item->payee }}</td>
+                                    <td>
+                                        @if ($config_confidential)
+                                            -
+                                        @else
+                                            {{ $item->payee }}
+                                        @endif
+                                    </td>
                                     <td>
                                         @if ($config_confidential)
                                             -
@@ -364,14 +412,24 @@
                                 </tr>
                             </thead>
                             @foreach ($unliquidated as $item)
-                                <?php $config_confidential = (Auth::user()->id != $item->owner_id && $item->is_confidential == 1); ?>
+                                <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
                                 <tr>
                                     <td>
-                                        <a href="transaction-form/view/{{ $item->id }}">
+                                        @if ($config_confidential)
                                             {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
-                                        </a>
+                                        @else
+                                            <a href="transaction-form/view/{{ $item->id }}">
+                                                {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                            </a>
+                                        @endif
                                     </td>
-                                    <td>{{ $item->payee }}</td>
+                                    <td>
+                                        @if ($config_confidential)
+                                            -
+                                        @else
+                                            {{ $item->payee }}
+                                        @endif
+                                    </td>
                                     <td>
                                         @if ($config_confidential)
                                             -
@@ -386,8 +444,20 @@
                                             {{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}
                                         @endif
                                     </td>
-                                    <td>{{ $item->control_no }}</td>
-                                    <td class="text-center">{{ $item->released_at }}</td>
+                                    <td>
+                                        @if ($config_confidential)
+                                            -
+                                        @else
+                                            {{ $item->control_no }}
+                                        @endif    
+                                    </td>
+                                    <td class="text-center">
+                                        @if ($config_confidential)
+                                            -
+                                        @else
+                                            {{ $item->released_at }}
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </table>
@@ -428,14 +498,24 @@
                                 </tr>
                             </thead>
                             @foreach ($cleared as $item)
-                                <?php $config_confidential = (Auth::user()->id != $item->owner_id && $item->is_confidential == 1); ?>
+                                <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
                                 <tr>
                                     <td>
-                                        <a href="transaction-liquidation/view/{{ $item->id }}">
+                                        @if ($config_confidential)
                                             {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
-                                        </a>
+                                        @else
+                                            <a href="transaction-liquidation/view/{{ $item->id }}">
+                                                {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                            </a>
+                                        @endif
                                     </td>
-                                    <td>{{ $item->payee }}</td>
+                                    <td>
+                                        @if ($config_confidential)
+                                            -
+                                        @else
+                                            {{ $item->payee }}
+                                        @endif    
+                                    </td>
                                     <td>
                                         @if ($config_confidential)
                                             -
@@ -450,7 +530,13 @@
                                             {{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}
                                         @endif
                                     </td>
-                                    <td>{{ $item->depo_ref }}</td>
+                                    <td>
+                                        @if ($config_confidential)
+                                            -
+                                        @else
+                                            {{ $item->depo_ref }}
+                                        @endif    
+                                    </td>
                                     <td class="text-center">{{ Carbon::parse($item->updated_at)->diffInDays(Carbon::now()) >= 1 ? $item->updated_at->format('Y-m-d') : $item->updated_at->diffForHumans() }}</td>
                                 </tr>
                             @endforeach
@@ -494,14 +580,24 @@
                                     </tr>
                                 </thead>
                                 @foreach ($deposited as $item)
-                                    <?php $config_confidential = (Auth::user()->id != $item->owner_id && $item->is_confidential == 1); ?>
+                                    <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
                                     <tr>
                                         <td>
-                                            <a href="transaction-liquidation/view/{{ $item->id }}">
+                                            @if ($config_confidential)
                                                 {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
-                                            </a>
+                                            @else
+                                                <a href="transaction-liquidation/view/{{ $item->id }}">
+                                                    {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                                </a>
+                                            @endif
                                         </td>
-                                        <td>{{ $item->payor }}</td>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->payor }}
+                                            @endif
+                                        </td>
                                         <td>
                                             @if ($config_confidential)
                                                 -
@@ -516,8 +612,20 @@
                                                 {{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}
                                             @endif
                                         </td>
-                                        <td>{{ $item->control_no }}</td>
-                                        <td class="text-center">{{ $item->depo_date }}</td>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->control_no }}
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->depo_date }}
+                                            @endif    
+                                        </td>
                                     </tr>
                                 @endforeach
                             </table>

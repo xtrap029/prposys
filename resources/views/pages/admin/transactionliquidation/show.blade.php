@@ -4,7 +4,7 @@
 @section('nav_class', 'navbar-dark')
 
 @section('content')
-    <?php $config_confidential = (Auth::user()->id != $transaction->owner_id && $transaction->is_confidential == 1); ?>
+    <?php $config_confidential = 0; ?>
     <section class="content-header bg-dark">
         <div class="container-fluid">
             <div class="row">
@@ -443,11 +443,17 @@
                                             @endif
                                         </td>
                                     </tr>
-                                    @if (Auth::user()->is_smt)
+                                    @if (Auth::user()->is_smt && $transaction->owner->is_smt)
                                         <tr>
                                             <td class="font-weight-bold text-gray">Is Confidential?</td>
                                             <td class="font-weight-bold">
-                                                {{ $transaction->is_confidential ? 'Yes' : 'No' }}
+                                                <a href="/transaction/toggle-visibility/{{ $transaction->id }}" class="mr-1" onclick="return confirm('Toggle visibility?');">
+                                                    @if ($transaction->is_confidential == 0)
+                                                        <i class="material-icons font-weight-bold text-xl text-gray vlign--middle" title="Visible">toggle_off</i>
+                                                    @else
+                                                        <i class="material-icons font-weight-bold text-xl text-danger vlign--middle" title="Hidden">toggle_on</i>
+                                                    @endif
+                                                </a> 
                                             </td>
                                         </tr>
                                     @endif

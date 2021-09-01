@@ -163,6 +163,10 @@ class TransactionsLiquidationController extends Controller {
                 $query->where('company_id', $company);
             })
             ->first();
+        
+        if (!User::find(auth()->id())->is_smt && $transaction->is_confidential) {
+            return abort(401);
+        }
 
         switch ($transaction->trans_type) {
             case 'pr':
@@ -218,6 +222,10 @@ class TransactionsLiquidationController extends Controller {
                     $query->where('company_id', $company);
                 })
                 ->first();
+
+            if (!User::find(auth()->id())->is_smt && $transaction->is_confidential) {
+                return abort(401);
+            }
         }
 
         // liq attachment atributes
@@ -790,6 +798,10 @@ class TransactionsLiquidationController extends Controller {
         $trans_to = '';
 
         $transactions = Transaction::whereIn('status_id', config('global.liquidation_cleared'))->orderBy('id', 'desc');
+
+        if (!User::find(auth()->id())->is_smt) {
+            $transactions = $transactions->where('is_confidential', 0);
+        }
 
         if (!empty($_GET['type'])) {
             if (!in_array($_GET['type'], config('global.trans_types'))) {

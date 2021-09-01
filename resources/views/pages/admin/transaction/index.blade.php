@@ -144,23 +144,18 @@
                         </thead>
                         <tbody>
                             @forelse ($transactions as $item)
-                                <?php $config_confidential = (Auth::user()->id != $item->owner_id && $item->is_confidential == 1); ?>
+                                <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
                                 <tr>
                                     <td class="text-nowrap">
                                         <div>
-                                            <a href="/{{ $item->url_view }}/view/{{ $item->id }}?page={{ $transactions->currentPage() }}">
+                                            @if ($config_confidential)
                                                 {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
-                                            </a>
-                                        </div>
-                                        @if (Auth::user()->is_smt)
-                                            <a href="/transaction/toggle-visibility/{{ $item->id }}" class="mr-1" onclick="return confirm('Toggle visibility?');">
-                                                @if ($item->is_confidential == 0)
-                                                    <i class="material-icons font-weight-bold text-xl text-gray vlign--middle" title="Visible">toggle_off</i>
-                                                @else
-                                                    <i class="material-icons font-weight-bold text-xl text-danger vlign--middle" title="Hidden">toggle_on</i>
-                                                @endif
-                                            </a>                                            
-                                        @endif
+                                            @else
+                                                <a href="/{{ $item->url_view }}/view/{{ $item->id }}?page={{ $transactions->currentPage() }}">
+                                                    {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                                </a>
+                                            @endif
+                                        </div>        
                                         @if ($item->is_deposit) <span class="badge badge-pill py-1 px-2 mt-2 small bg-green">Deposit Transaction</span>
                                         @elseif ($item->is_bills) <span class="badge badge-pill py-1 px-2 mt-2 small bg-blue">Bills Payment</span>
                                         @elseif ($item->is_hr) <span class="badge badge-pill py-1 px-2 mt-2 small bg-orange">Human Resource</span>
@@ -169,7 +164,13 @@
                                         @else <span class="badge badge-pill py-1 px-2 mt-2 small bg-yellow">Regular Transaction</span>
                                         @endif
                                     </td>
-                                    <td>{{ $item->payee }}</td>
+                                    <td>
+                                        @if ($config_confidential)
+                                            -
+                                        @else
+                                            {{ $item->payee }}
+                                        @endif
+                                    </td>
                                     <td>
                                         @if ($config_confidential)
                                             -
@@ -192,8 +193,20 @@
                                         @endif                                        
                                     </td>
                                     <td class="text-nowrap">{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
-                                    <td class="break-word">{{ $item->control_no }}</td>
-                                    <td class="text-nowrap">{{ Carbon::parse($item->released_at)->format('Y-m-d') }}</td>
+                                    <td class="break-word">
+                                        @if ($config_confidential)
+                                            -
+                                        @else
+                                            {{ $item->control_no }}
+                                        @endif
+                                    </td>
+                                    <td class="text-nowrap">
+                                        @if ($config_confidential)
+                                            -
+                                        @else
+                                            {{ Carbon::parse($item->released_at)->format('Y-m-d') }}
+                                        @endif
+                                    </td>
                                     <td class="text-nowrap">{{ $item->requested->name }}</td>
                                     <td class="text-nowrap">{{ $item->status->name }}</td>
                                 </tr>
@@ -254,6 +267,7 @@
                         type: 'POST',
                         data: {
                             '_token': '{{ csrf_token() }}',
+                            'id': '{{ Auth::user()->id }}',
                             'trans_page': '{{ $trans_page }}',
                             'trans_company': '{{ $company->id }}',
                             's': $('[name=s]').val(),
@@ -286,17 +300,17 @@
                                 )
                                 
                                 $.each(result, function(i, item) {
-                                    config_confidential = "{{ Auth::user()->id }}" != item.owner_id && item.is_confidential
+                                    config_confidential = item.is_confidential == "0"
 
                                     $(cls+'_data table').append('<tr class="bg-transparent border-0">'
-                                        + '<td class="border-0 py-1"><a href="/'+item.url_view+'/view/'+item.id+'" class="text-info font-weight-bold" target="_blank">'
+                                        + '<td class="border-0 py-1"><a href="'+(config_confidential ? '#' : '/'+item.url_view+'/view/'+item.id)+'" class="text-info font-weight-bold '+(config_confidential ? 'text-white' : '')+'" target="_blank">'
                                             + item.trans_type+'-'+item.trans_year+'-'+item.trans_seq
                                         + '</a></td>'
-                                        + '<td class="border-0 py-1">'+item.payee+'</td>'
+                                        + '<td class="border-0 py-1">'+(config_confidential ? "-" : item.payee)+'</td>'
                                         + '<td class="border-0 py-1 text-right">'+(config_confidential ? "-" : item.currency)+'</td>'
                                         + '<td class="border-0 py-1 text-right">'+(config_confidential ? "-" : item.amount)+'</td>'
                                         + '<td class="border-0 py-1">'+item.created+'</td>'
-                                        + '<td class="border-0 py-1">'+item.released+'</td>'
+                                        + '<td class="border-0 py-1">'+(config_confidential ? "-" : item.released)+'</td>'
                                         + '<td class="border-0 py-1">'+item.requested_by+'</td>'
                                         + '<td class="border-0 py-1">'+item.status_name+'</td>'
                                         + '</tr>'

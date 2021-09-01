@@ -34,7 +34,10 @@
                                 {{ $item->name }}
                                 <div class="text-info">{{ $item->email }}</div>
                             </td>
-                            <td class="align-middle">{{ $item->role_id ? $item->role->name : 'Inactive' }}</td>
+                            <td class="align-middle">
+                                {{ $item->role_id ? $item->role->name : 'Inactive' }}
+                                {{ $item->is_smt ? '- SMT' : '' }}
+                            </td>
                             <td class="align-middle text-right">
                                 <a href="/user/{{ $item->id }}/edit" class="btn btn-link btn-sm">Edit</a>
                             </td>
@@ -45,24 +48,6 @@
                         </tr>
                     @endforelse
                 </tbody>
-                {{-- <thead>
-                    <tr>
-                        <th colspan="5">Inactive</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($users_inactive as $item)
-                        <tr>
-                            <td><img src="storage/public/images/users/{{ $item->avatar }}" alt="" class="img-circle thumb--xs"></td>
-                            <td class="align-middle">{{ $item->name }}</td>
-                            <td class="align-middle">{{ $item->email }}</td>
-                            <td></td>
-                            <td class="align-middle text-right">
-                                <a href="/user/{{ $item->id }}/edit" class="btn btn-link btn-sm">Edit</a>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody> --}}
             </table>
         </div>
     </section>

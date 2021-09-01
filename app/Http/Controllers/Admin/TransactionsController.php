@@ -305,6 +305,8 @@ class TransactionsController extends Controller {
             $transactions[$key]->created = Carbon::parse($value->created_at)->format('Y-m-d');
             $transactions[$key]->released = Carbon::parse($value->released_at)->format('Y-m-d');
 
+            $transactions[$key]->is_confidential = (!User::find($request->id)->is_smt && $value->is_confidential) ? 0 : 1;
+
             $transactions[$key]->url_view = "transaction";
             if (in_array($value->status_id, config('global.page_form'))
                 || (in_array($value->status_id, config('global.cancelled')) && in_array($value->status_prev_id, config('global.page_form')))) {
@@ -819,6 +821,10 @@ class TransactionsController extends Controller {
         $trans_currency = '';
 
         $transactions = Transaction::orderBy('id', 'desc');
+
+        if (!User::find(auth()->id())->is_smt) {
+            $transactions = $transactions->where('is_confidential', 0);
+        }
 
         if (!empty($_GET['s'])) {
             $trans_s = $_GET['s'];

@@ -421,7 +421,7 @@
                             @endforeach
                         </tr>
                         @foreach ($transactions as $item)
-                            <?php $config_confidential = (Auth::user()->id != $item->owner_id && $item->is_confidential == 1); ?>
+                            <?php $config_confidential = 0; ?>
                             <tr>
                                 @foreach ($report_template->templatecolumn as $item_2)
                                     <td>{{ eval($item_2->column->code) }}</td>

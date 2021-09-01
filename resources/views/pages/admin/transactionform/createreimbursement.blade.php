@@ -3,7 +3,7 @@
 @section('title', 'Make Form')
 
 @section('content')
-    <?php $config_confidential = (Auth::user()->id != $transaction->owner_id && $transaction->is_confidential == 1); ?>
+    <?php $config_confidential = 0; ?>
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">

@@ -3,7 +3,7 @@
 @section('title', 'Print Liquidation')
 
 @section('content')
-    <?php $config_confidential = (Auth::user()->id != $transaction->owner_id && $transaction->is_confidential == 1); ?>
+    <?php $config_confidential = 0; ?>
     <section class="content">
         <div class="container-fluid">
             <div class="float-right">Date Generated: <b>{{ Carbon\Carbon::now() }}</b></div>

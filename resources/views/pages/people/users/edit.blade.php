@@ -190,18 +190,16 @@
                     <div class="tab-pane fade m-4" id="sequence" role="tabpanel" aria-labelledby="sequence-tab">
                         <div class="form-group mb-3">
                             <label for="">Role</label>
-                            <select name="role_id" class="form-control @error('role_id') is-invalid @enderror">
+                            @if ($user->is_smt)
+                                <span class="font-weight-bold ml-3">{{ $user->role->name }} - SMT</span>
+                            @endif
+                            <select name="role_id" class="form-control @error('role_id') is-invalid @enderror {{ $user->is_smt ? 'd-none' : '' }}">
                                 <option value="">Inactive</option>
                                 @foreach ($roles as $role)
                                     <option value="{{ $role->id }}" {{ $user->role_id == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>                                        
                                 @endforeach
                             </select>
                             @include('errors.inline', ['message' => $errors->first('role_id')])
-                        </div>
-                        <div class="form-group mb-3 {{ $user->role_id == 1 ? '' : 'd-none' }}">
-                            <label for="">Senior Management Team?</label>
-                            <input type="checkbox" name="is_smt" value="1" class="ml-2 vlign--middle" {{ $user->is_smt == 1 ? 'checked' : '' }}>
-                            @include('errors.inline', ['message' => $errors->first('is_smt')])
                         </div>
                         <div class="form-group mb-3">
                             <label for="">Default Company</label>

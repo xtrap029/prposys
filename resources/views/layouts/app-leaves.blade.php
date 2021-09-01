@@ -43,7 +43,7 @@
                                 </div>
                                 <div class="info">
                                     <a href="/my-account" class="d-block">{{ Auth::user()->name }}</a>
-                                    <span class="small text-secondary font-weight-bold">{{ Auth::user()->role->name }}</span>
+                                    <span class="small text-secondary font-weight-bold">{{ Auth::user()->role->name }} {{ Auth::user()->is_smt ? ' - SMT' : '' }}</span>
                                 </div>
                             </div>
     
