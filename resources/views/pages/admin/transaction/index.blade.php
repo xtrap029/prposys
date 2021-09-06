@@ -135,6 +135,7 @@
                                 <th class="text-nowrap text-center">Currency</th>
                                 <th class="text-nowrap text-right">Amount</th>
                                 <th class="text-nowrap">Date Gen.</th>
+                                <th class="text-nowrap">Date Due</th>
                                 <th class="text-nowrap">Trans. #</th>
                                 <th class="text-nowrap">Date Rel.</th>
                                 <th class="text-nowrap">Req. By</th>
@@ -193,6 +194,13 @@
                                         @endif                                        
                                     </td>
                                     <td class="text-nowrap">{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
+                                    <td class="text-nowrap">
+                                        @if ($config_confidential)
+                                            -
+                                        @else
+                                            {{ Carbon::parse($item->due_at)->format('Y-m-d') }}
+                                        @endif
+                                    </td>
                                     <td class="break-word">
                                         @if ($config_confidential)
                                             -
