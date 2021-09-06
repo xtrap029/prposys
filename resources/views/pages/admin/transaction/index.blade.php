@@ -204,7 +204,7 @@
                                         @if ($config_confidential)
                                             -
                                         @else
-                                            {{ Carbon::parse($item->released_at)->format('Y-m-d') }}
+                                            {{ $item->released_at ? Carbon::parse($item->released_at)->format('Y-m-d') : '' }}
                                         @endif
                                     </td>
                                     <td class="text-nowrap">{{ $item->requested->name }}</td>
