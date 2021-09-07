@@ -55,48 +55,50 @@
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    @switch($item->description)
-                                                        @case('created')
-                                                        @case('deleted')
-                                                            <table class="table table-sm table-bordered">
-                                                                <thead class="bg-gradient-gray">
-                                                                    <tr>
-                                                                        <th></th>
-                                                                        <th>Value</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    @foreach ($item->changes['attributes'] as $key => $attribute)
+                                                    <div class="table-responsive">
+                                                        @switch($item->description)
+                                                            @case('created')
+                                                            @case('deleted')
+                                                                <table class="table table-sm table-bordered">
+                                                                    <thead class="bg-gradient-gray">
                                                                         <tr>
-                                                                            <td class="font-weight-bold">{{ ucwords($key) }}</td>
-                                                                            <td>{{ $attribute }}</td>
+                                                                            <th></th>
+                                                                            <th>Value</th>
                                                                         </tr>
-                                                                    @endforeach
-                                                                </tbody>
-                                                            </table>
-                                                            @break
-                                                        @case('updated')
-                                                            <table class="table table-sm table-bordered">
-                                                                <thead class="bg-gradient-gray">
-                                                                    <tr>
-                                                                        <th></th>
-                                                                        <th>From</th>
-                                                                        <th>To</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    @foreach ($item->changes['old'] as $key => $attribute)
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @foreach ($item->changes['attributes'] as $key => $attribute)
+                                                                            <tr>
+                                                                                <td class="font-weight-bold">{{ ucwords($key) }}</td>
+                                                                                <td>{{ $attribute }}</td>
+                                                                            </tr>
+                                                                        @endforeach
+                                                                    </tbody>
+                                                                </table>
+                                                                @break
+                                                            @case('updated')
+                                                                <table class="table table-sm table-bordered">
+                                                                    <thead class="bg-gradient-gray">
                                                                         <tr>
-                                                                            <td class="font-weight-bold">{{ ucwords($key) }}</td>
-                                                                            <td>{{ $attribute }}</td>
-                                                                            <td>{{ $item->changes['attributes'][$key] }}</td>
+                                                                            <th></th>
+                                                                            <th>From</th>
+                                                                            <th>To</th>
                                                                         </tr>
-                                                                    @endforeach
-                                                                </tbody>
-                                                            </table>
-                                                            @break
-                                                        @default                                                    
-                                                    @endswitch
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @foreach ($item->changes['old'] as $key => $attribute)
+                                                                            <tr>
+                                                                                <td class="font-weight-bold">{{ ucwords($key) }}</td>
+                                                                                <td>{{ $attribute }}</td>
+                                                                                <td>{{ $item->changes['attributes'][$key] }}</td>
+                                                                            </tr>
+                                                                        @endforeach
+                                                                    </tbody>
+                                                                </table>
+                                                                @break
+                                                            @default                                                    
+                                                        @endswitch
+                                                    </div>
                                                 </div>
                                                 <div class="modal-footer border-0">
                                                     @if (in_array($item->description, ['created', 'updated']))

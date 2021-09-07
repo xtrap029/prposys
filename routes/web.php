@@ -144,6 +144,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
                 Route::put('/cancel/{transaction}', $url.'@cancel')->where('transaction', '[0-9]+');
                 Route::put('/manage/{transaction}', $url.'@manage')->where('transaction', '[0-9]+');
+                Route::put('/note/{transaction}', $url.'@note')->where('transaction', '[0-9]+');
                 // Route::get('/report/', $url.'@report')->middleware('checkRole:1|2');
             });
 

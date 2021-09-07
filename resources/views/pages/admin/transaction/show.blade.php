@@ -44,6 +44,10 @@
                         <a href="#_" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto {{ $perms['can_manage'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-manage"><i class="align-middle font-weight-bolder material-icons text-md">security</i> Manage</a>
                     </div>
                     <div>
+                        <a href="#_" class="btn mb-2 btn-sm btn-flat btn-warning col-12 col-lg-auto" data-toggle="modal" data-target="#modal-notes">
+                            <i class="align-middle font-weight-bolder material-icons text-md">speaker_notes</i> Notes
+                            <span class="badge badge-danger {{ $transaction->notes->count() > 0 ? '' : 'd-none' }}">{{$transaction->notes->count()}}</span>
+                        </a>
                         <a href="/transaction-form/create{{ $transaction->is_reimbursement ? '-reimbursement' : '' }}?company={{ $transaction->project->company_id }}&key={{ strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq) }}" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto {{ $perms['can_create'] ? '' : 'd-none' }}">
                             <i class="align-middle font-weight-bolder material-icons text-md">add</i> 
                             @if ($transaction->is_deposit)
@@ -155,6 +159,8 @@
                         </div>
                     </div>
                 @endif
+
+                @include('pages.admin.transaction.notes')
             </div>
         </div>
     </section>

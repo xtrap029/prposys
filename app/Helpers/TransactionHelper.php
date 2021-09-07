@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Settings;
 use App\Transaction;
 use App\TransactionsLiquidation;
+use App\TransactionsNote;
 use App\User;
 
 final class TransactionHelper {

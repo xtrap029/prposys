@@ -143,6 +143,10 @@ class Transaction extends Model {
     public function attachments() {
         return $this->hasMany(TransactionsAttachment::class);
     }
+
+    public function notes() {
+        return $this->hasMany(TransactionsNote::class);
+    }
     
     // public function bank() {
     //     return $this->belongsTo(Bank::class, 'depo_bank_id');

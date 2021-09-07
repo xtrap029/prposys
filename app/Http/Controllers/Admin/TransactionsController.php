@@ -13,6 +13,7 @@ use App\ReportTemplate;
 use App\Settings;
 use App\Transaction;
 use App\TransactionStatus;
+use App\TransactionsNote;
 use App\User;
 use App\VatType;
 use App\Helpers\TransactionHelper;
@@ -688,6 +689,21 @@ class TransactionsController extends Controller {
         } else {
             return back()->with('error', __('messages.cant_edit'));
         }
+    }
+    
+    public function note(Request $request, Transaction $transaction) {
+        $validation = [
+            'content' => ['required'],
+        ];
+
+        $data = $request->validate($validation);
+        $data['transaction_id'] = $transaction->id;
+        $data['user_id'] = auth()->id();
+        $data['created_at'] = NOW();
+
+        $note = TransactionsNote::create($data);
+
+        return back()->with('success', 'Note'.__('messages.create_success'));
     }
 
     public function reset(Transaction $transaction) {
