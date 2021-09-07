@@ -95,14 +95,23 @@
                             <option value="-1" {{ app('request')->input('bal') == '-1' ? 'selected' : '' }}>( - ) Return Money</option>
                         </select>
                     </div>
-                    <div class="mb-2 col-md-4 col-xl-2 {{ Auth::user()->is_smt ? '' : 'd-none' }}">
+                    <div class="mb-2 col-md-8 {{ Auth::user()->is_smt ? 'col-xl-6' : 'col-xl-10' }}">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1">Due From/To</span>
+                            </div>
+                            <input type="date" name="due_from" class="form-control filterSearch_select" value="{{ app('request')->input('due_from') }}">
+                            <input type="date" name="due_to" class="form-control filterSearch_select" value="{{ app('request')->input('due_to') }}">
+                        </div>
+                    </div>
+                    <div class="mb-2 col-md-4 col-xl-4 {{ Auth::user()->is_smt ? '' : 'd-none' }}">
                         <select name="is_confidential" class="form-control filterSearch_select">
                             <option value="">All Visibility</option>
                             <option value="0" {{ app('request')->input('is_confidential') == '0' ? 'selected' : '' }}>Not Confidential</option>
                             <option value="1" {{ app('request')->input('is_confidential') == '1' ? 'selected' : '' }}>Confidential</option>
                         </select>
                     </div>
-                    <div class="mb-2 col-md-4 {{ Auth::user()->is_smt ? 'col-xl-6' : 'col-xl-8' }}">
+                    <div class="mb-2 col-md-4 col-xl-10">
                         <input type="text" class="form-control filterSearch_input" name="s" value="{{ app('request')->input('s') }}" autocomplete="off" placeholder="keyword here...">
                         <div class="d-none d-md-block position-relative">
                             <div class="card card-search bg-secondary font-weight-normal filterSearch_result" style="display: none">
@@ -264,6 +273,8 @@
                     || $('[name=status]').val() != ''
                     || $('[name=user_req]').val() != ''
                     || $('[name=user_prep]').val() != ''
+                    || $('[name=due_from]').val() != ''
+                    || $('[name=due_to]').val() != ''
                     || $('[name=bal]').val() != '') {
 
                     $(cls+'_data').hide()
@@ -285,6 +296,8 @@
                             'status': $('[name=status]').val(),
                             'user_req': $('[name=user_req]').val(),
                             'user_prep': $('[name=user_prep]').val(),
+                            'due_from': $('[name=due_from]').val(),
+                            'due_to': $('[name=due_to]').val(),
                             'bal': $('[name=bal]').val(),
                         },
                         success: function(res) {
@@ -301,6 +314,7 @@
                                     + '<td class="border-0 py-1 text-right">Currency</td>'
                                     + '<td class="border-0 py-1 text-right">Amount</td>'
                                     + '<td class="border-0 py-1">Date Gen.</td>'
+                                    + '<td class="border-0 py-1">Date Due</td>'
                                     + '<td class="border-0 py-1">Date Rel.</td>'
                                     + '<td class="border-0 py-1">Req. By</td>'
                                     + '<td class="border-0 py-1">Status</td>'
@@ -318,6 +332,7 @@
                                         + '<td class="border-0 py-1 text-right">'+(config_confidential ? "-" : item.currency)+'</td>'
                                         + '<td class="border-0 py-1 text-right">'+(config_confidential ? "-" : item.amount)+'</td>'
                                         + '<td class="border-0 py-1">'+item.created+'</td>'
+                                        + '<td class="border-0 py-1">'+(config_confidential ? "-" : item.due_at)+'</td>'
                                         + '<td class="border-0 py-1">'+(config_confidential ? "-" : item.released)+'</td>'
                                         + '<td class="border-0 py-1">'+item.requested_by+'</td>'
                                         + '<td class="border-0 py-1">'+item.status_name+'</td>'

@@ -67,6 +67,8 @@ class TransactionsController extends Controller {
             || !empty($_GET['status'])
             || !empty($_GET['user_req'])
             || !empty($_GET['user_prep'])
+            || !empty($_GET['due_from'])
+            || !empty($_GET['due_to'])
             || !empty($_GET['bal'])) {
             
             if ($_GET['type'] != "") {
@@ -118,6 +120,8 @@ class TransactionsController extends Controller {
             if ($_GET['user_req'] != "") $transactions = $transactions->where('requested_id', $_GET['user_req']);
             if ($_GET['user_prep'] != "") $transactions = $transactions->where('owner_id', $_GET['user_prep']);
             if ($_GET['is_confidential'] != "") $transactions = $transactions->where('is_confidential', $_GET['is_confidential']);
+            if ($_GET['due_from'] != "") $transactions = $transactions->whereDate('due_at', '>=', $_GET['due_from']);
+            if ($_GET['due_to'] != "") $transactions = $transactions->whereDate('due_at', '<=', $_GET['due_to']);
 
             if ($_GET['category'] != "") {
                 if ($_GET['category'] == 'is_reg') {
@@ -153,6 +157,8 @@ class TransactionsController extends Controller {
             $transactions->appends(['category' => $_GET['category']]);
             $transactions->appends(['user_req' => $_GET['user_req']]);
             $transactions->appends(['user_prep' => $_GET['user_prep']]);
+            $transactions->appends(['due_from' => $_GET['due_from']]);
+            $transactions->appends(['due_to' => $_GET['due_to']]);
             $transactions->appends(['bal' => $_GET['bal']]);
             $transactions->appends(['is_confidential' => $_GET['is_confidential']]);
         } else {
@@ -266,6 +272,8 @@ class TransactionsController extends Controller {
         if ($request->status != "") $transactions = $transactions->whereIn('status_id', explode(',', $request->status));
         if ($request->user_req != "") $transactions = $transactions->where('requested_id', $request->user_req);
         if ($request->user_prep != "") $transactions = $transactions->where('owner_id', $request->user_prep);
+        if ($request->due_from != "") $transactions = $transactions->whereDate('due_at', '>=', $request->due_from);
+        if ($request->due_to != "") $transactions = $transactions->whereDate('due_at', '<=', $request->due_to);
         if ($request->is_confidential != "") $transactions = $transactions->where('is_confidential', $request->is_confidential);
 
         if ($request->category != "") {
