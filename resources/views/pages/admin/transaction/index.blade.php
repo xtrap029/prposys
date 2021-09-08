@@ -174,7 +174,7 @@
                                         @else <span class="badge badge-pill py-1 px-2 mt-2 small bg-yellow">Regular Transaction</span>
                                         @endif
 
-                                        <div class="mt-2 {{ $item->notes->count() > 0 ? '' : 'd-none' }}">
+                                        <div class="mt-2 {{ $item->notes->count() == 0 || $config_confidential ? 'd-none' : '' }}">
                                             <a href="#_" class="btn mb-2 btn-xs btn-flat btn-default col-12 col-lg-auto" data-toggle="modal" data-target="#modal-notes-{{ $item->id }}">
                                                 <i class="align-middle font-weight-bolder material-icons text-md">speaker_notes</i>
                                                 <span class="badge badge-danger">{{$item->notes->count()}}</span>
@@ -231,7 +231,7 @@
                                             {{ $item->released_at ? Carbon::parse($item->released_at)->format('Y-m-d') : '' }}
                                         @endif
                                     </td>
-                                    <td class="text-nowrap">{{ $item->requested->name }}</td>
+                                    <td>{{ $item->requested->name }}</td>
                                     <td class="text-nowrap">{{ $item->status->name }}</td>
                                 </tr>
                             @empty
