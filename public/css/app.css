@@ -44047,6 +44047,20 @@ div.tooltip-inner {
   border-right-color: #0076A8;
 }
 
+table.table-sticky-first thead th:first-child {
+  position: -webkit-sticky;
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+
+table.table-sticky-first tbody th {
+  position: -webkit-sticky;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+}
+
 .vlign--middle {
   vertical-align: middle !important;
 }

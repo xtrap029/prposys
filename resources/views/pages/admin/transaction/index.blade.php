@@ -134,20 +134,8 @@
                     </div>
                     
                 </form>
-                <style>
-                    table thead th:first-child {
-                        position: sticky;
-                        left: 0;
-                        z-index: 2;
-                    }
-                    table tbody th {
-                        position: sticky;
-                        left: 0;
-                        z-index: 1;
-                    }
-                </style>
                 <div class="table-responsive">
-                    <table class="table table-striped">
+                    <table class="table table-striped table-sticky-first">
                         <thead>
                             <tr>
                                 <th class="text-nowrap bg-light">{{ $trans_page == 'prpo' ? 'PR/PO' : 'PC' }} #</th>
@@ -161,7 +149,6 @@
                                 <th class="text-nowrap">Date Rel.</th>
                                 <th class="text-nowrap">Req. By</th>
                                 <th>Status</th>
-                                {{-- <th></th> --}}
                             </tr>
                         </thead>
                         <tbody>

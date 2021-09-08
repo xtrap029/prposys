@@ -11,3 +11,16 @@
         border-right-color: $blue;
     }
 }
+table.table-sticky-first {
+    & thead th:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+    }
+
+    & tbody th {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+    }
+}
