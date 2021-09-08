@@ -45,7 +45,7 @@
                     </div>
                     <div>
                         <a href="#_" class="btn mb-2 btn-sm btn-flat btn-light col-12 col-lg-auto" data-toggle="modal" data-target="#modal-notes">
-                            <i class="align-middle font-weight-bolder material-icons text-md">speaker_notes</i>
+                            <i class="align-middle font-weight-bolder material-icons text-md">speaker_notes</i> Notes
                             <span class="badge badge-danger {{ $transaction->notes->count() > 0 ? '' : 'd-none' }}">{{$transaction->notes->count()}}</span>
                         </a>
                         <a href="/transaction-form/create{{ $transaction->is_reimbursement ? '-reimbursement' : '' }}?company={{ $transaction->project->company_id }}&key={{ strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq) }}" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto {{ $perms['can_create'] ? '' : 'd-none' }}">
