@@ -134,11 +134,23 @@
                     </div>
                     
                 </form>
+                <style>
+                    table thead th:first-child {
+                        position: sticky;
+                        left: 0;
+                        z-index: 2;
+                    }
+                    table tbody th {
+                        position: sticky;
+                        left: 0;
+                        z-index: 1;
+                    }
+                </style>
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th class="text-nowrap">{{ $trans_page == 'prpo' ? 'PR/PO' : 'PC' }} #</th>
+                                <th class="text-nowrap bg-light">{{ $trans_page == 'prpo' ? 'PR/PO' : 'PC' }} #</th>
                                 <th class="text-nowrap">Vendor/Payee</th>
                                 <th class="text-nowrap">Purpose</th>
                                 <th class="text-nowrap text-center">Currency</th>
@@ -155,9 +167,10 @@
                         <tbody>
                             @forelse ($transactions as $item)
                                 <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
+                                @include('pages.admin.transaction.notesmulti')
                                 <tr>
-                                    <td class="text-nowrap">
-                                        <div>
+                                    <th class="bg-light">
+                                        <div class="text-nowrap">
                                             @if ($config_confidential)
                                                 {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
                                             @else
@@ -173,7 +186,14 @@
                                         @elseif ($item->is_bank) <span class="badge badge-pill py-1 px-2 mt-2 small bg-purple">Fund Transfer</span>
                                         @else <span class="badge badge-pill py-1 px-2 mt-2 small bg-yellow">Regular Transaction</span>
                                         @endif
-                                    </td>
+
+                                        <div class="mt-2 {{ $item->notes->count() > 0 ? '' : 'd-none' }}">
+                                            <a href="#_" class="btn mb-2 btn-xs btn-flat btn-default col-12 col-lg-auto" data-toggle="modal" data-target="#modal-notes-{{ $item->id }}">
+                                                <i class="align-middle font-weight-bolder material-icons text-md">speaker_notes</i>
+                                                <span class="badge badge-danger">{{$item->notes->count()}}</span>
+                                            </a>
+                                        </div>
+                                    </th>
                                     <td>
                                         @if ($config_confidential)
                                             -

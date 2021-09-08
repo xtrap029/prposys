@@ -76,11 +76,18 @@
                     </div>
                 </div>
                 <div class="form-row mb-3">
-                    <div class="col-sm-4 col-lg-4 mb-2">
+                    <div class="col-sm-6 col-lg-8 mb-2">
+                        <label for="">Note</label>
+                        <input type="text" class="form-control @error('note_content') is-invalid @enderror" name="note_content" value="{{ old('note_content') ?: (isset($_GET['note_content']) ? $_GET['note_content'] : '') }}">
+                        @include('errors.inline', ['message' => $errors->first('note_content')])
+                    </div>
+                    <div class="col-sm-6 col-lg-4 mb-2">
                         <label for="">Due Date</label>
                         <input type="date" class="form-control @error('due_at') is-invalid @enderror" name="due_at" value="{{ old('due_at') ?: (isset($_GET['due_at']) ? $_GET['due_at'] : '') }}" required>
                         @include('errors.inline', ['message' => $errors->first('due_at')])
                     </div>
+                </div>
+                <div class="form-row mb-3">
                     <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Requested by</label>
                         <select name="requested_id" class="form-control @error('requested_id') is-invalid @enderror">
@@ -94,14 +101,14 @@
                         <label for="">Prepared by</label>
                         <h5>{{ Auth::user()->name }}</h5>
                     </div>
-                </div>
-                <div class="form-row mb-3">
                     {{-- ALLOw ALL CATEGORIES --}}
                     {{-- <div class="col-sm-4 col-lg-4 mb-2 {{ $trans_type == 'po' ? '' : 'd-none' }}"> --}}
                     <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Statement of Account/Invoice/Form</label>
                         <input type="file" name="soa" class="soa form_control" {{ $trans_type == 'po' ? 'required' : '' }}>
                     </div>
+                </div>
+                <div class="form-row mb-3">
                     <div class="col-sm-4 col-lg-4 mb-2 {{ Auth::user()->is_smt ? '' : 'd-none' }}">             
                         <label for="">Is Confidential?</label>
                         <select name="is_confidential" class="form-control">

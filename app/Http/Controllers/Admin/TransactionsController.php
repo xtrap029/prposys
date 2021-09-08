@@ -452,7 +452,7 @@ class TransactionsController extends Controller {
             })
             ->orderBy('trans_seq', 'desc')->first();
         $data['trans_year'] = now()->year;
-        if($latest_trans) {
+        if ($latest_trans) {
             $data['trans_seq'] = $latest_trans->trans_seq+1;
         } else {
             $data['trans_seq'] = 1;
@@ -463,6 +463,15 @@ class TransactionsController extends Controller {
         $data['status_prev_id'] = 1;
 
         $transaction = Transaction::create($data);
+
+        if ($request->note_content && $request->note_content != "") {
+            TransactionsNote::create([
+                'transaction_id' => $transaction->id,
+                'content' => $request->note_content,
+                'user_id' => auth()->id(),
+                'created_at' => now()
+            ]);
+        }
 
         return redirect('/transaction/view/'.$transaction->id);
     }
