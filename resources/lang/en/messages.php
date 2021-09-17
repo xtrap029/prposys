@@ -20,6 +20,7 @@ return [
     'invalid_zip_contents' => 'Invalid zipped file contents!',
     'cant_create' => 'You are not allowed to create the item right now.',
     'cant_edit' => 'You are not allowed to edit the item right now.',
+    'cant_delete' => 'You are not allowed to delete the item right now.',
     'cant_print' => 'You are not allowed to print the item right now.',
     'cant_issue' => 'You are not allowed to issue the item right now.',
     'exceed_amount_unliq' => 'Unliquidated amount limit exceeded.',

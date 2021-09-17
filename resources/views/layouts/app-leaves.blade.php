@@ -55,8 +55,26 @@
                                             <i class="nav-icon material-icons icon--list">dashboard</i><p>Dashboard</p>
                                         </a>
                                     </li>
+                                    @if (Auth::user()->departmentuserapprover->count() > 0 || Auth::user()->departmentusermember->count() > 0)
+                                        <li class="nav-header">DEPARTMENT</li>                          
+                                        <li class="nav-item">
+                                            <a href="/leaves-department-peak/my" class="nav-link {{ Route::currentRouteName() == 'leavespeakmy' ? 'active' : '' }}">
+                                                <i class="nav-icon material-icons icon--list">event_busy</i><p>Peak</p>
+                                            </a>
+                                        </li>
+                                    @endif
                                     @if (Auth::user()->role_id == 1)
                                         <li class="nav-header">ADMINISTRATOR</li>                          
+                                        <li class="nav-item">
+                                            <a href="/leaves-reason" class="nav-link {{ Route::currentRouteName() == 'leavesreason' ? 'active' : '' }}">
+                                                <i class="nav-icon material-icons icon--list">accessibility_new</i><p>Leave Reason</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="/leaves-department" class="nav-link {{ Route::currentRouteName() == 'leavesdepartment' ? 'active' : '' }}">
+                                                <i class="nav-icon material-icons icon--list">account_tree</i><p>Department</p>
+                                            </a>
+                                        </li>
                                         <li class="nav-item">
                                             <a href="/leaves-settings" class="nav-link {{ Route::currentRouteName() == 'leaves-settings' ? 'active' : '' }}">
                                                 <i class="nav-icon material-icons icon--list">settings</i><p>Settings</p>

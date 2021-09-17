@@ -124,8 +124,8 @@
                         </select>
                         @include('errors.inline', ['message' => $errors->first('requested_id')])
                     </div>
-                    <div class="col-md-6 mb-2 {{ $transaction->trans_type == 'po' || $transaction->is_bills ? '' : 'd-none' }}">
-                        <label for="">Statement of Account</label>
+                    <div class="col-md-6 mb-2">
+                        <label for="">Statement of Account/Invoice/Form</label>
                         @if ($transaction->soa)
                             <a href="/storage/public/attachments/soa/{{ $transaction->soa }}" target="_blank" class="vlign--top ml-1">
                                 <i class="material-icons mr-2 align-bottom">attachment</i>

@@ -21,6 +21,8 @@ final class BreadHelper {
             case 'reporttemplates': $bread[] = ['report template', '/report-template']; break;
             case 'myaccount': $bread[] = ['my account', '/my-account']; break;
             case 'transactionreport': $bread[] = ['reports', '#']; break;
+            case 'leavesreason': $bread[] = ['leaves reason', '/leaves-reason']; break;
+            case 'leavesdepartment': $bread[] = ['leaves department', '/leaves-department']; break;
             case 'transaction': 
                 $bread[] = ['transactions', '/transaction/prpo/'.$special]; 
                 break;

@@ -637,10 +637,10 @@ class TransactionsFormsController extends Controller {
         // validate input
         $data = $request->validate($validation);
 
-        if (($transaction->trans_type == 'po' || $request->trans_category == 'bp') && $request->file('soa')) {
+        if ($request->file('soa')) {
             $data['soa'] = basename($request->file('soa')->store('public/attachments/soa'));
-        } else if ($transaction->trans_type != 'po' && $request->trans_category != 'bp') {
-            $data['soa'] = '';
+        } else {
+            $data['soa'] = $transaction->soa;
         }
 
         $data['particulars_id'] = $data['particulars_id_single'];

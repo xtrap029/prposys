@@ -112,13 +112,15 @@
                                                             @case('App\Particular')                     <?php $view_url = '/particular/'.$item->subject_id.'/edit'; ?> @break
                                                             @case('App\ReleasedBy')                     <?php $view_url = '/released-by/'.$item->subject_id.'/edit'; ?> @break
                                                             @case('App\Role')                           <?php $view_url = '/role/'.$item->subject_id.'/edit'; ?> @break
-                                                            @case('App\Settings')                       <?php $view_url = '/people-settings'; ?> @break
                                                             @case('App\Transaction')                    <?php $view_url = '/transaction/view/'.$item->subject_id; ?> @break
                                                             @case('App\TransactionsAttachment')         <?php $view_url = '/transaction-liquidation/finder-attachment/'.$item->subject_id; ?> @break
                                                             @case('App\TransactionsDescription')        <?php $view_url = '#'; ?> @break
                                                             @case('App\TransactionsLiquidation')        <?php $view_url = '/transaction-liquidation/finder-liquidation/'.$item->subject_id; ?> @break
-                                                            @case('App\User')                           <?php $view_url = '/user/'.$item->subject_id.'/edit'; ?> @break
                                                             @case('App\VatType')                        <?php $view_url = '/vat-type/'.$item->subject_id.'/edit'; ?> @break
+                                                            @case('App\User')                           <?php $view_url = '/user/'.$item->subject_id.'/edit'; ?> @break
+                                                            @case('App\Settings')                       <?php $view_url = '/people-settings'; ?> @break
+                                                            @case('App\LeaveReason')                    <?php $view_url = '/leaves-reason'; ?> @break
+                                                            @case('App\Department')                    <?php $view_url = '/leaves-department'; ?> @break
                                                             @default                                                        
                                                         @endswitch
                                                     <a href="{{ !empty($view_url) ? $view_url : '#' }}" class="btn btn-primary" target="_blank">View Item</a>

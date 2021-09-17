@@ -88,16 +88,42 @@ Route::middleware('auth')->group(function () {
             Route::get('/', $url.'@index')->name('leaves-settings');
             Route::post('/', $url.'@update')->name('leaves-settings');
         });
+
+        Route::resource('leaves-reason', 'Leaves\ReasonsController', ['names' => ['index' => 'leavesreason', 'create' => 'leavesreason', 'edit' => 'leavesreason']]);
+        Route::resource('leaves-department', 'Leaves\DepartmentsController', ['names' => ['index' => 'leavesdepartment', 'create' => 'leavesdepartment', 'edit' => 'leavesdepartment']]);
+    
+        Route::prefix('leaves-department-user')->group(function () {
+            $url = 'Leaves\DepartmentUsersController';
+
+            Route::get('/create/{department}', $url.'@create')->where('department', '[0-9]+')->name('leavesdepartment');
+            Route::post('/', $url.'@store');
+            Route::get('/edit/{department_user}', $url.'@edit')->where('department_user', '[0-9]+')->name('leavesdepartment');
+            Route::put('/{department_user}', $url.'@update')->where('department_user', '[0-9]+');
+            Route::delete('/{department_user}', $url.'@destroy')->where('department_user', '[0-9]+');
+        });
+
+        Route::prefix('leaves-department-peak')->group(function () {
+            $url = 'Leaves\DepartmentPeaksController';
+
+            Route::get('/{department}', $url.'@index')->where('department', '[0-9]+')->name('leavesdepartment');
+            Route::get('/{department}/create', $url.'@create')->where('department', '[0-9]+')->name('leavesdepartment');
+            Route::post('/{department}', $url.'@store')->where('department', '[0-9]+');
+            Route::get('/edit/{departmentpeak}', $url.'@edit')->where('departmentpeak', '[0-9]+')->name('leavesdepartment');
+            Route::put('/{departmentpeak}', $url.'@update')->where('departmentpeak', '[0-9]+');
+            Route::delete('/{departmentpeak}', $url.'@destroy')->where('departmentpeak', '[0-9]+');
+        });
     });
 
     // Access Level 1 and 2
     Route::middleware('checkRole:1|2')->group(function () {
+
+        // Sequence
+
         Route::resource('coa-tagging', 'Admin\CoaTaggingController', ['names' => ['index' => 'coatagging', 'create' => 'coatagging', 'edit' => 'coatagging']]);
         Route::resource('expense-type', 'Admin\ExpenseTypesController', ['names' => ['index' => 'expensetype', 'create' => 'expensetype', 'edit' => 'expensetype']]);
         Route::resource('particular', 'Admin\ParticularsController', ['names' => ['index' => 'particular', 'create' => 'particular', 'edit' => 'particular']]);
         Route::resource('vat-type', 'Admin\VatTypesController', ['names' => ['index' => 'vattype', 'create' => 'vattype', 'edit' => 'vattype']]);
-        Route::resource('released-by', 'Admin\ReleasedByController', ['names' => ['index' => 'releasedby', 'create' => 'releasedby', 'edit' => 'releasedby']]);
-        
+        Route::resource('released-by', 'Admin\ReleasedByController', ['names' => ['index' => 'releasedby', 'create' => 'releasedby', 'edit' => 'releasedby']]);        
         Route::resource('bank', 'Admin\BanksController', ['names' => ['index' => 'bank', 'create' => 'bank', 'edit' => 'bank'], 'asd' => ['index' => 'bank1', 'create' => 'bank1', 'edit' => 'bank1']]);
 
         Route::prefix('bank-branch')->group(function () {
@@ -121,7 +147,7 @@ Route::middleware('auth')->group(function () {
     
         Route::middleware('CheckConfidential')->group(function () {            
             Route::get('transaction/duplicate/{transaction}', 'Admin\TransactionsController@duplicate')->where('transaction', '[0-9]+');
-        });
+        });    
     });
 
     // Access Level 1, 2, and 3
@@ -232,5 +258,17 @@ Route::middleware('auth')->group(function () {
 
         Route::get('my-account', 'People\MyAccountController@index')->name('myaccount');
         Route::put('my-account', 'People\MyAccountController@update')->name('myaccount');
+
+        // Leaves
+        Route::prefix('leaves-department-peak/my')->group(function () {
+            $url = 'Leaves\DepartmentPeaksController';
+
+            Route::get('/', $url.'@index_my')->name('leavespeakmy');
+            Route::get('/{department}/create', $url.'@create_my')->where('department', '[0-9]+')->name('leavespeakmy');
+            Route::post('/{department}', $url.'@store_my')->where('department', '[0-9]+');
+            Route::get('/edit/{departmentpeak}', $url.'@edit_my')->where('departmentpeak', '[0-9]+')->name('leavespeakmy');
+            Route::put('/{departmentpeak}', $url.'@update_my')->where('departmentpeak', '[0-9]+');
+            Route::delete('/{departmentpeak}', $url.'@destroy_my')->where('departmentpeak', '[0-9]+');
+        });
     });
 });

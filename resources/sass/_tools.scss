@@ -64,3 +64,11 @@
 .cursor-pointer {
     cursor: pointer;
 }
+
+.text {
+    
+    &--line-through {
+        text-decoration: line-through;
+    }
+
+}

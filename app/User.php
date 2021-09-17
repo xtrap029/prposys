@@ -106,4 +106,16 @@ class User extends Authenticatable {
     public function company() {
         return $this->belongsTo(Company::class);
     }
+
+    public function departmentuser() {
+        return $this->hasMany(DepartmentsUser::class);
+    }
+
+    public function departmentusermember() {
+        return $this->hasMany(DepartmentsUser::class)->where('is_approver', '=', 0);
+    }
+
+    public function departmentuserapprover() {
+        return $this->hasMany(DepartmentsUser::class)->where('is_approver', '=', 1);
+    }
 }

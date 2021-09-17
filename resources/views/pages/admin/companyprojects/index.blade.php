@@ -15,8 +15,8 @@
     <section class="content">
         <div class="container-fluid">
             <div class="text-center mb-5">
-                <img src="/storage/public/images/companies/{{ $company->logo }}" alt="" class="thumb thumb--sm d-block m-auto">
-                {{ $company->name }}<br>
+                <img src="/storage/public/images/companies/{{ $company->logo }}" alt="" class="thumb thumb--sm d-block m-auto pb-3">
+                <h4>{{ $company->name }}</h4>
                 <a href="/company">Back to companies</a>
             </div>
     

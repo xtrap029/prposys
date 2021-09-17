@@ -44141,6 +44141,10 @@ footer ul li:last-child {
   cursor: pointer;
 }
 
+.text--line-through {
+  text-decoration: line-through;
+}
+
 @media print {
   .row--print {
     page-break-inside: avoid;
