@@ -129,6 +129,12 @@
                             <label for="" class="text-gray">Confirm Change Password</label>
                             <input type="password" class="form-control" name="password_confirmation">
                         </div>
+                        <div class="form-group border p-2 mb-0 col-12 text-center">
+                            <div class="my-2">Available Apps</div>
+                            @foreach (explode(',', $user->apps) as $item)
+                                <img src="{{ config('global.site_icon'.($item != 'sequence' ? '_'.$item : '')) }}" alt="" class="img-size-64">
+                            @endforeach
+                        </div>
                         <div class="form-group p-2 mb-0 col-lg-12 text-center">
                             <input type="submit" class="btn btn-primary btn-sm" value="Update">
                         </div>

@@ -69,14 +69,16 @@ class UsersController extends Controller {
             'e_sss' => ['nullable'],
             'e_phic' => ['nullable'],
             'e_hmdf' => ['nullable'],
+            'app_control.*' => ['nullable'],
         ]);
 
+        $data['apps'] = $request->app_control ? implode(",", $request->app_control) : "";
         $data['avatar'] = basename($request->file('avatar')->store('public/images/users'));
-
         User::create([
             'avatar' => $data['avatar'],
             'name' => $data['name'],
             'role_id' => $data['role_id'],
+            'apps' => $data['apps'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'company_id' => $data['company_id'],
@@ -146,6 +148,7 @@ class UsersController extends Controller {
             'e_sss' => ['nullable'],
             'e_phic' => ['nullable'],
             'e_hmdf' => ['nullable'],
+            'app_control.*' => ['nullable'],
         ];
 
         if ($request->password) {
@@ -162,6 +165,9 @@ class UsersController extends Controller {
         if ($request->password) {
             $data['password'] = Hash::make($data['password']);
         }
+
+        $data['apps'] = $request->app_control ? implode(",", $request->app_control) : "";
+        unset($data['app_control']);
 
         $user->update($data);
 

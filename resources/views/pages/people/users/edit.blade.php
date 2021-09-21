@@ -186,6 +186,25 @@
                             <label for="">Confirm Change Password</label>
                             <input type="password" class="form-control" name="password_confirmation">
                         </div>
+                        <div class="card col-md-12 mt-4">
+                            <div class="card-header">
+                                App Access
+                            </div>
+                            <div class="card-body pb-1 row">
+                                @foreach (config('global.apps') as $item)
+                                    <div class="col-md-6 col-xl-4">
+                                        <div class="callout py-1 mx-1 row">
+                                            <div class="col-2">
+                                                <input type="checkbox" name="app_control[]" value="{{ $item }}" class="vlign--baseline-middle m-auto outline-0" {{ in_array($item, explode(',',$user->apps)) ? 'checked' : '' }}>
+                                            </div>
+                                            <div class="col-10 mt-2">
+                                                <h6>{{ ucwords($item) }}</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-pane fade m-4" id="sequence" role="tabpanel" aria-labelledby="sequence-tab">
                         <div class="form-group mb-3">

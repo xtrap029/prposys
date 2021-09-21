@@ -58,6 +58,7 @@
             ['Cancelled', '3'],
         ],
         'attachment_format' => ['jpg', 'jpeg', 'png', 'pdf'],
+        'apps' => ['leaves', 'sequence', 'people'],
         'dashboard_sequence' => '/sequence-dashboard',
         'dashboard_leaves' => '/leaves-dashboard',
         'dashboard_people' => '/people-dashboard',
