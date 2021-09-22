@@ -211,25 +211,27 @@
 
 
                     <div class="tab-pane fade m-4" id="sequence" role="tabpanel" aria-labelledby="sequence-tab">
-                        <div class="form-group mb-3">
-                            <label for="">Role</label>
-                            <select name="role_id" class="form-control @error('role_id') is-invalid @enderror">
-                                <option value="">Inactive</option>
-                                @foreach ($roles as $role)
-                                    <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>                                        
-                                @endforeach
-                            </select>
-                            @include('errors.inline', ['message' => $errors->first('role_id')])
-                        </div>                
-                        {{-- <div class="form-group mb-3">
-                            <label for="">Default Company</label>
-                            <select name="company_id" class="form-control @error('company_id') is-invalid @enderror" required>
-                                @foreach ($companies as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                            @include('errors.inline', ['message' => $errors->first('company_id')])
-                        </div> --}}
+                        <div class="form-row">
+                            <div class="form-group col-lg-8 mb-3">
+                                <label for="">Role</label>
+                                <select name="role_id" class="form-control @error('role_id') is-invalid @enderror">
+                                    <option value="">Inactive</option>
+                                    @foreach ($roles as $role)
+                                        <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>                                        
+                                    @endforeach
+                                </select>
+                                @include('errors.inline', ['message' => $errors->first('role_id')])
+                            </div>
+                            <div class="form-group col-lg-4 mb-3">
+                                <label for="">Read Only Access?</label>
+                                <select name="is_read_only" class="form-control @error('is_read_only') is-invalid @enderror">
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                                <small>Not applicable for Manager role.</small>
+                                @include('errors.inline', ['message' => $errors->first('is_read_only')])
+                            </div>
+                        </div>
                         <div class="card col-md-12 mt-4">
                             <div class="card-header">
                                 Company Access

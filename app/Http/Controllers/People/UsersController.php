@@ -71,6 +71,7 @@ class UsersController extends Controller {
             'e_hmdf' => ['nullable'],
             'app_control.*' => ['nullable'],
             'company_control.*' => ['nullable'],
+            'is_read_only' => ['boolean'],
         ]);
 
         $data['apps'] = $request->app_control ? implode(",", $request->app_control) : "";
@@ -84,6 +85,7 @@ class UsersController extends Controller {
             'role_id' => $data['role_id'],
             'apps' => $data['apps'],
             'companies' => $data['companies'],
+            'is_read_only' => $data['role_id'] == 1 ? 0 : $data['is_read_only'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'company_id' => $data['company_id'],
@@ -155,6 +157,7 @@ class UsersController extends Controller {
             'e_hmdf' => ['nullable'],
             'app_control.*' => ['nullable'],
             'company_control.*' => ['nullable'],
+            'is_read_only' => ['boolean'],
         ];
 
         if ($request->password) {
@@ -178,6 +181,8 @@ class UsersController extends Controller {
         $data['companies'] = $request->company_control ? implode(",", $request->company_control) : "";
         $data['company_id'] = $request->company_control ? $request->company_control[0] : null;
         unset($data['company_control']);
+
+        $data['is_read_only'] = $data['role_id'] == 1 ? 0 : $data['is_read_only'];
 
         $user->update($data);
 

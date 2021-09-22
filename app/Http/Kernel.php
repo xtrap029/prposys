@@ -64,6 +64,7 @@ class Kernel extends HttpKernel
         'checkRole' => \App\Http\Middleware\CheckRole::class,
         'CheckConfidential' => \App\Http\Middleware\CheckConfidential::class,
         'CheckAppAccess' => \App\Http\Middleware\CheckAppAccess::class,
+        'CheckReadOnly' => \App\Http\Middleware\CheckReadOnly::class,
     ];
 
     /**

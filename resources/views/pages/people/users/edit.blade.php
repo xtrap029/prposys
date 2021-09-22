@@ -207,27 +207,30 @@
                         </div>
                     </div>
                     <div class="tab-pane fade m-4" id="sequence" role="tabpanel" aria-labelledby="sequence-tab">
-                        <div class="form-group mb-3">
-                            <label for="">Role</label>
-                            @if ($user->is_smt)
-                                <span class="font-weight-bold ml-3">{{ $user->role->name }} - SMT</span>
-                            @endif
-                            <select name="role_id" class="form-control @error('role_id') is-invalid @enderror {{ $user->is_smt ? 'd-none' : '' }}">
-                                <option value="">Inactive</option>
-                                @foreach ($roles as $role)
-                                    <option value="{{ $role->id }}" {{ $user->role_id == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>                                        
-                                @endforeach
-                            </select>
-                            @include('errors.inline', ['message' => $errors->first('role_id')])
+                        <div class="form-row">
+                            <div class="form-group col-lg-8 mb-3">
+                                <label for="">Role</label>
+                                @if ($user->is_smt)
+                                    <span class="font-weight-bold ml-3">{{ $user->role->name }} - SMT</span>
+                                @endif
+                                <select name="role_id" class="form-control @error('role_id') is-invalid @enderror {{ $user->is_smt ? 'd-none' : '' }}">
+                                    <option value="">Inactive</option>
+                                    @foreach ($roles as $role)
+                                        <option value="{{ $role->id }}" {{ $user->role_id == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>                                        
+                                    @endforeach
+                                </select>
+                                @include('errors.inline', ['message' => $errors->first('role_id')])
+                            </div>
+                            <div class="form-group col-lg-4 mb-3">
+                                <label for="">Read Only Access?</label>
+                                <select name="is_read_only" class="form-control @error('is_read_only') is-invalid @enderror">
+                                    <option value="0" {{ !$user->is_read_only ? 'selected' : '' }}>No</option>
+                                    <option value="1" {{ $user->is_read_only ? 'selected' : '' }}>Yes</option>
+                                </select>
+                                <small>Not applicable for Manager role.</small>
+                                @include('errors.inline', ['message' => $errors->first('is_read_only')])
+                            </div>
                         </div>
-                        {{-- <div class="form-group mb-3">
-                            <label for="">Default Company</label>
-                            <select name="company_id" class="form-control">
-                                @foreach ($companies as $item)
-                                    <option value="{{ $item->id }}" {{ $user->company_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        </div> --}}
                         <div class="card col-md-12 mt-4">
                             <div class="card-header">
                                 Company Access

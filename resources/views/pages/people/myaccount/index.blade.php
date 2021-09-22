@@ -147,8 +147,20 @@
                             <h6>{{ $user->role->name }} {{ $user->is_smt ? ' - SMT' : '' }}</h6>
                         </div>
                         <div class="form-group border p-2 mb-0 col-lg-6">
+                            <label for="" class="text-gray">Read Only Access?</label>
+                            <h6>{{ $user->is_read_only ? 'Yes' : 'No' }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-lg-6">
                             <label for="" class="text-gray">Default Company</label>
                             <h6>{{ $user->company->name }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-6">
+                            <label for="" class="text-gray">Accessible Companies</label>
+                            <h6>
+                                @foreach ($companies as $item)
+                                    {{ $item->name }}<br>
+                                @endforeach
+                            </h6>
                         </div>
                         <div class="form-group border p-2 mb-0 col-lg-6">
                             <label for="" class="text-gray">Unliquidated PR amount limit</label>

@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\Storage;
 class MyAccountController extends Controller {
     
     public function index() {
-        $companies = Company::orderBy('name', 'asc')->get();
+        $allowed_companies = explode(',', User::where('id', auth()->id())->first()->companies);
+        $companies = Company::whereIn('id', $allowed_companies)->orderBy('name', 'asc')->get();
         $user = User::where('id', auth()->id())->first();
         $roles = Role::orderBy('id', 'desc')->get();
 

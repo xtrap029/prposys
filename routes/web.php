@@ -128,34 +128,36 @@ Route::middleware('auth')->group(function () {
 
         // Sequence
         Route::middleware('CheckAppAccess:'.config('global.apps')[1])->group(function () {
-            Route::resource('coa-tagging', 'Admin\CoaTaggingController', ['names' => ['index' => 'coatagging', 'create' => 'coatagging', 'edit' => 'coatagging']]);
-            Route::resource('expense-type', 'Admin\ExpenseTypesController', ['names' => ['index' => 'expensetype', 'create' => 'expensetype', 'edit' => 'expensetype']]);
-            Route::resource('particular', 'Admin\ParticularsController', ['names' => ['index' => 'particular', 'create' => 'particular', 'edit' => 'particular']]);
-            Route::resource('vat-type', 'Admin\VatTypesController', ['names' => ['index' => 'vattype', 'create' => 'vattype', 'edit' => 'vattype']]);
-            Route::resource('released-by', 'Admin\ReleasedByController', ['names' => ['index' => 'releasedby', 'create' => 'releasedby', 'edit' => 'releasedby']]);        
-            Route::resource('bank', 'Admin\BanksController', ['names' => ['index' => 'bank', 'create' => 'bank', 'edit' => 'bank'], 'asd' => ['index' => 'bank1', 'create' => 'bank1', 'edit' => 'bank1']]);
+            Route::middleware('CheckReadOnly')->group(function () {
+                Route::resource('coa-tagging', 'Admin\CoaTaggingController', ['names' => ['index' => 'coatagging', 'create' => 'coatagging', 'edit' => 'coatagging']]);
+                Route::resource('expense-type', 'Admin\ExpenseTypesController', ['names' => ['index' => 'expensetype', 'create' => 'expensetype', 'edit' => 'expensetype']]);
+                Route::resource('particular', 'Admin\ParticularsController', ['names' => ['index' => 'particular', 'create' => 'particular', 'edit' => 'particular']]);
+                Route::resource('vat-type', 'Admin\VatTypesController', ['names' => ['index' => 'vattype', 'create' => 'vattype', 'edit' => 'vattype']]);
+                Route::resource('released-by', 'Admin\ReleasedByController', ['names' => ['index' => 'releasedby', 'create' => 'releasedby', 'edit' => 'releasedby']]);        
+                Route::resource('bank', 'Admin\BanksController', ['names' => ['index' => 'bank', 'create' => 'bank', 'edit' => 'bank'], 'asd' => ['index' => 'bank1', 'create' => 'bank1', 'edit' => 'bank1']]);
 
-            Route::prefix('bank-branch')->group(function () {
-                $url = 'Admin\BankBranchesController';
+                Route::prefix('bank-branch')->group(function () {
+                    $url = 'Admin\BankBranchesController';
 
-                Route::get('/create', $url.'@create')->name('bank');
-                Route::post('/', $url.'@store');
-                Route::get('/edit/{bank_branch}', $url.'@edit')->where('bank_branch', '[0-9]+')->name('bank');
-                Route::put('/{bank_branch}', $url.'@update')->where('bank_branch', '[0-9]+');
-                Route::delete('/{bank_branch}', $url.'@destroy')->where('bank_branch', '[0-9]+');
-            });
+                    Route::get('/create', $url.'@create')->name('bank');
+                    Route::post('/', $url.'@store');
+                    Route::get('/edit/{bank_branch}', $url.'@edit')->where('bank_branch', '[0-9]+')->name('bank');
+                    Route::put('/{bank_branch}', $url.'@update')->where('bank_branch', '[0-9]+');
+                    Route::delete('/{bank_branch}', $url.'@destroy')->where('bank_branch', '[0-9]+');
+                });
 
-            Route::prefix('report-column')->group(function () {
-                $url = 'Admin\ReportColumnsController';
+                Route::prefix('report-column')->group(function () {
+                    $url = 'Admin\ReportColumnsController';
 
-                Route::get('/', $url.'@index')->name('reporttemplates');
-                Route::put('/', $url.'@update');
-            });
+                    Route::get('/', $url.'@index')->name('reporttemplates');
+                    Route::put('/', $url.'@update');
+                });
 
-            Route::resource('report-template', 'Admin\ReportTemplatesController', ['names' => ['index' => 'reporttemplates', 'create' => 'reporttemplates', 'edit' => 'reporttemplates']]);
-        
-            Route::middleware('CheckConfidential')->group(function () {            
-                Route::get('transaction/duplicate/{transaction}', 'Admin\TransactionsController@duplicate')->where('transaction', '[0-9]+');
+                Route::resource('report-template', 'Admin\ReportTemplatesController', ['names' => ['index' => 'reporttemplates', 'create' => 'reporttemplates', 'edit' => 'reporttemplates']]);
+            
+                Route::middleware('CheckConfidential')->group(function () {            
+                    Route::get('transaction/duplicate/{transaction}', 'Admin\TransactionsController@duplicate')->where('transaction', '[0-9]+');
+                });    
             });    
         });    
     });
@@ -167,27 +169,40 @@ Route::middleware('auth')->group(function () {
         Route::middleware('CheckAppAccess:'.config('global.apps')[1])->group(function () {
             Route::prefix('transaction')->group(function () {
                 $url = 'Admin\TransactionsController';
-
-                Route::get('/create/{trans_type}/{trans_company}', $url.'@create')->where('trans_company', '[0-9]+')->name('transaction');
-                Route::post('/create', $url.'@store');
+                
+                Route::middleware('CheckReadOnly')->group(function () {
+                    $url = 'Admin\TransactionsController';
+                    Route::get('/create/{trans_type}/{trans_company}', $url.'@create')->where('trans_company', '[0-9]+')->name('transaction');
+                    Route::post('/create', $url.'@store');
+                });
                 
                 Route::middleware('CheckConfidential')->group(function () {
                     $url = 'Admin\TransactionsController';
                     
-                    Route::get('/edit/{transaction}', $url.'@edit')->where('transaction', '[0-9]+')->name('transaction');
-                    Route::put('/edit/{transaction}', $url.'@update')->where('transaction', '[0-9]+');
                     Route::get('/view/{transaction}', $url.'@show')->where('transaction', '[0-9]+')->name('transaction');
-                    Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
-                    Route::put('/cancel/{transaction}', $url.'@cancel')->where('transaction', '[0-9]+');
-                    Route::put('/manage/{transaction}', $url.'@manage')->where('transaction', '[0-9]+');
+
+                    Route::middleware('CheckReadOnly')->group(function () {
+                        $url = 'Admin\TransactionsController';
+                        
+                        Route::get('/edit/{transaction}', $url.'@edit')->where('transaction', '[0-9]+')->name('transaction');
+                        Route::put('/edit/{transaction}', $url.'@update')->where('transaction', '[0-9]+');
+                        Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
+                        Route::put('/cancel/{transaction}', $url.'@cancel')->where('transaction', '[0-9]+');
+                        Route::put('/manage/{transaction}', $url.'@manage')->where('transaction', '[0-9]+');
+                    });
+
                     Route::put('/note/{transaction}', $url.'@note')->where('transaction', '[0-9]+');
                     // Route::get('/report/', $url.'@report')->middleware('checkRole:1|2');
                 });
 
-                Route::put('/edit-company/', $url.'@update_company')->name('transaction');
-                Route::get('/report-all/', $url.'@report_all')->name('transactionreport');
-                Route::get('/toggle-visibility/{id}', $url.'@toggle_confidential')->name('transaction');
+                Route::middleware('CheckReadOnly')->group(function () {
+                    $url = 'Admin\TransactionsController';
 
+                    Route::put('/edit-company/', $url.'@update_company')->name('transaction');
+                    Route::get('/toggle-visibility/{id}', $url.'@toggle_confidential')->name('transaction');
+                });
+
+                Route::get('/report-all/', $url.'@report_all')->name('transactionreport');
                 Route::get('/{trans_page}/{trans_company?}', $url.'@index')->where('trans_company', '[0-9]+')->name('transaction');
 
                 Route::post('/api-search', $url.'@api_search');
@@ -196,35 +211,44 @@ Route::middleware('auth')->group(function () {
             Route::prefix('transaction-form')->group(function () {
                 $url = 'Admin\TransactionsFormsController';
                 
-                Route::get('/create', $url.'@create')->name('transaction');
-                Route::post('/create', $url.'@store');
+                Route::middleware('CheckReadOnly')->group(function () {
+                    $url = 'Admin\TransactionsFormsController';
 
-                Route::get('/create-reimbursement', $url.'@create_reimbursement')->name('transaction');
-                Route::post('/create-reimbursement', $url.'@store_reimbursement');
+                    Route::get('/create', $url.'@create')->name('transaction');
+                    Route::post('/create', $url.'@store');
+
+                    Route::get('/create-reimbursement', $url.'@create_reimbursement')->name('transaction');
+                    Route::post('/create-reimbursement', $url.'@store_reimbursement');
+                });
 
                 Route::middleware('CheckConfidential')->group(function () {
                     $url = 'Admin\TransactionsFormsController';
                     
                     Route::get('/view/{transaction}', $url.'@show')->where('transaction', '[0-9]+')->name('transaction');
-        
-                    Route::get('/edit/{transaction}', $url.'@edit')->where('transaction', '[0-9]+')->name('transaction');
-                    Route::put('/edit/{transaction}', $url.'@update')->where('transaction', '[0-9]+');
-        
-                    Route::get('/edit-reimbursement/{transaction}', $url.'@edit_reimbursement')->where('transaction', '[0-9]+')->name('transaction');
-                    Route::put('/edit-reimbursement/{transaction}', $url.'@update_reimbursement')->where('transaction', '[0-9]+');
-        
-                    Route::put('/edit-issued/{transaction}', $url.'@update_issued')->where('transaction', '[0-9]+');
                     
-                    // if is_bank
-                    Route::put('/edit-issued-company/{transaction}', $url.'@update_issued_company')->where('transaction', '[0-9]+');
-                    Route::get('/edit-issued-clear/{transaction}', $url.'@update_issued_clear')->where('transaction', '[0-9]+');
+                    Route::middleware('CheckReadOnly')->group(function () {
+                        $url = 'Admin\TransactionsFormsController';
+
+                        Route::get('/edit/{transaction}', $url.'@edit')->where('transaction', '[0-9]+')->name('transaction');
+                        Route::put('/edit/{transaction}', $url.'@update')->where('transaction', '[0-9]+');
+            
+                        Route::get('/edit-reimbursement/{transaction}', $url.'@edit_reimbursement')->where('transaction', '[0-9]+')->name('transaction');
+                        Route::put('/edit-reimbursement/{transaction}', $url.'@update_reimbursement')->where('transaction', '[0-9]+');
         
-                    Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
-                    Route::put('/cancel/{transaction}', $url.'@cancel')->where('transaction', '[0-9]+');
-                    // Route::put('/approval/{transaction}', $url.'@approval')->where('transaction', '[0-9]+');
-                    Route::get('/approval/{transaction}', $url.'@approval')->where('transaction', '[0-9]+');
+                        Route::put('/edit-issued/{transaction}', $url.'@update_issued')->where('transaction', '[0-9]+');
+                    
+                        // if is_bank
+                        Route::put('/edit-issued-company/{transaction}', $url.'@update_issued_company')->where('transaction', '[0-9]+');
+                        Route::get('/edit-issued-clear/{transaction}', $url.'@update_issued_clear')->where('transaction', '[0-9]+');
+        
+                        Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
+                        Route::put('/cancel/{transaction}', $url.'@cancel')->where('transaction', '[0-9]+');
+                        // Route::put('/approval/{transaction}', $url.'@approval')->where('transaction', '[0-9]+');
+                        Route::get('/approval/{transaction}', $url.'@approval')->where('transaction', '[0-9]+');
+                        Route::put('/issue/{transaction}', $url.'@issue')->where('transaction', '[0-9]+');
+                    });
+
                     Route::get('/print/{transaction}', $url.'@print')->where('transaction', '[0-9]+')->name('transaction');
-                    Route::put('/issue/{transaction}', $url.'@issue')->where('transaction', '[0-9]+');
                 });
 
                 // Route::get('/report/', $url.'@report')->middleware('checkRole:1|2');
@@ -236,22 +260,31 @@ Route::middleware('auth')->group(function () {
             Route::prefix('transaction-liquidation')->group(function () {
                 $url = 'Admin\TransactionsLiquidationController';
                 
-                Route::get('/create', $url.'@create')->name('transaction');
-                Route::post('/create', $url.'@store');
+                Route::middleware('CheckReadOnly')->group(function () {
+                    $url = 'Admin\TransactionsLiquidationController';
+
+                    Route::get('/create', $url.'@create')->name('transaction');
+                    Route::post('/create', $url.'@store');
+                });
 
                 Route::middleware('CheckConfidential')->group(function () {
                     $url = 'Admin\TransactionsLiquidationController';
                     
                     Route::get('/view/{transaction}', $url.'@show')->where('transaction', '[0-9]+')->name('transaction');
-                    Route::get('/edit/{transaction}', $url.'@edit')->where('transaction', '[0-9]+')->name('transaction');
-                    Route::put('/edit/{transaction}', $url.'@update')->where('transaction', '[0-9]+');
-                    Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
-                    // Route::put('/approval/{transaction}', $url.'@approval')->where('transaction', '[0-9]+');
-                    Route::get('/approval/{transaction}', $url.'@approval')->where('transaction', '[0-9]+');
-                    Route::get('/print/{transaction}', $url.'@print')->where('transaction', '[0-9]+')->name('transaction');
-                    Route::post('/clear/{transaction}', $url.'@clear')->where('transaction', '[0-9]+');
-                    Route::put('/clear/{transaction}', $url.'@clear_edit')->where('transaction', '[0-9]+');
                     
+                    Route::middleware('CheckReadOnly')->group(function () {
+                        $url = 'Admin\TransactionsLiquidationController';
+
+                        Route::get('/edit/{transaction}', $url.'@edit')->where('transaction', '[0-9]+')->name('transaction');
+                        Route::put('/edit/{transaction}', $url.'@update')->where('transaction', '[0-9]+');
+                        Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
+                        // Route::put('/approval/{transaction}', $url.'@approval')->where('transaction', '[0-9]+');
+                        Route::get('/approval/{transaction}', $url.'@approval')->where('transaction', '[0-9]+');
+                        Route::post('/clear/{transaction}', $url.'@clear')->where('transaction', '[0-9]+');
+                        Route::put('/clear/{transaction}', $url.'@clear_edit')->where('transaction', '[0-9]+');
+                    });
+                    
+                    Route::get('/print/{transaction}', $url.'@print')->where('transaction', '[0-9]+')->name('transaction');
                     Route::get('/finder-liquidation/{transaction}', $url.'@finder_liquidation')->where('transaction', '[0-9]+');
                     Route::get('/finder-attachment/{transaction}', $url.'@finder_attachment')->where('transaction', '[0-9]+');
                 });

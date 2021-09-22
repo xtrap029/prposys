@@ -73,7 +73,7 @@
                                         </li>
                                     @endif
                                         
-                                    @if (in_array(Auth::user()->role_id, [1, 2]))
+                                    @if (in_array(Auth::user()->role_id, [1, 2]) && !Auth::user()->is_read_only)
                                         <li class="nav-header">ACCOUNTING</li>
                                         <li class="nav-item">
                                             <a href="/bank" class="nav-link {{ Route::currentRouteName() == 'bank' ? 'active' : '' }}">
