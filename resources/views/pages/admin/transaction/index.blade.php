@@ -13,7 +13,7 @@
                     @csrf
                     @method('put')
                     <select name="company_id" class="form-control w-auto border-0 bg-transparent font-weight-bold outline-0 float-right" onchange="this.form.submit()">
-                        @foreach ($companies as $item)
+                        @foreach ($companies->whereIn('id', explode(',', Auth::user()->companies)) as $item)
                             <option value="{{ $item->id }}" {{ $company->id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                         @endforeach
                     </select>
@@ -236,7 +236,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="10" class="text-center">{{ __('messages.empty') }}</td>
+                                    <td colspan="11" class="text-center">{{ __('messages.empty') }}</td>
                                 </tr>
                             @endforelse
                         </tbody>

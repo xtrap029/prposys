@@ -46,7 +46,7 @@ class UsersController extends Controller {
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'avatar' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'company_id' =>  ['required', 'exists:companies,id'],
+            // 'company_id' =>  ['required', 'exists:companies,id'],
             'LIMIT_UNLIQUIDATEDPR_AMOUNT' => ['nullable', 'integer'],
             'LIMIT_UNLIQUIDATEDPR_COUNT' => ['nullable', 'integer'],
             'e_emp_no' => ['nullable'],
@@ -70,15 +70,20 @@ class UsersController extends Controller {
             'e_phic' => ['nullable'],
             'e_hmdf' => ['nullable'],
             'app_control.*' => ['nullable'],
+            'company_control.*' => ['nullable'],
         ]);
 
         $data['apps'] = $request->app_control ? implode(",", $request->app_control) : "";
+        $data['companies'] = $request->company_control ? implode(",", $request->company_control) : "";
+        $data['company_id'] = $request->company_control ? $request->company_control[0] : null;
+
         $data['avatar'] = basename($request->file('avatar')->store('public/images/users'));
         User::create([
             'avatar' => $data['avatar'],
             'name' => $data['name'],
             'role_id' => $data['role_id'],
             'apps' => $data['apps'],
+            'companies' => $data['companies'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'company_id' => $data['company_id'],
@@ -123,7 +128,7 @@ class UsersController extends Controller {
     public function update(Request $request, User $user) {
         $validation_rules = [
             'role_id' => ['nullable', 'exists:roles,id'],
-            'company_id' =>  ['required', 'exists:companies,id'],
+            // 'company_id' =>  ['required', 'exists:companies,id'],
             'name' => ['required', 'string', 'max:255'],
             'avatar' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             'LIMIT_UNLIQUIDATEDPR_AMOUNT' => ['nullable', 'integer'],
@@ -149,6 +154,7 @@ class UsersController extends Controller {
             'e_phic' => ['nullable'],
             'e_hmdf' => ['nullable'],
             'app_control.*' => ['nullable'],
+            'company_control.*' => ['nullable'],
         ];
 
         if ($request->password) {
@@ -168,6 +174,10 @@ class UsersController extends Controller {
 
         $data['apps'] = $request->app_control ? implode(",", $request->app_control) : "";
         unset($data['app_control']);
+
+        $data['companies'] = $request->company_control ? implode(",", $request->company_control) : "";
+        $data['company_id'] = $request->company_control ? $request->company_control[0] : null;
+        unset($data['company_control']);
 
         $user->update($data);
 

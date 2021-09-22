@@ -162,6 +162,8 @@ class TransactionsFormsController extends Controller {
     }
 
     public function create() {
+        if (!in_array($_GET['company'], explode(',', User::where('id', auth()->id())->first()->companies))) return abort(401);
+        
         if (empty($_GET['key']) || empty($_GET['company']) || !$this->check_can_create($_GET['key'], $_GET['company'])) {
             return back()->with('error', __('messages.make_not_allowed'));
         }
@@ -221,6 +223,8 @@ class TransactionsFormsController extends Controller {
     }
 
     public function create_reimbursement() {
+        if (!in_array($_GET['company'], explode(',', User::where('id', auth()->id())->first()->companies))) return abort(401);
+
         if (empty($_GET['key']) || empty($_GET['company']) || !$this->check_can_create($_GET['key'], $_GET['company'])) {
             return back()->with('error', __('messages.make_not_allowed'));
         }
@@ -454,6 +458,8 @@ class TransactionsFormsController extends Controller {
     }
 
     public function show(Transaction $transaction) {
+        if (!in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies))) return abort(401);
+
         $logs = Activity::where('subject_id', $transaction->id)
                 ->where('subject_type', 'App\Transaction')
                 ->orderBy('id', 'desc')->paginate(15)->onEachSide(1);
@@ -514,6 +520,8 @@ class TransactionsFormsController extends Controller {
     }
 
     public function edit(Transaction $transaction) {
+        if (!in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies))) return abort(401);
+
         if (!$this->check_can_edit($transaction->id) && !$this->check_can_issue($transaction->id)) {
             return back()->with('error', __('messages.cant_edit'));
         }
@@ -566,6 +574,8 @@ class TransactionsFormsController extends Controller {
     }
 
     public function edit_reimbursement(Transaction $transaction) {
+        if (!in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies))) return abort(401);
+
         if (!$this->check_can_edit($transaction->id) && !$this->check_can_issue($transaction->id)) {
             return back()->with('error', __('messages.cant_edit'));
         }
@@ -1029,6 +1039,8 @@ class TransactionsFormsController extends Controller {
     }
 
     public function print(Transaction $transaction) {
+        if (!in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies))) return abort(401);
+
         if (!$this->check_can_print($transaction->id)) {
             return back()->with('error', __('messages.cant_print'));
         }
@@ -1085,6 +1097,9 @@ class TransactionsFormsController extends Controller {
             $transactions = $transactions->whereHas('project', function($query) use($trans_company) {
                 $query->where('company_id', $trans_company);
             });
+        } else {
+            $projects = CompanyProject::whereIn('company_id', explode(',', User::where('id', auth()->id())->first()->companies))->pluck('id')->toArray();
+            $transactions = $transactions->whereIn('project_id', $projects);
         }
 
         if (!empty($_GET['status'])) {

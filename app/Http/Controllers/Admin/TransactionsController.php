@@ -43,6 +43,10 @@ class TransactionsController extends Controller {
                 break;
         }
 
+        if (!in_array($trans_company, explode(',', User::where('id', auth()->id())->first()->companies))) {
+            return abort(401);
+        }
+
         $trans_status = TransactionStatus::whereIn('id', config('global.status'))->get();
         $companies = Company::orderBy('name', 'asc')->get();
         $company = Company::where('id', $trans_company)->first();
@@ -330,6 +334,8 @@ class TransactionsController extends Controller {
     }
 
     public function create($trans_type, $trans_company) {
+        if (!in_array($trans_company, explode(',', User::where('id', auth()->id())->first()->companies))) return abort(401);
+
         switch ($trans_type) {
             case 'pr':
             case 'po':
@@ -524,6 +530,8 @@ class TransactionsController extends Controller {
     }
 
     public function edit(Transaction $transaction) {
+        if (!in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies))) return abort(401);
+
         if (!$this->check_can_edit($transaction->id)) {
             return back()->with('error', __('messages.cant_edit'));
         }
@@ -639,6 +647,8 @@ class TransactionsController extends Controller {
     }
 
     public function show(Transaction $transaction) {
+        if (!in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies))) return abort(401);
+
         $logs = Activity::where('subject_id', $transaction->id)
                 ->where('subject_type', 'App\Transaction')
                 ->orderBy('id', 'desc')->paginate(15)->onEachSide(1);
@@ -924,6 +934,9 @@ class TransactionsController extends Controller {
             $transactions = $transactions->whereDoesntHave('project', function($query) use($trans_company) {
                 $query->where('company_id', '!=', $trans_company);
             });
+        } else {
+            $projects = CompanyProject::whereIn('company_id', explode(',', User::where('id', auth()->id())->first()->companies))->pluck('id')->toArray();
+            $transactions = $transactions->whereIn('project_id', $projects);
         }        
         if (!empty($_GET['status'])) {
             $transactions = $transactions->whereIn('status_id', explode(',', $_GET['status']));

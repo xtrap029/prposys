@@ -34,7 +34,7 @@
                                     @csrf
                                     @method('put')
                                     <select name="company_id" class="form-control" onchange="this.form.submit()">
-                                        @foreach ($companies as $item)
+                                        @foreach ($companies->whereIn('id', explode(',', $user->companies)) as $item)
                                             <option value="{{ $item->id }}" {{ $user->company_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                         @endforeach
                                     </select>

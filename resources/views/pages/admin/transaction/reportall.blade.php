@@ -55,7 +55,7 @@
                                     <label for="">Company</label>
                                     <select name="company" class="form-control">
                                         <option value="">All</option>
-                                        @foreach ($companies as $item)
+                                        @foreach ($companies->whereIn('id', explode(',', Auth::user()->companies)) as $item)
                                             <option value="{{ $item->id }}" {{ !empty($trans_company) ? $trans_company == $item->id ? 'selected' : '' : '' }}>{{ $item->name }}</option>
                                         @endforeach
                                     </select>
@@ -272,7 +272,7 @@
                                 <label for="">Company</label>
                                 <select name="company" class="form-control form-control-sm">
                                     <option value="">All</option>
-                                    @foreach ($companies as $item)
+                                    @foreach ($companies->whereIn('id', explode(',', Auth::user()->companies)) as $item)
                                         <option value="{{ $item->id }}" {{ !empty($trans_company) ? $trans_company == $item->id ? 'selected' : '' : '' }}>{{ $item->name }}</option>
                                     @endforeach
                                 </select>

@@ -221,7 +221,7 @@
                             </select>
                             @include('errors.inline', ['message' => $errors->first('role_id')])
                         </div>                
-                        <div class="form-group mb-3">
+                        {{-- <div class="form-group mb-3">
                             <label for="">Default Company</label>
                             <select name="company_id" class="form-control @error('company_id') is-invalid @enderror" required>
                                 @foreach ($companies as $item)
@@ -229,6 +229,25 @@
                                 @endforeach
                             </select>
                             @include('errors.inline', ['message' => $errors->first('company_id')])
+                        </div> --}}
+                        <div class="card col-md-12 mt-4">
+                            <div class="card-header">
+                                Company Access
+                            </div>
+                            <div class="card-body pb-1 row">
+                                @foreach ($companies as $item)
+                                    <div class="col-md-6 col-xl-4">
+                                        <div class="callout py-1 mx-1 row">
+                                            <div class="col-2">
+                                                <input type="checkbox" name="company_control[]" value="{{ $item->id }}" class="vlign--baseline-middle m-auto outline-0" checked>
+                                            </div>
+                                            <div class="col-10 mt-2">
+                                                <h6>{{ ucwords($item->name) }}</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
 
                         <div class="form-row mb-3">
