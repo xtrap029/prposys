@@ -60,7 +60,23 @@
                                         </a>
                                     </li>
                                     @if (Auth::user()->departmentuserapprover->count() > 0 || Auth::user()->departmentusermember->count() > 0)
-                                        <li class="nav-header">DEPARTMENT</li>                          
+                                    <li class="nav-header">DEPARTMENT</li>                          
+                                        @foreach (Auth::user()->departmentuserapprover as $item)
+                                            <li class="nav-item">
+                                                <a href="/leaves-department/my/{{ $item->department_id }}" class="nav-link {{ Route::currentRouteName() == 'leavesdepartmentmy' && $item->department_id == $department->id ? 'active' : '' }}">
+                                                    <i class="nav-icon material-icons icon--list">arrow_right</i><p>{{ $item->department->name }}</p>
+                                                    <div class="ml-4 pl-2 small">Approver</div>
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                        @foreach (Auth::user()->departmentusermember as $item)
+                                            <li class="nav-item">
+                                                <a href="/leaves-department/my/{{ $item->department_id }}" class="nav-link {{ Route::currentRouteName() == 'leavesdepartmentmy' && $item->department_id == $department->id ? 'active' : '' }}">
+                                                    <i class="nav-icon material-icons icon--list">arrow_right</i><p>{{ $item->department->name }}</p>
+                                                    <div class="ml-4 pl-2 small">Member</div>
+                                                </a>
+                                            </li>
+                                        @endforeach
                                         <li class="nav-item">
                                             <a href="/leaves-department-peak/my" class="nav-link {{ Route::currentRouteName() == 'leavespeakmy' ? 'active' : '' }}">
                                                 <i class="nav-icon material-icons icon--list">event_busy</i><p>Peak</p>

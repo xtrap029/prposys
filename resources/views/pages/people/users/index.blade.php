@@ -17,7 +17,9 @@
             <table class="table table-striped table-responsive-sm">
                 <thead>
                     <tr>
-                        <th colspan="3">List</th>
+                        <th colspan="2">List</th>
+                        <th>Role</th>
+                        <th>Seq. Access</th>
                         <th class="text-right text-nowrap">
                             @if (!isset($_GET['all'])) <a href="/user?all=1" class="mr-5">Show Inactive</a>
                             @else <a href="/user" class="mr-5">Hide Inactive</a>
@@ -34,9 +36,12 @@
                                 {{ $item->name }}
                                 <div class="text-info">{{ $item->email }}</div>
                             </td>
-                            <td class="align-middle">
+                            <td>
                                 {{ $item->role_id ? $item->role->name : 'Inactive' }}
                                 {{ $item->is_smt ? '- SMT' : '' }}
+                            </td>
+                            <td>
+                                {{ $item->is_read_only && $item->role_id != 1 ? 'Read' : 'Read/Write' }}
                             </td>
                             <td class="align-middle text-right">
                                 <a href="/user/{{ $item->id }}/edit" class="btn btn-link btn-sm">Edit</a>
@@ -44,7 +49,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center">{{ __('messages.empty') }}</td>
+                            <td colspan="6" class="text-center">{{ __('messages.empty') }}</td>
                         </tr>
                     @endforelse
                 </tbody>

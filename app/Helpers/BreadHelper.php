@@ -23,6 +23,8 @@ final class BreadHelper {
             case 'transactionreport': $bread[] = ['reports', '#']; break;
             case 'leavesreason': $bread[] = ['leaves reason', '/leaves-reason']; break;
             case 'leavesdepartment': $bread[] = ['leaves department', '/leaves-department']; break;
+            case 'leavespeakmy': $bread[] = ['leaves peak', '/leaves-department-peak/my']; break;
+            case 'leavesdepartmentmy': $bread[] = ['leaves department', '#']; break;
             case 'transaction': 
                 $bread[] = ['transactions', '/transaction/prpo/'.$special]; 
                 break;
@@ -36,7 +38,10 @@ final class BreadHelper {
             case 'force_cancel':
             case 'print_issued':
             case 'print_cleared':
+            case 'index_my':
             case 'db_backups': break;
+            case 'create_my': $bread[] = ['create', '#']; break;
+            case 'edit_my': $bread[] = ['edit', '#']; break;
             case 'create_reimbursement': $bread[] = ['create', '#']; break;
             case 'edit_reimbursement': $bread[] = ['edit', '#']; break;
             default: $bread[] = [$action, '#']; break;

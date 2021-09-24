@@ -316,6 +316,11 @@ Route::middleware('auth')->group(function () {
                 Route::put('/{departmentpeak}', $url.'@update_my')->where('departmentpeak', '[0-9]+');
                 Route::delete('/{departmentpeak}', $url.'@destroy_my')->where('departmentpeak', '[0-9]+');
             });
+            Route::prefix('leaves-department/my')->group(function () {
+                $url = 'Leaves\DepartmentsController';
+
+                Route::get('/{leavesDepartment}', $url.'@index_my')->name('leavesdepartmentmy');
+            });
         });
     });
 });

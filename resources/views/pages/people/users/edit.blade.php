@@ -189,13 +189,17 @@
                         <div class="card col-md-12 mt-4">
                             <div class="card-header">
                                 App Access
+                                <span class="float-right">
+                                    Select All
+                                    <input type="checkbox" class="check vlign--middle ml-2" id="checkApp">
+                                </span>
                             </div>
                             <div class="card-body pb-1 row">
                                 @foreach (config('global.apps') as $item)
                                     <div class="col-md-6 col-xl-4">
                                         <div class="callout py-1 mx-1 row">
                                             <div class="col-2">
-                                                <input type="checkbox" name="app_control[]" value="{{ $item }}" class="vlign--baseline-middle m-auto outline-0" {{ in_array($item, explode(',',$user->apps)) ? 'checked' : '' }}>
+                                                <input type="checkbox" name="app_control[]" value="{{ $item }}" class="check-app vlign--baseline-middle m-auto outline-0" {{ in_array($item, explode(',',$user->apps)) ? 'checked' : '' }}>
                                             </div>
                                             <div class="col-10 mt-2">
                                                 <h6>{{ ucwords($item) }}</h6>
@@ -234,13 +238,17 @@
                         <div class="card col-md-12 mt-4">
                             <div class="card-header">
                                 Company Access
+                                <span class="float-right">
+                                    Select All
+                                    <input type="checkbox" class="check vlign--middle ml-2" id="checkCompany">
+                                </span>
                             </div>
                             <div class="card-body pb-1 row">
                                 @foreach ($companies as $item)
-                                    <div class="col-md-6 col-xl-4">
+                                    <div class="col-md-6">
                                         <div class="callout py-1 mx-1 row">
                                             <div class="col-2">
-                                                <input type="checkbox" name="company_control[]" value="{{ $item->id }}" class="vlign--baseline-middle m-auto outline-0" {{ in_array($item->id, explode(',',$user->companies)) ? 'checked' : '' }}>
+                                                <input type="checkbox" name="company_control[]" value="{{ $item->id }}" class="check-company vlign--baseline-middle m-auto outline-0" {{ in_array($item->id, explode(',',$user->companies)) ? 'checked' : '' }}>
                                             </div>
                                             <div class="col-10 mt-2">
                                                 <h6>{{ ucwords($item->name) }}</h6>
@@ -278,4 +286,17 @@
             </form>
         </div>
     </section>
+@endsection
+
+@section('script')
+    <script type="text/javascript">
+        $(function() {
+            $("#checkApp").click(function () {
+                $(".check-app").prop('checked', $(this).prop('checked'));
+            });
+            $("#checkCompany").click(function () {
+                $(".check-company").prop('checked', $(this).prop('checked'));
+            });
+        })
+    </script>
 @endsection

@@ -20,6 +20,14 @@ class Department extends Model {
         return $this->hasMany(DepartmentsUser::class);
     }
 
+    public function departmentusermember() {
+        return $this->hasMany(DepartmentsUser::class)->where('is_approver', '=', 0);
+    }
+
+    public function departmentuserapprover() {
+        return $this->hasMany(DepartmentsUser::class)->where('is_approver', '=', 1);
+    }
+
     public function departmentspeaks() {
         return $this->hasMany(DepartmentsPeak::class)->where('date_from', '>=', now())->orderBy('date_from', 'asc');
     }

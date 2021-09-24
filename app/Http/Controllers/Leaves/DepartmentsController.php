@@ -55,4 +55,10 @@ class DepartmentsController extends Controller {
 
         return redirect('/leaves-department')->with('success', 'Department'.__('messages.delete_success'));
     }
+
+    public function index_my(Department $leavesDepartment) {
+        return view('pages.leaves.departmentmy.index')->with([
+            'department' => $leavesDepartment,
+        ]);
+    }
 }
