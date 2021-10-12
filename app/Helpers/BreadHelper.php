@@ -25,6 +25,7 @@ final class BreadHelper {
             case 'leavesdepartment': $bread[] = ['leaves department', '/leaves-department']; break;
             case 'leavespeakmy': $bread[] = ['leaves peak', '/leaves-department-peak/my']; break;
             case 'leavesdepartmentmy': $bread[] = ['leaves department', '#']; break;
+            case 'leavesadjustment': $bread[] = ['leaves adjustment', '#']; break;
             case 'transaction': 
                 $bread[] = ['transactions', '/transaction/prpo/'.$special]; 
                 break;

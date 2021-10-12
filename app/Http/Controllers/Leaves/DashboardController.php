@@ -11,7 +11,7 @@ class DashboardController extends Controller {
 
     public function index() {
         $user = User::where('id', auth()->id())->first();
-        
+
         return view('pages.leaves.dashboard.index')->with([
             'user' => $user,
         ]);

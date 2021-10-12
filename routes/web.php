@@ -99,6 +99,7 @@ Route::middleware('auth')->group(function () {
 
             Route::resource('leaves-reason', 'Leaves\ReasonsController', ['names' => ['index' => 'leavesreason', 'create' => 'leavesreason', 'edit' => 'leavesreason']]);
             Route::resource('leaves-department', 'Leaves\DepartmentsController', ['names' => ['index' => 'leavesdepartment', 'create' => 'leavesdepartment', 'edit' => 'leavesdepartment']]);
+            Route::resource('leaves-adjustment', 'Leaves\AdjustmentsController', ['names' => ['index' => 'leavesadjustment', 'create' => 'leavesadjustment', 'edit' => 'leavesadjustment'], 'except' => ['show']]);
         
             Route::prefix('leaves-department-user')->group(function () {
                 $url = 'Leaves\DepartmentUsersController';
@@ -192,6 +193,8 @@ Route::middleware('auth')->group(function () {
                     });
 
                     Route::put('/note/{transaction}', $url.'@note')->where('transaction', '[0-9]+');
+                    Route::put('/edit_note/{transaction_note}', $url.'@edit_note')->where('transaction_note', '[0-9]+');
+                    Route::get('/delete_note/{transaction_note}', $url.'@destroy_note')->where('transaction_note', '[0-9]+');
                     // Route::get('/report/', $url.'@report')->middleware('checkRole:1|2');
                 });
 
@@ -321,6 +324,7 @@ Route::middleware('auth')->group(function () {
 
                 Route::get('/{leavesDepartment}', $url.'@index_my')->name('leavesdepartmentmy');
             });
+            Route::get('leaves-adjustment/my', 'Leaves\AdjustmentsController@index_my')->name('leavesadjustmentmy');
         });
     });
 });

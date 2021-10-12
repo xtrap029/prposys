@@ -25,8 +25,14 @@
                             </div>
                             <div class="col-sm-6">
                                 <div class="description-block">
-                                    <h5 class="description-header">Joined</h5>
-                                    <span>{{ Carbon::parse($user->created_at)->diffInDays(Carbon::now()) >= 1 ? $user->created_at->format('Y-m-d') : $user->created_at->diffForHumans() }}</span>
+                                    <h5 class="description-header">Hired</h5>
+                                    <span>  
+                                        @if ($user->e_hire_date)
+                                            {{ Carbon::parse($user->e_hire_date)->diffInDays(Carbon::now()) >= 1 ? Carbon::parse($user->e_hire_date)->format('Y-m-d') : $user->e_hire_date->diffForHumans() }}
+                                        @else
+                                            -
+                                        @endif
+                                    </span>
                                 </div>
                             </div>
                             <div class="col-12 py-3">

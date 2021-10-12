@@ -47,7 +47,11 @@
                                 </div>
                                 <div class="info">
                                     <a href="/my-account" class="d-block">{{ Auth::user()->name }}</a>
-                                    <span class="small text-secondary font-weight-bold">{{ Auth::user()->role->name }} {{ Auth::user()->is_smt ? ' - SMT' : '' }}</span>
+                                    <span class="small text-secondary font-weight-bold">
+                                        @foreach (Auth::user()->departmentuser as $item)
+                                            {{ $item->department->name }}<br>
+                                        @endforeach    
+                                    </span>
                                 </div>
                             </div>
     
@@ -57,6 +61,11 @@
                                     <li class="nav-item">
                                         <a href="{{ config('global.dashboard_leaves') }}" class="nav-link {{ Route::currentRouteName() == 'leaves-dashboard' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">dashboard</i><p>Dashboard</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/leaves-adjustment/my" class="nav-link {{ Route::currentRouteName() == 'leavesadjustmentmy' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">replay</i><p>Leaves Adjustment</p>
                                         </a>
                                     </li>
                                     @if (Auth::user()->departmentuserapprover->count() > 0 || Auth::user()->departmentusermember->count() > 0)
@@ -87,7 +96,12 @@
                                         <li class="nav-header">ADMINISTRATOR</li>                          
                                         <li class="nav-item">
                                             <a href="/leaves-reason" class="nav-link {{ Route::currentRouteName() == 'leavesreason' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">accessibility_new</i><p>Leave Reason</p>
+                                                <i class="nav-icon material-icons icon--list">accessibility_new</i><p>Leave Type</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="/leaves-adjustment" class="nav-link {{ Route::currentRouteName() == 'leavesadjustment' ? 'active' : '' }}">
+                                                <i class="nav-icon material-icons icon--list">tune</i><p>Leave Adjustment</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">
@@ -122,6 +136,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     @yield('script')
+    @yield('script2')
 
     <script>
         $(function() {            

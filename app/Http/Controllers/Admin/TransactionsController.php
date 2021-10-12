@@ -733,6 +733,28 @@ class TransactionsController extends Controller {
         return back()->with('success', 'Note'.__('messages.create_success'));
     }
 
+    public function edit_note(Request $request, TransactionsNote $transactionNote) {
+        if ($transactionNote->user_id == auth()->id()) {
+            $transactionNote->content = $request->note;
+            $transactionNote->save();
+
+            return back()->with('success', 'Note'.__('messages.edit_success'));
+        } else {
+            return back()->with('error', __('messages.cant_edit'));
+        }
+    }
+
+    public function destroy_note(TransactionsNote $transactionNote) {
+        if ($transactionNote->user_id == auth()->id()) {
+            $transactionNote->save();
+            $transactionNote->delete();
+
+            return back()->with('success', 'Note'.__('messages.delete_success'));
+        } else {
+            return back()->with('error', __('messages.cant_delete'));
+        }
+    }
+
     public function reset(Transaction $transaction) {
         $user = User::where('id', auth()->id())->first();
 

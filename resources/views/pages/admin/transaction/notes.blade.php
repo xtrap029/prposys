@@ -19,7 +19,26 @@
                                             <span class="direct-chat-timestamp float-left">{{ $item->created_at->diffForHumans() }}</span>
                                         </div>
                                         <img class="direct-chat-img" src="/storage/public/images/users/{{ $item->user->avatar }}" alt="message user image">
-                                        <div class="direct-chat-text">{{ $item->content }}</div>
+                                        <div class="direct-chat-text">
+                                            <div class="notes-content">
+                                                {{ $item->content }}
+                                                <span class="float-right">
+                                                    <a href="#" class="mx-1 editNote">
+                                                        <i class="align-middle font-weight-bolder material-icons text-md text-white-50">edit</i>
+                                                    </a>
+                                                    <a href="/transaction/delete_note/{{ $item->id }}" onclick="return confirm('Are you sure?')" class="mx-1">
+                                                        <i class="align-middle font-weight-bolder material-icons text-md text-white-50">delete</i>
+                                                    </a>
+                                                </span>
+                                            </div>
+                                            <form action="/transaction/edit_note/{{ $item->id }}" method="post" class="notes-content-edit my-2 d-none">
+                                                @csrf
+                                                @method('put')
+                                                <textarea name="note" rows="2" class="form-control">{{ $item->content }}</textarea>
+                                                <input type="submit" class="btn btn-xs btn-default mt-2" value="Save">
+                                                <button type="button" class="btn btn-xs btn-default mt-2 cancelNote">Cancel</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 @else
                                     <div class="direct-chat-msg">
@@ -53,3 +72,18 @@
         </div>
     </div>
 </div>
+
+@section('script2')
+<script type="text/javascript">
+    $(function() {
+        $('.editNote').on('click', function() {
+            $(this).parents('.direct-chat-text').find('.notes-content-edit').toggleClass('d-none')
+            $(this).parents('.notes-content').toggleClass('d-none')
+        })
+        $('.cancelNote').on('click', function() {
+            $(this).parents('.direct-chat-text').find('.notes-content-edit').addClass('d-none')
+            $(this).parents('.direct-chat-text').find('.notes-content').removeClass('d-none')
+        })
+    })
+</script>
+@endsection

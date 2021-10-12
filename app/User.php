@@ -124,4 +124,32 @@ class User extends Authenticatable {
     public function departmentuserapprover() {
         return $this->hasMany(DepartmentsUser::class)->where('is_approver', '=', 1);
     }
+
+    public function leavesadjustment() {
+        return $this->hasMany(LeaveAdjustment::class);
+    }
+
+    public function monthdiff() {
+        return $this->belongsTo(ViewMonthDiffData::class, 'id');
+    }
+
+    public function monthdiffpast() {
+        return $this->belongsTo(ViewMonthDiffPastData::class, 'id');
+    }
+
+    public function leavesytd() {
+        return $this->belongsTo(ViewLeavesYtdData::class, 'id');
+    }
+
+    public function leavesytdpast() {
+        return $this->belongsTo(ViewLeavesYtdPastData::class, 'id');
+    }
+
+    public function leavesadjustmenttotal() {
+        return $this->belongsTo(ViewLeavesAdjustmentsData::class, 'id');
+    }
+
+    public function leavesadjustmenttotalpast() {
+        return $this->belongsTo(ViewLeavesAdjustmentsPastData::class, 'id');
+    }
 }

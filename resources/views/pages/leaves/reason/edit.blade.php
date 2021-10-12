@@ -1,13 +1,13 @@
 @extends('layouts.app-leaves')
 
-@section('title', 'Edit Leave Reason')
+@section('title', 'Edit Leave Type')
 
 @section('content')
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Edit Leave Reason</h1>
+                    <h1>Edit Leave Type</h1>
                 </div>
             </div>
         </div>
