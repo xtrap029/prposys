@@ -193,8 +193,8 @@ Route::middleware('auth')->group(function () {
                     });
 
                     Route::put('/note/{transaction}', $url.'@note')->where('transaction', '[0-9]+');
-                    Route::put('/edit_note/{transaction_note}', $url.'@edit_note')->where('transaction_note', '[0-9]+');
-                    Route::get('/delete_note/{transaction_note}', $url.'@destroy_note')->where('transaction_note', '[0-9]+');
+                    Route::put('/edit_note/{transaction}/{transaction_note}', $url.'@edit_note')->where('transaction_note', '[0-9]+');
+                    Route::get('/delete_note/{transaction}/{transaction_note}', $url.'@destroy_note')->where('transaction_note', '[0-9]+');
                     // Route::get('/report/', $url.'@report')->middleware('checkRole:1|2');
                 });
 

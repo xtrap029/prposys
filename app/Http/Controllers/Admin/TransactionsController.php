@@ -733,7 +733,7 @@ class TransactionsController extends Controller {
         return back()->with('success', 'Note'.__('messages.create_success'));
     }
 
-    public function edit_note(Request $request, TransactionsNote $transactionNote) {
+    public function edit_note(Request $request, Transaction $transaction, TransactionsNote $transactionNote) {
         if ($transactionNote->user_id == auth()->id()) {
             $transactionNote->content = $request->note;
             $transactionNote->save();
@@ -744,7 +744,7 @@ class TransactionsController extends Controller {
         }
     }
 
-    public function destroy_note(TransactionsNote $transactionNote) {
+    public function destroy_note(Transaction $transaction, TransactionsNote $transactionNote) {
         if ($transactionNote->user_id == auth()->id()) {
             $transactionNote->save();
             $transactionNote->delete();

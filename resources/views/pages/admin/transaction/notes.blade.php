@@ -26,12 +26,12 @@
                                                     <a href="#" class="mx-1 editNote">
                                                         <i class="align-middle font-weight-bolder material-icons text-md text-white-50">edit</i>
                                                     </a>
-                                                    <a href="/transaction/delete_note/{{ $item->id }}" onclick="return confirm('Are you sure?')" class="mx-1">
+                                                    <a href="/transaction/delete_note/{{ $transaction->id }}/{{ $item->id }}" onclick="return confirm('Are you sure?')" class="mx-1">
                                                         <i class="align-middle font-weight-bolder material-icons text-md text-white-50">delete</i>
                                                     </a>
                                                 </span>
                                             </div>
-                                            <form action="/transaction/edit_note/{{ $item->id }}" method="post" class="notes-content-edit my-2 d-none">
+                                            <form action="/transaction/edit_note/{{ $transaction->id }}/{{ $item->id }}" method="post" class="notes-content-edit my-2 d-none">
                                                 @csrf
                                                 @method('put')
                                                 <textarea name="note" rows="2" class="form-control">{{ $item->content }}</textarea>

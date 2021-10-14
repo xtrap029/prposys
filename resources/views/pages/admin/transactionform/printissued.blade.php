@@ -214,6 +214,20 @@
                             <tr>
                                 <td>Date Entered</td>
                             </tr>
+                            <tr>
+                                <td class="border-top">
+                                    <b class="d-block mb-1">Notes:</b>
+                                    @foreach ($transaction->notes as $item)
+                                        <div class="px-2">
+                                            <i class="material-icons mr-1 small">person</i>
+                                            {{ $item->user->name }}
+                                        </div>
+                                        <div class="p-2 border rounded mb-2">
+                                            <i>{{ $item->content }}</i>
+                                        </div>
+                                    @endforeach
+                                </td>
+                            </tr>
                         </table>
                     </div>
                     <div class="col-6">
