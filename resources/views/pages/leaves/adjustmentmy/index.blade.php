@@ -13,11 +13,11 @@
                     <table class="table table-sm">
                         <tr>
                             <td class="border-top-0">Current Year</td>
-                            <td class="border-top-0 text-right">{{ Auth::user()->leavesadjustmenttotal->adjustment }}</td>
+                            <td class="border-top-0 text-right">{{ Auth::user()->leavesadjustmenttotal ? Auth::user()->leavesadjustmenttotal->adjustment : '-' }}</td>
                         </tr>
                         <tr>
                             <td>Previous Year</td>
-                            <td class="text-right">{{ Auth::user()->leavesadjustmenttotalpast->adjustment }}</td>
+                            <td class="text-right">{{ Auth::user()->leavesadjustmenttotalpast ? Auth::user()->leavesadjustmenttotalpast->adjustment : '-' }}</td>
                         </tr>
                     </table>
                 </div>
