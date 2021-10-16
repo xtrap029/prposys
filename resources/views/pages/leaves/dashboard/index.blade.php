@@ -49,7 +49,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 d-none">
                 <div class="card">
                     <div class="card-header pb-2">
                         <h3 class="card-title">Leave Balances <i class="text-danger small">(test data only)</i></h3>
@@ -58,16 +58,16 @@
                         <table class="table">
                             <tr>
                                 <td>YTD Leaves</td>
-                                <td class="text-center">{{ $user->leavesytd->leaves_ytd }}</td>
+                                <td class="text-center">{{ $user->leavesytd ? $user->leavesytd->leaves_ytd : '-' }}</td>
                             </tr>
                             <tr>
                                 <td>Carry Over Leaves</td>
                                 {{-- deduct prev used and prev adjustment --}}
-                                <td class="text-center">{{ $user->leavesytdpast->leaves_ytd }}</td>
+                                <td class="text-center">{{ $user->leavesytdpast ? $user->leavesytdpast->leaves_ytd : '-' }}</td>
                             </tr>
                             <tr>
                                 <td>Leave Adjustments</td>
-                                <td class="text-center">{{ $user->leavesadjustmenttotal->adjustment }}</td>
+                                <td class="text-center">{{ $user->leavesadjustmenttotal ? $user->leavesadjustmenttotal->adjustment : '-' }}</td>
                             </tr>
                             <tr>
                                 <td>Used Leaves</td>
