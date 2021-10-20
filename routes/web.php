@@ -86,6 +86,12 @@ Route::middleware('auth')->group(function () {
             Route::get('/db-backups', 'People\DBBackupsController@db_backups')->name('dbbackups');
             Route::get('/db-backups-zip', 'People\DBBackupsController@db_backups_zip')->name('dbbackups');
             Route::get('/db-backups-generate', 'People\DBBackupsController@db_backups_generate')->name('dbbackups');
+
+            Route::get('/ua-route', 'People\UaRoutesController@index')->name('uaroute');
+            Route::put('/ua-route', 'People\UaRoutesController@update');
+
+            Route::get('/ua-level', 'People\UaLevelsController@index')->name('ualevel');
+            Route::put('/ua-level', 'People\UaLevelsController@update');
         });
 
         // Leaves

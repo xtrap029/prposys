@@ -61,6 +61,15 @@
                                     </li>
                                     
                                     @if (Auth::user()->role_id == 1)
+                                        <li class="nav-header">USER ACCESS</li>
+                                        <li class="nav-item">
+                                            <a href="/ua-route" class="nav-link {{ Route::currentRouteName() == 'uaroute' ? 'active' : '' }}">
+                                                <i class="nav-icon material-icons icon--list">route</i><p>Route</p>
+                                            </a>
+                                            <a href="/ua-level" class="nav-link {{ Route::currentRouteName() == 'ualevel' ? 'active' : '' }}">
+                                                <i class="nav-icon material-icons icon--list">leaderboard</i><p>Level</p>
+                                            </a>
+                                        </li> 
                                         <li class="nav-header">ADMINISTRATOR</li>
                                         <li class="nav-item">
                                             <a href="/user" class="nav-link {{ Route::currentRouteName() == 'user' ? 'active' : '' }}">
