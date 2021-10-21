@@ -69,6 +69,9 @@
                                             <a href="/ua-level" class="nav-link {{ Route::currentRouteName() == 'ualevel' ? 'active' : '' }}">
                                                 <i class="nav-icon material-icons icon--list">leaderboard</i><p>Level</p>
                                             </a>
+                                            <a href="/ua-level-route" class="nav-link {{ Route::currentRouteName() == 'ualevelroute' ? 'active' : '' }}">
+                                                <i class="nav-icon material-icons icon--list">rule</i><p>Level Route</p>
+                                            </a>
                                         </li> 
                                         <li class="nav-header">ADMINISTRATOR</li>
                                         <li class="nav-item">

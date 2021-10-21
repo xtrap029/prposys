@@ -92,6 +92,9 @@ Route::middleware('auth')->group(function () {
 
             Route::get('/ua-level', 'People\UaLevelsController@index')->name('ualevel');
             Route::put('/ua-level', 'People\UaLevelsController@update');
+
+            Route::get('/ua-level-route', 'People\UaLevelRoutesController@index')->name('ualevelroute');
+            Route::put('/ua-level-route', 'People\UaLevelRoutesController@update');
         });
 
         // Leaves

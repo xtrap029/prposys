@@ -120,7 +120,10 @@
                                                             @case('App\User')                           <?php $view_url = '/user/'.$item->subject_id.'/edit'; ?> @break
                                                             @case('App\Settings')                       <?php $view_url = '/people-settings'; ?> @break
                                                             @case('App\LeaveReason')                    <?php $view_url = '/leaves-reason'; ?> @break
-                                                            @case('App\Department')                    <?php $view_url = '/leaves-department'; ?> @break
+                                                            @case('App\Department')                     <?php $view_url = '/leaves-department'; ?> @break
+                                                            @case('App\UaLevelRoute')                   <?php $view_url = '/ua-level-route'; ?> @break
+                                                            @case('App\UaLevel')                        <?php $view_url = '/ua-level'; ?> @break
+                                                            @case('App\UaRoute')                        <?php $view_url = '/ua-route'; ?> @break
                                                             @default                                                        
                                                         @endswitch
                                                     <a href="{{ !empty($view_url) ? $view_url : '#' }}" class="btn btn-primary" target="_blank">View Item</a>

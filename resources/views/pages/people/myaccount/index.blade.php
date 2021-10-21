@@ -187,7 +187,7 @@
                                     @foreach ($user->departmentusermember as $item)
                                         <tr>
                                             <td><b>{{ $item->department->name }}</b></td>
-                                            <td>Mamber</td>
+                                            <td>Member</td>
                                         </tr>
                                     @endforeach
                                 </table>

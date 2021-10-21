@@ -12,4 +12,8 @@ class UaLevel extends Model {
     protected static $logAttributes = ['name'];
     protected static $logName = 'UA Level';
     protected static $logOnlyDirty = true;
+
+    public function levelroutes() {
+        return $this->hasMany(UaLevelRoute::class);
+    }
 }
