@@ -18,6 +18,7 @@ use App\User;
 use App\VatType;
 use App\Helpers\TransactionHelper;
 use App\Helpers\UserHelper;
+use App\Helpers\UAHelper;
 use Spatie\Activitylog\Models\Activity;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -55,7 +56,15 @@ class TransactionsController extends Controller {
         $transactions = new Transaction;
 
         $user_logged = User::where('id', auth()->id())->first();
-        if (!in_array($user_logged->role_id, config('global.admin_subadmin'))) {
+        // if (!in_array($user_logged->role_id, config('global.admin_subadmin'))) {
+        //     $user_id = $user_logged->id;
+        //     $transactions = $transactions->where(static function ($query) use ($user_id) {
+        //         $query->where('requested_id', $user_id)
+        //         ->orWhere('owner_id',  $user_id);
+        //     });
+        // }
+
+        if (UAHelper::get()['trans_view'] == config('global.ua_own')) {
             $user_id = $user_logged->id;
             $transactions = $transactions->where(static function ($query) use ($user_id) {
                 $query->where('requested_id', $user_id)
@@ -227,14 +236,17 @@ class TransactionsController extends Controller {
         $transactions = new Transaction;
 
         $user_logged = User::where('id', auth()->id())->first();
-        if (!in_array($user_logged->role_id, config('global.admin_subadmin'))) {
+        
+        if (UAHelper::get()['trans_view'] == config('global.ua_own')) {
             $user_id = $user_logged->id;
             $transactions = $transactions->where(static function ($query) use ($user_id) {
                 $query->where('requested_id', $user_id)
                 ->orWhere('owner_id',  $user_id);
             });
+        } else if (UAHelper::get()['trans_view'] == config('global.ua_none')) {
+            $transactions = $transactions->where('id', 0);
         }
-        
+
         $transactions = $transactions->whereIn('trans_type', $trans_types)
                                 ->whereIn('status_id', config('global.status'))
                                 ->whereDoesntHave('project', function($query) use($trans_company) {
@@ -647,8 +659,18 @@ class TransactionsController extends Controller {
     }
 
     public function show(Transaction $transaction) {
-        if (!in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies))) return abort(401);
-
+        if (
+            !in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies))
+            ||
+            (
+                UAHelper::get()['trans_view'] == config('global.ua_own')
+                &&
+                $transaction->requested_id != auth()->id()
+                &&
+                $transaction->requested_id != auth()->id()
+            )
+         ) return abort(401);
+         
         $logs = Activity::where('subject_id', $transaction->id)
                 ->where('subject_type', 'App\Transaction')
                 ->orderBy('id', 'desc')->paginate(15)->onEachSide(1);
@@ -886,6 +908,17 @@ class TransactionsController extends Controller {
         $trans_currency = '';
 
         $transactions = Transaction::orderBy('id', 'desc');
+
+        $user_logged = User::where('id', auth()->id())->first();
+        $user_id = $user_logged->id;
+        if (UAHelper::get()['trans_view'] == config('global.ua_own')) {
+            $transactions = $transactions->where(static function ($query) use ($user_id) {
+                $query->where('requested_id', $user_id)
+                ->orWhere('owner_id',  $user_id);
+            });
+        } else if (UAHelper::get()['trans_view'] == config('global.ua_none')) {
+            $transactions = $transactions->where('id', 0);
+        }
 
         if (!User::find(auth()->id())->is_smt) {
             $transactions = $transactions->where('is_confidential', 0);

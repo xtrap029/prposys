@@ -20,6 +20,7 @@ class User extends Authenticatable {
         'email',
         'password',
         'role_id',
+        'ua_level_id',
         'apps',
         'companies',
         'is_read_only',
@@ -123,6 +124,10 @@ class User extends Authenticatable {
 
     public function departmentuserapprover() {
         return $this->hasMany(DepartmentsUser::class)->where('is_approver', '=', 1);
+    }
+
+    public function ualevel() {
+        return $this->belongsTo(UaLevel::class, 'ua_level_id');
     }
 
     public function leavesadjustment() {

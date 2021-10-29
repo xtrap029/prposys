@@ -4,6 +4,7 @@ namespace App\Http\Controllers\People;
 
 use App\Company;
 use App\Role;
+use App\UaLevel;
 use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -32,10 +33,12 @@ class UsersController extends Controller {
     public function create() {
         $companies = Company::orderBy('name', 'asc')->get();
         $roles = Role::orderBy('id', 'desc')->get();
+        $levels = UaLevel::orderBy('order', 'asc')->get();
 
         return view('pages.people.users.create')->with([
             'companies' => $companies,
-            'roles' => $roles
+            'roles' => $roles,
+            'levels' => $levels,
         ]);
     }
 
@@ -43,6 +46,7 @@ class UsersController extends Controller {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'role_id' => ['nullable', 'exists:roles,id'],
+            'ua_level_id' => ['nullable', 'exists:ua_levels,id'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'avatar' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
@@ -83,6 +87,7 @@ class UsersController extends Controller {
             'avatar' => $data['avatar'],
             'name' => $data['name'],
             'role_id' => $data['role_id'],
+            'ua_level_id' => $data['ua_level_id'],
             'apps' => $data['apps'],
             'companies' => $data['companies'],
             'is_read_only' => $data['role_id'] == 1 ? 0 : $data['is_read_only'],
@@ -119,17 +124,20 @@ class UsersController extends Controller {
     public function edit(User $user) {
         $roles = Role::orderBy('id', 'desc')->get();
         $companies = Company::orderBy('name', 'asc')->get();
+        $levels = UaLevel::orderBy('order', 'asc')->get();
 
         return view('pages.people.users.edit')->with([
             'user' => $user,
             'roles' => $roles,
-            'companies' => $companies
+            'companies' => $companies,
+            'levels' => $levels,
         ]);
     }
 
     public function update(Request $request, User $user) {
         $validation_rules = [
             'role_id' => ['nullable', 'exists:roles,id'],
+            'ua_level_id' => ['nullable', 'exists:ua_levels,id'],
             // 'company_id' =>  ['required', 'exists:companies,id'],
             'name' => ['required', 'string', 'max:255'],
             'avatar' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],

@@ -41,14 +41,24 @@
                                     <td>
                                         <input type="hidden" name="route[]" value="{{ $route->id }}">
                                         <input type="hidden" name="level[]" value="{{ $level->id }}">
-                                        <select name="option[]" class="form-control form-control-sm w-auto m-auto">
+                                        <select name="option[]" class="form-control form-control-sm m-auto">
                                             @foreach ($ua_options as $option)
                                                 <?php
                                                     $selected = '';
                                                     $column = $ua_level_routes->where('ua_route_id', $route->id)->where('ua_level_id', $level->id);
                                                     if ($column->count() > 0) $selected = $column->first()->ua_route_option_id;
                                                 ?>  
-                                                <option value="{{ $option->id }}" {{ $selected == $option->id ? 'selected' : '' }}>{{ $option->name }}</option>
+                                                @if (!$route->is_yesno || in_array($option->id, config('global.is_yesno_id')))
+                                                    <option value="{{ $option->id }}" {{ $selected == $option->id ? 'selected' : '' }}>
+                                                        @if ($route->is_yesno && $option->id == config('global.is_yesno_id')[0])
+                                                            Yes
+                                                        @elseif ($route->is_yesno && $option->id == config('global.is_yesno_id')[1])
+                                                            No
+                                                        @else
+                                                            {{ $option->name }}
+                                                        @endif
+                                                    </option>
+                                                @endif
                                             @endforeach
                                         </select>
                                     </td>

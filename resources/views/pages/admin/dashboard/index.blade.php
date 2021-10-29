@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
+
+<?php $ua = (new \App\Helpers\UAHelper)->get(); ?>
+<?php $non = config('global.ua_none'); ?>
+
 <section class="content-header pb-0">
 </section>
 <section class="content">
@@ -141,8 +145,7 @@
                 </div>
             </div>
 
-            @if (in_array($user->role_id, config('global.admin_subadmin')))
-
+            @if ($ua['trans_view'] != $non)  
                 {{-- FOR APPROVAL --}}
                 <div class="col-12 col-md-12">
                     <div class="card">
@@ -309,250 +312,246 @@
                     </div>
                 </div>
 
-            @endif
-
-            {{-- GENERATED --}}
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header pb-2">
-                        <h3 class="card-title">Generated</h3>
-                        <div class="card-tools">
-                            <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=1,5&category=&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Show More</a>
-                            <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="material-icons text-primary">list</i>
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=1,5&type=pr&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Payment Release</a>
-                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=1,5&type=po&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Purchase Order</a>
-                                {{-- <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=1,5issued&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Petty Cash</a> --}}
+                {{-- GENERATED --}}
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header pb-2">
+                            <h3 class="card-title">Generated</h3>
+                            <div class="card-tools">
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=1,5&category=&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Show More</a>
+                                <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="material-icons text-primary">list</i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=1,5&type=pr&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Payment Release</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=1,5&type=po&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Purchase Order</a>
+                                    {{-- <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=1,5issued&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Petty Cash</a> --}}
+                                </div>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="material-icons text-primary">arrow_drop_up</i>
+                                </button>
                             </div>
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="material-icons text-primary">arrow_drop_up</i>
-                            </button>
+                        </div>
+                        <div class="card-body p-0 table-responsive">
+                            <table class="table table-striped small m-0">
+                                <thead>
+                                    <tr>
+                                        <th>PO/PR #</th>
+                                        <th>Vendor/Payee</th>
+                                        <th>Purpose</th>
+                                        <th class="text-right">Amount</th>
+                                        <th class="text-center">Trans. #</th>
+                                        <th class="text-center">Last Updated</th>
+                                    </tr>
+                                </thead>
+                                @foreach ($generated as $item)
+                                    <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
+                                    <tr>
+                                        <td>
+                                            @if ($config_confidential)
+                                                {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                            @else
+                                                <a href="transaction/view/{{ $item->id }}">
+                                                    {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                                </a>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->payee }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->purpose }}
+                                            @endif
+                                        </td>
+                                        <td class="text-right">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ number_format($item->amount, 2, '.', ',') }}
+                                            @endif
+                                        </td>
+                                        <td class="text-center">-</td>
+                                        <td class="text-center">{{ Carbon::parse($item->updated_at)->diffInDays(Carbon::now()) >= 1 ? $item->updated_at->format('Y-m-d') : $item->updated_at->diffForHumans() }}</td>
+                                    </tr>
+                                @endforeach
+                            </table>
                         </div>
                     </div>
-                    <div class="card-body p-0 table-responsive">
-                        <table class="table table-striped small m-0">
-                            <thead>
-                                <tr>
-                                    <th>PO/PR #</th>
-                                    <th>Vendor/Payee</th>
-                                    <th>Purpose</th>
-                                    <th class="text-right">Amount</th>
-                                    <th class="text-center">Trans. #</th>
-                                    <th class="text-center">Last Updated</th>
-                                </tr>
-                            </thead>
-                            @foreach ($generated as $item)
-                                <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
-                                <tr>
-                                    <td>
-                                        @if ($config_confidential)
-                                            {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
-                                        @else
-                                            <a href="transaction/view/{{ $item->id }}">
-                                                {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
-                                            </a>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{ $item->payee }}
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{ $item->purpose }}
-                                        @endif
-                                    </td>
-                                    <td class="text-right">
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{ number_format($item->amount, 2, '.', ',') }}
-                                        @endif
-                                    </td>
-                                    <td class="text-center">-</td>
-                                    <td class="text-center">{{ Carbon::parse($item->updated_at)->diffInDays(Carbon::now()) >= 1 ? $item->updated_at->format('Y-m-d') : $item->updated_at->diffForHumans() }}</td>
-                                </tr>
-                            @endforeach
-                        </table>
-                    </div>
                 </div>
-            </div>
 
-            {{-- UNLIQUIDATED --}}
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header pb-2">
-                        <h3 class="card-title">Unliquidated</h3>
-                        <div class="card-tools">
-                            <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=4&category=&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Show More</a>
-                            <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="material-icons text-primary">list</i>
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=4&type=pr&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Payment Release</a>
-                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=4&type=po&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Purchase Order</a>
-                                {{-- <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=issued&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Petty Cash</a> --}}
+                {{-- UNLIQUIDATED --}}
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header pb-2">
+                            <h3 class="card-title">Unliquidated</h3>
+                            <div class="card-tools">
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=4&category=&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Show More</a>
+                                <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="material-icons text-primary">list</i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=4&type=pr&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Payment Release</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=4&type=po&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Purchase Order</a>
+                                    {{-- <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=issued&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Petty Cash</a> --}}
+                                </div>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="material-icons text-primary">arrow_drop_up</i>
+                                </button>
                             </div>
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="material-icons text-primary">arrow_drop_up</i>
-                            </button>
+                        </div>
+                        <div class="card-body p-0 table-responsive">
+                            <table class="table table-striped small m-0">
+                                <thead>
+                                    <tr>
+                                        <th>PO/PR #</th>
+                                        <th>Vendor/Payee</th>
+                                        <th>Purpose</th>
+                                        <th class="text-right">Amount</th>
+                                        <th>Trans. #</th>
+                                        <th class="text-center">Date Released</th>
+                                    </tr>
+                                </thead>
+                                @foreach ($unliquidated as $item)
+                                    <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
+                                    <tr>
+                                        <td>
+                                            @if ($config_confidential)
+                                                {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                            @else
+                                                <a href="transaction-form/view/{{ $item->id }}">
+                                                    {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                                </a>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->payee }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->purpose }}
+                                            @endif
+                                        </td>
+                                        <td class="text-right">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->control_no }}
+                                            @endif    
+                                        </td>
+                                        <td class="text-center">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->released_at }}
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </table>
                         </div>
                     </div>
-                    <div class="card-body p-0 table-responsive">
-                        <table class="table table-striped small m-0">
-                            <thead>
-                                <tr>
-                                    <th>PO/PR #</th>
-                                    <th>Vendor/Payee</th>
-                                    <th>Purpose</th>
-                                    <th class="text-right">Amount</th>
-                                    <th>Trans. #</th>
-                                    <th class="text-center">Date Released</th>
-                                </tr>
-                            </thead>
-                            @foreach ($unliquidated as $item)
-                                <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
-                                <tr>
-                                    <td>
-                                        @if ($config_confidential)
-                                            {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
-                                        @else
-                                            <a href="transaction-form/view/{{ $item->id }}">
+                </div>
+
+                {{-- CLEARED --}}
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header pb-2">
+                            <h3 class="card-title">Cleared</h3>
+                            <div class="card-tools">
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=9&category=&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Show More</a>
+                                <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="material-icons text-primary">list</i>
+                                </button>                            
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=9&type=pr&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Payment Release</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=9&type=po&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Purchase Order</a>
+                                    {{-- <a class="dropdown-item" href="transaction-liquidation/pc/{{ $user->company_id }}?status=cleared&type=&s=">Petty Cash</a> --}}
+                                </div>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="material-icons text-primary">arrow_drop_up</i>
+                                </button>
+                            </div>  
+                        </div>
+                        <div class="card-body p-0 table-responsive">
+                            <table class="table table-striped small m-0">
+                                <thead>
+                                    <tr>
+                                        <th>PO/PR #</th>
+                                        <th>Vendor/Payee</th>
+                                        <th>Purpose</th>
+                                        <th class="text-right">Amount</th>
+                                        <th>Trans. #</th>
+                                        <th class="text-center">Last Updated</th>
+                                    </tr>
+                                </thead>
+                                @foreach ($cleared as $item)
+                                    <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
+                                    <tr>
+                                        <td>
+                                            @if ($config_confidential)
                                                 {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
-                                            </a>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{ $item->payee }}
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{ $item->purpose }}
-                                        @endif
-                                    </td>
-                                    <td class="text-right">
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{ $item->control_no }}
-                                        @endif    
-                                    </td>
-                                    <td class="text-center">
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{ $item->released_at }}
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </table>
+                                            @else
+                                                <a href="transaction-liquidation/view/{{ $item->id }}">
+                                                    {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                                </a>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->payee }}
+                                            @endif    
+                                        </td>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->purpose }}
+                                            @endif
+                                        </td>
+                                        <td class="text-right">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->depo_ref }}
+                                            @endif    
+                                        </td>
+                                        <td class="text-center">{{ Carbon::parse($item->updated_at)->diffInDays(Carbon::now()) >= 1 ? $item->updated_at->format('Y-m-d') : $item->updated_at->diffForHumans() }}</td>
+                                    </tr>
+                                @endforeach
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            {{-- CLEARED --}}
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header pb-2">
-                        <h3 class="card-title">Cleared</h3>
-                        <div class="card-tools">
-                            <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=9&category=&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Show More</a>
-                            <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="material-icons text-primary">list</i>
-                            </button>                            
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=9&type=pr&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Payment Release</a>
-                                <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=9&type=po&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Purchase Order</a>
-                                {{-- <a class="dropdown-item" href="transaction-liquidation/pc/{{ $user->company_id }}?status=cleared&type=&s=">Petty Cash</a> --}}
-                            </div>
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="material-icons text-primary">arrow_drop_up</i>
-                            </button>
-                        </div>  
-                    </div>
-                    <div class="card-body p-0 table-responsive">
-                        <table class="table table-striped small m-0">
-                            <thead>
-                                <tr>
-                                    <th>PO/PR #</th>
-                                    <th>Vendor/Payee</th>
-                                    <th>Purpose</th>
-                                    <th class="text-right">Amount</th>
-                                    <th>Trans. #</th>
-                                    <th class="text-center">Last Updated</th>
-                                </tr>
-                            </thead>
-                            @foreach ($cleared as $item)
-                                <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
-                                <tr>
-                                    <td>
-                                        @if ($config_confidential)
-                                            {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
-                                        @else
-                                            <a href="transaction-liquidation/view/{{ $item->id }}">
-                                                {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
-                                            </a>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{ $item->payee }}
-                                        @endif    
-                                    </td>
-                                    <td>
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{ $item->purpose }}
-                                        @endif
-                                    </td>
-                                    <td class="text-right">
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{ $item->depo_ref }}
-                                        @endif    
-                                    </td>
-                                    <td class="text-center">{{ Carbon::parse($item->updated_at)->diffInDays(Carbon::now()) >= 1 ? $item->updated_at->format('Y-m-d') : $item->updated_at->diffForHumans() }}</td>
-                                </tr>
-                            @endforeach
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            @if (in_array($user->role_id, config('global.admin_subadmin')))        
-
+        
                 {{-- DEPOSITED --}}
                 <div class="col-12 col-md-12">
                     <div class="card">
@@ -638,9 +637,7 @@
                         </div>
                     </div>
                 </div>
-
             @endif
-
         </div>
     </div>
 </section>

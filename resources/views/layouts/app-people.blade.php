@@ -6,6 +6,8 @@
     <div class="wrapper">
 
         @include('layouts.sections.nav')
+        <?php $ua = (new \App\Helpers\UAHelper)->get(); ?>
+        <?php $non = config('global.ua_none'); ?>
         
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar elevation-4 sidebar--tecc sidebar--{{ config('global.site_color_people') }}">
@@ -47,7 +49,7 @@
                                 </div>
                                 <div class="info">
                                     <a href="/my-account" class="d-block">{{ Auth::user()->name }}</a>
-                                    <span class="small text-secondary font-weight-bold">{{ Auth::user()->role->name }} {{ Auth::user()->is_smt ? ' - SMT' : '' }}</span>
+                                    <span class="small text-secondary font-weight-bold">{{ Auth::user()->ualevel->name }}</span>
                                 </div>
                             </div>
     
@@ -60,41 +62,42 @@
                                         </a>
                                     </li>
                                     
-                                    @if (Auth::user()->role_id == 1)
-                                        <li class="nav-header">USER ACCESS</li>
-                                        <li class="nav-item">
-                                            <a href="/ua-route" class="nav-link {{ Route::currentRouteName() == 'uaroute' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">route</i><p>Route</p>
-                                            </a>
-                                            <a href="/ua-level" class="nav-link {{ Route::currentRouteName() == 'ualevel' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">leaderboard</i><p>Level</p>
-                                            </a>
-                                            <a href="/ua-level-route" class="nav-link {{ Route::currentRouteName() == 'ualevelroute' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">rule</i><p>Level Route</p>
-                                            </a>
-                                        </li> 
-                                        <li class="nav-header">ADMINISTRATOR</li>
-                                        <li class="nav-item">
-                                            <a href="/user" class="nav-link {{ Route::currentRouteName() == 'user' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">face</i><p>User</p>
-                                            </a>
-                                        </li>                                            
-                                        <li class="nav-item">
-                                            <a href="/people-settings" class="nav-link {{ Route::currentRouteName() == 'people-settings' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">settings</i><p>Settings</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/activity-log" class="nav-link {{ Route::currentRouteName() == 'activitylog' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">history</i><p>Activity Log</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/db-backups" class="nav-link {{ Route::currentRouteName() == 'dbbackups' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">storage</i><p>Database</p>
-                                            </a>
-                                        </li>
-                                    @endif
+                                    <li class="nav-header">CONTROL PANEL</li>
+                                    <li class="nav-item {{ $ua['peo_user'] == $non ? 'd-none' : '' }}">
+                                        <a href="/user" class="nav-link {{ Route::currentRouteName() == 'user' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">face</i><p>User</p>
+                                        </a>
+                                    </li>                                            
+                                    <li class="nav-item {{ $ua['peo_ua_route'] == $non ? 'd-none' : '' }}">
+                                        <a href="/ua-route" class="nav-link {{ Route::currentRouteName() == 'uaroute' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">route</i><p>User Route</p>
+                                        </a>
+                                    </li> 
+                                    <li class="nav-item {{ $ua['peo_ua_level'] == $non ? 'd-none' : '' }}">
+                                        <a href="/ua-level" class="nav-link {{ Route::currentRouteName() == 'ualevel' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">leaderboard</i><p>User Level</p>
+                                        </a>
+                                    </li> 
+                                    <li class="nav-item {{ $ua['peo_ua_level_route'] == $non ? 'd-none' : '' }}">
+                                        <a href="/ua-level-route" class="nav-link {{ Route::currentRouteName() == 'ualevelroute' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">rule</i><p>User Level Route</p>
+                                        </a>
+                                    </li> 
+                                    <li class="nav-item {{ $ua['peo_settings'] == $non ? 'd-none' : '' }}">
+                                        <a href="/people-settings" class="nav-link {{ Route::currentRouteName() == 'people-settings' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">settings</i><p>Settings</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['peo_activity'] == $non ? 'd-none' : '' }}">
+                                        <a href="/activity-log" class="nav-link {{ Route::currentRouteName() == 'activitylog' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">history</i><p>Activity Log</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['peo_db'] == $non ? 'd-none' : '' }}">
+                                        <a href="/db-backups" class="nav-link {{ Route::currentRouteName() == 'dbbackups' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">storage</i><p>Database</p>
+                                        </a>
+                                    </li>
                                 </ul>
                             </nav>
                         </div>

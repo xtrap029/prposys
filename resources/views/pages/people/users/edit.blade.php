@@ -186,6 +186,14 @@
                             <label for="">Confirm Change Password</label>
                             <input type="password" class="form-control" name="password_confirmation">
                         </div>
+                        <div class="form-group">
+                            <label for="">User Level</label>
+                            <select name="ua_level_id" class="form-control" required>
+                                @foreach ($levels as $item)
+                                    <option value="{{ $item->id }}" {{ $item->id == $user->ua_level_id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="card col-md-12 mt-4">
                             <div class="card-header">
                                 App Access

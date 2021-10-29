@@ -9,6 +9,7 @@ use App\Company;
 use App\Transaction;
 use App\User;
 use App\Helpers\TransactionHelper;
+use App\Helpers\UAHelper;
 
 class DashboardController extends Controller {
 
@@ -17,64 +18,87 @@ class DashboardController extends Controller {
         $companies = Company::orderBy('name', 'asc')->get();
         $company_id = $user->company_id;
 
-        $generated = Transaction::whereHas('project', function($query) use($company_id) {
-                            $query->where('company_id', $company_id);
-                        })
-                        ->where('trans_type', '!=', 'pc')
-                        ->where('owner_id', auth()->id())
-                        ->whereIn('status_id', config('global.form_generated'))
-                        ->orderBy('updated_at', 'desc')
-                        ->limit(6)
-                        ->get();
+        $generated = [];
+        $unliquidated = [];
+        $cleared = [];
+        $for_issue = [];
+        $for_clearing = [];
+        $deposited = [];
 
-        $unliquidated = Transaction::whereHas('project', function($query) use($company_id) {
-                            $query->where('company_id', $company_id);
-                        })
-                        ->where('trans_type', '!=', 'pc')
-                        ->where('requested_id', auth()->id())
-                        ->whereIn('status_id', config('global.form_issued'))
-                        ->orderBy('updated_at', 'desc')
-                        ->limit(6)
-                        ->get();
+        if (UAHelper::get()['trans_view'] != config('global.ua_non')) {
+            $generated = Transaction::whereHas('project', function($query) use($company_id) {
+                                $query->where('company_id', $company_id);
+                            })
+                            ->where('trans_type', '!=', 'pc')
+                            ->where('owner_id', auth()->id())
+                            ->whereIn('status_id', config('global.form_generated'))
+                            ->orderBy('updated_at', 'desc')
+                            ->limit(6)
+                            ->get();
 
-        $cleared = Transaction::whereHas('project', function($query) use($company_id) {
-                            $query->where('company_id', $company_id);
-                        })
-                        ->where('trans_type', '!=', 'pc')
-                        ->where('requested_id', auth()->id())
-                        ->whereIn('status_id', config('global.liquidation_cleared'))
-                        ->orderBy('updated_at', 'desc')
-                        ->limit(6)
-                        ->get();
+            $unliquidated = Transaction::whereHas('project', function($query) use($company_id) {
+                                $query->where('company_id', $company_id);
+                            })
+                            ->where('trans_type', '!=', 'pc')
+                            ->where('requested_id', auth()->id())
+                            ->whereIn('status_id', config('global.form_issued'))
+                            ->orderBy('updated_at', 'desc')
+                            ->limit(6)
+                            ->get();
 
-        $for_issue = Transaction::whereHas('project', function($query) use($company_id) {
-                            $query->where('company_id', $company_id);
-                        })
-                        ->where('trans_type', '!=', 'pc')
-                        ->whereIn('status_id', config('global.form_approval'))
-                        ->orderBy('updated_at', 'desc')
-                        ->limit(6)
-                        ->get();
+            $cleared = Transaction::whereHas('project', function($query) use($company_id) {
+                                $query->where('company_id', $company_id);
+                            })
+                            ->where('trans_type', '!=', 'pc')
+                            ->where('requested_id', auth()->id())
+                            ->whereIn('status_id', config('global.liquidation_cleared'))
+                            ->orderBy('updated_at', 'desc')
+                            ->limit(6)
+                            ->get();
 
-        $for_clearing = Transaction::whereHas('project', function($query) use($company_id) {
-                            $query->where('company_id', $company_id);
-                        })
-                        ->where('trans_type', '!=', 'pc')
-                        ->whereIn('status_id', config('global.liquidations'))
-                        ->orderBy('updated_at', 'desc')
-                        ->limit(6)
-                        ->get();
+            $for_issue = Transaction::whereHas('project', function($query) use($company_id) {
+                                $query->where('company_id', $company_id);
+                            })
+                            ->where('trans_type', '!=', 'pc')
+                            ->whereIn('status_id', config('global.form_approval'));
+            if (UAHelper::get()['trans_view'] == config('global.ua_own')) {
+                $user_id = $user->id;
+                $for_issue = $for_issue->where(static function ($query) use ($user_id) {
+                    $query->where('requested_id', $user_id)
+                    ->orWhere('owner_id',  $user_id);
+                });
+            }
+            $for_issue = $for_issue->orderBy('updated_at', 'desc')->limit(6)->get();
 
-        $deposited = Transaction::whereHas('project', function($query) use($company_id) {
+            $for_clearing = Transaction::whereHas('project', function($query) use($company_id) {
+                                $query->where('company_id', $company_id);
+                            })
+                            ->where('trans_type', '!=', 'pc')
+                            ->whereIn('status_id', config('global.liquidations'));
+            if (UAHelper::get()['trans_view'] == config('global.ua_own')) {
+                $user_id = $user->id;
+                $for_clearing = $for_clearing->where(static function ($query) use ($user_id) {
+                    $query->where('requested_id', $user_id)
+                    ->orWhere('owner_id',  $user_id);
+                });
+            }
+            $for_clearing = $for_clearing->orderBy('updated_at', 'desc')->limit(6)->get();
+
+            $deposited = Transaction::whereHas('project', function($query) use($company_id) {
                         $query->where('company_id', $company_id);
                     })
                     ->where('trans_type', '!=', 'pc')
                     ->whereIn('status_id', config('global.liquidation_cleared'))
-                    ->where('is_deposit', '1')
-                    ->orderBy('updated_at', 'desc')
-                    ->limit(6)
-                    ->get();
-
+                    ->where('is_deposit', '1');
+            if (UAHelper::get()['trans_view'] == config('global.ua_own')) {
+                $user_id = $user->id;
+                $deposited = $deposited->where(static function ($query) use ($user_id) {
+                    $query->where('requested_id', $user_id)
+                    ->orWhere('owner_id',  $user_id);
+                });
+            }
+            $deposited = $deposited->orderBy('updated_at', 'desc')->limit(6)->get();
+        }
         $unliquidated_bal = TransactionHelper::check_unliquidated_balance(auth()->id());
         $liquidated_bal = TransactionHelper::check_liquidated_balance(auth()->id());
         // $logs = Activity::where('causer_id', auth()->id())

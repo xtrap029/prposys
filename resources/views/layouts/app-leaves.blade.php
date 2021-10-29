@@ -6,6 +6,8 @@
     <div class="wrapper">
 
         @include('layouts.sections.nav')
+        <?php $ua = (new \App\Helpers\UAHelper)->get(); ?>
+        <?php $non = config('global.ua_none'); ?>
         
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar elevation-4 sidebar--tecc sidebar--{{ config('global.site_color_leaves') }}">
@@ -63,15 +65,15 @@
                                             <i class="nav-icon material-icons icon--list">dashboard</i><p>Dashboard</p>
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    <li class="nav-item {{ $ua['lea_adjust_my'] == $non ? 'd-none' : '' }}">
                                         <a href="/leaves-adjustment/my" class="nav-link {{ Route::currentRouteName() == 'leavesadjustmentmy' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">replay</i><p>Leaves Adjustment</p>
                                         </a>
                                     </li>
                                     @if (Auth::user()->departmentuserapprover->count() > 0 || Auth::user()->departmentusermember->count() > 0)
-                                    <li class="nav-header">DEPARTMENT</li>                          
+                                        <li class="nav-header">DEPARTMENT</li>                          
                                         @foreach (Auth::user()->departmentuserapprover as $item)
-                                            <li class="nav-item">
+                                            <li class="nav-item {{ $ua['lea_dept_my'] == $non ? 'd-none' : '' }}">
                                                 <a href="/leaves-department/my/{{ $item->department_id }}" class="nav-link {{ Route::currentRouteName() == 'leavesdepartmentmy' && $item->department_id == $department->id ? 'active' : '' }}">
                                                     <i class="nav-icon material-icons icon--list">arrow_right</i><p>{{ $item->department->name }}</p>
                                                     <div class="ml-4 pl-2 small">Approver</div>
@@ -79,42 +81,40 @@
                                             </li>
                                         @endforeach
                                         @foreach (Auth::user()->departmentusermember as $item)
-                                            <li class="nav-item">
+                                            <li class="nav-item {{ $ua['lea_dept_my'] == $non ? 'd-none' : '' }}">
                                                 <a href="/leaves-department/my/{{ $item->department_id }}" class="nav-link {{ Route::currentRouteName() == 'leavesdepartmentmy' && $item->department_id == $department->id ? 'active' : '' }}">
                                                     <i class="nav-icon material-icons icon--list">arrow_right</i><p>{{ $item->department->name }}</p>
                                                     <div class="ml-4 pl-2 small">Member</div>
                                                 </a>
                                             </li>
                                         @endforeach
-                                        <li class="nav-item">
+                                        <li class="nav-item {{ $ua['lea_dept_peak_my'] == $non ? 'd-none' : '' }}">
                                             <a href="/leaves-department-peak/my" class="nav-link {{ Route::currentRouteName() == 'leavespeakmy' ? 'active' : '' }}">
                                                 <i class="nav-icon material-icons icon--list">event_busy</i><p>Peak</p>
                                             </a>
                                         </li>
                                     @endif
-                                    @if (Auth::user()->role_id == 1)
-                                        <li class="nav-header">ADMINISTRATOR</li>                          
-                                        <li class="nav-item">
-                                            <a href="/leaves-reason" class="nav-link {{ Route::currentRouteName() == 'leavesreason' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">accessibility_new</i><p>Leave Type</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/leaves-adjustment" class="nav-link {{ Route::currentRouteName() == 'leavesadjustment' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">tune</i><p>Leave Adjustment</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/leaves-department" class="nav-link {{ Route::currentRouteName() == 'leavesdepartment' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">account_tree</i><p>Department</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/leaves-settings" class="nav-link {{ Route::currentRouteName() == 'leaves-settings' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">settings</i><p>Settings</p>
-                                            </a>
-                                        </li>
-                                    @endif
+                                    <li class="nav-header">CONTROL PANEL</li>                          
+                                    <li class="nav-item {{ $ua['lea_reason'] == $non ? 'd-none' : '' }}">
+                                        <a href="/leaves-reason" class="nav-link {{ Route::currentRouteName() == 'leavesreason' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">accessibility_new</i><p>Leave Type</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['lea_adjust'] == $non ? 'd-none' : '' }}">
+                                        <a href="/leaves-adjustment" class="nav-link {{ Route::currentRouteName() == 'leavesadjustment' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">tune</i><p>Leave Adjustment</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['lea_dept'] == $non ? 'd-none' : '' }}">
+                                        <a href="/leaves-department" class="nav-link {{ Route::currentRouteName() == 'leavesdepartment' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">account_tree</i><p>Department</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['lea_settings'] == $non ? 'd-none' : '' }}">
+                                        <a href="/leaves-settings" class="nav-link {{ Route::currentRouteName() == 'leaves-settings' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">settings</i><p>Settings</p>
+                                        </a>
+                                    </li>
                                 </ul>
                             </nav>
                         </div>

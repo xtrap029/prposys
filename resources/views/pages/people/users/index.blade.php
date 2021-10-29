@@ -18,6 +18,7 @@
                 <thead>
                     <tr>
                         <th colspan="2">List</th>
+                        <th>User Level</th>
                         <th>Role</th>
                         <th>Seq. Access</th>
                         <th class="text-right text-nowrap">
@@ -36,6 +37,7 @@
                                 {{ $item->name }}
                                 <div class="text-info">{{ $item->email }}</div>
                             </td>
+                            <td>{{ $item->ualevel->name }}</td>
                             <td>
                                 {{ $item->role_id ? $item->role->name : 'Inactive' }}
                                 {{ $item->is_smt ? '- SMT' : '' }}

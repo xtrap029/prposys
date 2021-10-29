@@ -3,6 +3,9 @@
 @section('title', 'Transaction - Generate')
 
 @section('content')
+    <?php $ua = (new \App\Helpers\UAHelper)->get(); ?>
+    <?php $non = config('global.ua_none'); ?>
+
     <section class="content-header pb-0">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -28,7 +31,7 @@
                 <form action="/transaction/{{ $trans_page }}/{{ $company->id }}" method="GET" class="mt-5 row">
                     <div class="mb-2 col-6 col-md-2 col-xl-1">
                         @if ($trans_page == 'prpo')
-                            <a href="/transaction/create/pr/{{ $company->id }}" class="vlign--baseline-middle btn btn-success btn-block"><span class="font-weight-bold">+</span> PR</a>
+                            <a href="/transaction/create/pr/{{ $company->id }}" class="vlign--baseline-middle btn btn-success btn-block {{ $ua['trans_add'] == $non ? 'disabled' : '' }}"><span class="font-weight-bold">+</span> PR</a>
                         @else
                             <a href="/transaction/create/pc/{{ $company->id }}" class="vlign--baseline-middle d-none">Generate PC</a>
                         @endif
@@ -44,7 +47,7 @@
                     </div>
                     <div class="mb-2 col-6 col-md-2 col-xl-1">
                         @if ($trans_page == 'prpo')
-                            <a href="/transaction/create/po/{{ $company->id }}" class="vlign--baseline-middle btn btn-success btn-block"><span class="font-weight-bold">+</span> PO</a>
+                            <a href="/transaction/create/po/{{ $company->id }}" class="vlign--baseline-middle btn btn-success btn-block {{ $ua['trans_add'] == $non ? 'disabled' : '' }}"><span class="font-weight-bold">+</span> PO</a>
                         @endif
                     </div>
                     

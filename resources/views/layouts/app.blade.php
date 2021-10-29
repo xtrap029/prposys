@@ -6,6 +6,8 @@
     <div class="wrapper">
 
         @include('layouts.sections.nav')
+        <?php $ua = (new \App\Helpers\UAHelper)->get(); ?>
+        <?php $non = config('global.ua_none'); ?>
         
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar elevation-4 sidebar--tecc sidebar--{{ config('global.site_color') }}">
@@ -47,7 +49,7 @@
                                 </div>
                                 <div class="info">
                                     <a href="/my-account" class="d-block" target="_blank">{{ Auth::user()->name }}</a>
-                                    <span class="small text-secondary font-weight-bold">{{ Auth::user()->role->name }} {{ Auth::user()->is_smt ? ' - SMT' : '' }}</span>
+                                    <span class="small text-secondary font-weight-bold">{{ Auth::user()->ualevel->name }}</span>
                                 </div>
                             </div>
     
@@ -61,7 +63,7 @@
                                     </li>
                                     
                                     @if (in_array(Auth::user()->role_id, [1, 2, 3]))
-                                        <li class="nav-item">
+                                        <li class="nav-item {{ $ua['trans_view'] == $non ? 'd-none' : '' }}">
                                             <a href="/transaction/prpo/{{ Auth::user()->company_id }}" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc', 'prpo-form', 'pc-form', 'prpo-liquidation', 'pc-liquidation']) ? 'active' : '' : '' }}">
                                                 <i class="nav-icon material-icons icon--list">toll</i><p>Transactions</p>
                                             </a>
@@ -73,82 +75,67 @@
                                         </li>
                                     @endif
                                         
-                                    @if (in_array(Auth::user()->role_id, [1, 2]) && !Auth::user()->is_read_only)
-                                        <li class="nav-header">ACCOUNTING</li>
-                                        <li class="nav-item">
-                                            <a href="/bank" class="nav-link {{ Route::currentRouteName() == 'bank' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">account_balance</i><p> Bank</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/coa-tagging" class="nav-link {{ Route::currentRouteName() == 'coatagging' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">poll</i><p> COA Tagging</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/expense-type" class="nav-link {{ Route::currentRouteName() == 'expensetype' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">payments</i><p>Expense Type</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/particular" class="nav-link {{ Route::currentRouteName() == 'particular' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">description</i><p>Particulars</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/released-by" class="nav-link {{ Route::currentRouteName() == 'releasedby' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">person_pin</i><p>Released By</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/vat-type" class="nav-link {{ Route::currentRouteName() == 'vattype' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">receipt</i><p>Tax Type</p>
-                                            </a>
-                                        </li>
-                                        {{-- <li class="nav-item">
-                                            <a href="/report-column" class="nav-link {{ Route::currentRouteName() == 'reportcolumns' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">view_column</i><p>Report Column</p>
-                                            </a>
-                                        </li> --}}
-                                        <li class="nav-item">
-                                            <a href="/report-template" class="nav-link {{ Route::currentRouteName() == 'reporttemplates' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">extension</i><p>Report Template</p>
-                                            </a>
-                                        </li>
-                                    @endif
-                                    
-                                    @if (Auth::user()->role_id == 1)
-                                        <li class="nav-header">ADMINISTRATOR</li>
-                                        <li class="nav-item">
-                                            <a href="/role" class="nav-link {{ Route::currentRouteName() == 'role' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">lock</i><p>Role</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/company" class="nav-link {{ Route::currentRouteName() == 'company' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">business</i><p>Company</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/settings" class="nav-link {{ Route::currentRouteName() == 'settings' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">settings</i><p>Settings</p>
-                                            </a>
-                                        </li>
-                                    @endif
-                                    
-                                    @if (Auth::user()->role_id == 1)
-                                        <li class="nav-header">CONTROL PANEL</li>
-                                        <li class="nav-item">
-                                            <a href="/control-panel/revert-status" class="nav-link {{ Route::currentRouteName() == 'revertstatus' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">history_edu</i><p>Revert Status</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/control-panel/force-cancel" class="nav-link {{ Route::currentRouteName() == 'forcecancel' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">cancel</i><p>Force Cancel</p>
-                                            </a>
-                                        </li>
-                                    @endif
+                                    <li class="nav-header">CONTROL PANEL</li>  
+                                    <li class="nav-item {{ $ua['seq_bank'] == $non ? 'd-none' : '' }}">
+                                        <a href="/bank" class="nav-link {{ Route::currentRouteName() == 'bank' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">account_balance</i><p> Bank</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['seq_coa'] == $non ? 'd-none' : '' }}">
+                                        <a href="/coa-tagging" class="nav-link {{ Route::currentRouteName() == 'coatagging' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">poll</i><p> COA Tagging</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['seq_expense'] == $non ? 'd-none' : '' }}">
+                                        <a href="/expense-type" class="nav-link {{ Route::currentRouteName() == 'expensetype' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">payments</i><p>Expense Type</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['seq_particulars'] == $non ? 'd-none' : '' }}">
+                                        <a href="/particular" class="nav-link {{ Route::currentRouteName() == 'particular' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">description</i><p>Particulars</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['seq_rel_by'] == $non ? 'd-none' : '' }}">
+                                        <a href="/released-by" class="nav-link {{ Route::currentRouteName() == 'releasedby' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">person_pin</i><p>Released By</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['seq_vat'] == $non ? 'd-none' : '' }}">
+                                        <a href="/vat-type" class="nav-link {{ Route::currentRouteName() == 'vattype' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">receipt</i><p>Tax Type</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['seq_rep_temp'] == $non ? 'd-none' : '' }}">
+                                        <a href="/report-template" class="nav-link {{ Route::currentRouteName() == 'reporttemplates' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">extension</i><p>Report Template</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['seq_role'] == $non ? 'd-none' : '' }}">
+                                        <a href="/role" class="nav-link {{ Route::currentRouteName() == 'role' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">lock</i><p>Role</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['seq_comp'] == $non ? 'd-none' : '' }}">
+                                        <a href="/company" class="nav-link {{ Route::currentRouteName() == 'company' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">business</i><p>Company</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['seq_settings'] == $non ? 'd-none' : '' }}">
+                                        <a href="/settings" class="nav-link {{ Route::currentRouteName() == 'settings' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">settings</i><p>Settings</p>
+                                        </a>
+                                    </li>                               
+                                    <li class="nav-item {{ $ua['seq_rev_stat'] == $non ? 'd-none' : '' }}">
+                                        <a href="/control-panel/revert-status" class="nav-link {{ Route::currentRouteName() == 'revertstatus' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">history_edu</i><p>Revert Status</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['seq_force_cancel'] == $non ? 'd-none' : '' }}">
+                                        <a href="/control-panel/force-cancel" class="nav-link {{ Route::currentRouteName() == 'forcecancel' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">cancel</i><p>Force Cancel</p>
+                                        </a>
+                                    </li>
                                 </ul>
                             </nav>
                         </div>
