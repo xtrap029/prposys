@@ -1231,29 +1231,12 @@ class TransactionsController extends Controller {
 
         // check if unliquidated
         if (in_array($transaction->status_id, config('global.generated'))) {
-            // check if not admin
-            if ($user->role_id != 1) {
-                // check if owned
-                if ($user->id == $transaction->owner_id) {
-                    // check if pr, not po
-                    if ($transaction->trans_type == 'pr') {
-                        // check role limit
-                        if ($user->role_id == 2) {
-                            $edit_pr_limit = Settings::where('type', 'LIMIT_EDIT_GENPR_USER_2')->first()->value;
-                        } else if ($user->role_id == 3) {
-                            $edit_pr_limit = Settings::where('type', 'LIMIT_EDIT_GENPR_USER_3')->first()->value;
-                        } else {
-                            $can_edit = false;
-                        }
-
-                        // check if role limit is enough
-                        if ($transaction->edit_count >= $edit_pr_limit) {
-                            $can_edit = false;
-                        } 
-                    }
-                } else {
-                    $can_edit = false;
-                }
+            // check if access = own and transaction is owned or if access = none
+            if (
+                (UAHelper::get()['trans_edit'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+                || UAHelper::get()['trans_edit'] == config('global.ua_none')
+            ) {
+                $can_edit = false;
             }
         } else {
             $can_edit = false;
@@ -1274,8 +1257,11 @@ class TransactionsController extends Controller {
 
         // check if unliquidated
         if (in_array($transaction->status_id, config('global.generated'))) {
-            // check if not admin and not the owner
-            if ($user->role_id != 1 && $user->id != $transaction->owner_id) {
+            // check if access = own and transaction is owned or if access = none
+            if (
+                (UAHelper::get()['trans_cancel'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+                || UAHelper::get()['trans_cancel'] == config('global.ua_none')
+            ) {
                 $can_cancel = false;
             }
         } else {
@@ -1311,9 +1297,13 @@ class TransactionsController extends Controller {
         }
 
         $user = User::where('id', $user)->first();
+        $transaction = Transaction::where('id', $transaction)->first();
 
-        // check if reassign
-        if ($user->role_id != 1) {
+        // check if access = own and transaction is owned or if access = none
+        if (
+            (UAHelper::get()['trans_manage'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            || UAHelper::get()['trans_manage'] == config('global.ua_none')
+        ) {
             $can_reassign = false;
         }
 

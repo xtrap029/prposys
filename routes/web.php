@@ -267,6 +267,34 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+    // Seq Transaction Edit
+    Route::middleware('CheckUserAccess:trans_edit')->group(function () {
+        Route::prefix('transaction')->group(function () {
+            $url = 'Admin\TransactionsController';
+
+            Route::get('/edit/{transaction}', $url.'@edit')->where('transaction', '[0-9]+')->name('transaction');
+            Route::put('/edit/{transaction}', $url.'@update')->where('transaction', '[0-9]+');
+        });
+    });
+
+    // Seq Transaction Edit
+    Route::middleware('CheckUserAccess:trans_cancel')->group(function () {
+        Route::prefix('transaction')->group(function () {
+            $url = 'Admin\TransactionsController';
+
+            Route::put('/cancel/{transaction}', $url.'@cancel')->where('transaction', '[0-9]+');
+        });
+    });
+
+    // Seq Transaction Edit
+    Route::middleware('CheckUserAccess:trans_manage')->group(function () {
+        Route::prefix('transaction')->group(function () {
+            $url = 'Admin\TransactionsController';
+
+            Route::put('/manage/{transaction}', $url.'@manage')->where('transaction', '[0-9]+');
+        });
+    });
+
     
     
     // ----------------------------------------------------------------------------------------------------------
@@ -284,39 +312,11 @@ Route::middleware('auth')->group(function () {
         // Sequence
         Route::prefix('transaction')->group(function () {
             $url = 'Admin\TransactionsController';
-            
-            Route::middleware('CheckConfidential')->group(function () {
-                $url = 'Admin\TransactionsController';
-                
 
-                Route::middleware('CheckReadOnly')->group(function () {
-                    $url = 'Admin\TransactionsController';
-                    
-                    Route::get('/edit/{transaction}', $url.'@edit')->where('transaction', '[0-9]+')->name('transaction');
-                    Route::put('/edit/{transaction}', $url.'@update')->where('transaction', '[0-9]+');
-                    Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
-                    Route::put('/cancel/{transaction}', $url.'@cancel')->where('transaction', '[0-9]+');
-                    Route::put('/manage/{transaction}', $url.'@manage')->where('transaction', '[0-9]+');
-                });
-
-                Route::put('/note/{transaction}', $url.'@note')->where('transaction', '[0-9]+');
-                Route::put('/edit_note/{transaction}/{transaction_note}', $url.'@edit_note')->where('transaction_note', '[0-9]+');
-                Route::get('/delete_note/{transaction}/{transaction_note}', $url.'@destroy_note')->where('transaction_note', '[0-9]+');
-                // Route::get('/report/', $url.'@report')->middleware('checkRole:1|2');
-            });
-
-            Route::middleware('CheckReadOnly')->group(function () {
-                $url = 'Admin\TransactionsController';
-
-                Route::put('/edit-company/', $url.'@update_company')->name('transaction');
-                Route::get('/toggle-visibility/{id}', $url.'@toggle_confidential')->name('transaction');
-            });
+            Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
+            Route::get('/toggle-visibility/{id}', $url.'@toggle_confidential')->name('transaction');
             
             Route::get('/report-all/', $url.'@report_all')->name('transactionreport');
-            
-            // Route::get('/{trans_page}/{trans_company?}', $url.'@index')->where('trans_company', '[0-9]+')->name('transaction');
-
-            Route::post('/api-search', $url.'@api_search');
         });
 
         Route::prefix('transaction-form')->group(function () {
@@ -362,10 +362,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('/print/{transaction}', $url.'@print')->where('transaction', '[0-9]+')->name('transaction');
             });
 
-            // Route::get('/report/', $url.'@report')->middleware('checkRole:1|2');
             Route::get('/print-issued/', $url.'@print_issued')->middleware('checkRole:1|2');
-
-            // Route::get('/{trans_page}/{trans_company?}', $url.'@index')->where('trans_company', '[0-9]+');
         });
 
         Route::prefix('transaction-liquidation')->group(function () {
@@ -414,7 +411,7 @@ Route::middleware('auth')->group(function () {
 
 
 
-    
+
     // Seq Transaction View
     Route::middleware('CheckUserAccess:trans_view')->group(function () {
         Route::prefix('transaction')->group(function () {
@@ -422,6 +419,14 @@ Route::middleware('auth')->group(function () {
 
             Route::get('/view/{transaction}', $url.'@show')->where('transaction', '[0-9]+')->name('transaction');
             Route::get('/{trans_page}/{trans_company?}', $url.'@index')->where('trans_company', '[0-9]+')->name('transaction');
+
+            Route::post('/api-search', $url.'@api_search');
+
+            Route::put('/note/{transaction}', $url.'@note')->where('transaction', '[0-9]+');
+            Route::put('/edit_note/{transaction}/{transaction_note}', $url.'@edit_note')->where('transaction_note', '[0-9]+');
+            Route::get('/delete_note/{transaction}/{transaction_note}', $url.'@destroy_note')->where('transaction_note', '[0-9]+');
+
+            Route::put('/edit-company/', $url.'@update_company')->name('transaction');
         });
     });
 });
