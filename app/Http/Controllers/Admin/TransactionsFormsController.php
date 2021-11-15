@@ -727,7 +727,7 @@ class TransactionsFormsController extends Controller {
             $data['edit_count'] = $transaction->edit_count + 1;
         }
 
-        if ($this->check_can_issue($transaction->id)) {
+        if ($transaction->status_id != 5) {
             $data['status_prev_id'] = $transaction->status_id;
             $data['status_id'] = 5;
         }
