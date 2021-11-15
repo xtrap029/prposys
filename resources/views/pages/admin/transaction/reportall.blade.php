@@ -422,11 +422,21 @@
                         </tr>
                         @foreach ($transactions as $item)
                             <?php $config_confidential = 0; ?>
-                            <tr>
-                                @foreach ($report_template->templatecolumn as $item_2)
-                                    <td>{{ eval($item_2->column->code) }}</td>
-                                @endforeach
-                            </tr>
+
+                            <?php 
+                                $config_confidential2 = false;
+                                // check levels
+                                if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential2 = true;
+                                // check level parallel confidential
+                                if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential2 = true;
+                            ?>
+                            @if (!$config_confidential2)
+                                <tr>
+                                    @foreach ($report_template->templatecolumn as $item_2)
+                                        <td>{{ eval($item_2->column->code) }}</td>
+                                    @endforeach
+                                </tr>
+                            @endif
                         @endforeach
                     </table>
                 </div>

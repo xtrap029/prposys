@@ -195,7 +195,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="card col-md-12 mt-4">
+                        <div class="card col-md-12 mt-4 d-none">
                             <div class="card-header">
                                 App Access
                                 <span class="float-right">
@@ -223,11 +223,11 @@
 
 
                     <div class="tab-pane fade m-4" id="sequence" role="tabpanel" aria-labelledby="sequence-tab">
-                        <div class="form-row">
+                        <div class="form-row d-none">
                             <div class="form-group col-lg-8 mb-3">
                                 <label for="">Role</label>
                                 <select name="role_id" class="form-control @error('role_id') is-invalid @enderror">
-                                    <option value="">Inactive</option>
+                                    {{-- <option value="">Inactive</option> --}}
                                     @foreach ($roles as $role)
                                         <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>                                        
                                     @endforeach

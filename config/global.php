@@ -88,4 +88,5 @@
         'is_yesno_id' => ['1', '5'],
         'ua_none' => '5',
         'ua_own' => '2',
+        'ua_inactive' => '6',
     ];

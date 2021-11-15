@@ -62,18 +62,16 @@
                                         </a>
                                     </li>
                                     
-                                    @if (in_array(Auth::user()->role_id, [1, 2, 3]))
-                                        <li class="nav-item {{ $ua['trans_view'] == $non ? 'd-none' : '' }}">
-                                            <a href="/transaction/prpo/{{ Auth::user()->company_id }}" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc', 'prpo-form', 'pc-form', 'prpo-liquidation', 'pc-liquidation']) ? 'active' : '' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">toll</i><p>Transactions</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/transaction/report-all?from={{ date('Y-m-01') }}&to={{ date('Y-m-t') }}" class="nav-link {{ Route::currentRouteName() == 'transactionreport' ? 'active' : '' }}">
-                                                <i class="nav-icon material-icons icon--list">assessment</i><p> REPORTS</p>
-                                            </a>
-                                        </li>
-                                    @endif
+                                    <li class="nav-item {{ $ua['trans_view'] == $non ? 'd-none' : '' }}">
+                                        <a href="/transaction/prpo/{{ Auth::user()->company_id }}" class="nav-link {{ isset($trans_page) ? in_array($trans_page, ['prpo', 'pc', 'prpo-form', 'pc-form', 'prpo-liquidation', 'pc-liquidation']) ? 'active' : '' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">toll</i><p>Transactions</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['trans_report'] == $non ? 'd-none' : '' }}">
+                                        <a href="/transaction/report-all?from={{ date('Y-m-01') }}&to={{ date('Y-m-t') }}" class="nav-link {{ Route::currentRouteName() == 'transactionreport' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">assessment</i><p> Reports</p>
+                                        </a>
+                                    </li>
                                         
                                     <li class="nav-header">CONTROL PANEL</li>  
                                     <li class="nav-item {{ $ua['seq_bank'] == $non ? 'd-none' : '' }}">

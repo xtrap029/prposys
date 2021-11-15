@@ -17,7 +17,7 @@ Route::get('/',  function () {
 
 Auth::routes();
 
-Route::middleware('auth')->group(function () {
+Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfidential']], function () {
     
     Route::get('/', 'Main\ChooseAppController@index')->name('chooseapp');
 
@@ -153,6 +153,13 @@ Route::middleware('auth')->group(function () {
 
             Route::get('/', $url.'@index')->name('activitylog');
         });
+
+        Route::prefix('transaction-liquidation')->group(function () {
+            $url = 'Admin\TransactionsLiquidationController';
+
+            Route::get('/finder-liquidation/{transaction}', $url.'@finder_liquidation')->where('transaction', '[0-9]+');
+            Route::get('/finder-attachment/{transaction}', $url.'@finder_attachment')->where('transaction', '[0-9]+');
+        });
     });
     
     // Peo Database
@@ -267,6 +274,15 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+    // Seq Transaction Duplicate
+    Route::middleware('CheckUserAccess:trans_dup')->group(function () {
+        Route::prefix('transaction')->group(function () {
+            $url = 'Admin\TransactionsController';
+            
+            Route::get('/duplicate/{transaction}', $url.'@duplicate')->where('transaction', '[0-9]+');
+        });
+    });
+
     // Seq Transaction Edit
     Route::middleware('CheckUserAccess:trans_edit')->group(function () {
         Route::prefix('transaction')->group(function () {
@@ -295,123 +311,183 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    
-    
-    // ----------------------------------------------------------------------------------------------------------
-
-    // Access Level 1 and 2
-    Route::middleware('checkRole:1|2')->group(function () {            
-        Route::middleware('CheckConfidential')->group(function () {            
-            Route::get('transaction/duplicate/{transaction}', 'Admin\TransactionsController@duplicate')->where('transaction', '[0-9]+');
-        });    
-    });
-
-    // Access Level 1, 2, and 3
-    Route::middleware('checkRole:1|2|3')->group(function () {
-        
-        // Sequence
+    // Seq Transaction Toggle Confidential
+    Route::middleware('CheckUserAccess:trans_toggle_conf')->group(function () {
         Route::prefix('transaction')->group(function () {
             $url = 'Admin\TransactionsController';
 
-            Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
             Route::get('/toggle-visibility/{id}', $url.'@toggle_confidential')->name('transaction');
-            
-            Route::get('/report-all/', $url.'@report_all')->name('transactionreport');
         });
-
-        Route::prefix('transaction-form')->group(function () {
-            $url = 'Admin\TransactionsFormsController';
-            
-            Route::middleware('CheckReadOnly')->group(function () {
-                $url = 'Admin\TransactionsFormsController';
-
-                Route::get('/create', $url.'@create')->name('transaction');
-                Route::post('/create', $url.'@store');
-
-                Route::get('/create-reimbursement', $url.'@create_reimbursement')->name('transaction');
-                Route::post('/create-reimbursement', $url.'@store_reimbursement');
-            });
-
-            Route::middleware('CheckConfidential')->group(function () {
-                $url = 'Admin\TransactionsFormsController';
-                
-                Route::get('/view/{transaction}', $url.'@show')->where('transaction', '[0-9]+')->name('transaction');
-                
-                Route::middleware('CheckReadOnly')->group(function () {
-                    $url = 'Admin\TransactionsFormsController';
-
-                    Route::get('/edit/{transaction}', $url.'@edit')->where('transaction', '[0-9]+')->name('transaction');
-                    Route::put('/edit/{transaction}', $url.'@update')->where('transaction', '[0-9]+');
-        
-                    Route::get('/edit-reimbursement/{transaction}', $url.'@edit_reimbursement')->where('transaction', '[0-9]+')->name('transaction');
-                    Route::put('/edit-reimbursement/{transaction}', $url.'@update_reimbursement')->where('transaction', '[0-9]+');
-    
-                    Route::put('/edit-issued/{transaction}', $url.'@update_issued')->where('transaction', '[0-9]+');
-                
-                    // if is_bank
-                    Route::put('/edit-issued-company/{transaction}', $url.'@update_issued_company')->where('transaction', '[0-9]+');
-                    Route::get('/edit-issued-clear/{transaction}', $url.'@update_issued_clear')->where('transaction', '[0-9]+');
-    
-                    Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
-                    Route::put('/cancel/{transaction}', $url.'@cancel')->where('transaction', '[0-9]+');
-                    // Route::put('/approval/{transaction}', $url.'@approval')->where('transaction', '[0-9]+');
-                    Route::get('/approval/{transaction}', $url.'@approval')->where('transaction', '[0-9]+');
-                    Route::put('/issue/{transaction}', $url.'@issue')->where('transaction', '[0-9]+');
-                });
-
-                Route::get('/print/{transaction}', $url.'@print')->where('transaction', '[0-9]+')->name('transaction');
-            });
-
-            Route::get('/print-issued/', $url.'@print_issued')->middleware('checkRole:1|2');
-        });
-
-        Route::prefix('transaction-liquidation')->group(function () {
-            $url = 'Admin\TransactionsLiquidationController';
-            
-            Route::middleware('CheckReadOnly')->group(function () {
-                $url = 'Admin\TransactionsLiquidationController';
-
-                Route::get('/create', $url.'@create')->name('transaction');
-                Route::post('/create', $url.'@store');
-            });
-
-            Route::middleware('CheckConfidential')->group(function () {
-                $url = 'Admin\TransactionsLiquidationController';
-                
-                Route::get('/view/{transaction}', $url.'@show')->where('transaction', '[0-9]+')->name('transaction');
-                
-                Route::middleware('CheckReadOnly')->group(function () {
-                    $url = 'Admin\TransactionsLiquidationController';
-
-                    Route::get('/edit/{transaction}', $url.'@edit')->where('transaction', '[0-9]+')->name('transaction');
-                    Route::put('/edit/{transaction}', $url.'@update')->where('transaction', '[0-9]+');
-                    Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
-                    // Route::put('/approval/{transaction}', $url.'@approval')->where('transaction', '[0-9]+');
-                    Route::get('/approval/{transaction}', $url.'@approval')->where('transaction', '[0-9]+');
-                    Route::post('/clear/{transaction}', $url.'@clear')->where('transaction', '[0-9]+');
-                    Route::put('/clear/{transaction}', $url.'@clear_edit')->where('transaction', '[0-9]+');
-                });
-                
-                Route::get('/print/{transaction}', $url.'@print')->where('transaction', '[0-9]+')->name('transaction');
-                Route::get('/finder-liquidation/{transaction}', $url.'@finder_liquidation')->where('transaction', '[0-9]+');
-                Route::get('/finder-attachment/{transaction}', $url.'@finder_attachment')->where('transaction', '[0-9]+');
-            });
-
-            // Route::get('/report/', $url.'@report')->middleware('checkRole:1|2');
-            Route::get('/report-deposit/', $url.'@report_deposit')->middleware('checkRole:1|2');
-            Route::get('/print-cleared/', $url.'@print_cleared')->middleware('checkRole:1|2');
-            
-
-            // Route::get('/{trans_page}/{trans_company?}', $url.'@index')->where('trans_company', '[0-9]+');
-        });
-        
     });
 
-    // ----------------------------------------------------------------------------------------------------------
+    // Seq Transaction Form Create
+    Route::middleware('CheckUserAccess:form_add')->group(function () {
+        Route::prefix('transaction-form')->group(function () {
+            $url = 'Admin\TransactionsFormsController';
 
+            Route::get('/create', $url.'@create')->name('transaction');
+            Route::post('/create', $url.'@store');
 
+            Route::get('/create-reimbursement', $url.'@create_reimbursement')->name('transaction');
+            Route::post('/create-reimbursement', $url.'@store_reimbursement');
+        });
+    });
 
+    // Seq Transaction Form Edit
+    Route::middleware('CheckUserAccess:form_edit')->group(function () {
+        Route::prefix('transaction-form')->group(function () {
+            $url = 'Admin\TransactionsFormsController';
 
+            Route::get('/edit/{transaction}', $url.'@edit')->where('transaction', '[0-9]+')->name('transaction');
+                Route::put('/edit/{transaction}', $url.'@update')->where('transaction', '[0-9]+');
+    
+                Route::get('/edit-reimbursement/{transaction}', $url.'@edit_reimbursement')->where('transaction', '[0-9]+')->name('transaction');
+                Route::put('/edit-reimbursement/{transaction}', $url.'@update_reimbursement')->where('transaction', '[0-9]+');
+        });
+    });
+
+    // Seq Transaction Form Cancel
+    Route::middleware('CheckUserAccess:form_cancel')->group(function () {
+        Route::prefix('transaction-form')->group(function () {
+            $url = 'Admin\TransactionsFormsController';
+
+            Route::put('/cancel/{transaction}', $url.'@cancel')->where('transaction', '[0-9]+');
+        });
+    });
+
+    // Seq Transaction Form Approval
+    Route::middleware('CheckUserAccess:form_approval')->group(function () {
+        Route::prefix('transaction-form')->group(function () {
+            $url = 'Admin\TransactionsFormsController';
+
+            Route::get('/approval/{transaction}', $url.'@approval')->where('transaction', '[0-9]+');
+        });
+    });
+
+    // Seq Transaction Form Issue
+    Route::middleware('CheckUserAccess:form_issue')->group(function () {
+        Route::prefix('transaction-form')->group(function () {
+            $url = 'Admin\TransactionsFormsController';
+
+            Route::put('/issue/{transaction}', $url.'@issue')->where('transaction', '[0-9]+');
+        });
+    });
+
+    // Seq Transaction Form Edit Issued
+    Route::middleware('CheckUserAccess:form_edit_issued')->group(function () {
+        Route::prefix('transaction-form')->group(function () {
+            $url = 'Admin\TransactionsFormsController';
+
+            Route::put('/edit-issued/{transaction}', $url.'@update_issued')->where('transaction', '[0-9]+');
+            
+            // if is_bank
+            Route::put('/edit-issued-company/{transaction}', $url.'@update_issued_company')->where('transaction', '[0-9]+');
+            Route::get('/edit-issued-clear/{transaction}', $url.'@update_issued_clear')->where('transaction', '[0-9]+');
+        });
+    });
+
+    // Seq Transaction Form Print
+    Route::middleware('CheckUserAccess:form_print')->group(function () {
+        Route::prefix('transaction-form')->group(function () {
+            $url = 'Admin\TransactionsFormsController';
+
+            Route::get('/print/{transaction}', $url.'@print')->where('transaction', '[0-9]+')->name('transaction');
+        });
+    });    
+
+    // Seq Transaction Liq Create
+    Route::middleware('CheckUserAccess:liq_add')->group(function () {
+        Route::prefix('transaction-liquidation')->group(function () {
+            $url = 'Admin\TransactionsLiquidationController';
+
+            Route::get('/create', $url.'@create')->name('transaction');
+            Route::post('/create', $url.'@store');
+        });
+    });
+
+    // Seq Transaction Liq Edit
+    Route::middleware('CheckUserAccess:liq_edit')->group(function () {
+        Route::prefix('transaction-liquidation')->group(function () {
+            $url = 'Admin\TransactionsLiquidationController';
+
+            Route::get('/edit/{transaction}', $url.'@edit')->where('transaction', '[0-9]+')->name('transaction');
+            Route::put('/edit/{transaction}', $url.'@update')->where('transaction', '[0-9]+');
+        });
+    });
+
+    // Seq Transaction Liq Approval
+    Route::middleware('CheckUserAccess:liq_approval')->group(function () {
+        Route::prefix('transaction-liquidation')->group(function () {
+            $url = 'Admin\TransactionsLiquidationController';
+
+            Route::get('/approval/{transaction}', $url.'@approval')->where('transaction', '[0-9]+');
+        });
+    });
+
+    // Seq Transaction Liq Clear
+    Route::middleware('CheckUserAccess:liq_clear')->group(function () {
+        Route::prefix('transaction-liquidation')->group(function () {
+            $url = 'Admin\TransactionsLiquidationController';
+
+            Route::post('/clear/{transaction}', $url.'@clear')->where('transaction', '[0-9]+');
+        });
+    });
+
+    // Seq Transaction Liq Edit Cleared
+    Route::middleware('CheckUserAccess:liq_edit_cleared')->group(function () {
+        Route::prefix('transaction-liquidation')->group(function () {
+            $url = 'Admin\TransactionsLiquidationController';
+
+            Route::put('/clear/{transaction}', $url.'@clear_edit')->where('transaction', '[0-9]+');
+        });
+    });
+
+    // Seq Transaction Liq Print
+    Route::middleware('CheckUserAccess:liq_print')->group(function () {
+        Route::prefix('transaction-liquidation')->group(function () {
+            $url = 'Admin\TransactionsLiquidationController';
+
+            Route::get('/print/{transaction}', $url.'@print')->where('transaction', '[0-9]+')->name('transaction');
+        });
+    });
+
+    // Seq Transaction Reset Edit Count
+    Route::middleware('CheckUserAccess:trans_reset')->group(function () {
+        Route::prefix('transaction')->group(function () {
+            $url = 'Admin\TransactionsController';
+            Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
+        });
+    
+        Route::prefix('transaction-form')->group(function () {
+            $url = 'Admin\TransactionsFormsController';
+            Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
+        });
+    
+        Route::prefix('transaction-liquidation')->group(function () {
+            $url = 'Admin\TransactionsLiquidationController';
+            Route::get('/reset/{transaction}', $url.'@reset')->where('transaction', '[0-9]+');
+        });
+    });    
+
+    // Seq Transaction Reports
+    Route::middleware('CheckUserAccess:trans_report')->group(function () {
+        Route::prefix('transaction')->group(function () {
+            $url = 'Admin\TransactionsController';
+            Route::get('/report-all/', $url.'@report_all')->name('transactionreport');
+        });
+        
+        Route::prefix('transaction-form')->group(function () {
+            $url = 'Admin\TransactionsFormsController';
+            Route::get('/print-issued/', $url.'@print_issued');
+        });
+    
+        Route::prefix('transaction-liquidation')->group(function () {
+            $url = 'Admin\TransactionsLiquidationController';
+            Route::get('/report-deposit/', $url.'@report_deposit');
+            Route::get('/print-cleared/', $url.'@print_cleared');
+        });
+    });    
+    
     // Seq Transaction View
     Route::middleware('CheckUserAccess:trans_view')->group(function () {
         Route::prefix('transaction')->group(function () {
@@ -427,6 +503,18 @@ Route::middleware('auth')->group(function () {
             Route::get('/delete_note/{transaction}/{transaction_note}', $url.'@destroy_note')->where('transaction_note', '[0-9]+');
 
             Route::put('/edit-company/', $url.'@update_company')->name('transaction');
+        });
+
+        Route::prefix('transaction-form')->group(function () {
+            $url = 'Admin\TransactionsFormsController';
+
+            Route::get('/view/{transaction}', $url.'@show')->where('transaction', '[0-9]+')->name('transaction');
+        });
+
+        Route::prefix('transaction-liquidation')->group(function () {
+            $url = 'Admin\TransactionsLiquidationController';
+
+            Route::get('/view/{transaction}', $url.'@show')->where('transaction', '[0-9]+')->name('transaction');
         });
     });
 });

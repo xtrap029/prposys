@@ -129,7 +129,7 @@
                             <label for="" class="text-gray">Confirm Change Password</label>
                             <input type="password" class="form-control" name="password_confirmation">
                         </div>
-                        <div class="form-group border p-2 mb-0 col-12 text-center">
+                        <div class="form-group border p-2 mb-0 col-12 text-center d-none">
                             <div class="my-2">Available Apps</div>
                             @foreach (explode(',', $user->apps) as $item)
                                 <img src="{{ config('global.site_icon'.($item != 'sequence' ? '_'.$item : '')) }}" alt="" class="img-size-64">
@@ -142,11 +142,11 @@
                     
                     <h5 class="my-4 text-right">Sequence</h5>
                     <div class="form-row">
-                        <div class="form-group border p-2 mb-0 col-lg-6">
+                        <div class="form-group border p-2 mb-0 col-lg-6 d-none">
                             <label for="" class="text-gray">Role</label>
                             <h6>{{ $user->role->name }} {{ $user->is_smt ? ' - SMT' : '' }}</h6>
                         </div>
-                        <div class="form-group border p-2 mb-0 col-lg-6">
+                        <div class="form-group border p-2 mb-0 col-lg-6 d-none">
                             <label for="" class="text-gray">Read Only Access?</label>
                             <h6>{{ $user->is_read_only ? 'Yes' : 'No' }}</h6>
                         </div>
@@ -166,7 +166,7 @@
                             <label for="" class="text-gray">Unliquidated PR amount limit</label>
                             <h6>{{ $user->LIMIT_UNLIQUIDATEDPR_AMOUNT }}</h6>
                         </div>
-                        <div class="form-group border p-2 mb-0 col-lg-6">
+                        <div class="form-group border p-2 mb-0 col-lg-6 d-none">
                             <label for="" class="text-gray">Unliquidated PR transactions limit</label>
                             <h6>{{ $user->LIMIT_UNLIQUIDATEDPR_COUNT }}</h6>
                         </div>                          

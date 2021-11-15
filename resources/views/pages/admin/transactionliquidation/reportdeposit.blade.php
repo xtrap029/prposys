@@ -110,14 +110,24 @@
                         <td>Ref Code</td>
                     </tr>
                     @foreach ($transactions as $item)
-                        <tr>
-                            <td><h6 class="font-weight-bold">{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</h6></td>
-                            <td class="text-right">{{ number_format($item->amount_issued, 2, '.', ',') }}</td>
-                            <td>{{ $item->depo_type }}</td>
-                            <td>{{ $item->bankbranch->bank->name }} - {{ $item->bankbranch->name }}</td>
-                            <td>{{ $item->depo_date }}</td>
-                            <td>{{ $item->depo_ref }}</td>
-                        </tr>
+                        <?php 
+                            $config_confidential2 = false;
+                            // check levels
+                            if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential2 = true;
+                            // check level parallel confidential
+                            if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential2 = true;
+                        ?>
+
+                        @if (!$config_confidential2)   
+                            <tr>
+                                <td><h6 class="font-weight-bold">{{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}</h6></td>
+                                <td class="text-right">{{ number_format($item->amount_issued, 2, '.', ',') }}</td>
+                                <td>{{ $item->depo_type }}</td>
+                                <td>{{ $item->bankbranch->bank->name }} - {{ $item->bankbranch->name }}</td>
+                                <td>{{ $item->depo_date }}</td>
+                                <td>{{ $item->depo_ref }}</td>
+                            </tr>
+                        @endif
                     @endforeach
                     </tbody>
                 </table>

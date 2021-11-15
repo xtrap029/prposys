@@ -4,6 +4,10 @@
 @section('nav_class', 'navbar-dark')
 
 @section('content')
+    <?php $ua = (new \App\Helpers\UAHelper)->get(); ?>
+    <?php $non = config('global.ua_none'); ?>
+    <?php $own = config('global.ua_own'); ?>
+
     <?php $config_confidential = 0; ?>
     <section class="content-header bg-dark">
         <div class="container-fluid">
@@ -39,7 +43,7 @@
                     <div>
                         <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}{{ isset($_GET['page']) ? '?page='.$_GET['page'] : '' }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
                         <a data-toggle="modal" data-target="#modal-make" href="#_" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>                
-                        <a href="/transaction-form/reset/{{ $transaction->id }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
+                        <a href="/transaction-form/reset/{{ $transaction->id }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto d-none {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                     </div>
                     <div>        
                         <a href="#_" class="btn mb-2 btn-sm btn-flat btn-warning col-12 col-lg-auto" data-toggle="modal" data-target="#modal-notes">
@@ -407,7 +411,8 @@
                                         <td class="font-weight-bold text-gray">Tax Type</td>
                                         <td class="font-weight-bold">{{ $transaction->form_vat_name && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_vat_name : $transaction->vattype->name }}</td>
                                     </tr>
-                                    @if (Auth::user()->is_smt && $transaction->owner->is_smt)
+                                    @if ($ua['trans_toggle_conf'] == $non || ($ua['trans_toggle_conf'] == $own && $transaction->owner_id != Auth::user()->id))
+                                    @else
                                         <tr>
                                             <td class="font-weight-bold text-gray">Is Confidential?</td>
                                             <td class="font-weight-bold">

@@ -194,7 +194,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="card col-md-12 mt-4">
+                        <div class="card col-md-12 mt-4 d-none">
                             <div class="card-header">
                                 App Access
                                 <span class="float-right">
@@ -219,7 +219,7 @@
                         </div>
                     </div>
                     <div class="tab-pane fade m-4" id="sequence" role="tabpanel" aria-labelledby="sequence-tab">
-                        <div class="form-row">
+                        <div class="form-row d-none">
                             <div class="form-group col-lg-8 mb-3">
                                 <label for="">Role</label>
                                 @if ($user->is_smt)

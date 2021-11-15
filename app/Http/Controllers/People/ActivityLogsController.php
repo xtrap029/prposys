@@ -5,6 +5,7 @@ namespace App\Http\Controllers\People;
 use Spatie\Activitylog\Models\Activity;
 use App\Transaction;
 use App\User;
+use App\Helpers\UAHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -13,10 +14,12 @@ class ActivityLogsController extends Controller {
     public function index() {
         $activity = Activity::orderBy('id', 'desc');
         
-        if (User::where('id', auth()->id())->first()->is_smt == 0) {
-            $activity = $activity->whereNotIn('log_name', ['Transaction Liquidation', 'Transaction Descriptions', 'Transaction Attachments', 'Transaction Notes']);
-        }
+        $activity = $activity->whereNotIn('log_name', ['Transaction Liquidation', 'Transaction Descriptions', 'Transaction Attachments', 'Transaction Notes']);
         
+        if (UAHelper::get()['peo_activity'] == config('global.ua_own')) {
+            $activity = $activity->where('causer_id', auth()->id());
+        }
+
         if (!empty($_GET['log_name']) && $_GET['log_name'] != "") $activity = $activity->where('log_name', $_GET['log_name']);
 
         $activity = $activity->paginate(10);

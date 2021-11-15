@@ -4,6 +4,10 @@
 @section('nav_class', 'navbar-dark')
 
 @section('content')
+    <?php $ua = (new \App\Helpers\UAHelper)->get(); ?>
+    <?php $non = config('global.ua_none'); ?>
+    <?php $own = config('global.ua_own'); ?>
+
     <?php $config_confidential = 0; ?>
     <section class="content-header bg-dark">
         <div class="container-fluid">
@@ -41,7 +45,7 @@
                         <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}{{ isset($_GET['page']) ? '?page='.$_GET['page'] : '' }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
                         <a data-toggle="modal" data-target="#modal-liquidate" href="#_" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>
                         <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}?project_id={{ $transaction->project_id }}&currency={{ $transaction->currency }}&amount={{ $transaction->amount }}&purpose={{ $transaction->purpose }}&payee={{ $transaction->payee }}&due_at={{ $transaction->due_at }}&requested_id={{ $transaction->requested_id }}&is_deposit={{ $transaction->is_deposit }}&is_bills={{ $transaction->is_bills }}&is_hr={{ $transaction->is_hr }}&is_reimbursement={{ $transaction->is_reimbursement }}&is_bank={{ $transaction->is_bank }}" target="_blank" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto {{ $perms['can_duplicate'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i> Duplicate</a>
-                        <a href="/transaction-liquidation/reset/{{ $transaction->id }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
+                        <a href="/transaction-liquidation/reset/{{ $transaction->id }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto d-none {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                     </div>
                     <div>
                         <a href="#_" class="btn mb-2 btn-sm btn-flat btn-warning col-12 col-lg-auto" data-toggle="modal" data-target="#modal-notes">
@@ -71,7 +75,7 @@
         
                         <a href="/transaction-liquidation/edit/{{ $transaction->id }}" class="btn mb-2 btn-sm btn-flat btn-primary col-12 col-lg-auto {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
                         <a href="/transaction-liquidation/approval/{{ $transaction->id }}" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto {{ $perms['can_approval'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a>
-                        <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto {{ !$transaction->is_reimbursement ? '' : 'd-none' }}" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print Generated {{ strtoupper($transaction->trans_type) }} Form</a>
+                        <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto {{ !$transaction->is_reimbursement ? '' : 'd-none' }} {{ ($ua['form_print'] == $non || ($ua['form_print'] == $own && $transaction->owner_id != Auth::user()->id)) ? 'd-none' : '' }}" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print Generated {{ strtoupper($transaction->trans_type) }} Form</a>
                         <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-liquidation/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i>
                             Print
                             @if ($transaction->is_deposit)
@@ -450,7 +454,8 @@
                                             @endif
                                         </td>
                                     </tr>
-                                    @if (Auth::user()->is_smt && $transaction->owner->is_smt)
+                                    @if ($ua['trans_toggle_conf'] == $non || ($ua['trans_toggle_conf'] == $own && $transaction->owner_id != Auth::user()->id))
+                                    @else
                                         <tr>
                                             <td class="font-weight-bold text-gray">Is Confidential?</td>
                                             <td class="font-weight-bold">

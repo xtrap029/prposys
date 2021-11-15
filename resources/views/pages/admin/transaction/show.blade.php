@@ -6,6 +6,7 @@
 @section('content')
     <?php $ua = (new \App\Helpers\UAHelper)->get(); ?>
     <?php $non = config('global.ua_none'); ?>
+    <?php $own = config('global.ua_own'); ?>
 
     <?php $config_confidential = 0; ?>
     <section class="content-header bg-dark">
@@ -43,7 +44,7 @@
                     <div>
                         <a href="/transaction/{{ $trans_page }}/{{ $transaction->project->company_id }}{{ isset($_GET['page']) ? '?page='.$_GET['page'] : '' }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
                         <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto {{ $ua['trans_add'] == $non ? 'd-none' : '' }}"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>
-                        {{-- <a href="/transaction/reset/{{ $transaction->id }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a> --}}
+                        <a href="/transaction/reset/{{ $transaction->id }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto d-none {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                         <a href="#_" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto {{ $perms['can_manage'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-manage"><i class="align-middle font-weight-bolder material-icons text-md">security</i> Manage</a>
                     </div>
                     <div>
@@ -218,7 +219,8 @@
                                         <td class="font-weight-bold text-gray">Payee Name</td>
                                         <td class="font-weight-bold">{{ $transaction->payee }}</td>
                                     </tr>
-                                    @if (Auth::user()->is_smt && $transaction->owner->is_smt)
+                                    @if ($ua['trans_toggle_conf'] == $non || ($ua['trans_toggle_conf'] == $own && $transaction->owner_id != Auth::user()->id))
+                                    @else
                                         <tr>
                                             <td class="font-weight-bold text-gray">Is Confidential?</td>
                                             <td class="font-weight-bold">

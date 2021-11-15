@@ -156,7 +156,13 @@
                         </thead>
                         <tbody>
                             @forelse ($transactions as $item)
-                                <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
+                                <?php 
+                                    $config_confidential = false;
+                                    // check levels
+                                    if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
+                                    // check level parallel confidential
+                                    if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential = true;
+                                ?>
                                 @include('pages.admin.transaction.notesmulti')
                                 <tr>
                                     <th class="bg-light">
@@ -332,7 +338,7 @@
                                 )
                                 
                                 $.each(result, function(i, item) {
-                                    config_confidential = item.is_confidential == "0"
+                                    config_confidential = item.is_confidential
 
                                     $(cls+'_data table').append('<tr class="bg-transparent border-0">'
                                         + '<td class="border-0 py-1"><a href="'+(config_confidential ? '#' : '/'+item.url_view+'/view/'+item.id)+'" class="text-info font-weight-bold '+(config_confidential ? 'text-white' : '')+'" target="_blank">'

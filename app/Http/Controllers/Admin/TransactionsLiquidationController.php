@@ -14,6 +14,7 @@ use App\TransactionStatus;
 use App\Settings;
 use App\User;
 use Spatie\Activitylog\Models\Activity;
+use App\Helpers\UAHelper;
 use ZanySoft\Zip\Zip;
 use Illuminate\Http\Request;
 use \DB;
@@ -166,9 +167,9 @@ class TransactionsLiquidationController extends Controller {
             })
             ->first();
         
-        if (!User::find(auth()->id())->is_smt && $transaction->is_confidential) {
-            return abort(401);
-        }
+        // if (!User::find(auth()->id())->is_smt && $transaction->is_confidential) {
+        //     return abort(401);
+        // }
 
         switch ($transaction->trans_type) {
             case 'pr':
@@ -225,9 +226,9 @@ class TransactionsLiquidationController extends Controller {
                 })
                 ->first();
 
-            if (!User::find(auth()->id())->is_smt && $transaction->is_confidential) {
-                return abort(401);
-            }
+            // if (!User::find(auth()->id())->is_smt && $transaction->is_confidential) {
+            //     return abort(401);
+            // }
         }
 
         // liq attachment atributes
@@ -347,6 +348,13 @@ class TransactionsLiquidationController extends Controller {
 
     public function show(Transaction $transaction) {
         if (!in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies))) return abort(401);
+
+        if (
+            (UAHelper::get()['trans_view'] == config('global.ua_own') && auth()->id() != $transaction->owner_id)
+            || UAHelper::get()['trans_view'] == config('global.ua_none')
+        ) {
+            return abort(401);
+        }
 
         $transaction_liquidations = TransactionsLiquidation::where('transaction_id', $transaction->id)->pluck('id')->toArray();
         $transaction_attachments = TransactionsAttachment::where('transaction_id', $transaction->id)->pluck('id')->toArray();
@@ -585,11 +593,14 @@ class TransactionsLiquidationController extends Controller {
     public function reset(Transaction $transaction) {
         $user = User::where('id', auth()->id())->first();
 
-        if ($user->role_id == 1) {
+        if (
+            (UAHelper::get()['trans_reset'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            || UAHelper::get()['trans_reset'] == config('global.ua_none')
+        ) {
+            return back()->with('error', __('messages.cant_edit'));
+        } else {
             $transaction->update(['edit_count' => 0]);
             return back()->with('success', 'Transaction Liquidation'.__('messages.reset_success'));
-        } else {
-            return back()->with('error', __('messages.cant_edit'));
         }
     }
 
@@ -770,6 +781,26 @@ class TransactionsLiquidationController extends Controller {
         $transactions = Transaction::where('trans_type', $_GET['type'])
             ->where('is_deposit', '1')
             ->where('status_id', config('global.liquidation_cleared')[0]);
+
+        $user_id = auth()->id();
+
+        if (UAHelper::get()['trans_view'] == config('global.ua_own')
+            || UAHelper::get()['trans_report'] == config('global.ua_own')) {
+            $transactions = $transactions->where(static function ($query) use ($user_id) {
+                $query->where('requested_id', $user_id)
+                ->orWhere('owner_id',  $user_id);
+            });
+        } else if (UAHelper::get()['trans_view'] == config('global.ua_none')
+            || UAHelper::get()['trans_report'] == config('global.ua_none')) {
+            $transactions = $transactions->where('id', 0);
+        }
+
+        $ua_code = User::find(auth()->id())->ualevel->code;
+        $transactions = $transactions->whereHas('owner', function($q) use($ua_code) {
+            $q->whereHas('ualevel', function($q2) use($ua_code){
+                $q2->where('code', '<=', $ua_code);
+             });
+         });
         
         if (!empty($_GET['company'])) {
             $req_company = $_GET['company'];
@@ -807,9 +838,29 @@ class TransactionsLiquidationController extends Controller {
 
         $transactions = Transaction::whereIn('status_id', config('global.liquidation_cleared'))->orderBy('id', 'desc');
 
-        if (!User::find(auth()->id())->is_smt) {
-            $transactions = $transactions->where('is_confidential', 0);
+        $user_id = auth()->id();
+
+        if (UAHelper::get()['trans_view'] == config('global.ua_own')
+            || UAHelper::get()['trans_report'] == config('global.ua_own')) {
+            $transactions = $transactions->where(static function ($query) use ($user_id) {
+                $query->where('requested_id', $user_id)
+                ->orWhere('owner_id',  $user_id);
+            });
+        } else if (UAHelper::get()['trans_view'] == config('global.ua_none')
+            || UAHelper::get()['trans_report'] == config('global.ua_none')) {
+            $transactions = $transactions->where('id', 0);
         }
+
+        $ua_code = User::find(auth()->id())->ualevel->code;
+        $transactions = $transactions->whereHas('owner', function($q) use($ua_code) {
+            $q->whereHas('ualevel', function($q2) use($ua_code){
+                $q2->where('code', '<=', $ua_code);
+             });
+         });
+
+        // if (!User::find(auth()->id())->is_smt) {
+        //     $transactions = $transactions->where('is_confidential', 0);
+        // }
 
         if (!empty($_GET['type'])) {
             if (!in_array($_GET['type'], config('global.trans_types'))) {
@@ -937,8 +988,15 @@ class TransactionsLiquidationController extends Controller {
             })
             ->whereIn('status_id', config('global.form_issued'));
 
-        if (!in_array(User::where('id', auth()->id())->first()->role_id, config('global.admin_subadmin'))) {
-            $result = $result->where('requested_id', auth()->id());
+        if (UAHelper::get()['liq_add'] != config('global.ua_none')) {
+            if (UAHelper::get()['liq_add'] == config('global.ua_own')) {
+                $result = $result->where('owner_id', auth()->id());
+                $result2 = $result->count();
+
+                if ($result2 == 0) $can_create = false;
+            }
+        } else {
+            $can_create = false;
         }
 
         $bank_validation = clone $result;
@@ -965,35 +1023,43 @@ class TransactionsLiquidationController extends Controller {
 
         $transaction = Transaction::where('id', $transaction)->first();
 
+        if (
+            (UAHelper::get()['liq_edit'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            || UAHelper::get()['liq_edit'] == config('global.ua_none')
+        ) {
+            $can_edit = false;
+        }
+
         // check if unliquidated
         if (in_array($transaction->status_id, config('global.liquidation_generated'))) {
             // check if not admin
-            if (!in_array($user->role_id, config('global.admin_subadmin'))) {
-                // check if requestor
-                if ($user->id == $transaction->requested_id) {
-                    // check if pr, not po
-                    if ($transaction->trans_type != 'pc') {
-                        // check role limit
-                        if ($user->role_id == 2) {
-                            $edit_limit = Settings::where('type', 'LIMIT_EDIT_LIQFORM_USER_2')->first()->value;
-                        } else if ($user->role_id == 3) {
-                            $edit_limit = Settings::where('type', 'LIMIT_EDIT_LIQFORM_USER_3')->first()->value;
-                        } else {
-                            $can_edit = false;
-                        }
+            // if (!in_array($user->role_id, config('global.admin_subadmin'))) {
+            //     // check if requestor
+            //     if ($user->id == $transaction->requested_id) {
+            //         // check if pr, not po
+            //         if ($transaction->trans_type != 'pc') {
+            //             // check role limit
+            //             if ($user->role_id == 2) {
+            //                 $edit_limit = Settings::where('type', 'LIMIT_EDIT_LIQFORM_USER_2')->first()->value;
+            //             } else if ($user->role_id == 3) {
+            //                 $edit_limit = Settings::where('type', 'LIMIT_EDIT_LIQFORM_USER_3')->first()->value;
+            //             } else {
+            //                 $can_edit = false;
+            //             }
 
-                        // check if role limit is enough
-                        if ($transaction->edit_count >= $edit_limit) {
-                            $can_edit = false;
-                        } 
-                    }
-                } else {
-                    $can_edit = false;
-                }
-            }
-        } else if (in_array($transaction->status_id, config('global.liquidation_approval')) && in_array($user->role_id, config('global.admin_subadmin'))) {
-            // if admin and for approval status
-        } else {
+            //             // check if role limit is enough
+            //             if ($transaction->edit_count >= $edit_limit) {
+            //                 $can_edit = false;
+            //             } 
+            //         }
+            //     } else {
+            //         $can_edit = false;
+            //     }
+            // }
+        // } else if (in_array($transaction->status_id, config('global.liquidation_approval')) && in_array($user->role_id, config('global.admin_subadmin'))) {
+        //     // if admin and for approval status
+        }
+        else {
             $can_edit = false;
         }
 
@@ -1011,9 +1077,16 @@ class TransactionsLiquidationController extends Controller {
         $transaction = Transaction::where('id', $transaction)->first();
 
         // check if reset
-        if (!in_array($transaction->status_id, config('global.liquidation_generated')) || $user->role_id != 1 || in_array($transaction->trans_type, ['pc'])) {
+        if (!in_array($transaction->status_id, config('global.liquidation_generated')) || in_array($transaction->trans_type, ['pc'])) {
             $can_reset = false;
         }
+
+        // if (
+        //     (UAHelper::get()['trans_reset'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+        //     || UAHelper::get()['trans_reset'] == config('global.ua_none')
+        // ) {
+        //     $can_reset = false;
+        // }
 
         return $can_reset;
     }
@@ -1028,12 +1101,19 @@ class TransactionsLiquidationController extends Controller {
 
         $transaction = Transaction::where('id', $transaction)->first();
 
+        if (
+            (UAHelper::get()['liq_approval'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            || UAHelper::get()['liq_approval'] == config('global.ua_none')
+        ) {
+            $can_approve = false;
+        }
+
         // check if unliquidated
         if (in_array($transaction->status_id, config('global.liquidation_generated'))) {
             // check if not admin and not the requestor
-            if ($user->role_id != 1 && $user->id != $transaction->requested_id) {
-                $can_approve = false;
-            }
+            // if ($user->role_id != 1 && $user->id != $transaction->requested_id) {
+            //     $can_approve = false;
+            // }
         } else {
             $can_approve = false;
         }
@@ -1045,6 +1125,13 @@ class TransactionsLiquidationController extends Controller {
         $can_print = true;
 
         $transaction = Transaction::where('id', $transaction)->first();
+
+        if (
+            (UAHelper::get()['liq_print'] == config('global.ua_own') && auth()->id() != $transaction->owner_id)
+            || UAHelper::get()['liq_print'] == config('global.ua_none')
+        ) {
+            $can_print = false;
+        }
 
         //  check if for approval
         if (!in_array($transaction->status_id, config('global.liquidation_approval')) && !in_array($transaction->status_id, config('global.liquidation_cleared'))
@@ -1069,8 +1156,15 @@ class TransactionsLiquidationController extends Controller {
         $user = User::where('id', $user)->first();
 
         // check if not for approval and not designated approver
-        // if (!in_array($transaction->status_id, config('global.liquidation_approval')) || $user->id != $transaction->liquidation_approver_id) {
-        if (!in_array($transaction->status_id, config('global.liquidation_approval')) || !in_array($user->role_id, config('global.approver_form'))) {
+        // if (!in_array($transaction->status_id, config('global.liquidation_approval')) || !in_array($user->role_id, config('global.approver_form'))) {
+        if (!in_array($transaction->status_id, config('global.liquidation_approval'))) {
+            $can_clear = false;
+        }
+
+        if (
+            (UAHelper::get()['liq_clear'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            || UAHelper::get()['liq_clear'] == config('global.ua_none')
+        ) {
             $can_clear = false;
         }
         
@@ -1091,8 +1185,16 @@ class TransactionsLiquidationController extends Controller {
         $user = User::where('id', $user)->first();
 
         // check if not for approval and not designated approver
-        if (in_array($transaction->status_id, config('global.liquidation_cleared')) && $user->id == 1) {
+        // if (in_array($transaction->status_id, config('global.liquidation_cleared')) && $user->id == 1) {
+        if (in_array($transaction->status_id, config('global.liquidation_cleared'))) {
         } else {
+            $can_clear_edit = false;
+        }
+
+        if (
+            (UAHelper::get()['liq_edit_cleared'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            || UAHelper::get()['liq_edit_cleared'] == config('global.ua_none')
+        ) {
             $can_clear_edit = false;
         }
         
@@ -1102,10 +1204,19 @@ class TransactionsLiquidationController extends Controller {
     private function check_can_duplicate($transaction, $user = '') {
         $can_duplicate = true;
 
-        // if (!$user) {
-        //     $user = auth()->id();
-        // }
-        // $user = User::where('id', $user)->first();
+        if (!$user) {
+            $user = auth()->id();
+        }
+        $user = User::where('id', $user)->first();
+
+        $transaction = Transaction::where('id', $transaction)->first();
+
+        if (
+            (UAHelper::get()['trans_dup'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            || UAHelper::get()['trans_dup'] == config('global.ua_none')
+        ) {
+            $can_duplicate = false;
+        }
 
         // $transaction = Transaction::where('id', $transaction)->first();
 

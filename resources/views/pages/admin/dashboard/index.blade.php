@@ -179,7 +179,13 @@
                                     </tr>
                                 </thead>
                                 @foreach ($for_issue as $item)
-                                    <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
+                                    <?php 
+                                        $config_confidential = false;
+                                        // check levels
+                                        if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
+                                        // check level parallel confidential
+                                        if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential = true;
+                                    ?>
                                     <tr>
                                         <td>
                                             @if ($config_confidential)
@@ -259,7 +265,13 @@
                                     </tr>
                                 </thead>
                                 @foreach ($for_clearing as $item)
-                                    <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
+                                    <?php 
+                                        $config_confidential = false;
+                                        // check levels
+                                        if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
+                                        // check level parallel confidential
+                                        if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential = true;
+                                    ?>
                                     <tr>
                                         <td>
                                             @if ($config_confidential)
@@ -345,7 +357,13 @@
                                     </tr>
                                 </thead>
                                 @foreach ($generated as $item)
-                                    <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
+                                    <?php 
+                                        $config_confidential = false;
+                                        // check levels
+                                        if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
+                                        // check level parallel confidential
+                                        if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential = true;
+                                    ?>
                                     <tr>
                                         <td>
                                             @if ($config_confidential)
@@ -419,7 +437,13 @@
                                     </tr>
                                 </thead>
                                 @foreach ($unliquidated as $item)
-                                    <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
+                                    <?php 
+                                        $config_confidential = false;
+                                        // check levels
+                                        if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
+                                        // check level parallel confidential
+                                        if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential = true;
+                                    ?>
                                     <tr>
                                         <td>
                                             @if ($config_confidential)
@@ -505,7 +529,13 @@
                                     </tr>
                                 </thead>
                                 @foreach ($cleared as $item)
-                                    <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
+                                    <?php 
+                                        $config_confidential = false;
+                                        // check levels
+                                        if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
+                                        // check level parallel confidential
+                                        if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential = true;
+                                    ?>
                                     <tr>
                                         <td>
                                             @if ($config_confidential)
@@ -585,7 +615,13 @@
                                     </tr>
                                 </thead>
                                 @foreach ($deposited as $item)
-                                    <?php $config_confidential = (!Auth::user()->is_smt && $item->is_confidential == 1); ?>
+                                    <?php 
+                                        $config_confidential = false;
+                                        // check levels
+                                        if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
+                                        // check level parallel confidential
+                                        if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential = true;
+                                    ?>
                                     <tr>
                                         <td>
                                             @if ($config_confidential)

@@ -22,6 +22,8 @@ use App\Helpers\UAHelper;
 use Spatie\Activitylog\Models\Activity;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use \DB;
 use \File;
 use \Storage;
@@ -322,6 +324,13 @@ class TransactionsController extends Controller {
 
 
         foreach ($transactions as $key => $value) {
+            $confidential = 0;
+
+            // check levels
+            if (User::find(auth()->id())->ualevel->code < $value->owner->ualevel->code) $confidential = 1;
+            // check level parallel confidential
+            if (User::find(auth()->id())->ualevel->code == $value->owner->ualevel->code && $value->is_confidential && auth()->id() != $value->owner->id) $confidential = 1;
+
             $transactions[$key]->trans_seq = sprintf("%05d", $value->trans_seq);
             $transactions[$key]->trans_type = strtoupper($value->trans_type);
             $transactions[$key]->status_name = strtoupper($value->status->name);
@@ -330,7 +339,7 @@ class TransactionsController extends Controller {
             $transactions[$key]->created = Carbon::parse($value->created_at)->format('Y-m-d');
             $transactions[$key]->released = Carbon::parse($value->released_at)->format('Y-m-d');
 
-            $transactions[$key]->is_confidential = (!User::find($request->id)->is_smt && $value->is_confidential) ? 0 : 1;
+            $transactions[$key]->is_confidential = $confidential;
 
             $transactions[$key]->url_view = "transaction";
             if (in_array($value->status_id, config('global.page_form'))
@@ -495,6 +504,15 @@ class TransactionsController extends Controller {
     }
 
     public function duplicate(Transaction $transaction) {
+
+        if (
+            (UAHelper::get()['trans_dup'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            || UAHelper::get()['trans_dup'] == config('global.ua_none')
+        ) {
+            abort(404);
+        }
+
+
         $new_trans = new Transaction;
         $new_trans->trans_type = $transaction->trans_type;
         $new_trans->currency = $transaction->currency;
@@ -660,15 +678,9 @@ class TransactionsController extends Controller {
 
     public function show(Transaction $transaction) {
         if (
-            !in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies))
+            (!in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies)))
             ||
-            (
-                UAHelper::get()['trans_view'] == config('global.ua_own')
-                &&
-                $transaction->requested_id != auth()->id()
-                &&
-                $transaction->requested_id != auth()->id()
-            )
+            (UAHelper::get()['trans_view'] == config('global.ua_own') && $transaction->requested_id != auth()->id())
          ) return abort(401);
          
         $logs = Activity::where('subject_id', $transaction->id)
@@ -780,11 +792,14 @@ class TransactionsController extends Controller {
     public function reset(Transaction $transaction) {
         $user = User::where('id', auth()->id())->first();
 
-        if ($user->role_id == 1) {
+        if (
+            (UAHelper::get()['trans_reset'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            || UAHelper::get()['trans_reset'] == config('global.ua_none')
+        ) {
+            return back()->with('error', __('messages.cant_edit'));
+        } else {
             $transaction->update(['edit_count' => 0]);
             return back()->with('success', 'Transaction'.__('messages.reset_success'));
-        } else {
-            return back()->with('error', __('messages.cant_edit'));
         }
     }
     
@@ -814,14 +829,19 @@ class TransactionsController extends Controller {
     }
 
     public function toggle_confidential($id) {
-        if (User::where('id', auth()->id())->first()->is_smt) {
-            $is_confidential = Transaction::where('id', $id)->first()->is_confidential;
+        $transaction = Transaction::where('id', $id)->first();
+        
+        if (
+            (UAHelper::get()['trans_toggle_conf'] == config('global.ua_own') && auth()->id() != $transaction->owner_id)
+            || UAHelper::get()['trans_toggle_conf'] == config('global.ua_none')
+        ) {
+            return back()->with('error', __('messages.invalid_command'));
+        } else {   
+            $is_confidential = $transaction->is_confidential;
             $transaction = Transaction::where('id', $id)->first();
             $transaction->is_confidential = $is_confidential == 1 ? 0 : 1;
             $transaction->save();
-            return back()->with('success', 'Transaction'.__('messages.edit_success'));            
-        } else {
-            return back()->with('error', __('messages.invalid_command'));
+            return back()->with('success', 'Transaction'.__('messages.edit_success'));
         }
     }
 
@@ -911,18 +931,33 @@ class TransactionsController extends Controller {
 
         $user_logged = User::where('id', auth()->id())->first();
         $user_id = $user_logged->id;
-        if (UAHelper::get()['trans_view'] == config('global.ua_own')) {
+        if (UAHelper::get()['trans_view'] == config('global.ua_own')
+            || UAHelper::get()['trans_report'] == config('global.ua_own')) {
             $transactions = $transactions->where(static function ($query) use ($user_id) {
                 $query->where('requested_id', $user_id)
                 ->orWhere('owner_id',  $user_id);
             });
-        } else if (UAHelper::get()['trans_view'] == config('global.ua_none')) {
+        } else if (UAHelper::get()['trans_view'] == config('global.ua_none')
+            || UAHelper::get()['trans_report'] == config('global.ua_none')) {
             $transactions = $transactions->where('id', 0);
         }
 
-        if (!User::find(auth()->id())->is_smt) {
-            $transactions = $transactions->where('is_confidential', 0);
-        }
+        $ua_code = User::find(auth()->id())->ualevel->code;
+        $transactions = $transactions->whereHas('owner', function($q) use($ua_code) {
+            $q->whereHas('ualevel', function($q2) use($ua_code){
+                $q2->where('code', '<=', $ua_code);
+             });
+        });
+
+        $transactions = $transactions->whereHas('owner', function($q) use($ua_code) {
+            $q->whereHas('ualevel', function($q2) use($ua_code){
+                $q2->where('code', '<=', $ua_code);
+             });
+        });
+
+         // if (!User::find(auth()->id())->is_smt) {
+        //     $transactions = $transactions->where('is_confidential', 0);
+        // }
 
         if (!empty($_GET['s'])) {
             $trans_s = $_GET['s'];
@@ -1164,13 +1199,24 @@ class TransactionsController extends Controller {
                 fputcsv($file, $columns);
 
                 foreach ($transactions as $item) {
+                    
                     $config_confidential = (auth()->user()->id != $item->owner_id && $item->is_confidential == 1);
-                    $row = [];
-                    foreach ($temp_column as $key => $value) {
-                        $row[] = eval($value->column->code);
-                    }
 
-                    fputcsv($file, $row);
+                    $confidential = 0;
+
+                    // check levels
+                    if (User::find(auth()->id())->ualevel->code < $item->owner->ualevel->code) $confidential = 1;
+                    // check level parallel confidential
+                    if (User::find(auth()->id())->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && auth()->id() != $item->owner->id) $confidential = 1;
+
+                    if (!$confidential) {
+                        $row = [];
+                        foreach ($temp_column as $key => $value) {
+                            $row[] = eval($value->column->code);
+                        }
+    
+                        fputcsv($file, $row);
+                    } 
                 }
 
                 fclose($file);
@@ -1282,9 +1328,16 @@ class TransactionsController extends Controller {
         $transaction = Transaction::where('id', $transaction)->first();
 
         // check if reset
-        if (!in_array($transaction->status_id, config('global.generated')) || $user->role_id != 1 || in_array($transaction->trans_type, ['po', 'pc'])) {
+        if (!in_array($transaction->status_id, config('global.generated')) || in_array($transaction->trans_type, ['po', 'pc'])) {
             $can_reset = false;
         }
+
+        // if (
+        //     (UAHelper::get()['trans_reset'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+        //     || UAHelper::get()['trans_reset'] == config('global.ua_none')
+        // ) {
+        //     $can_reset = false;
+        // }
 
         return $can_reset;
     }

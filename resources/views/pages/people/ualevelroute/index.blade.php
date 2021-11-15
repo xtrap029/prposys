@@ -29,7 +29,9 @@
                         <tr>
                             <th>Routes</th>
                             @foreach ($ua_levels as $level)
-                                <th class="text-center">{{ $level->name }}</th>
+                                @if ($level->id != config('global.ua_inactive'))
+                                    <th class="text-center">{{ $level->name }}</th>
+                                @endif
                             @endforeach
                         </tr>
                     </thead>
@@ -38,30 +40,32 @@
                             <tr>
                                 <td class="text-nowrap">{{ $route->name }}</td>
                                 @foreach ($ua_levels as $level)
-                                    <td>
-                                        <input type="hidden" name="route[]" value="{{ $route->id }}">
-                                        <input type="hidden" name="level[]" value="{{ $level->id }}">
-                                        <select name="option[]" class="form-control form-control-sm m-auto">
-                                            @foreach ($ua_options as $option)
-                                                <?php
-                                                    $selected = '';
-                                                    $column = $ua_level_routes->where('ua_route_id', $route->id)->where('ua_level_id', $level->id);
-                                                    if ($column->count() > 0) $selected = $column->first()->ua_route_option_id;
-                                                ?>  
-                                                @if (!$route->is_yesno || in_array($option->id, config('global.is_yesno_id')))
-                                                    <option value="{{ $option->id }}" {{ $selected == $option->id ? 'selected' : '' }}>
-                                                        @if ($route->is_yesno && $option->id == config('global.is_yesno_id')[0])
-                                                            Yes
-                                                        @elseif ($route->is_yesno && $option->id == config('global.is_yesno_id')[1])
-                                                            No
-                                                        @else
-                                                            {{ $option->name }}
-                                                        @endif
-                                                    </option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </td>
+                                    @if ($level->id != config('global.ua_inactive'))
+                                        <td>
+                                            <input type="hidden" name="route[]" value="{{ $route->id }}">
+                                            <input type="hidden" name="level[]" value="{{ $level->id }}">
+                                            <select name="option[]" class="form-control form-control-sm m-auto">
+                                                @foreach ($ua_options as $option)
+                                                    <?php
+                                                        $selected = '';
+                                                        $column = $ua_level_routes->where('ua_route_id', $route->id)->where('ua_level_id', $level->id);
+                                                        if ($column->count() > 0) $selected = $column->first()->ua_route_option_id;
+                                                    ?>  
+                                                    @if (!$route->is_yesno || in_array($option->id, config('global.is_yesno_id')))
+                                                        <option value="{{ $option->id }}" {{ $selected == $option->id ? 'selected' : '' }}>
+                                                            @if ($route->is_yesno && $option->id == config('global.is_yesno_id')[0])
+                                                                Yes
+                                                            @elseif ($route->is_yesno && $option->id == config('global.is_yesno_id')[1])
+                                                                No
+                                                            @else
+                                                                {{ $option->name }}
+                                                            @endif
+                                                        </option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                    @endif
                                 @endforeach
                             </tr>
                         @endforeach

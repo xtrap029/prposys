@@ -17,6 +17,7 @@ use App\TransactionsLiquidation;
 use App\TransactionStatus;
 use App\User;
 use App\VatType;
+use App\Helpers\UAHelper;
 use App\Helpers\TransactionHelper;
 use Spatie\Activitylog\Models\Activity;
 use ZanySoft\Zip\Zip;
@@ -175,9 +176,9 @@ class TransactionsFormsController extends Controller {
             })
             ->first();
         
-        if (!User::find(auth()->id())->is_smt && $transaction->is_confidential) {
-            return abort(401);
-        }
+        // if (!User::find(auth()->id())->is_smt && $transaction->is_confidential) {
+        //     return abort(401);
+        // }
 
         switch ($transaction->trans_type) {
             case 'pr':
@@ -236,9 +237,9 @@ class TransactionsFormsController extends Controller {
             })
             ->first();
 
-        if (!User::find(auth()->id())->is_smt && $transaction->is_confidential) {
-            return abort(401);
-        }
+        // if (!User::find(auth()->id())->is_smt && $transaction->is_confidential) {
+        //     return abort(401);
+        // }
 
         switch ($transaction->trans_type) {
             case 'pr':
@@ -284,9 +285,9 @@ class TransactionsFormsController extends Controller {
                 })
                 ->first();
 
-            if (!User::find(auth()->id())->is_smt && $transaction->is_confidential) {
-                return abort(401);
-            }
+            // if (!User::find(auth()->id())->is_smt && $transaction->is_confidential) {
+            //     return abort(401);
+            // }
         }
 
         $validation = [
@@ -351,9 +352,9 @@ class TransactionsFormsController extends Controller {
                 })
                 ->first();
 
-            if (!User::find(auth()->id())->is_smt && $transaction->is_confidential) {
-                return abort(401);
-            }
+            // if (!User::find(auth()->id())->is_smt && $transaction->is_confidential) {
+            //     return abort(401);
+            // }
         }
 
         $validation = [
@@ -459,6 +460,12 @@ class TransactionsFormsController extends Controller {
 
     public function show(Transaction $transaction) {
         if (!in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies))) return abort(401);
+        if (
+            (UAHelper::get()['trans_view'] == config('global.ua_own') && auth()->id() != $transaction->owner_id)
+            || UAHelper::get()['trans_view'] == config('global.ua_none')
+        ) {
+            return abort(401);
+        }
 
         $logs = Activity::where('subject_id', $transaction->id)
                 ->where('subject_type', 'App\Transaction')
@@ -973,11 +980,14 @@ class TransactionsFormsController extends Controller {
     public function reset(Transaction $transaction) {
         $user = User::where('id', auth()->id())->first();
 
-        if ($user->role_id == 1) {
+        if (
+            (UAHelper::get()['trans_reset'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            || UAHelper::get()['trans_reset'] == config('global.ua_none')
+        ) {
+            return back()->with('error', __('messages.cant_edit'));
+        } else {
             $transaction->update(['edit_count' => 0]);
             return back()->with('success', 'Transaction Form'.__('messages.reset_success'));
-        } else {
-            return back()->with('error', __('messages.cant_edit'));
         }
     }
 
@@ -1079,10 +1089,29 @@ class TransactionsFormsController extends Controller {
         $trans_to = '';
 
         $transactions = Transaction::whereIn('status_id', config('global.form_issued'))->orderBy('id', 'desc');
+        $user_id = auth()->id();
 
-        if (!User::find(auth()->id())->is_smt) {
-            $transactions = $transactions->where('is_confidential', 0);
+        if (UAHelper::get()['trans_view'] == config('global.ua_own')
+            || UAHelper::get()['trans_report'] == config('global.ua_own')) {
+            $transactions = $transactions->where(static function ($query) use ($user_id) {
+                $query->where('requested_id', $user_id)
+                ->orWhere('owner_id',  $user_id);
+            });
+        } else if (UAHelper::get()['trans_view'] == config('global.ua_none')
+            || UAHelper::get()['trans_report'] == config('global.ua_none')) {
+            $transactions = $transactions->where('id', 0);
         }
+
+        $ua_code = User::find(auth()->id())->ualevel->code;
+        $transactions = $transactions->whereHas('owner', function($q) use($ua_code) {
+            $q->whereHas('ualevel', function($q2) use($ua_code){
+                $q2->where('code', '<=', $ua_code);
+             });
+         });
+
+        // if (!User::find(auth()->id())->is_smt) {
+        //     $transactions = $transactions->where('is_confidential', 0);
+        // }
 
         if (!empty($_GET['type'])) {
             if (!in_array($_GET['type'], config('global.trans_types'))) {
@@ -1239,13 +1268,16 @@ class TransactionsFormsController extends Controller {
             })
             ->whereIn('status_id', config('global.generated'));
 
-        if (User::where('id', auth()->id())->first()->role_id != 1) {
-            $result = $result->where('owner_id', auth()->id());
+        if (UAHelper::get()['form_add'] != config('global.ua_none')) {
+            if (UAHelper::get()['form_add'] == config('global.ua_own')) {
+                $result = $result->where('owner_id', auth()->id());
+                $result = $result->count();
+
+                if ($result == 0) $can_create = false;
+            }
+        } else {
+            $can_create = false;
         }
-
-        $result = $result->count();
-
-        if ($result == 0) $can_create = false;
 
         return $can_create;
     }
@@ -1264,16 +1296,23 @@ class TransactionsFormsController extends Controller {
         $user = User::where('id', $user)->first();
 
         // check if reset
-        if (!in_array($transaction->status_id, config('global.generated_form')) || $user->role_id != 1 || in_array($transaction->trans_type, ['pc'])) {
+        if (!in_array($transaction->status_id, config('global.generated_form')) || in_array($transaction->trans_type, ['pc'])) {
             $can_reset = false;
         }
+
+        // if (
+        //     (UAHelper::get()['trans_reset'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+        //     || UAHelper::get()['trans_reset'] == config('global.ua_none')
+        // ) {
+        //     $can_reset = false;
+        // }
 
         return $can_reset;
     }
 
     private function check_can_cancel($transaction, $user = '') {
         $transaction = Transaction::where('id', $transaction)->first();
-        if (in_array($transaction->status_id, config('global.cancelled'))) {
+        if (!in_array($transaction->status_id, config('global.forms'))) {
             $can_cancel = false;
         } else {
             $can_cancel = true;
@@ -1284,13 +1323,10 @@ class TransactionsFormsController extends Controller {
         }
         $user = User::where('id', $user)->first();
 
-        // check if unliquidated
-        if (in_array($transaction->status_id, config('global.forms'))) {
-            // check if not admin and not the owner
-            if ($user->role_id != 1 && $user->id != $transaction->owner_id && $user->id != $transaction->requested_id) {
-                $can_cancel = false;
-            }
-        } else {
+        if (
+            (UAHelper::get()['form_cancel'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            || UAHelper::get()['form_cancel'] == config('global.ua_none')
+        ) {
             $can_cancel = false;
         }
 
@@ -1312,52 +1348,58 @@ class TransactionsFormsController extends Controller {
         }
         $user = User::where('id', $user)->first();
 
+        if (
+            (UAHelper::get()['form_edit'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            || UAHelper::get()['form_edit'] == config('global.ua_none')
+        ) {
+            $can_edit = false;
+        }
+
         // if reimbursement
         if ($transaction->is_reimbursement
-            && in_array($transaction->status_id, config('global.unliquidated'))
-            && ($user->id == $transaction->owner_id || in_array($user->role_id, config('global.admin_subadmin')))) {
+            && in_array($transaction->status_id, config('global.unliquidated'))) {
             // check if pr, not po
-            if ($transaction->trans_type != 'pc' && $user->role_id != 1) {
+            // if ($transaction->trans_type != 'pc' && $user->role_id != 1) {
                 // check role limit
-                if ($user->role_id == 2) {
-                    $edit_limit = Settings::where('type', 'LIMIT_EDIT_PRPOFORM_USER_2')->first()->value;
-                } else if ($user->role_id == 3) {
-                    $edit_limit = Settings::where('type', 'LIMIT_EDIT_PRPOFORM_USER_3')->first()->value;
-                } else {
-                    $can_edit = false;
-                }
+                // if ($user->role_id == 2) {
+                    // $edit_limit = Settings::where('type', 'LIMIT_EDIT_PRPOFORM_USER_2')->first()->value;
+                // } else if ($user->role_id == 3) {
+                    // $edit_limit = Settings::where('type', 'LIMIT_EDIT_PRPOFORM_USER_3')->first()->value;
+                // } else {
+                    // $can_edit = false;
+                // }
 
                 // check if role limit is enough
-                if ($transaction->edit_count >= $edit_limit) {
-                    $can_edit = false;
-                } 
-            }
+                // if ($transaction->edit_count >= $edit_limit) {
+                //     $can_edit = false;
+                // } 
+            // }
         } else if (in_array($transaction->status_id, config('global.generated_form'))
-            || ($user->role_id == 1 && in_array($transaction->status_id, config('global.form_approval')))) {
-            // check if not admin
-            if ($user->role_id != 1) {
-                // check if owned
-                if ($user->id == $transaction->owner_id) {
-                    // check if pr, not po
-                    if ($transaction->trans_type != 'pc') {
-                        // check role limit
-                        if ($user->role_id == 2) {
-                            $edit_limit = Settings::where('type', 'LIMIT_EDIT_PRPOFORM_USER_2')->first()->value;
-                        } else if ($user->role_id == 3) {
-                            $edit_limit = Settings::where('type', 'LIMIT_EDIT_PRPOFORM_USER_3')->first()->value;
-                        } else {
-                            $can_edit = false;
-                        }
+            || in_array($transaction->status_id, config('global.form_approval'))) {
+            // // check if not admin
+            // if ($user->role_id != 1) {
+            //     // check if owned
+            //     if ($user->id == $transaction->owner_id) {
+            //         // check if pr, not po
+            //         if ($transaction->trans_type != 'pc') {
+            //             // check role limit
+            //             if ($user->role_id == 2) {
+            //                 $edit_limit = Settings::where('type', 'LIMIT_EDIT_PRPOFORM_USER_2')->first()->value;
+            //             } else if ($user->role_id == 3) {
+            //                 $edit_limit = Settings::where('type', 'LIMIT_EDIT_PRPOFORM_USER_3')->first()->value;
+            //             } else {
+            //                 $can_edit = false;
+            //             }
 
-                        // check if role limit is enough
-                        if ($transaction->edit_count >= $edit_limit) {
-                            $can_edit = false;
-                        } 
-                    }
-                } else {
-                    $can_edit = false;
-                }
-            }
+            //             // check if role limit is enough
+            //             if ($transaction->edit_count >= $edit_limit) {
+            //                 $can_edit = false;
+            //             } 
+            //         }
+            //     } else {
+            //         $can_edit = false;
+            //     }
+            // }
         } else {
             $can_edit = false;
         }
@@ -1380,8 +1422,10 @@ class TransactionsFormsController extends Controller {
 
         // check if unliquidated
         if (in_array($transaction->status_id, config('global.generated_form'))) {
-            // check if not admin and not the owner
-            if ($user->role_id != 1 && $user->id != $transaction->owner_id) {
+            if (
+                (UAHelper::get()['form_approval'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+                || UAHelper::get()['form_approval'] == config('global.ua_none')
+            ) {
                 $can_approve = false;
             }
         } else {
@@ -1395,6 +1439,13 @@ class TransactionsFormsController extends Controller {
         $can_print = true;
 
         $transaction = Transaction::where('id', $transaction)->first();
+
+        if (
+            (UAHelper::get()['form_print'] == config('global.ua_own') && auth()->id() != $transaction->owner_id)
+            || UAHelper::get()['form_print'] == config('global.ua_none')
+        ) {
+            $can_print = false;
+        }
 
         //  check if for approval
         if ((!in_array($transaction->status_id, config('global.form_approval_printing')) && !in_array($transaction->status_id, config('global.page_liquidation')))
@@ -1420,7 +1471,14 @@ class TransactionsFormsController extends Controller {
 
         $user = User::where('id', $user)->first();
 
-        if (!in_array($user->role_id, config('global.admin_subadmin')) || !in_array($transaction->status_id, config('global.form_issued'))) {
+        if (!in_array($transaction->status_id, config('global.form_issued'))) {
+            $admin_subadmin = false;
+        }
+
+        if (
+            (UAHelper::get()['form_edit_issued'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            || UAHelper::get()['form_edit_issued'] == config('global.ua_none')
+        ) {
             $admin_subadmin = false;
         }
 
@@ -1441,8 +1499,14 @@ class TransactionsFormsController extends Controller {
         $user = User::where('id', $user)->first();
 
         // check if not unliquidated and not designated approver
-        // if (!in_array($transaction->status_id, config('global.form_approval')) || $user->id != $transaction->form_approver_id) {
-        if (!in_array($transaction->status_id, config('global.form_approval')) || !in_array($user->role_id, config('global.approver_form'))) {
+        if (!in_array($transaction->status_id, config('global.form_approval'))) {
+            $can_issue = false;
+        }
+
+        if (
+            (UAHelper::get()['form_issue'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            || UAHelper::get()['form_issue'] == config('global.ua_none')
+        ) {
             $can_issue = false;
         }
         
