@@ -48,7 +48,11 @@ class CheckConfidential
 
             // check levels
             if (in_array(explode('@', Route::getCurrentRoute()->getActionName())[1], $confidentials)
-                && User::find(auth()->id())->ualevel->code < $transaction->owner->ualevel->code) {
+                && (
+                        User::find(auth()->id())->ualevel->code < $transaction->owner->ualevel->code
+                        && auth()->id() != $transaction->requested_id
+                    )
+                ) {
                 return abort(401);
             }
 

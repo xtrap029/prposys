@@ -29,6 +29,6 @@ class TransactionsDescription extends Model {
     }
 
     public function particulars() {
-        return $this->belongsTo(Particulars::class);
+        return $this->belongsTo(Particulars::class)->withTrashed();
     }
 }
