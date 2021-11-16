@@ -944,17 +944,15 @@ class TransactionsController extends Controller {
         }
 
         $ua_code = User::find(auth()->id())->ualevel->code;
-        $transactions = $transactions->whereHas('owner', function($q) use($ua_code) {
-            $q->whereHas('ualevel', function($q2) use($ua_code){
-                $q2->where('code', '<=', $ua_code);
-             });
+        $transactions = $transactions->where(static function ($query) use ($user_id, $ua_code) {
+            $query->where('requested_id', $user_id)
+            ->orWhereHas('owner', function($q) use($ua_code) {
+                $q->whereHas('ualevel', function($q2) use($ua_code){
+                    $q2->where('code', '<=', $ua_code);
+                });        
+            });
         });
-
-        $transactions = $transactions->whereHas('owner', function($q) use($ua_code) {
-            $q->whereHas('ualevel', function($q2) use($ua_code){
-                $q2->where('code', '<=', $ua_code);
-             });
-        });
+            
 
          // if (!User::find(auth()->id())->is_smt) {
         //     $transactions = $transactions->where('is_confidential', 0);
@@ -1201,14 +1199,17 @@ class TransactionsController extends Controller {
 
                 foreach ($transactions as $item) {
                     
-                    $config_confidential = (auth()->user()->id != $item->owner_id && $item->is_confidential == 1);
+                    // $config_confidential = (auth()->user()->id != $item->owner_id && $item->is_confidential == 1);
 
                     $confidential = 0;
 
-                    // check levels
-                    if (User::find(auth()->id())->ualevel->code < $item->owner->ualevel->code) $confidential = 1;
-                    // check level parallel confidential
-                    if (User::find(auth()->id())->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && auth()->id() != $item->owner->id) $confidential = 1;
+                    // if req by
+                    if (auth()->id() != $item->requested_id) {
+                        // check levels
+                        if (User::find(auth()->id())->ualevel->code < $item->owner->ualevel->code) $confidential = 1;
+                        // check level parallel confidential
+                        if (User::find(auth()->id())->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && auth()->id() != $item->owner->id) $confidential = 1;
+                    }
 
                     if (!$confidential) {
                         $row = [];
