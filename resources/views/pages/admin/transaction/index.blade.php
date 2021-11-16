@@ -158,10 +158,13 @@
                             @forelse ($transactions as $item)
                                 <?php 
                                     $config_confidential = false;
-                                    // check levels
-                                    if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
-                                    // check level parallel confidential
-                                    if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential = true;
+                                    // if req by
+                                    if (Auth::user()->id != $item->requested_id) {
+                                        // check levels
+                                        if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
+                                        // check level parallel confidential
+                                        if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential = true;
+                                    }
                                 ?>
                                 @include('pages.admin.transaction.notesmulti')
                                 <tr>

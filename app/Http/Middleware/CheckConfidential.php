@@ -53,10 +53,13 @@ class CheckConfidential
             }
 
             // check confidential parallel
-            if (in_array(explode('@', Route::getCurrentRoute()->getActionName())[1], $confidentials)
+            if (
+                in_array(explode('@', Route::getCurrentRoute()->getActionName())[1], $confidentials)
                 && User::find(auth()->id())->ualevel->code == $transaction->owner->ualevel->code
                 && $transaction->is_confidential
-                && auth()->id() != $transaction->owner->id) {
+                && auth()->id() != $transaction->owner->id
+                && auth()->id() != $transaction->requested_id
+            ) {
                 return abort(401);
             }
         }

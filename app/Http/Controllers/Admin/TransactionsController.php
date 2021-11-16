@@ -326,10 +326,13 @@ class TransactionsController extends Controller {
         foreach ($transactions as $key => $value) {
             $confidential = 0;
 
-            // check levels
-            if (User::find(auth()->id())->ualevel->code < $value->owner->ualevel->code) $confidential = 1;
-            // check level parallel confidential
-            if (User::find(auth()->id())->ualevel->code == $value->owner->ualevel->code && $value->is_confidential && auth()->id() != $value->owner->id) $confidential = 1;
+            // if req by
+            if (auth()->id() != $value->requested_id) {
+                // check levels
+                if (User::find(auth()->id())->ualevel->code < $value->owner->ualevel->code) $confidential = 1;
+                // check level parallel confidential
+                if (User::find(auth()->id())->ualevel->code == $value->owner->ualevel->code && $value->is_confidential && auth()->id() != $value->owner->id) $confidential = 1;
+            }
 
             $transactions[$key]->trans_seq = sprintf("%05d", $value->trans_seq);
             $transactions[$key]->trans_type = strtoupper($value->trans_type);
@@ -506,12 +509,10 @@ class TransactionsController extends Controller {
     public function duplicate(Transaction $transaction) {
 
         if (
-            (UAHelper::get()['trans_dup'] == config('global.ua_own') && $user->id != $transaction->owner_id)
-            || UAHelper::get()['trans_dup'] == config('global.ua_none')
+            (UAHelper::get()['trans_dup'] == config('global.ua_own') && auth()->id() != $transaction->owner_id && auth()->id() != $transaction->requested_id)
         ) {
             abort(404);
-        }
-
+        }            
 
         $new_trans = new Transaction;
         $new_trans->trans_type = $transaction->trans_type;
@@ -680,7 +681,7 @@ class TransactionsController extends Controller {
         if (
             (!in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies)))
             ||
-            (UAHelper::get()['trans_view'] == config('global.ua_own') && $transaction->requested_id != auth()->id())
+            (UAHelper::get()['trans_view'] == config('global.ua_own') && $transaction->requested_id != auth()->id() && $transaction->owner_id != auth()->id())
          ) return abort(401);
          
         $logs = Activity::where('subject_id', $transaction->id)
@@ -793,7 +794,7 @@ class TransactionsController extends Controller {
         $user = User::where('id', auth()->id())->first();
 
         if (
-            (UAHelper::get()['trans_reset'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            (UAHelper::get()['trans_reset'] == config('global.ua_own') && $user->id != $transaction->owner_id && $transaction->requested_id != auth()->id())
             || UAHelper::get()['trans_reset'] == config('global.ua_none')
         ) {
             return back()->with('error', __('messages.cant_edit'));
@@ -832,7 +833,7 @@ class TransactionsController extends Controller {
         $transaction = Transaction::where('id', $id)->first();
         
         if (
-            (UAHelper::get()['trans_toggle_conf'] == config('global.ua_own') && auth()->id() != $transaction->owner_id)
+            (UAHelper::get()['trans_toggle_conf'] == config('global.ua_own') && auth()->id() != $transaction->owner_id && $transaction->requested_id != auth()->id())
             || UAHelper::get()['trans_toggle_conf'] == config('global.ua_none')
         ) {
             return back()->with('error', __('messages.invalid_command'));
@@ -1279,7 +1280,7 @@ class TransactionsController extends Controller {
         if (in_array($transaction->status_id, config('global.generated'))) {
             // check if access = own and transaction is owned or if access = none
             if (
-                (UAHelper::get()['trans_edit'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+                (UAHelper::get()['trans_edit'] == config('global.ua_own') && $user->id != $transaction->owner_id  && $user->id != $transaction->requested_id)
                 || UAHelper::get()['trans_edit'] == config('global.ua_none')
             ) {
                 $can_edit = false;
@@ -1305,7 +1306,7 @@ class TransactionsController extends Controller {
         if (in_array($transaction->status_id, config('global.generated'))) {
             // check if access = own and transaction is owned or if access = none
             if (
-                (UAHelper::get()['trans_cancel'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+                (UAHelper::get()['trans_cancel'] == config('global.ua_own') && $user->id != $transaction->owner_id && $user->id != $transaction->requested_id)
                 || UAHelper::get()['trans_cancel'] == config('global.ua_none')
             ) {
                 $can_cancel = false;
@@ -1354,7 +1355,7 @@ class TransactionsController extends Controller {
 
         // check if access = own and transaction is owned or if access = none
         if (
-            (UAHelper::get()['trans_manage'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            (UAHelper::get()['trans_manage'] == config('global.ua_own') && $user->id != $transaction->owner_id && $user->id != $transaction->requested_id)
             || UAHelper::get()['trans_manage'] == config('global.ua_none')
         ) {
             $can_reassign = false;

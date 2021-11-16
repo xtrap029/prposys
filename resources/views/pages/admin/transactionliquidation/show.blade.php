@@ -75,7 +75,7 @@
         
                         <a href="/transaction-liquidation/edit/{{ $transaction->id }}" class="btn mb-2 btn-sm btn-flat btn-primary col-12 col-lg-auto {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
                         <a href="/transaction-liquidation/approval/{{ $transaction->id }}" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto {{ $perms['can_approval'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a>
-                        <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto {{ !$transaction->is_reimbursement ? '' : 'd-none' }} {{ ($ua['form_print'] == $non || ($ua['form_print'] == $own && $transaction->owner_id != Auth::user()->id)) ? 'd-none' : '' }}" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print Generated {{ strtoupper($transaction->trans_type) }} Form</a>
+                        <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto {{ !$transaction->is_reimbursement ? '' : 'd-none' }} {{ ($ua['form_print'] == $non || ($ua['form_print'] == $own && $transaction->owner_id != Auth::user()->id && $transaction->requested_id != Auth::user()->id)) ? 'd-none' : '' }}" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print Generated {{ strtoupper($transaction->trans_type) }} Form</a>
                         <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-liquidation/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i>
                             Print
                             @if ($transaction->is_deposit)
@@ -454,7 +454,7 @@
                                             @endif
                                         </td>
                                     </tr>
-                                    @if ($ua['trans_toggle_conf'] == $non || ($ua['trans_toggle_conf'] == $own && $transaction->owner_id != Auth::user()->id))
+                                    @if ($ua['trans_toggle_conf'] == $non || ($ua['trans_toggle_conf'] == $own && $transaction->owner_id != Auth::user()->id && $transaction->requested_id != Auth::user()->id))
                                     @else
                                         <tr>
                                             <td class="font-weight-bold text-gray">Is Confidential?</td>

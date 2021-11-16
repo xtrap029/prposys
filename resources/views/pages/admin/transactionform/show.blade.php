@@ -411,7 +411,7 @@
                                         <td class="font-weight-bold text-gray">Tax Type</td>
                                         <td class="font-weight-bold">{{ $transaction->form_vat_name && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_vat_name : $transaction->vattype->name }}</td>
                                     </tr>
-                                    @if ($ua['trans_toggle_conf'] == $non || ($ua['trans_toggle_conf'] == $own && $transaction->owner_id != Auth::user()->id))
+                                    @if ($ua['trans_toggle_conf'] == $non || ($ua['trans_toggle_conf'] == $own && $transaction->owner_id != Auth::user()->id && $transaction->requested_id != Auth::user()->id))
                                     @else
                                         <tr>
                                             <td class="font-weight-bold text-gray">Is Confidential?</td>

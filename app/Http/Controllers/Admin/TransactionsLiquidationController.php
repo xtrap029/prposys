@@ -350,7 +350,7 @@ class TransactionsLiquidationController extends Controller {
         if (!in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies))) return abort(401);
 
         if (
-            (UAHelper::get()['trans_view'] == config('global.ua_own') && auth()->id() != $transaction->owner_id)
+            (UAHelper::get()['trans_view'] == config('global.ua_own') && auth()->id() != $transaction->owner_id && auth()->id() != $transaction->requested_id)
             || UAHelper::get()['trans_view'] == config('global.ua_none')
         ) {
             return abort(401);
@@ -594,7 +594,7 @@ class TransactionsLiquidationController extends Controller {
         $user = User::where('id', auth()->id())->first();
 
         if (
-            (UAHelper::get()['trans_reset'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            (UAHelper::get()['trans_reset'] == config('global.ua_own') && $user->id != $transaction->owner_id && $user->id != $transaction->requested_id)
             || UAHelper::get()['trans_reset'] == config('global.ua_none')
         ) {
             return back()->with('error', __('messages.cant_edit'));
@@ -990,7 +990,12 @@ class TransactionsLiquidationController extends Controller {
 
         if (UAHelper::get()['liq_add'] != config('global.ua_none')) {
             if (UAHelper::get()['liq_add'] == config('global.ua_own')) {
-                $result = $result->where('owner_id', auth()->id());
+                $user_id = auth()->id();
+
+                $result = $result->where(static function ($query) use ($user_id) {
+                    $query->where('requested_id', $user_id)
+                    ->orWhere('owner_id',  $user_id);
+                });
                 $result2 = $result->count();
 
                 if ($result2 == 0) $can_create = false;
@@ -1024,7 +1029,7 @@ class TransactionsLiquidationController extends Controller {
         $transaction = Transaction::where('id', $transaction)->first();
 
         if (
-            (UAHelper::get()['liq_edit'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            (UAHelper::get()['liq_edit'] == config('global.ua_own') && $user->id != $transaction->owner_id && $user->id != $transaction->requested_id)
             || UAHelper::get()['liq_edit'] == config('global.ua_none')
         ) {
             $can_edit = false;
@@ -1102,7 +1107,7 @@ class TransactionsLiquidationController extends Controller {
         $transaction = Transaction::where('id', $transaction)->first();
 
         if (
-            (UAHelper::get()['liq_approval'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            (UAHelper::get()['liq_approval'] == config('global.ua_own') && $user->id != $transaction->owner_id && $user->id != $transaction->requested_id)
             || UAHelper::get()['liq_approval'] == config('global.ua_none')
         ) {
             $can_approve = false;
@@ -1127,7 +1132,7 @@ class TransactionsLiquidationController extends Controller {
         $transaction = Transaction::where('id', $transaction)->first();
 
         if (
-            (UAHelper::get()['liq_print'] == config('global.ua_own') && auth()->id() != $transaction->owner_id)
+            (UAHelper::get()['liq_print'] == config('global.ua_own') && auth()->id() != $transaction->owner_id && auth()->id() != $transaction->requested_id)
             || UAHelper::get()['liq_print'] == config('global.ua_none')
         ) {
             $can_print = false;
@@ -1162,7 +1167,7 @@ class TransactionsLiquidationController extends Controller {
         }
 
         if (
-            (UAHelper::get()['liq_clear'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            (UAHelper::get()['liq_clear'] == config('global.ua_own') && $user->id != $transaction->owner_id && auth()->id() != $transaction->requested_id)
             || UAHelper::get()['liq_clear'] == config('global.ua_none')
         ) {
             $can_clear = false;
@@ -1192,7 +1197,7 @@ class TransactionsLiquidationController extends Controller {
         }
 
         if (
-            (UAHelper::get()['liq_edit_cleared'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            (UAHelper::get()['liq_edit_cleared'] == config('global.ua_own') && $user->id != $transaction->owner_id && $user->id != $transaction->requested_id)
             || UAHelper::get()['liq_edit_cleared'] == config('global.ua_none')
         ) {
             $can_clear_edit = false;
@@ -1212,7 +1217,7 @@ class TransactionsLiquidationController extends Controller {
         $transaction = Transaction::where('id', $transaction)->first();
 
         if (
-            (UAHelper::get()['trans_dup'] == config('global.ua_own') && $user->id != $transaction->owner_id)
+            (UAHelper::get()['trans_dup'] == config('global.ua_own') && $user->id != $transaction->owner_id && $user->id != $transaction->requested_id)
             || UAHelper::get()['trans_dup'] == config('global.ua_none')
         ) {
             $can_duplicate = false;

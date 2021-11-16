@@ -219,7 +219,7 @@
                                         <td class="font-weight-bold text-gray">Payee Name</td>
                                         <td class="font-weight-bold">{{ $transaction->payee }}</td>
                                     </tr>
-                                    @if ($ua['trans_toggle_conf'] == $non || ($ua['trans_toggle_conf'] == $own && $transaction->owner_id != Auth::user()->id))
+                                    @if ($ua['trans_toggle_conf'] == $non || ($ua['trans_toggle_conf'] == $own && $transaction->owner_id != Auth::user()->id && $transaction->requested_id != Auth::user()->id))
                                     @else
                                         <tr>
                                             <td class="font-weight-bold text-gray">Is Confidential?</td>

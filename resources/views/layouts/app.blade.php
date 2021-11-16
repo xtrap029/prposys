@@ -73,7 +73,6 @@
                                         </a>
                                     </li>
                                         
-                                    <li class="nav-header">CONTROL PANEL</li>  
                                     <li class="nav-item {{ $ua['seq_bank'] == $non ? 'd-none' : '' }}">
                                         <a href="/bank" class="nav-link {{ Route::currentRouteName() == 'bank' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">account_balance</i><p> Bank</p>
