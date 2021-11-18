@@ -61,7 +61,7 @@
                                             <i class="nav-icon material-icons icon--list">dashboard</i><p>Dashboard</p>
                                         </a>
                                     </li>
-                                    
+                                    <li class="nav-item py-3"></li>
                                     <li class="nav-item {{ $ua['peo_user'] == $non ? 'd-none' : '' }}">
                                         <a href="/user" class="nav-link {{ Route::currentRouteName() == 'user' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">face</i><p>User</p>
