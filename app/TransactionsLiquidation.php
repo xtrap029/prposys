@@ -32,7 +32,7 @@ class TransactionsLiquidation extends Model {
     }
 
     public function expensetype() {
-        return $this->belongsTo(ExpenseType::class, 'expense_type_id');
+        return $this->belongsTo(ExpenseType::class, 'expense_type_id')->withTrashed();
     }
 
     public function project() {

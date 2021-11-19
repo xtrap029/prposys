@@ -17,7 +17,7 @@ class UsersController extends Controller {
         $users = User::orderBy('name', 'asc');
         
         if (!isset($_GET['all'])) {
-            $users = $users->whereNotNull('role_id');
+            $users = $users->where('ua_level_id', '!=', config('global.ua_inactive'));
         }
 
         $users = $users->get();

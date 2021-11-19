@@ -109,11 +109,6 @@
                                             <i class="nav-icon material-icons icon--list">extension</i><p>Report Template</p>
                                         </a>
                                     </li>
-                                    <li class="nav-item {{ $ua['seq_role'] == $non ? 'd-none' : '' }}">
-                                        <a href="/role" class="nav-link {{ Route::currentRouteName() == 'role' ? 'active' : '' }}">
-                                            <i class="nav-icon material-icons icon--list">lock</i><p>Role</p>
-                                        </a>
-                                    </li>
                                     <li class="nav-item {{ $ua['seq_comp'] == $non ? 'd-none' : '' }}">
                                         <a href="/company" class="nav-link {{ Route::currentRouteName() == 'company' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">business</i><p>Company</p>
