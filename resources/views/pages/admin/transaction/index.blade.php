@@ -80,6 +80,11 @@
                             @foreach ($users as $item)
                                 <option value="{{ $item->id }}" {{ app('request')->input('user_req') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                             @endforeach
+                            <optgroup label="Inactive" class="bg-gray-light">
+                                @foreach ($users_inactive as $item)
+                                    <option value="{{ $item->id }}" {{ app('request')->input('user_req') == $item->id ? 'selected' : '' }} class="bg-gray-light">{{ $item->name }}</option>
+                                @endforeach
+                            </optgroup>
                         </select>
                     </div>
                     <div class="mb-2 col-md-4 col-xl-2">
@@ -88,6 +93,11 @@
                             @foreach ($users as $item)
                                 <option value="{{ $item->id }}" {{ app('request')->input('user_prep') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                             @endforeach
+                            <optgroup label="Inactive" class="bg-gray-light">
+                                @foreach ($users_inactive as $item)
+                                    <option value="{{ $item->id }}" {{ app('request')->input('user_prep') == $item->id ? 'selected' : '' }} class="bg-gray-light">{{ $item->name }}</option>
+                                @endforeach
+                            </optgroup>
                         </select>
                     </div>
                     <div class="mb-2 col-md-4 col-xl-2">

@@ -53,7 +53,8 @@ class TransactionsController extends Controller {
         $trans_status = TransactionStatus::whereIn('id', config('global.status'))->get();
         $companies = Company::orderBy('name', 'asc')->get();
         $company = Company::where('id', $trans_company)->first();
-        $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
+        $users = User::where('ua_level_id', '!=', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
+        $users_inactive = User::where('ua_level_id', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
 
         $transactions = new Transaction;
 
@@ -209,6 +210,7 @@ class TransactionsController extends Controller {
             'companies' => $companies,
             'company' => $company,
             'users' => $users,
+            'users_inactive' => $users_inactive,
             'transactions' => $transactions
         ]);
     }
@@ -1156,7 +1158,8 @@ class TransactionsController extends Controller {
 
         $transactions = $transactions->get();
         
-        $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
+        $users = User::where('ua_level_id', '!=', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
+        $users_inactive = User::where('ua_level_id', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
         $particulars = Particulars::orderBy('type', 'asc')->orderBy('name', 'asc')->get();
         $releasers = ReleasedBy::orderBy('name', 'asc')->get();
         $companies = Company::orderBy('name', 'asc')->get();
@@ -1239,6 +1242,7 @@ class TransactionsController extends Controller {
                 'report_templates' => $report_templates,
                 'companies' => $companies,
                 'users' => $users,
+                'users_inactive' => $users_inactive,
                 'releasers' => $releasers,
                 'banks' => $banks,
                 'vat_types' => $vat_types,

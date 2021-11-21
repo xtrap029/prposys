@@ -130,11 +130,11 @@
                                 </thead>
                                 <tbody class="jsReplicate_container">
                                     <tr>
-                                        <td><input type="date" class="form-control" name="date[]" value="{{ old('date.0') }}" required></td>
+                                        <td><input type="date" class="form-control" name="date[]" value="{{ old('date.0') ?: $transaction->due_at }}" required></td>
                                         <td>
                                             <select name="project_id[]" class="form-control" required>
                                                 @foreach ($projects as $item)
-                                                    <option value="{{ $item->id }}" {{ old('project_id.0') == $item->id ? 'selected' : strtolower($item->project) == "none" ? 'selected' : '' }}>{{ $item->project }}</option>
+                                                    <option value="{{ $item->id }}" {{ old('project_id.0') == $item->id ? 'selected' : $item->id == $transaction->project_id ? 'selected' : '' }}>{{ $item->project }}</option>
                                                 @endforeach
                                             </select>
                                         </td>
@@ -145,7 +145,7 @@
                                                 @endforeach
                                             </select>
                                         </td>
-                                        <td><input type="text" class="form-control" name="description[]" value="{{ old('description.0') }}" required></td>
+                                        <td><input type="text" class="form-control" name="description[]" value="{{ old('description.0') ?: $transaction->transaction_description[0]->description }}" required></td>
                                         <td><input type="text" class="form-control" name="location[]" value="{{ old('location.0') }}" required></td>
                                         <td class="text-center">
                                             <select name="receipt[]" class="form-control">
@@ -353,11 +353,11 @@
                 <table class="d-none">
                     <tbody class="jsReplicate_template">
                         <tr class="jsReplicate_template_item">
-                            <td><input type="date" class="form-control" name="date[]" required></td>
+                            <td><input type="date" class="form-control" name="date[]" value="{{ $transaction->due_at }}" required></td>
                             <td>
                                 <select name="project_id[]" class="form-control" required>
                                     @foreach ($projects as $item)
-                                        <option value="{{ $item->id }}" {{ strtolower($item->project) == "none" ? 'selected' : '' }}>{{ $item->project }}</option>
+                                        <option value="{{ $item->id }}" {{ $item->id == $transaction->project_id ? 'selected' : '' }}>{{ $item->project }}</option>
                                     @endforeach
                                 </select>
                             </td>
@@ -368,7 +368,7 @@
                                     @endforeach
                                 </select>
                             </td>
-                            <td><input type="text" class="form-control" name="description[]" required></td>
+                            <td><input type="text" class="form-control" name="description[]" value="{{ $transaction->transaction_description[0]->description }}" required></td>
                             <td><input type="text" class="form-control" name="location[]" required></td>
                             <td class="text-center">
                                 <select name="receipt[]" class="form-control">

@@ -128,6 +128,11 @@
             @foreach ($users as $item)
                 <option value="{{ $item->id }}" {{ app('request')->input('user_req') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
             @endforeach
+            <optgroup label="Inactive" class="bg-gray-light">
+                @foreach ($users_inactive as $item)
+                    <option value="{{ $item->id }}" {{ app('request')->input('user_req') == $item->id ? 'selected' : '' }} class="bg-gray-light">{{ $item->name }}</option>
+                @endforeach
+            </optgroup>
         </select>
     </div>
     <div class="col-sm-6 col-md-2 my-1">
@@ -137,6 +142,11 @@
             @foreach ($users as $item)
                 <option value="{{ $item->id }}" {{ app('request')->input('user_prep') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
             @endforeach
+            <optgroup label="Inactive" class="bg-gray-light">
+                @foreach ($users_inactive as $item)
+                    <option value="{{ $item->id }}" {{ app('request')->input('user_prep') == $item->id ? 'selected' : '' }} class="bg-gray-light">{{ $item->name }}</option>
+                @endforeach
+            </optgroup>
         </select>
     </div>
     <div class="col-sm-6 col-md-2 my-1">
@@ -146,6 +156,11 @@
             @foreach ($users as $item)
                 <option value="{{ $item->id }}" {{ app('request')->input('user_updated') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
             @endforeach
+            <optgroup label="Inactive" class="bg-gray-light">
+                @foreach ($users_inactive as $item)
+                    <option value="{{ $item->id }}" {{ app('request')->input('user_updated') == $item->id ? 'selected' : '' }} class="bg-gray-light">{{ $item->name }}</option>
+                @endforeach
+            </optgroup>
         </select>
     </div>
 @endif
@@ -160,6 +175,11 @@
             @foreach ($users as $item)
                 <option value="{{ $item->id }}" {{ app('request')->input('user_approver_form') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
             @endforeach
+            <optgroup label="Inactive" class="bg-gray-light">
+                @foreach ($users_inactive as $item)
+                    <option value="{{ $item->id }}" {{ app('request')->input('user_approver_form') == $item->id ? 'selected' : '' }} class="bg-gray-light">{{ $item->name }}</option>
+                @endforeach
+            </optgroup>
         </select>
     </div>
 @endif
