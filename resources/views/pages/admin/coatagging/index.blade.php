@@ -22,6 +22,27 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <tr>
+                        <td colspan="2">
+                            <p class="font-weight-bold">All</p>
+                            @forelse ($coanull as $coatagging)
+                                <div class="pl-5 py-1">
+                                    {{ $coatagging->name }}
+                                    
+                                    <div class="float-none float-sm-right">
+                                        <a href="/coa-tagging/{{ $coatagging->id }}/edit" class="btn btn-link btn-sm">Edit</a>
+                                        <form action="/coa-tagging/{{ $coatagging->id }}" method="post" class="d-inline-block">
+                                            @csrf
+                                            @method('delete')
+                                            <input type="submit" class="btn btn-link btn-sm" value="Delete" onclick="return confirm('Are you sure?')">
+                                        </form>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="pl-5 py-1">{{ __('messages.empty') }}</div>
+                            @endforelse
+                        </td>
+                    </tr>
                     @forelse ($companies as $item)
                         <tr>
                             <td colspan="2">

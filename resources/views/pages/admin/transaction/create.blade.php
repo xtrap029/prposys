@@ -3,6 +3,9 @@
 @section('title', 'Generate '.strtoupper($trans_type))
 
 @section('content')
+    <?php $ua = (new \App\Helpers\UAHelper)->get(); ?>
+    <?php $non = config('global.ua_none'); ?>
+    <?php $own = config('global.ua_own'); ?>
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -109,7 +112,7 @@
                     </div>
                 </div>
                 <div class="form-row mb-3">
-                    <div class="col-sm-4 col-lg-4 mb-2 {{ Auth::user()->is_smt ? '' : 'd-none' }}">             
+                    <div class="col-sm-4 col-lg-4 mb-2 {{ $ua['trans_toggle_conf'] == $non ? 'd-none' : '' }}">             
                         <label for="">Is Confidential?</label>
                         <select name="is_confidential" class="form-control">
                             <option value="0" selected>No</option>

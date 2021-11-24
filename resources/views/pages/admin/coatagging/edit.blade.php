@@ -25,6 +25,7 @@
                 <div class="form-group">
                     <label for="">Company</label>
                     <select name="company_id" class="form-control">
+                        <option value="">All</option>
                         @foreach ($companies as $data)
                             <option value="{{ $data->id }}" {{ $coa_tagging->company_id == $data->id ? 'selected' : '' }}>{{ $data->name }}</option>
                         @endforeach

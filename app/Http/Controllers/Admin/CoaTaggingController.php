@@ -12,7 +12,8 @@ class CoaTaggingController extends Controller {
 
     public function index() {
         return view('pages.admin.coatagging.index')->with([
-            'companies' => Company::orderBy('name', 'asc')->get()
+            'companies' => Company::orderBy('name', 'asc')->get(),
+            'coanull' => CoaTagging::whereNull('company_id')->orderBy('name', 'asc')->get()
         ]);
     }
 
@@ -27,7 +28,7 @@ class CoaTaggingController extends Controller {
     public function store(Request $request) {
         $data = $request->validate([
             'name' => ['required'],
-            'company_id' => ['required', 'exists:companies,id']
+            'company_id' => ['sometimes', 'nullable', 'exists:companies,id']
         ]);
         $data['owner_id'] = auth()->id();
         $data['updated_id'] = auth()->id();
@@ -49,7 +50,7 @@ class CoaTaggingController extends Controller {
     public function update(Request $request, CoaTagging $coaTagging) {
         $data = $request->validate([
             'name' => ['required'],
-            'company_id' => ['required', 'exists:companies,id']
+            'company_id' => ['sometimes', 'nullable', 'exists:companies,id']
         ]);
         $data['updated_id'] = auth()->id();
 

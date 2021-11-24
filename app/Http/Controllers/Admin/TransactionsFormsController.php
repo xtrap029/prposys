@@ -195,7 +195,7 @@ class TransactionsFormsController extends Controller {
                 break;
         }
 
-        $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orderBy('name', 'asc')->get();
+        $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orWhereNull('company_id')->orderBy('name', 'asc')->get();
         $particulars = Particulars::where('type', $transaction->trans_type)->orderBy('name', 'asc')->get();
         $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('name', 'asc')->get();
 
@@ -256,7 +256,7 @@ class TransactionsFormsController extends Controller {
                 break;
         }
 
-        $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orderBy('name', 'asc')->get();
+        $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orWhereNull('company_id')->orderBy('name', 'asc')->get();
         $particulars = Particulars::where('type', $transaction->trans_type)->orderBy('name', 'asc')->get();
         $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('name', 'asc')->get();
         $expense_types = ExpenseType::orderBy('name', 'asc')->get();
@@ -548,7 +548,7 @@ class TransactionsFormsController extends Controller {
                 break;
         }
 
-        $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orderBy('name', 'asc')->get();
+        $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orWhereNull('company_id')->orderBy('name', 'asc')->get();
         // $expense_types = ExpenseType::orderBy('name', 'asc')->get();
         $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('name', 'asc')->get();
         $particulars = Particulars::where('type', $transaction->trans_type)->orderBy('name', 'asc')->get();
