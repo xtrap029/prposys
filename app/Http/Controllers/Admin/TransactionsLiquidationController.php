@@ -389,6 +389,9 @@ class TransactionsLiquidationController extends Controller {
                         ->orderBy('id', 'desc')->paginate(10)->onEachSide(1);
 
         $perms['can_edit'] = $this->check_can_edit($transaction->id);
+        $perms['can_create'] = $this->check_can_create(
+            $transaction->trans_type."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
+            $transaction->project->company_id);
         $perms['can_reset'] = $this->check_can_reset($transaction->id);
         $perms['can_approval'] = $this->check_can_approval($transaction->id);
         $perms['can_print'] = $this->check_can_print($transaction->id);

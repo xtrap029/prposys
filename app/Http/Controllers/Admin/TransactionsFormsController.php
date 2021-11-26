@@ -1335,7 +1335,7 @@ class TransactionsFormsController extends Controller {
             $can_cancel = false;
         }
 
-        return true;
+        return $can_cancel;
     }
 
     private function check_can_edit($transaction, $user = '') {

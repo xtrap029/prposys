@@ -24,10 +24,10 @@
                         <div class="d-inline-block mb-1 ml-2">All</div>
                     </a>
                     @if (in_array(config('global.apps')[0], explode(',', Auth::user()->apps)))
-                        <a class="dropdown-item px-3" href="{{ config('global.dashboard_leaves') }}">
+                        {{-- <a class="dropdown-item px-3" href="{{ config('global.dashboard_leaves') }}">
                             <img src="{{ config('global.site_icon_leaves') }}" alt="" class="img-size-32 mr-2">
                             Leaves
-                        </a>
+                        </a> --}}
                     @endif
                     @if (in_array(config('global.apps')[1], explode(',', Auth::user()->apps)))
                         <a class="dropdown-item px-3" href="{{ config('global.dashboard_sequence') }}">
