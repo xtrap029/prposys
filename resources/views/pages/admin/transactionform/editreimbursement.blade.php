@@ -115,28 +115,34 @@
                     </div>
                 </div>
                 <div class="form-row mt-5">
+                    @if (1==0)
+                        <div class="col-md-6 mb-2">
+                            <label for="">Particulars</label>
+                            @if ($trans_page_url == 'prpo')
+                                <select name="particulars_id_single" class="form-control @error('particulars_id') is-invalid @enderror">
+                                    @foreach ($particulars as $item)
+                                        <option value="{{ $item->id }}" {{ $item->id == $transaction->particulars_id ? 'selected' : '' }}>{{ $item->name }}</option>                                        
+                                    @endforeach
+                                </select>
+                                @include('errors.inline', ['message' => $errors->first('particulars_id')])
+                            @else
+                                <input type="text" class="form-control @error('particulars_custom') is-invalid @enderror" name="particulars_custom" value="{{ $transaction->particulars_custom }}" required>
+                                @include('errors.inline', ['message' => $errors->first('particulars_custom')])
+                            @endif
+                        </div>
+                    @endif
                     <div class="col-md-6 mb-2">
-                        <label for="">Particulars</label>
-                        @if ($trans_page_url == 'prpo')
-                            <select name="particulars_id_single" class="form-control @error('particulars_id') is-invalid @enderror">
-                                @foreach ($particulars as $item)
-                                    <option value="{{ $item->id }}" {{ $item->id == $transaction->particulars_id ? 'selected' : '' }}>{{ $item->name }}</option>                                        
-                                @endforeach
-                            </select>
-                            @include('errors.inline', ['message' => $errors->first('particulars_id')])
-                        @else
-                            <input type="text" class="form-control @error('particulars_custom') is-invalid @enderror" name="particulars_custom" value="{{ $transaction->particulars_custom }}" required>
-                            @include('errors.inline', ['message' => $errors->first('particulars_custom')])
-                        @endif
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <label for="">COA Tagging</label>
+                        <label for="">Category / Class</label>
                         <select name="coa_tagging_id" class="form-control @error('coa_tagging_id') is-invalid @enderror" required>
                             @foreach ($coa_taggings as $item)
                                 <option value="{{ $item->id }}" {{ $item->id == $transaction->coa_tagging_id ? 'selected' : '' }}>{{ $item->name }}</option>
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('coa_tagging_id')])
+                    </div>
+                    <div class="mb-2 col-md-6">
+                        <label for="">Category / Class Notes</label>
+                        <textarea name="coa_notes" rows="2" class="form-control">{{ $transaction->coa_notes }}</textarea>
                     </div>
 
                     <div class="col-md-12 {{ $config_confidential ? 'd-none' : '' }}">

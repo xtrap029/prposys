@@ -39,7 +39,7 @@
                                 <th>Request No.</th>
                                 <th>Date Requested</th>
                                 <th>Staff</th>
-                                <th>COA Tagging</th>
+                                <th>Category / Class</th>
                                 @if ($transaction->is_deposit
                                     || $transaction->is_bills
                                     || $transaction->is_hr
@@ -80,10 +80,12 @@
                                     <td class="font-weight-bold">Vendor / Payee</td>
                                     <td>{{ $transaction->payee }}</td>
                                 </tr>
-                                <tr>
-                                    <td class="font-weight-bold">Particulars</td>
-                                    <td>{{ $transaction->particulars_custom ?: $transaction->particulars->name }}</td>
-                                </tr>
+                                @if (1==0)
+                                    <tr>
+                                        <td class="font-weight-bold">Particulars</td>
+                                        <td>{{ $transaction->particulars_custom ?: $transaction->particulars->name }}</td>
+                                    </tr>
+                                @endif
                                 <tr>
                                     <td class="font-weight-bold">Purpose</td>
                                     <td>

@@ -377,17 +377,39 @@
                                         <td class="font-weight-bold text-gray">Due By</td>
                                         <td class="font-weight-bold">{{ $transaction->due_at }}</td>
                                     </tr>
-                                    <tr>
-                                        <td class="font-weight-bold text-gray">Particulars</td>
-                                        <td class="font-weight-bold">{{ $trans_page_url == 'prpo' ? $transaction->particulars->name : $transaction->particulars_custom }}</td>
-                                    </tr>
+                                    @if (1==0)
+                                        <tr>
+                                            <td class="font-weight-bold text-gray">Particulars</td>
+                                            <td class="font-weight-bold">{{ $trans_page_url == 'prpo' ? $transaction->particulars->name : $transaction->particulars_custom }}</td>
+                                        </tr>
+                                    @endif
                                     <tr>
                                         <td class="font-weight-bold text-gray">{{ !$transaction->is_reimbursement ? 'Payor' : 'Payee' }}</td>
                                         <td class="font-weight-bold">{{ $transaction->payor ?: 'n/a' }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="font-weight-bold text-gray">COA Tagging</td>
-                                        <td class="font-weight-bold">{{ $transaction->coatagging->name }}</td>
+                                        <td class="font-weight-bold text-gray">Category / Class</td>
+                                        <td class="font-weight-bold">
+                                            {{ $transaction->coatagging->name }}
+                                            <a href="#_" data-toggle="modal" data-target="#modal-coa-notes">
+                                                <i class="align-middle material-icons text-md text-primary">info</i>
+                                            </a>
+                                            <div class="modal fade" id="modal-coa-notes" tabindex="-1" role="dialog" aria-hidden="true">
+                                                <div class="modal-dialog modal-md" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header border-0">
+                                                            <h5 class="modal-title">Category / Class Notes</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p class="font-weight-light">{{ $transaction->coa_notes ?: __('messages.not_found') }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Vendor / Payee</td>
@@ -505,7 +527,7 @@
                                         <tr>
                                             <th>Qty</th>
                                             <th>Description</th>
-                                            <th>Particulars</th>
+                                            <th>Expense Type</th>
                                             <th class="text-right text-nowrap">Unit Price</th>
                                             <th class="text-right">Total</th>
                                         </tr>

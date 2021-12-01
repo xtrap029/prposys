@@ -296,13 +296,14 @@ class TransactionsFormsController extends Controller {
             // 'expense_type_id' => ['required', 'exists:expense_types,id'],
             // 'expense_type_description' => ['required'],
             'vat_type_id' => ['required', 'exists:vat_types,id'],
+            'coa_notes' => ['nullable', 'string'],
         ];
 
-        if ($transaction->trans_type == 'pc') {
-            $validation['particulars_custom'] = ['required'];
-        } else {
-            $validation['particulars_id_single'] = ['required', 'exists:particulars,id'];
-        }
+        // if ($transaction->trans_type == 'pc') {
+        //     $validation['particulars_custom'] = ['required'];
+        // } else {
+        //     $validation['particulars_id_single'] = ['required', 'exists:particulars,id'];
+        // }
 
         // validate input
         $data = $request->validate($validation);
@@ -327,8 +328,8 @@ class TransactionsFormsController extends Controller {
             TransactionsDescription::create($attr_desc);
         }
         
-        $data['particulars_id'] = $data['particulars_id_single'];
-        unset($data['particulars_id_single']);
+        // $data['particulars_id'] = $data['particulars_id_single'];
+        // unset($data['particulars_id_single']);
 
         $data['edit_count'] = 0;
         $data['status_prev_id'] = $transaction->status_id;
@@ -359,13 +360,14 @@ class TransactionsFormsController extends Controller {
 
         $validation = [
             'coa_tagging_id' => ['required', 'exists:coa_taggings,id'],
+            'coa_notes' => ['nullable', 'string'],
         ];
 
-        if ($transaction->trans_type == 'pc') {
-            $validation['particulars_custom'] = ['required'];
-        } else {
-            $validation['particulars_id_single'] = ['required', 'exists:particulars,id'];
-        }
+        // if ($transaction->trans_type == 'pc') {
+        //     $validation['particulars_custom'] = ['required'];
+        // } else {
+        //     $validation['particulars_id_single'] = ['required', 'exists:particulars,id'];
+        // }
 
         // validate input
         $data = $request->validate($validation);
@@ -444,8 +446,8 @@ class TransactionsFormsController extends Controller {
             }
         }
 
-        $data['particulars_id'] = $data['particulars_id_single'];
-        unset($data['particulars_id_single']);
+        // $data['particulars_id'] = $data['particulars_id_single'];
+        // unset($data['particulars_id_single']);
 
         $data['vat_type_id'] = VatType::select('id')->orderBy('id', 'asc')->first()['id'];
         $data['edit_count'] = 0;
@@ -643,13 +645,14 @@ class TransactionsFormsController extends Controller {
             'requested_id' => ['required', 'exists:users,id'],
             'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
             'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'coa_notes' => ['nullable', 'string'],
         ];
 
-        if ($transaction->trans_type == 'pc') {
-            $validation['particulars_custom'] = ['required'];
-        } else {
-            $validation['particulars_id_single'] = ['required', 'exists:particulars,id'];
-        }
+        // if ($transaction->trans_type == 'pc') {
+        //     $validation['particulars_custom'] = ['required'];
+        // } else {
+        //     $validation['particulars_id_single'] = ['required', 'exists:particulars,id'];
+        // }
 
         // validate input
         $data = $request->validate($validation);
@@ -660,8 +663,8 @@ class TransactionsFormsController extends Controller {
             $data['soa'] = $transaction->soa;
         }
 
-        $data['particulars_id'] = $data['particulars_id_single'];
-        unset($data['particulars_id_single']);
+        // $data['particulars_id'] = $data['particulars_id_single'];
+        // unset($data['particulars_id_single']);
 
         $data['is_deposit'] = 0;
         $data['is_bills'] = 0;
@@ -754,7 +757,8 @@ class TransactionsFormsController extends Controller {
             'currency' => ['required'],
             'due_at' => ['required', 'date'],
             'requested_id' => ['required', 'exists:users,id'],
-            'particulars_id_single' => ['required', 'exists:particulars,id'],
+            'coa_notes' => ['nullable', 'string'],
+            // 'particulars_id_single' => ['required', 'exists:particulars,id'],
         ];
 
         $attr_liq['transaction_id'] = $transaction->id;
@@ -764,8 +768,8 @@ class TransactionsFormsController extends Controller {
         // validate input
         $data = $request->validate($validation);
 
-        $data['particulars_id'] = $data['particulars_id_single'];
-        unset($data['particulars_id_single']);
+        // $data['particulars_id'] = $data['particulars_id_single'];
+        // unset($data['particulars_id_single']);
 
         // validate input
         $attach_liq = $request->validate([

@@ -28,6 +28,7 @@ class Transaction extends Model {
                                         'payor',
                                         'owner.name',
                                         'coatagging.name',
+                                        'coa_notes',
                                         'expense_type_description',
                                         // 'expensetype.name',
                                         'vattype.name',

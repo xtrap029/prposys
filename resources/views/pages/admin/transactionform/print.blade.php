@@ -39,7 +39,7 @@
                                 <th>Request No.</th>
                                 <th>Date Requested</th>
                                 <th>Project</th>
-                                <th>COA Tagging</th>
+                                <th>Category / Class</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -163,7 +163,7 @@
                                 <td>Item No.</td>                            
                                 <th>Qty</th>
                                 <th>Description</th>
-                                <th>Particulars</th>
+                                <th>Expense Type</th>
                                 <th class="text-right">Unit Price</th>
                                 <th class="text-right">Total</th>
                             </tr>

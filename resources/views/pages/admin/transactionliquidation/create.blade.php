@@ -36,7 +36,7 @@
                         <td>{{ $transaction->project->project }}</td>
                     </tr>
                     <tr>
-                        <td class="font-weight-bold">COA Tagging</td>
+                        <td class="font-weight-bold">Category / Class</td>
                         <td>{{ $transaction->coatagging->name }}</td>
                     </tr>
                 </table>
