@@ -112,7 +112,7 @@
                     <tr class="bg-gray font-weight-bold">
                         <td>Transaction</td>
                         <td>Project</td>
-                        <td>COA Tagging</td>
+                        <td>Category/Class</td>
                         <td class="text-right">Subtotal</td>
                         <td class="text-right">Deposit/Payment</td>
                         <td class="text-right">Balance</td>

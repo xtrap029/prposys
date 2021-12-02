@@ -13,7 +13,7 @@ final class BreadHelper {
             case 'dbbackups': $bread[] = ['database', '/control-panel/db-backups']; break;
             case 'revertstatus': $bread[] = ['revert status', '/control-panel/revert-status']; break;
             case 'forcecancel': $bread[] = ['force cancel', '/control-panel/force-cancel']; break;
-            case 'coatagging': $bread[] = ['coa tagging', '/coa-tagging']; break;
+            case 'coatagging': $bread[] = ['category / class', '/coa-tagging']; break;
             case 'expensetype': $bread[] = ['expense type', '/expense-type']; break;
             case 'particular': $bread[] = ['particulars', '/particular']; break;
             case 'vattype': $bread[] = ['tax type', '/vat-type']; break;

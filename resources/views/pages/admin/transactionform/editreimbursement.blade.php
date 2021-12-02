@@ -133,16 +133,16 @@
                     @endif
                     <div class="col-md-6 mb-2">
                         <label for="">Category / Class</label>
-                        <select name="coa_tagging_id" class="form-control @error('coa_tagging_id') is-invalid @enderror" required>
+                        <select name="coa_tagging_id" id="coa_tagging_id" class="form-control @error('coa_tagging_id') is-invalid @enderror" required>
                             @foreach ($coa_taggings as $item)
-                                <option value="{{ $item->id }}" {{ $item->id == $transaction->coa_tagging_id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                <option value="{{ $item->id }}" {{ $item->id == $transaction->coa_tagging_id ? 'selected' : '' }} data-notes="{{ $item->notes }}">{{ $item->name }}</option>
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('coa_tagging_id')])
                     </div>
                     <div class="mb-2 col-md-6">
-                        <label for="">Category / Class Notes</label>
-                        <textarea name="coa_notes" rows="2" class="form-control">{{ $transaction->coa_notes }}</textarea>
+                        <label for="" class="invisible">Notes</label>
+                        <p id="coa_tagging_notes" class="bg-white font-italic px-3 py-1 pt-2 rounded text-center">{{ __("messages.not_found") }}</p>
                     </div>
 
                     <div class="col-md-12 {{ $config_confidential ? 'd-none' : '' }}">
@@ -406,6 +406,12 @@
                     return false
                 }
             })
+
+            $('#coa_tagging_id').change(function() {
+                notes = $(this).find(':selected').data('notes')
+                $('#coa_tagging_notes').text(notes != "" ? notes : '{{ __("messages.not_found") }}')
+            })
+            $('#coa_tagging_id').trigger('change')
         })
     </script>
 @endsection

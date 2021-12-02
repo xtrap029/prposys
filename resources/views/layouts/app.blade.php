@@ -81,7 +81,7 @@
                                     </li>
                                     <li class="nav-item {{ $ua['seq_coa'] == $non ? 'd-none' : '' }}">
                                         <a href="/coa-tagging" class="nav-link {{ Route::currentRouteName() == 'coatagging' ? 'active' : '' }}">
-                                            <i class="nav-icon material-icons icon--list">poll</i><p> COA Tagging</p>
+                                            <i class="nav-icon material-icons icon--list">poll</i><p> Category/Class</p>
                                         </a>
                                     </li>
                                     <li class="nav-item {{ $ua['seq_expense'] == $non ? 'd-none' : '' }}">

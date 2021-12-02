@@ -28,6 +28,7 @@ class CoaTaggingController extends Controller {
     public function store(Request $request) {
         $data = $request->validate([
             'name' => ['required'],
+            'notes' => ['nullable', 'string'],
             'company_id' => ['sometimes', 'nullable', 'exists:companies,id']
         ]);
         $data['owner_id'] = auth()->id();
@@ -35,7 +36,7 @@ class CoaTaggingController extends Controller {
 
         CoaTagging::create($data);
 
-        return redirect('/coa-tagging')->with('success', 'COA Tagging'.__('messages.create_success'));
+        return redirect('/coa-tagging')->with('success', 'Category/Class'.__('messages.create_success'));
     }
 
     public function edit(CoaTagging $coaTagging) {
@@ -50,13 +51,14 @@ class CoaTaggingController extends Controller {
     public function update(Request $request, CoaTagging $coaTagging) {
         $data = $request->validate([
             'name' => ['required'],
+            'notes' => ['nullable', 'string'],
             'company_id' => ['sometimes', 'nullable', 'exists:companies,id']
         ]);
         $data['updated_id'] = auth()->id();
 
         $coaTagging->update($data);
 
-        return redirect('/coa-tagging')->with('success', 'COA Tagging'.__('messages.edit_success'));
+        return redirect('/coa-tagging')->with('success', 'Category/Class'.__('messages.edit_success'));
     }
 
     public function destroy(CoaTagging $coaTagging) {
@@ -64,6 +66,6 @@ class CoaTaggingController extends Controller {
         $coaTagging->save();
         $coaTagging->delete();
 
-        return redirect('/coa-tagging')->with('success', 'COA Tagging'.__('messages.delete_success'));
+        return redirect('/coa-tagging')->with('success', 'Category/Class'.__('messages.delete_success'));
     }
 }

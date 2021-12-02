@@ -296,7 +296,7 @@ class TransactionsFormsController extends Controller {
             // 'expense_type_id' => ['required', 'exists:expense_types,id'],
             // 'expense_type_description' => ['required'],
             'vat_type_id' => ['required', 'exists:vat_types,id'],
-            'coa_notes' => ['nullable', 'string'],
+            // 'coa_notes' => ['nullable', 'string'],
         ];
 
         // if ($transaction->trans_type == 'pc') {
@@ -360,7 +360,7 @@ class TransactionsFormsController extends Controller {
 
         $validation = [
             'coa_tagging_id' => ['required', 'exists:coa_taggings,id'],
-            'coa_notes' => ['nullable', 'string'],
+            // 'coa_notes' => ['nullable', 'string'],
         ];
 
         // if ($transaction->trans_type == 'pc') {
@@ -604,7 +604,7 @@ class TransactionsFormsController extends Controller {
                 break;
         }
 
-        $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orderBy('name', 'asc')->get();
+        $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orWhereNull('company_id')->orderBy('name', 'asc')->get();
         $particulars = Particulars::where('type', $transaction->trans_type)->get();
         $projects = CompanyProject::where('company_id', $transaction->project->company_id)->get();
         $users = User::whereNotNull('role_id')->get();
@@ -645,7 +645,7 @@ class TransactionsFormsController extends Controller {
             'requested_id' => ['required', 'exists:users,id'],
             'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
             'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
-            'coa_notes' => ['nullable', 'string'],
+            // 'coa_notes' => ['nullable', 'string'],
         ];
 
         // if ($transaction->trans_type == 'pc') {
@@ -757,7 +757,7 @@ class TransactionsFormsController extends Controller {
             'currency' => ['required'],
             'due_at' => ['required', 'date'],
             'requested_id' => ['required', 'exists:users,id'],
-            'coa_notes' => ['nullable', 'string'],
+            // 'coa_notes' => ['nullable', 'string'],
             // 'particulars_id_single' => ['required', 'exists:particulars,id'],
         ];
 

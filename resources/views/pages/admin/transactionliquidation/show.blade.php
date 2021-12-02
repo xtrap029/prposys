@@ -389,27 +389,7 @@
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Category / Class</td>
-                                        <td class="font-weight-bold">
-                                            {{ $transaction->coatagging->name }}
-                                            <a href="#_" data-toggle="modal" data-target="#modal-coa-notes">
-                                                <i class="align-middle material-icons text-md text-primary">info</i>
-                                            </a>
-                                            <div class="modal fade" id="modal-coa-notes" tabindex="-1" role="dialog" aria-hidden="true">
-                                                <div class="modal-dialog modal-md" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header border-0">
-                                                            <h5 class="modal-title">Category / Class Notes</h5>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <p class="font-weight-light">{{ $transaction->coa_notes ?: __('messages.not_found') }}</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
+                                        <td class="font-weight-bold">{{ $transaction->coatagging->name }}</td>
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Vendor / Payee</td>

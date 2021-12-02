@@ -112,7 +112,7 @@
                     <tr class="bg-gray font-weight-bold">
                         <td>Transaction</td>
                         <td>Project</td>
-                        <td>COA Tagging</td>
+                        <td>Category/Class</td>
                         <td>Vendor/Payee</td>
                         <td>Tax Type</td>
                         <td>Amount</td>

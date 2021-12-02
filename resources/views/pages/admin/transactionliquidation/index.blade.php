@@ -107,7 +107,7 @@
                         <tr>
                             <th>{{ $trans_page_url == 'prpo' ? 'PR/PO' : 'PC' }} #</th>
                             <th>Project</th>
-                            <th>COA Tagging</th>
+                            <th>Category/Class</th>
                             <th class="text-center">Currency</th>
                             <th class="text-right">Req. Amount</th>
                             <th class="text-right">Liq. Amount</th>

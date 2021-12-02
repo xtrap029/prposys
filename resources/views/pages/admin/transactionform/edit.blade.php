@@ -202,21 +202,25 @@
                     </div>
                 </div>
                 <div class="form-row mt-5">
-                    <div class="col-md-5 {{ $transaction->is_deposit ? '' : 'd-none' }} mb-2">
+                    <div class="col-12 {{ $transaction->is_deposit ? '' : 'd-none' }} mb-2">
                         <label for="">Payor</label>
                         <input type="text" name="payor" class="form-control @error('payor') is-invalid @enderror" value="{{ $transaction->payor }}" {{ $transaction->is_deposit ? 'required' : '' }}>
                         @include('errors.inline', ['message' => $errors->first('payor')])
                     </div>     
-                    <div class="{{ $transaction->is_deposit ? 'col-md-5' : 'col-md-9' }} mb-2">
+                    <div class="col-md-6 mb-2">
                         <label for="">Category / Class</label>
-                        <select name="coa_tagging_id" class="form-control @error('coa_tagging_id') is-invalid @enderror" required>
+                        <select name="coa_tagging_id" id="coa_tagging_id" class="form-control @error('coa_tagging_id') is-invalid @enderror" required>
                             @foreach ($coa_taggings as $item)
-                                <option value="{{ $item->id }}" {{ $item->id == $transaction->coa_tagging_id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                <option value="{{ $item->id }}" {{ $item->id == $transaction->coa_tagging_id ? 'selected' : '' }} data-notes="{{ $item->notes }}">{{ $item->name }}</option>
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('coa_tagging_id')])
                     </div>
-                    <div class="{{ $transaction->is_deposit ? 'col-md-2' : 'col-md-3' }} mb-2">
+                    <div class="mb-2 col-md-6">
+                        <label for="" class="invisible">Notes</label>
+                        <p id="coa_tagging_notes" class="bg-white font-italic px-3 py-1 pt-2 rounded text-center">{{ __("messages.not_found") }}</p>
+                    </div>
+                    <div class="col-md-6 mb-2">
                         <label for="">Tax Type</label>
                         <select name="vat_type_id" class="form-control">
                             @foreach ($vat_types as $item)
@@ -224,10 +228,6 @@
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('vat_type_id')])
-                    </div>
-                    <div class="mb-2 {{ $transaction->is_deposit ? 'col-md-5' : 'col-md-9' }}">
-                        <label for="">Category / Class Notes</label>
-                        <textarea name="coa_notes" rows="2" class="form-control">{{ $transaction->coa_notes }}</textarea>
                     </div>
 
                     <div class="col-md-12 {{ $config_confidential ? 'd-none' : '' }}">
@@ -418,6 +418,12 @@
                     }
                 }
             }
+
+            $('#coa_tagging_id').change(function() {
+                notes = $(this).find(':selected').data('notes')
+                $('#coa_tagging_notes').text(notes != "" ? notes : '{{ __("messages.not_found") }}')
+            })
+            $('#coa_tagging_id').trigger('change')
         })
     </script>
 @endsection

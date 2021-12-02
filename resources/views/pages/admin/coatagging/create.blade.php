@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Create COA Tagging')
+@section('title', 'Create Category/Class')
 
 @section('content')
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Create COA Tagging</h1>
+                    <h1>Create Category/Class</h1>
                 </div>
             </div>
         </div>
@@ -20,6 +20,11 @@
                     <label for="">Name</label>
                     <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required>
                     @include('errors.inline', ['message' => $errors->first('name')])
+                </div>
+                <div class="form-group">
+                    <label for="">Notes</label>
+                    <textarea name="notes" rows="3" class="form-control">{{ old('notes') }}</textarea>
+                    @include('errors.inline', ['message' => $errors->first('notes')])
                 </div>
                 <div class="form-group">
                     <label for="">Company</label>

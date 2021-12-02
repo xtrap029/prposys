@@ -12,8 +12,8 @@ class CoaTagging extends Model {
     protected $guarded = [];
     
     use LogsActivity;
-    protected static $logAttributes = ['name', 'company.name'];
-    protected static $logName = 'COA Tagging';
+    protected static $logAttributes = ['name', 'notes', 'company.name'];
+    protected static $logName = 'Category/Class';
     protected static $logOnlyDirty = true;
 
     public function company() {

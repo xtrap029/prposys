@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddCoaNotesInTransactionsTable extends Migration
+class AddNotesInCoaTaggingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddCoaNotesInTransactionsTable extends Migration
      */
     public function up()
     {
-        Schema::table('transactions', function (Blueprint $table) {
-            $table->text('coa_notes')->after('coa_tagging_id')->nullable();
+        Schema::table('coa_taggings', function (Blueprint $table) {
+            $table->text('notes')->after('name')->nullable();
         });
     }
 
@@ -25,8 +25,8 @@ class AddCoaNotesInTransactionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('transactions', function (Blueprint $table) {
-            $table->dropColumn('coa_notes');
+        Schema::table('coa_taggings', function (Blueprint $table) {
+            $table->dropColumn('notes');
         });
     }
 }
