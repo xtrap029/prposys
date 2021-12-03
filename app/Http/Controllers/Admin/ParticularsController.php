@@ -32,7 +32,8 @@ class ParticularsController extends Controller {
     public function store(Request $request) {
         $data = $request->validate([
             'name' => ['required', Rule::unique('particulars')->where('type', $request->type)->whereNull('deleted_at')],
-            'type' => ['required']
+            'notes' => ['nullable', 'string'],
+            'type' => ['required'],
         ]);
 
         $data['owner_id'] = auth()->id();
@@ -51,7 +52,8 @@ class ParticularsController extends Controller {
 
     public function update(Request $request, Particulars $particular) {
         $data = $request->validate([
-            'name' => ['required', Rule::unique('particulars')->ignore($particular->id)->where('type', $particular->type)->whereNull('deleted_at')]
+            'name' => ['required', Rule::unique('particulars')->ignore($particular->id)->where('type', $particular->type)->whereNull('deleted_at')],
+            'notes' => ['nullable', 'string'],
         ]);
         $data['updated_id'] = auth()->id();
 

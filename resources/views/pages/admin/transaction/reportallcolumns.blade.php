@@ -218,7 +218,21 @@
     </div>
 @endif
 
-{{-- PROJ_NAME --}}
+@if (count(array_intersect($column_codes, [
+    'PROJ_NAME',
+    'PROJ_COMP_NAME',
+])) > 0)
+    <div class="col-sm-6 col-md-2 my-1">
+        <label for="">Projects</label>
+        <select name="project" class="form-control form-control-sm">
+            <option value="">All</option>
+            @foreach ($projects->sortBy('company.name') as $item)
+                <option value="{{ $item->id }}" {{ app('request')->input('project') == $item->id ? 'selected' : '' }}>{{ strtoupper($item->company->code).' - '.$item->project }}</option>
+            @endforeach
+        </select>
+    </div>
+@endif
+
 {{-- CTRL_NO --}}
 {{-- CTRL_TYPE --}}
 {{-- PAYEE --}}

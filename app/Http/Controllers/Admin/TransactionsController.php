@@ -925,6 +925,7 @@ class TransactionsController extends Controller {
         $trans_depo_to = '';
         $trans_rel_from = '';
         $trans_rel_to = '';
+        $trans_project = '';
         $trans_depo_type = '';
         $trans_vat_type = '';
         $trans_particulars = '';
@@ -1142,6 +1143,10 @@ class TransactionsController extends Controller {
 
             $trans_bal = $_GET['bal'];
         }
+        if (!empty($_GET['project'])) {
+            $transactions = $transactions->where('project_id', $_GET['project']);
+            $trans_project = $_GET['project'];
+        }
 
         $report_template = ReportTemplate::orderBy('id', 'asc');
         if (isset($_GET['template'])) {
@@ -1161,6 +1166,7 @@ class TransactionsController extends Controller {
         $users = User::where('ua_level_id', '!=', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
         $users_inactive = User::where('ua_level_id', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
         $particulars = Particulars::orderBy('type', 'asc')->orderBy('name', 'asc')->get();
+        $projects = CompanyProject::orderBy('project', 'asc')->get();
         $releasers = ReleasedBy::orderBy('name', 'asc')->get();
         $companies = Company::orderBy('name', 'asc')->get();
         $banks = Bank::orderBy('name', 'asc')->get();
@@ -1245,6 +1251,7 @@ class TransactionsController extends Controller {
                 'users_inactive' => $users_inactive,
                 'releasers' => $releasers,
                 'banks' => $banks,
+                'projects' => $projects,
                 'vat_types' => $vat_types,
                 'particulars' => $particulars,
                 'transactions' => $transactions,
@@ -1271,6 +1278,7 @@ class TransactionsController extends Controller {
                 'trans_particulars' => $trans_particulars,
                 'trans_currency' => $trans_currency,
                 'trans_bal' => $trans_bal,
+                'trans_project' => $trans_project,
                 'trans_template' => $trans_template,
                 'trans_s' => $trans_s
             ]);

@@ -22,6 +22,11 @@
                     <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required>
                     @include('errors.inline', ['message' => $errors->first('name')])
                 </div>
+                <div class="form-group">
+                    <label for="">Notes</label>
+                    <textarea name="notes" rows="3" class="form-control">{{ old('notes') }}</textarea>
+                    @include('errors.inline', ['message' => $errors->first('notes')])
+                </div>
                 <a href="/particular">Cancel</a>
                 <input type="submit" class="btn btn-primary float-right" value="Save">
             </form>

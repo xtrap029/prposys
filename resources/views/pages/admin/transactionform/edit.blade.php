@@ -239,7 +239,36 @@
                                         <tr>
                                             <th style="width: 100px">Qty.</th>
                                             <th>Description</th>
-                                            <th>Expense Type</th>
+                                            <th>
+                                                Expense Type
+                                                <a href="" class="align-bottom" data-toggle="modal" data-target="#modal-particulars">
+                                                    <i class="material-icons text-md align-middle pb-1">info</i>
+                                                </a>
+                                                <div class="modal fade" id="modal-particulars" tabindex="-1" role="dialog" aria-hidden="true">
+                                                    <div class="modal-dialog modal-lg" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header border-0">
+                                                                <h5 class="modal-title">Expense Types</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <table class="table font-weight-normal">
+                                                                    <tbody>
+                                                                        @foreach ($particulars as $item)
+                                                                            <tr>
+                                                                                <td class="w-25 font-weight-bold">{{ $item->name }}</td>
+                                                                                <td>{{ $item->notes }}</td>
+                                                                            </tr>
+                                                                        @endforeach
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </th>
                                             <th>Amount</th>
                                             <th></th>
                                         </tr>

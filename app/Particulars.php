@@ -12,7 +12,7 @@ class Particulars extends Model {
     protected $guarded = [];
 
     use LogsActivity;
-    protected static $logAttributes = ['name', 'type'];
+    protected static $logAttributes = ['name', 'notes', 'type'];
     protected static $logName = 'Particulars';
     protected static $logOnlyDirty = true;
 }
