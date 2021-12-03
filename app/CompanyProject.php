@@ -16,6 +16,6 @@ class CompanyProject extends Model {
     protected static $logName = 'Company Project';
 
     public function company() {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(Company::class)->withTrashed();
     }
 }
