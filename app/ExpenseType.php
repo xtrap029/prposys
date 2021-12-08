@@ -12,7 +12,7 @@ class ExpenseType extends Model {
     protected $guarded = [];
 
     use LogsActivity;
-    protected static $logAttributes = ['name'];
+    protected static $logAttributes = ['name', 'notes'];
     protected static $logName = 'Expense Type';
     protected static $logOnlyDirty = true;
 }

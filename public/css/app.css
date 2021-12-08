@@ -44274,6 +44274,10 @@ footer ul li:last-child .material-icons {
   background-color: #0076A8 !important;
 }
 
+.chosen-container {
+  width: 100% !important;
+}
+
 @page {
   size: auto;
 }

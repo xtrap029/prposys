@@ -139,7 +139,7 @@
                                                             <div class="modal-body">
                                                                 <table class="table font-weight-normal">
                                                                     <tbody>
-                                                                        @foreach ($particulars as $item)
+                                                                        @foreach ($expense_types as $item)
                                                                             <tr>
                                                                                 <td class="w-25 font-weight-bold">{{ $item->name }}</td>
                                                                                 <td>{{ $item->notes }}</td>
@@ -161,10 +161,10 @@
                                             <td><input type="number" min="1" step="any" class="form-control jsMath_qty jsMath_trigger" name="qty[]" value="{{ old('qty.0') ? old('qty.0') : 1 }}" required></td>
                                             <td><input type="text" class="form-control" name="description[]" value="{{ old('description.0') }}" required></td>
                                             <td>
-                                                <select name="particulars_id[]" class="form-control" required>
+                                                <select name="expense_type_id[]" class="form-control" required>
                                                     <option value="">- Select -</option>
-                                                    @foreach ($particulars as $item)
-                                                        <option value="{{ $item->id }}" {{ old('particulars_id.0') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                    @foreach ($expense_types as $item)
+                                                        <option value="{{ $item->id }}" {{ old('expense_type_id.0') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                                     @endforeach
                                                 </select>
                                             </td>
@@ -184,10 +184,10 @@
                                                         <td><input type="number" min="1" step="any" class="form-control jsMath_qty jsMath_trigger" name="qty[]" value="{{ old('qty.'.$key) }}" required></td>
                                                         <td><input type="text" class="form-control" name="description[]" value="{{ old('description.'.$key) }}" required></td>
                                                         <td>
-                                                            <select name="particulars_id[]" class="form-control" required>
+                                                            <select name="expense_type_id[]" class="form-control" required>
                                                                 <option value="">- Select -</option>
-                                                                @foreach ($particulars as $particulars_item)
-                                                                    <option value="{{ $particulars_item->id }}" {{ old('particulars_id.'.$key) == $particulars_item->id ? 'selected' : '' }}>{{ $particulars_item->name }}</option>
+                                                                @foreach ($expense_types as $expense_type_item)
+                                                                    <option value="{{ $expense_type_item->id }}" {{ old('expense_type_id.'.$key) == $expense_type_item->id ? 'selected' : '' }}>{{ $expense_type_item->name }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </td>
@@ -238,9 +238,9 @@
                         <td><input type="number" min="1" step="any" class="form-control jsMath_qty jsMath_trigger" name="qty[]" value="1" required></td>
                         <td><input type="text" class="form-control" name="description[]" required></td>
                         <td>
-                            <select name="particulars_id[]" class="form-control" required>
+                            <select name="expense_type_id[]" class="form-control" required>
                                 <option value="">- Select -</option>
-                                @foreach ($particulars as $item)
+                                @foreach ($expense_types as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                                 @endforeach
                             </select>

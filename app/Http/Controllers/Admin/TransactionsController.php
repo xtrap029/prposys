@@ -931,6 +931,8 @@ class TransactionsController extends Controller {
         $trans_particulars = '';
         $trans_currency = '';
 
+        $status_name = [];
+
         $transactions = Transaction::orderBy('id', 'desc');
 
         $user_logged = User::where('id', auth()->id())->first();
@@ -969,7 +971,6 @@ class TransactionsController extends Controller {
 
         if (!empty($_GET['s'])) {
             $trans_s = $_GET['s'];
-
             $transactions = $transactions->where(static function ($query) use ($trans_s) {
                                         $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$trans_s."%")
                                             ->orWhereHas('particulars', function($query) use($trans_s) {
@@ -1037,9 +1038,18 @@ class TransactionsController extends Controller {
             $transactions = $transactions->whereIn('project_id', $projects);
         }        
         if (!empty($_GET['status'])) {
-            $transactions = $transactions->whereIn('status_id', explode(',', $_GET['status']));
+            $transactions = $transactions->whereIn('status_id', $_GET['status']);
             // $status_sel = TransactionStatus::where('id', $_GET['status'])->first()->name;
             $trans_status = $_GET['status'];
+            
+            if ($_GET['status'] != "") {
+                foreach ($_GET['status'] as $key => $value) {
+                    $status_name[] = config('global.status_filter_reports')[array_search($value, array_column(config('global.status_filter_reports'), 1))][0];
+                }
+            }
+            $status_name = implode(', ', $status_name);
+        } else {
+            $status_name = 'All';
         }
         if (!empty($_GET['category'])) {
             if ($_GET['category'] == 'is_reg') {
@@ -1189,7 +1199,7 @@ class TransactionsController extends Controller {
             // fputcsv($file, $columns);
             $columns3 = array(
                 $trans_type_csv,
-                isset($_GET['status']) && $_GET['status'] != "" ? config('global.status_filter_reports')[array_search($_GET['status'], array_column(config('global.status_filter_reports'), 1))][0] : 'All',
+                $status_name,
                 $trans_from != '' ? $trans_from : '-',
                 $trans_to != '' ? $trans_to : '-',
                 User::where('id', auth()->id())->first()->name,
@@ -1280,7 +1290,8 @@ class TransactionsController extends Controller {
                 'trans_bal' => $trans_bal,
                 'trans_project' => $trans_project,
                 'trans_template' => $trans_template,
-                'trans_s' => $trans_s
+                'trans_s' => $trans_s,
+                'status_name' => $status_name
             ]);
         }
     }

@@ -278,14 +278,25 @@
                                             <tr>
                                                 <td><input type="number" min="1" step="any" class="form-control jsMath_qty jsMath_trigger" name="qty[]" value="{{ $transaction->transaction_description[0]->qty }}" required></td>
                                                 <td><input type="text" class="form-control" name="description[]" value="{{ $transaction->transaction_description[0]->description }}" required></td>
-                                                <td>
-                                                    <select name="particulars_id[]" class="form-control" required>
-                                                        <option value="">- Select -</option>
-                                                        @foreach ($particulars as $item)
-                                                        <option value="{{ $item->id }}" {{ $transaction->transaction_description[0]->particulars_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
+                                                @if ($transaction->transaction_description[0]->particulars_id)
+                                                    <td>
+                                                        <select name="particulars_id[]" class="form-control" required>
+                                                            <option value="">- Select -</option>
+                                                            @foreach ($particulars as $item)
+                                                            <option value="{{ $item->id }}" {{ $transaction->transaction_description[0]->particulars_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                @else
+                                                    <td>
+                                                        <select name="expense_type_id[]" class="form-control" required>
+                                                            <option value="">- Select -</option>
+                                                            @foreach ($expense_types as $item)
+                                                            <option value="{{ $item->id }}" {{ $transaction->transaction_description[0]->expense_type_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                @endif
                                                 <td colspan="2">
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
@@ -300,10 +311,10 @@
                                                 <td><input type="number" min="1" step="any" class="form-control jsMath_qty jsMath_trigger" name="qty[]" value="{{ old('qty.0') ? old('qty.0') : 1 }}" required></td>
                                                 <td><input type="text" class="form-control" name="description[]" value="{{ old('description.0') }}" required></td>
                                                 <td>
-                                                    <select name="particulars_id[]" class="form-control" required>
+                                                    <select name="expense_type_id[]" class="form-control" required>
                                                         <option value="">- Select -</option>
-                                                        @foreach ($particulars as $item)
-                                                            <option value="{{ $item->id }}" {{ old('particulars_id.0') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                        @foreach ($expense_types as $item)
+                                                            <option value="{{ $item->id }}" {{ old('expense_type_id.0') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </td>
@@ -322,14 +333,25 @@
                                                 <tr class="jsReplicate_template_item">
                                                     <td><input type="number" min="1" step="any" class="form-control jsMath_qty jsMath_trigger" name="qty[]" value="{{ $item->qty }}" required></td>
                                                     <td><input type="text" class="form-control" name="description[]" value="{{ $item->description }}" required></td>
-                                                    <td>
-                                                        <select name="particulars_id[]" class="form-control" required>
-                                                            <option value="">- Select -</option>
-                                                            @foreach ($particulars as $particulars_item)
-                                                                <option value="{{ $particulars_item->id }}" {{ $item->particulars_id == $particulars_item->id ? 'selected' : '' }}>{{ $particulars_item->name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </td>
+                                                    @if ($transaction->transaction_description[0]->particulars_id)
+                                                        <td>
+                                                            <select name="particulars_id[]" class="form-control" required>
+                                                                <option value="">- Select -</option>
+                                                                @foreach ($particulars as $particulars_item)
+                                                                    <option value="{{ $particulars_item->id }}" {{ $item->particulars_id == $particulars_item->id ? 'selected' : '' }}>{{ $particulars_item->name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </td>
+                                                    @else
+                                                        <td>
+                                                            <select name="expense_type_id[]" class="form-control" required>
+                                                                <option value="">- Select -</option>
+                                                                @foreach ($expense_types as $expense_type_item)
+                                                                    <option value="{{ $expense_type_item->id }}" {{ $item->expense_type_id == $expense_type_item->id ? 'selected' : '' }}>{{ $expense_type_item->name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </td>
+                                                    @endif
                                                     <td>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
@@ -375,14 +397,25 @@
                     <tr class="jsReplicate_template_item">
                         <td><input type="number" min="1" step="any" class="form-control jsMath_qty jsMath_trigger" name="qty[]" value="1" required></td>
                         <td><input type="text" class="form-control" name="description[]" required></td>
-                        <td>
-                            <select name="particulars_id[]" class="form-control" required>
-                                <option value="">- Select -</option>
-                                @foreach ($particulars as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        </td>
+                        @if ($transaction->transaction_description[0]->particulars_id)
+                            <td>
+                                <select name="particulars_id[]" class="form-control" required>
+                                    <option value="">- Select -</option>
+                                    @foreach ($particulars as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+                            </td>                            
+                        @else
+                            <td>
+                                <select name="expense_type_id[]" class="form-control" required>
+                                    <option value="">- Select -</option>
+                                    @foreach ($expense_types as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+                            </td>  
+                        @endif
                         <td>
                             <div class="input-group">
                                 <div class="input-group-prepend">

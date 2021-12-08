@@ -49,7 +49,8 @@
             ['Cancelled', '3'],
         ],
         'status_filter_reports' => [
-            ['Generated', '1,5'],
+            ['Generated', '1'],
+            ['Form/Generated', '5'],
             ['For Approval', '6'],
             ['Issued', '4'],
             ['Liq./Generated', '7'],

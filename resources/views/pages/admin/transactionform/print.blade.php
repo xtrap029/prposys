@@ -172,7 +172,7 @@
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $item_desc->qty }}</td>
                                     <td>{{ $item_desc->description }}</td>
-                                    <td>{{ $item_desc->particulars->name }}</td>
+                                    <td>{{ $item_desc->particulars_id ? $item_desc->particulars->name : $item_desc->expensetype->name }}</td>
                                     <td class="text-right">{{ number_format($item_desc->amount, 2, '.', ',') }}</td>
                                     <td class="text-right">{{ number_format($item_desc->amount * $item_desc->qty, 2, '.', ',') }}</td>
                                 </tr>

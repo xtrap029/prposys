@@ -235,7 +235,7 @@
                     </div>
                     <div class="card-body bg-gray-light">
                         <div class="row">
-                            <div class="col-sm-6 col-md-2 my-1">
+                            <div class="col-sm-6 col-md-3 my-1">
                                 <label for="">
                                     <a href="/report-template" target="_blank">Add/Edit Template</a>
                                 </label>
@@ -251,7 +251,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-sm-6 col-md-1 my-1">
+                            <div class="col-sm-6 col-md-3 my-1">
                                 <label for="">Type</label>
                                 <select name="type" class="form-control form-control-sm">
                                     <option value="">All</option>
@@ -259,16 +259,15 @@
                                     <option value="po" {{ $trans_type == "po" ? 'selected' : '' }}>PO</option>
                                 </select>
                             </div>
-                            <div class="col-sm-6 col-md-1 my-1">
+                            <div class="col-sm-6 my-1">
                                 <label for="">Status</label>
-                                <select name="status" class="form-control form-control-sm">
-                                    <option value="">All</option>
+                                <select name="status[]" class="form-control form-control-sm chosen-select" multiple>
                                     @foreach (config('global.status_filter_reports') as $item)
-                                        <option value="{{ $item[1] }}" {{ !empty($_GET['status']) && $_GET['status'] == $item[1] ? 'selected' : '' }}>{{ $item[0] }}</option>
+                                        <option value="{{ $item[1] }}" {{ !empty($_GET['status']) && in_array($item[1], $_GET['status']) ? 'selected' : '' }}>{{ $item[0] }}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-sm-6 col-md-2 my-1">
+                            <div class="col-sm-6 col-md-3 my-1">
                                 <label for="">Company</label>
                                 <select name="company" class="form-control form-control-sm">
                                     <option value="">All</option>
@@ -277,7 +276,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-2 my-1">
+                            <div class="col-md-3 my-1">
                                 <label for="">Category</label>
                                 <select name="category" class="form-control form-control-sm">
                                     <option value="">All</option>
@@ -286,11 +285,11 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-sm-6 col-md-2 my-1">
+                            <div class="col-sm-6 col-md-3 my-1">
                                 <label for="">Date From</label>
                                 <input type="date" name="from" class="form-control form-control-sm" value="{{ !empty($_GET['from']) ? $_GET['from'] : '' }}">
                             </div>
-                            <div class="col-sm-6 col-md-2 my-1">
+                            <div class="col-sm-6 col-md-3 my-1">
                                 <label for="">Date To</label>
                                 <input type="date" name="to" class="form-control form-control-sm" value="{{ !empty($_GET['to']) ? $_GET['to'] : '' }}">
                             </div>
@@ -377,7 +376,7 @@
                             <tr>
                                 <td class="border-0 pr-3">Status</td>
                                 {{-- <td class="border-0 font-weight-bold">{{ $status_sel != '' ? $status_sel : 'All' }}</td> --}}
-                                <td class="border-0 font-weight-bold">{{ isset($_GET['status']) && $_GET['status'] != "" ? config('global.status_filter_reports')[array_search($_GET['status'], array_column(config('global.status_filter_reports'), 1))][0] : 'All' }}</td>
+                                <td class="border-0 font-weight-bold">{{ $status_name }}</td>
                             </tr>
                             <tr>
                                 <td class="border-0 pr-3">Start Date</td>
@@ -446,4 +445,15 @@
             </div>
         </div>
     </section>
+@endsection
+
+@section('style')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.css" integrity="sha512-0nkKORjFgcyxv3HbE4rzFUlENUMNqic/EzDIeYCgsKa/nwqr2B91Vu/tNAu4Q0cBuG4Xe/D1f/freEci/7GDRA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+@endsection
+
+@section('script')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js" integrity="sha512-rMGGF4wg1R73ehtnxXBt5mbUfN9JUJwbk21KMlnLZDJh7BkPmeovBuddZCENJddHYYMkCh9hPFnPmS9sspki8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript">
+        $('.chosen-select').chosen();
+    </script>
 @endsection

@@ -19,6 +19,7 @@ class TransactionsDescription extends Model {
                                         'description',
                                         'qty',
                                         'particulars.name',
+                                        'expensetype.name',
                                         'amount'
                                         ];
     protected static $logName = 'Transaction Descriptions';
@@ -30,5 +31,9 @@ class TransactionsDescription extends Model {
 
     public function particulars() {
         return $this->belongsTo(Particulars::class)->withTrashed();
+    }
+
+    public function expensetype() {
+        return $this->belongsTo(ExpenseType::class, 'expense_type_id')->withTrashed();
     }
 }

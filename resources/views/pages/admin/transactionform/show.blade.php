@@ -474,7 +474,7 @@
                                             <tr>
                                                 <td>{{ $item_desc->qty }}</td>
                                                 <td>{{ $item_desc->description }}</td>
-                                                <td>{{ $item_desc->particulars->name }}</td>
+                                                <td>{{ $item_desc->expense_type_id ? $item_desc->expensetype->name : $item_desc->particulars->name }}</td>
                                                 <td class="text-right">{{ number_format($item_desc->amount, 2, '.', ',') }}</td>
                                                 <td class="text-right">{{ number_format($item_desc->amount * $item_desc->qty, 2, '.', ',') }}</td>
                                             </tr>

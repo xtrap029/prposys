@@ -196,7 +196,7 @@ class TransactionsFormsController extends Controller {
         }
 
         $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orWhereNull('company_id')->orderBy('name', 'asc')->get();
-        $particulars = Particulars::where('type', $transaction->trans_type)->orderBy('name', 'asc')->get();
+        $expense_types = ExpenseType::orderBy('name', 'asc')->get();
         $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('name', 'asc')->get();
 
         if ($transaction->is_deposit)
@@ -218,7 +218,7 @@ class TransactionsFormsController extends Controller {
             'transaction' => $transaction,
             'company' => $transaction->project->company,
             'coa_taggings' => $coa_taggings,
-            'particulars' => $particulars,
+            'expense_types' => $expense_types,
             'vat_types' => $vat_types
         ]);
     }
@@ -310,7 +310,7 @@ class TransactionsFormsController extends Controller {
 
         $data_desc = $request->validate([
             'qty.*' => ['required', 'min:1'],
-            'particulars_id.*' => ['required', 'exists:particulars,id'],
+            'expense_type_id.*' => ['required', 'exists:expense_types,id'],
             'description.*' => ['required'],
             'amount.*' => ['required', 'min:0']
         ]);
@@ -322,7 +322,7 @@ class TransactionsFormsController extends Controller {
         foreach ($data_desc['qty'] as $key => $value) {
             $attr_desc['qty'] = $value;
             $attr_desc['description'] = $data_desc['description'][$key];
-            $attr_desc['particulars_id'] = $data_desc['particulars_id'][$key];
+            $attr_desc['expense_type_id'] = $data_desc['expense_type_id'][$key];
             $attr_desc['amount'] = $data_desc['amount'][$key];
 
             TransactionsDescription::create($attr_desc);
@@ -551,7 +551,7 @@ class TransactionsFormsController extends Controller {
         }
 
         $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orWhereNull('company_id')->orderBy('name', 'asc')->get();
-        // $expense_types = ExpenseType::orderBy('name', 'asc')->get();
+        $expense_types = ExpenseType::orderBy('name', 'asc')->get();
         $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('name', 'asc')->get();
         $particulars = Particulars::where('type', $transaction->trans_type)->orderBy('name', 'asc')->get();
         $projects = CompanyProject::where('company_id', $transaction->project->company_id)->orderBy('project', 'asc')->get();
@@ -577,6 +577,7 @@ class TransactionsFormsController extends Controller {
             'coa_taggings' => $coa_taggings,
             'vat_types' => $vat_types,
             'particulars' => $particulars,
+            'expense_types' => $expense_types,
             'users' => $users,
             'projects' => $projects
         ]);
@@ -685,7 +686,8 @@ class TransactionsFormsController extends Controller {
 
         $data_desc = $request->validate([
             'qty.*' => ['required', 'min:1'],
-            'particulars_id.*' => ['required', 'exists:particulars,id'],
+            'particulars_id.*' => ['nullable', 'exists:particulars,id'],
+            'expense_type_id.*' => ['nullable', 'exists:expense_types,id'],
             'description.*' => ['required'],
             'amount_desc.*' => ['required', 'min:0']
         ]);
@@ -699,7 +701,12 @@ class TransactionsFormsController extends Controller {
         foreach ($data_desc['qty'] as $key => $value) {
             $attr_desc['qty'] = $value;
             $attr_desc['description'] = $data_desc['description'][$key];
-            $attr_desc['particulars_id'] = $data_desc['particulars_id'][$key];
+            if (isset($data_desc['particulars_id'][$key])) {
+                $attr_desc['particulars_id'] = $data_desc['particulars_id'][$key];
+            }
+            if (isset($data_desc['expense_type_id'][$key])) {
+                $attr_desc['expense_type_id'] = $data_desc['expense_type_id'][$key];
+            }
             $attr_desc['amount'] = $data_desc['amount_desc'][$key];
 
             TransactionsDescription::create($attr_desc);

@@ -21,7 +21,8 @@ class ExpenseTypesController extends Controller {
 
     public function store(Request $request) {
         $data = $request->validate([
-            'name' => ['required', Rule::unique('expense_types')->whereNull('deleted_at')]
+            'name' => ['required', Rule::unique('expense_types')->whereNull('deleted_at')],
+            'notes' => ['nullable', 'string'],
         ]);
         $data['owner_id'] = auth()->id();
         $data['updated_id'] = auth()->id();
@@ -39,7 +40,8 @@ class ExpenseTypesController extends Controller {
 
     public function update(Request $request, ExpenseType $expenseType) {
         $data = $request->validate([
-            'name' => ['required', Rule::unique('expense_types')->ignore($expenseType->id)->whereNull('deleted_at')]
+            'name' => ['required', Rule::unique('expense_types')->ignore($expenseType->id)->whereNull('deleted_at')],
+            'notes' => ['nullable', 'string'],
         ]);
         $data['updated_id'] = auth()->id();
 
