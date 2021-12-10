@@ -256,7 +256,7 @@
                                                             <div class="modal-body">
                                                                 <table class="table font-weight-normal">
                                                                     <tbody>
-                                                                        @foreach ($particulars as $item)
+                                                                        @foreach ($expense_types as $item)
                                                                             <tr>
                                                                                 <td class="w-25 font-weight-bold">{{ $item->name }}</td>
                                                                                 <td>{{ $item->notes }}</td>
