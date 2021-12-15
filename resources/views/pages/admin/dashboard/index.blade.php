@@ -32,7 +32,7 @@
                                     <h5 class="description-header">Hired</h5>
                                     <span>  
                                         @if ($user->e_hire_date)
-                                            {{ Carbon::parse($user->e_hire_date)->diffInDays(Carbon::now()) >= 1 ? Carbon::parse($user->e_hire_date)->format('Y-m-d') : $user->e_hire_date->diffForHumans() }}
+                                            {{ Carbon::parse($user->e_hire_date)->diffInDays(Carbon::now()) >= 1 ? Carbon::parse($user->e_hire_date)->format('Y-m-d') : Carbon::parse($user->e_hire_date)->diffForHumans() }}
                                         @else
                                             -
                                         @endif
