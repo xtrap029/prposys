@@ -28,25 +28,11 @@
                 <input type="hidden" name="trans_type" value="{{ $trans_type }}">
 
                 <div class="form-row mb-3">
-                    {{-- <div class="col-md-6">
-                        <label for="">Particulars</label>
-                        @if ($trans_page == 'prpo')
-                            <select name="particulars_id" class="form-control @error('particulars_id') is-invalid @enderror">
-                                @foreach ($particulars as $item)
-                                    <option value="{{ $item->id }}" {{ $item->id == old('particulars_id') ? 'selected' : '' }}>{{ $item->name }}</option>                                        
-                                @endforeach
-                            </select>
-                            @include('errors.inline', ['message' => $errors->first('particulars_id')])
-                        @else
-                            <input type="text" class="form-control @error('particulars_custom') is-invalid @enderror" name="particulars_custom" value="{{ old('particulars_custom') }}" required>
-                            @include('errors.inline', ['message' => $errors->first('particulars_custom')])
-                        @endif
-                    </div> --}}
                     <div class="col-sm-5 col-lg-7 mb-2">
                         <label for="">Project</label>
                         <select name="project_id" class="form-control @error('project_id') is-invalid @enderror">
                             @foreach ($projects as $item)
-                                <option value="{{ $item->id }}" {{ $item->id == old('project_id') ? 'selected' : (isset($_GET['project_id']) && $item->id == $_GET['project_id'] ? 'selected' : strtolower($item->project) == "none" ? 'selected' : '') }}>{{ $item->project }}</option>                                        
+                                <option value="{{ $item->id }}" {{ $item->id == old('project_id') ? 'selected' : (isset($_GET['project_id']) && $item->id == $_GET['project_id'] ? 'selected' : (strtolower($item->project) == "none" ? 'selected' : '')) }}>{{ $item->project }}</option>                                        
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('project_id')])

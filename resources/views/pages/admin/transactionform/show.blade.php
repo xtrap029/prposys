@@ -481,8 +481,8 @@
                                         @endforeach
                                         <tr class="font-weight-bold">
                                             <td colspan="3" class="text-right">
-                                                {{ $transaction->form_amount_vat && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_vat : $transaction->vattype->vat 
-                                                    + $transaction->form_amount_wht && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_wht : $transaction->vattype->wht == 0 ? 'Total' : 'Subtotal' }}
+                                                {{ $transaction->form_amount_vat && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_vat : (($transaction->vattype->vat 
+                                                    + $transaction->form_amount_wht) && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_wht : ($transaction->vattype->wht == 0 ? 'Total' : 'Subtotal')) }}
                                             </td>
                                             <td colspan="2" class="text-right">{{ number_format($transaction->form_amount_subtotal && !in_array($transaction->status_id, config('global.generated_form')) ? $transaction->form_amount_subtotal : $transaction->custom_subtotal, 2, '.', ',') }}</td>
                                         </tr>

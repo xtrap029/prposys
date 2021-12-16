@@ -158,39 +158,84 @@
                                     </tr>
                                 </thead>
                                 <tbody class="jsReplicate_container">
-                                    <tr>
-                                        <td><input type="date" class="form-control" name="date[]" value="{{ old('date.0') ?: $transaction->due_at }}" required></td>
-                                        <td>
-                                            <select name="project_id[]" class="form-control" required>
-                                                @foreach ($projects as $item)
-                                                    <option value="{{ $item->id }}" {{ old('project_id.0') == $item->id ? 'selected' : $item->id == $transaction->project_id ? 'selected' : '' }}>{{ $item->project }}</option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <select name="expense_type_id[]" class="form-control" required>
-                                                @foreach ($expense_types as $item)
-                                                    <option value="{{ $item->id }}" {{ old('expense_type_id.0') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                        <td><input type="text" class="form-control" name="description[]" value="{{ old('description.0') ?: $transaction->transaction_description[0]->description }}" required></td>
-                                        <td><input type="text" class="form-control" name="location[]" value="{{ old('location.0') }}" required></td>
-                                        <td class="text-center">
-                                            <select name="receipt[]" class="form-control">
-                                                <option value="1" {{ old('receipt.0') == 1 ? 'selected' : '' }}>Y</option>
-                                                <option value="0" {{ old('receipt.0') == 0 ? 'selected' : '' }}>N</option>
-                                            </select>
-                                        </td>
-                                        <td colspan="2">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">{{ $transaction->currency }}</span>
-                                                </div>
-                                                <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ old('amount.0') }}" required>
-                                            </div>  
-                                        </td>
-                                    </tr>
+                                    @if (!old('date'))
+                                        @foreach ($transaction->transaction_description as $key => $item)
+                                            <tr class="jsReplicate_template_item">
+                                                <td><input type="date" class="form-control" name="date[]" value="{{ $transaction->due_at }}" required></td>
+                                                <td>
+                                                    <select name="project_id[]" class="form-control" required>
+                                                        @foreach ($projects as $project)
+                                                            <option value="{{ $project->id }}" {{ $item->id == $transaction->project_id ? 'selected' : '' }}>{{ $project->project }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select name="expense_type_id[]" class="form-control" required>
+                                                        @foreach ($expense_types as $expense_type)
+                                                            <option value="{{ $expense_type->id }}" {{ $item->expensetype->id == $expense_type->id ? 'selected' : '' }}>{{ $expense_type->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td><input type="text" class="form-control" name="description[]" value="{{ $item->description }}" required></td>
+                                                <td><input type="text" class="form-control" name="location[]" required></td>
+                                                <td class="text-center">
+                                                    <select name="receipt[]" class="form-control">
+                                                        <option value="1">Y</option>
+                                                        <option value="0" selected>N</option>
+                                                    </select>
+                                                </td>
+                                                @if ($key == 0)
+                                                    <td colspan="2">
+                                                @else    
+                                                    <td>
+                                                @endif
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">{{ $transaction->currency }}</span>
+                                                        </div>
+                                                        <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ $item->amount }}" required>
+                                                    </div>  
+                                                </td>
+                                                @if ($key != 0)
+                                                    <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                                @endif
+                                            </tr>
+                                        @endforeach  
+                                    @else
+                                        <tr>
+                                            <td><input type="date" class="form-control" name="date[]" value="{{ old('date.0') }}" required></td>
+                                            <td>
+                                                <select name="project_id[]" class="form-control" required>
+                                                    @foreach ($projects as $item)
+                                                        <option value="{{ $item->id }}" {{ old('project_id.0') == $item->id ? 'selected' : '' }}>{{ $item->project }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select name="expense_type_id[]" class="form-control" required>
+                                                    @foreach ($expense_types as $item)
+                                                        <option value="{{ $item->id }}" {{ old('expense_type_id.0') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td><input type="text" class="form-control" name="description[]" value="{{ old('description.0') }}" required></td>
+                                            <td><input type="text" class="form-control" name="location[]" value="{{ old('location.0') }}" required></td>
+                                            <td class="text-center">
+                                                <select name="receipt[]" class="form-control">
+                                                    <option value="1" {{ old('receipt.0') == 1 ? 'selected' : '' }}>Y</option>
+                                                    <option value="0" {{ old('receipt.0') == 0 ? 'selected' : '' }}>N</option>
+                                                </select>
+                                            </td>
+                                            <td colspan="2">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">{{ $transaction->currency }}</span>
+                                                    </div>
+                                                    <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ old('amount.0') }}" required>
+                                                </div>  
+                                            </td>
+                                        </tr>
+                                    @endif
                                     @if (old('date'))
                                         @foreach (old('date') as $key => $item)
                                             @if ($key > 0)
@@ -199,7 +244,7 @@
                                                     <td>
                                                         <select name="project_id[]" class="form-control" required>
                                                             @foreach ($projects as $project)
-                                                                <option value="{{ $project->id }}" {{ old('project_id.'.$key) == $project->id ? 'selected' : strtolower($item->project) == "none" ? 'selected' : '' }}>{{ $project->project }}</option>
+                                                                <option value="{{ $project->id }}" {{ old('project_id.'.$key) == $project->id ? 'selected' : '' }}>{{ $project->project }}</option>
                                                             @endforeach
                                                         </select>
                                                     </td>
