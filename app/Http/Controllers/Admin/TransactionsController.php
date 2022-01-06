@@ -53,6 +53,7 @@ class TransactionsController extends Controller {
         $trans_status = TransactionStatus::whereIn('id', config('global.status'))->get();
         $companies = Company::orderBy('name', 'asc')->get();
         $company = Company::where('id', $trans_company)->first();
+        $projects = CompanyProject::where('company_id', $trans_company)->get();
         $users = User::where('ua_level_id', '!=', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
         $users_inactive = User::where('ua_level_id', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
 
@@ -83,6 +84,7 @@ class TransactionsController extends Controller {
             || !empty($_GET['status'])
             || !empty($_GET['user_req'])
             || !empty($_GET['user_prep'])
+            || !empty($_GET['project'])
             || !empty($_GET['due_from'])
             || !empty($_GET['due_to'])
             || !empty($_GET['bal'])) {
@@ -135,6 +137,7 @@ class TransactionsController extends Controller {
             if ($_GET['status'] != "") $transactions = $transactions->whereIn('status_id', explode(',', $_GET['status']));
             if ($_GET['user_req'] != "") $transactions = $transactions->where('requested_id', $_GET['user_req']);
             if ($_GET['user_prep'] != "") $transactions = $transactions->where('owner_id', $_GET['user_prep']);
+            if ($_GET['project'] != "") $transactions = $transactions->where('project_id', $_GET['project']);
             if ($_GET['is_confidential'] != "") $transactions = $transactions->where('is_confidential', $_GET['is_confidential']);
             if ($_GET['due_from'] != "") $transactions = $transactions->whereDate('due_at', '>=', $_GET['due_from']);
             if ($_GET['due_to'] != "") $transactions = $transactions->whereDate('due_at', '<=', $_GET['due_to']);
@@ -173,6 +176,7 @@ class TransactionsController extends Controller {
             $transactions->appends(['category' => $_GET['category']]);
             $transactions->appends(['user_req' => $_GET['user_req']]);
             $transactions->appends(['user_prep' => $_GET['user_prep']]);
+            $transactions->appends(['project' => $_GET['project']]);
             $transactions->appends(['due_from' => $_GET['due_from']]);
             $transactions->appends(['due_to' => $_GET['due_to']]);
             $transactions->appends(['bal' => $_GET['bal']]);
@@ -209,6 +213,7 @@ class TransactionsController extends Controller {
             'page_label' => $page_label_index,
             'companies' => $companies,
             'company' => $company,
+            'projects' => $projects,
             'users' => $users,
             'users_inactive' => $users_inactive,
             'transactions' => $transactions
@@ -292,6 +297,7 @@ class TransactionsController extends Controller {
         if ($request->status != "") $transactions = $transactions->whereIn('status_id', explode(',', $request->status));
         if ($request->user_req != "") $transactions = $transactions->where('requested_id', $request->user_req);
         if ($request->user_prep != "") $transactions = $transactions->where('owner_id', $request->user_prep);
+        if ($request->project != "") $transactions = $transactions->where('project_id', $request->project);
         if ($request->due_from != "") $transactions = $transactions->whereDate('due_at', '>=', $request->due_from);
         if ($request->due_to != "") $transactions = $transactions->whereDate('due_at', '<=', $request->due_to);
         if ($request->is_confidential != "") $transactions = $transactions->where('is_confidential', $request->is_confidential);

@@ -117,7 +117,15 @@
                             <input type="date" name="due_to" class="form-control filterSearch_select" value="{{ app('request')->input('due_to') }}">
                         </div>
                     </div>
-                    <div class="mb-2 col-md-4 col-xl-4 {{ Auth::user()->is_smt ? '' : 'd-none' }}">
+                    <div class="mb-2 col-md-2 {{ Auth::user()->is_smt ? '' : 'd-none' }}">
+                        <select name="project" class="form-control filterSearch_select">
+                            <option value="">All Projects</option>
+                            @foreach ($projects as $item)
+                                <option value="{{ $item->id }}" {{ app('request')->input('project') == $item->id ? 'selected' : '' }} class="bg-gray-light">{{ $item->project }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-2 col-md-2 {{ Auth::user()->is_smt ? '' : 'd-none' }}">
                         <select name="is_confidential" class="form-control filterSearch_select">
                             <option value="">All Visibility</option>
                             <option value="0" {{ app('request')->input('is_confidential') == '0' ? 'selected' : '' }}>Not Confidential</option>
@@ -302,6 +310,7 @@
                     || $('[name=status]').val() != ''
                     || $('[name=user_req]').val() != ''
                     || $('[name=user_prep]').val() != ''
+                    || $('[name=project]').val() != ''
                     || $('[name=due_from]').val() != ''
                     || $('[name=due_to]').val() != ''
                     || $('[name=bal]').val() != '') {
@@ -325,6 +334,7 @@
                             'status': $('[name=status]').val(),
                             'user_req': $('[name=user_req]').val(),
                             'user_prep': $('[name=user_prep]').val(),
+                            'project': $('[name=project]').val(),
                             'due_from': $('[name=due_from]').val(),
                             'due_to': $('[name=due_to]').val(),
                             'bal': $('[name=bal]').val(),
