@@ -172,7 +172,7 @@
                                                 <td>
                                                     <select name="expense_type_id[]" class="form-control" required>
                                                         @foreach ($expense_types as $expense_type)
-                                                            <option value="{{ $expense_type->id }}" {{ $item->expensetype->id == $expense_type->id ? 'selected' : '' }}>{{ $expense_type->name }}</option>
+                                                            <option value="{{ $expense_type->id }}" {{ isset($item->expensetype->id) ? ($item->expensetype->id == $expense_type->id ? 'selected' : '') : '' }}>{{ $expense_type->name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </td>
