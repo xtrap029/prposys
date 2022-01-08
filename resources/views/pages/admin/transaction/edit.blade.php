@@ -51,7 +51,12 @@
                     </div>
                     <div class="col-4 col-sm-2 col-lg-1 mb-2">
                         <label for="">Currency</label>
-                        <input type="text" class="form-control {{ $config_confidential ? 'd-none' : '' }}" value="{{ $transaction->currency }}" readonly>
+                        <select name="currency" class="form-control @error('currency') is-invalid @enderror">
+                            @foreach (config('global.currency') as $key => $item)
+                                <option value="{{ config('global.currency_label')[$key] }}" {{ config('global.currency_label')[$key] == $transaction->currency ? 'selected' : '' }}>{{ $item }}</option>
+                            @endforeach
+                        </select>
+                        @include('errors.inline', ['message' => $errors->first('currency')])
                     </div>
                     <div class="col-8 col-sm-5 col-lg-4 mb-2">
                         <label for="">Amount</label>

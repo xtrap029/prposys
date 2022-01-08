@@ -250,17 +250,19 @@
                                     </tr>
                                 </thead>
                                 <tbody class="jsReplicate_container">
-                                    <tr class="jsReplicate_template_item">
-                                        <td>
-                                            <a href="/storage/public/attachments/liquidation/{{ $transaction->attachments[0]->file }}" target="_blank">
-                                                <i class="material-icons mr-2 align-bottom align-text-bottom">attachment</i>
-                                            </a>
-                                            <input type="file" name="file_old[]" class="form-control w-75 d-inline-block overflow-hidden">
-                                            <input type="hidden" name="attachment_id_old[]" value="{{ $transaction->attachments[0]->id }}">
-                                        </td>
-                                        <td><input type="text" name="attachment_description_old[]" class="form-control" value="{{ $transaction->attachments[0]->description }}" required></td>
-                                        <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
-                                    </tr>
+                                    @if (isset($transaction->attachments[0]))
+                                        <tr class="jsReplicate_template_item">
+                                            <td>
+                                                <a href="/storage/public/attachments/liquidation/{{ $transaction->attachments[0]->file }}" target="_blank">
+                                                    <i class="material-icons mr-2 align-bottom align-text-bottom">attachment</i>
+                                                </a>
+                                                <input type="file" name="file_old[]" class="form-control w-75 d-inline-block overflow-hidden">
+                                                <input type="hidden" name="attachment_id_old[]" value="{{ $transaction->attachments[0]->id }}">
+                                            </td>
+                                            <td><input type="text" name="attachment_description_old[]" class="form-control" value="{{ $transaction->attachments[0]->description }}" required></td>
+                                            <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                        </tr>
+                                    @endif
                                     @foreach ($transaction->attachments as $key => $item)
                                         @if ($key > 0)
                                             <tr class="jsReplicate_template_item">

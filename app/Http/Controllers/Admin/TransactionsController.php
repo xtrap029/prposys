@@ -609,6 +609,7 @@ class TransactionsController extends Controller {
         // validate input
         $validation = [
             'amount' => ['required', 'min:0'],
+            'currency' => ['required'],
             'purpose' => ['required'],
             'project_id' => ['required', 'exists:company_projects,id'],
             'payee' => ['required'],
