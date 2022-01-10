@@ -117,7 +117,7 @@
                             <input type="date" name="due_to" class="form-control filterSearch_select" value="{{ app('request')->input('due_to') }}">
                         </div>
                     </div>
-                    <div class="mb-2 col-md-2 {{ Auth::user()->is_smt ? '' : 'd-none' }}">
+                    <div class="mb-2 col-md-2">
                         <select name="project" class="form-control filterSearch_select">
                             <option value="">All Projects</option>
                             @foreach ($projects as $item)
