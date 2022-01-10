@@ -193,7 +193,7 @@
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">{{ $transaction->currency }}</span>
                                                         </div>
-                                                        <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ $item->amount }}" required>
+                                                        <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ $item->qty*$item->amount }}" required>
                                                     </div>  
                                                 </td>
                                                 @if ($key != 0)
