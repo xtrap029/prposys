@@ -37,6 +37,7 @@ class Transaction extends Model {
                                         'releasedby.name',
                                         'released_at',
                                         'amount_issued',
+                                        'issue_slip',
                                         'cancellation_number',
                                         'cancellation_reason',
                                         'form_vat_code',

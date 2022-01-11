@@ -265,6 +265,11 @@
                                                 </select>
                                                 @include('errors.inline', ['message' => $errors->first('released_by_id')])
                                             </div>
+                                            <div id="issue_slip" class="col-md-12 mb-2 {{ $transaction->is_reimbursement ? 'd-none' : '' }}">
+                                                <label for="" class="font-weight-bold">Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than 5mb. )</small></label>
+                                                <input type="file" name="issue_slip" class="form-control @error('issue_slip') is-invalid @enderror" {{ $transaction->is_reimbursement ? '' : 'required' }}>
+                                                @include('errors.inline', ['message' => $errors->first('depo_slip')])
+                                            </div>
                                             <div id="depo_slip" class="col-md-12 mb-2 {{ $transaction->is_reimbursement ? '' : 'd-none' }}">
                                                 <label for="" class="font-weight-bold">Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than 5mb. )</small></label>
                                                 <input type="file" name="depo_slip" class="form-control @error('depo_slip') is-invalid @enderror" {{ $transaction->is_reimbursement ? 'required' : '' }}>
@@ -601,6 +606,12 @@
                                 @else
                                     @if ($transaction->is_bank && $transaction->depo_slip)
                                         <a class="btn btn-app p-2" href="/storage/public/attachments/deposit_slip/{{ $transaction->depo_slip }}" target="_blank">
+                                            <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
+                                            <p class="text-dark">Attachment</p>
+                                        </a>
+                                    @endif
+                                    @if ($transaction->issue_slip)
+                                        <a class="btn btn-app p-2" href="/storage/public/attachments/issue_slip/{{ $transaction->issue_slip }}" target="_blank">
                                             <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
                                             <p class="text-dark">Attachment</p>
                                         </a>

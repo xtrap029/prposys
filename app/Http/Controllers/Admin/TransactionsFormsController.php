@@ -1184,6 +1184,7 @@ class TransactionsFormsController extends Controller {
                 'amount' => ['required', 'min:0'],
                 'payor' => [''],
                 'depo_slip' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
+                'issue_slip' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
                 'released_by_id' => ['required', 'exists:released_by,id'],
                 'form_company_id' => ['required', 'exists:companies,id'],
                 'currency_2' => ['required'],
@@ -1193,6 +1194,10 @@ class TransactionsFormsController extends Controller {
 
             if (($transaction->is_reimbursement || $transaction->is_bank) && $request->file('depo_slip')) {
                 $data['depo_slip'] = basename($request->file('depo_slip')->store('public/attachments/deposit_slip'));
+            }
+
+            if (!$transaction->is_reimbursement && $request->file('issue_slip')) {
+                $data['issue_slip'] = basename($request->file('issue_slip')->store('public/attachments/issue_slip'));
             }
 
             if ($transaction->is_reimbursement) {
