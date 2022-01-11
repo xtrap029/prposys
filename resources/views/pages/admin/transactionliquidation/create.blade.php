@@ -165,7 +165,7 @@
                                                 <td>
                                                     <select name="project_id[]" class="form-control" required>
                                                         @foreach ($projects as $project)
-                                                            <option value="{{ $project->id }}" {{ $item->id == $transaction->project_id ? 'selected' : '' }}>{{ $project->project }}</option>
+                                                            <option value="{{ $project->id }}" {{ $project->id == $transaction->project_id ? 'selected' : '' }}>{{ $project->project }}</option>
                                                         @endforeach
                                                     </select>
                                                 </td>
