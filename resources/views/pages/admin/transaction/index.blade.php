@@ -130,6 +130,7 @@
                             <option value="">All Visibility</option>
                             <option value="0" {{ app('request')->input('is_confidential') == '0' ? 'selected' : '' }}>Not Confidential</option>
                             <option value="1" {{ app('request')->input('is_confidential') == '1' ? 'selected' : '' }}>Confidential</option>
+                            <option value="2" {{ app('request')->input('is_confidential') == '2' ? 'selected' : '' }}>Confidential (Own)</option>
                         </select>
                     </div>
                     <div class="mb-2 col-md-4 col-xl-10">
@@ -182,6 +183,8 @@
                                         if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
                                         // check level parallel confidential
                                         if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential = true;
+                                        // check level own confidential
+                                        if ($item->is_confidential_own && Auth::user()->id != $item->owner->id) $config_confidential = true;
                                     }
                                 ?>
                                 @include('pages.admin.transaction.notesmulti')

@@ -152,13 +152,13 @@
                         <div class="card-header pb-2">
                             <h3 class="card-title">For Approval</h3>
                             <div class="card-tools">
-                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=6&category=&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Show More</a>
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=6&category=&type=&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Show More</a>
                                 <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons text-primary">list</i>
                                 </button>                            
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=6&type=pr&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Payment Release</a>
-                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=6&type=po&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Purchase Order</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=6&type=pr&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Payment Release</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=6&type=po&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Purchase Order</a>
                                     {{-- <a class="dropdown-item" href="transaction/pc/{{ $user->company_id }}?status=6&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Petty Cash</a> --}}
                                 </div>
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -185,6 +185,8 @@
                                         if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
                                         // check level parallel confidential
                                         if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id && Auth::user()->id != $item->requested_id) $config_confidential = true;
+                                        // check level own confidential
+                                        if ($item->is_confidential_own && Auth::user()->id != $item->owner->id && Auth::user()->id != $item->requested_id) $config_confidential = true;
                                     ?>
                                     <tr>
                                         <td>
@@ -238,13 +240,13 @@
                         <div class="card-header pb-2">
                             <h3 class="card-title">Liq./For Approval</h3>
                             <div class="card-tools">
-                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=7,8&category=&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Show More</a>
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=7,8&category=&type=&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Show More</a>
                                 <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons text-primary">list</i>
                                 </button>                            
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=pr&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Payment Release</a>
-                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=po&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Purchase Order</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=pr&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Payment Release</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=po&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Purchase Order</a>
                                     {{-- <a class="dropdown-item" href="transaction-liquidation/pc/{{ $user->company_id }}?status=7,8&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Petty Cash</a> --}}
                                 </div>
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -271,6 +273,8 @@
                                         if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
                                         // check level parallel confidential
                                         if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id && Auth::user()->id != $item->requested_id) $config_confidential = true;
+                                        // check level own confidential
+                                        if ($item->is_confidential_own && Auth::user()->id != $item->owner->id && Auth::user()->id != $item->requested_id) $config_confidential = true;
                                     ?>
                                     <tr>
                                         <td>
@@ -330,13 +334,13 @@
                         <div class="card-header pb-2">
                             <h3 class="card-title">Generated</h3>
                             <div class="card-tools">
-                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=1,5&category=&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Show More</a>
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=1,5&category=&type=&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Show More</a>
                                 <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons text-primary">list</i>
                                 </button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=1,5&type=pr&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Payment Release</a>
-                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=1,5&type=po&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Purchase Order</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=1,5&type=pr&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Payment Release</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=1,5&type=po&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Purchase Order</a>
                                     {{-- <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=1,5issued&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Petty Cash</a> --}}
                                 </div>
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -363,6 +367,8 @@
                                         if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
                                         // check level parallel confidential
                                         if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id && Auth::user()->id != $item->requested_id) $config_confidential = true;
+                                        // check level own confidential
+                                        if ($item->is_confidential_own && Auth::user()->id != $item->owner->id && Auth::user()->id != $item->requested_id) $config_confidential = true;
                                     ?>
                                     <tr>
                                         <td>
@@ -410,13 +416,13 @@
                         <div class="card-header pb-2">
                             <h3 class="card-title">Unliquidated</h3>
                             <div class="card-tools">
-                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=4&category=&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Show More</a>
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=4&category=&type=&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Show More</a>
                                 <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons text-primary">list</i>
                                 </button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=4&type=pr&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Payment Release</a>
-                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=4&type=po&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Purchase Order</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=4&type=pr&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Payment Release</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=4&type=po&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Purchase Order</a>
                                     {{-- <a class="dropdown-item" href="transaction-form/pc/{{ $user->company_id }}?status=issued&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Petty Cash</a> --}}
                                 </div>
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -443,6 +449,8 @@
                                         if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
                                         // check level parallel confidential
                                         if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id && Auth::user()->id != $item->requested_id) $config_confidential = true;
+                                        // check level own confidential
+                                        if ($item->is_confidential_own && Auth::user()->id != $item->owner->id && Auth::user()->id != $item->requested_id) $config_confidential = true;
                                     ?>
                                     <tr>
                                         <td>
@@ -502,13 +510,13 @@
                         <div class="card-header pb-2">
                             <h3 class="card-title">Cleared</h3>
                             <div class="card-tools">
-                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=9&category=&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Show More</a>
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=9&category=&type=&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Show More</a>
                                 <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons text-primary">list</i>
                                 </button>                            
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=9&type=pr&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Payment Release</a>
-                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=9&type=po&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Purchase Order</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=9&type=pr&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Payment Release</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=9&type=po&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Purchase Order</a>
                                     {{-- <a class="dropdown-item" href="transaction-liquidation/pc/{{ $user->company_id }}?status=cleared&type=&s=">Petty Cash</a> --}}
                                 </div>
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -535,6 +543,8 @@
                                         if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
                                         // check level parallel confidential
                                         if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id && Auth::user()->id != $item->requested_id) $config_confidential = true;
+                                        // check level parallel confidential
+                                        if ($item->is_confidential_own && Auth::user()->id != $item->owner->id && Auth::user()->id != $item->requested_id) $config_confidential = true;
                                     ?>
                                     <tr>
                                         <td>
@@ -588,12 +598,12 @@
                         <div class="card-header pb-2">
                             <h3 class="card-title">Deposited</h3>
                             <div class="card-tools">
-                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=9&category=is_deposit&type=&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Show More</a>
+                                <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=9&category=is_deposit&type=&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Show More</a>
                                 <button type="button" class="btn btn-tool pr-0 d-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="material-icons text-primary">list</i>
                                 </button>                            
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=pr&s=&user_req=&user_prep&bal&is_confidential&due_from&due_to">Payment Release</a>
+                                    <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=pr&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Payment Release</a>
                                     <a class="dropdown-item" href="transaction/prpo/{{ $user->company_id }}?status=7,8&type=po&s=&user_req=&user_prep&bal">Purchase Order</a>
                                     {{-- <a class="dropdown-item" href="transaction-liquidation/pc/{{ $user->company_id }}?status=7,8&type=&s=&user_req=&user_prep&bal">Petty Cash</a> --}}
                                 </div>
@@ -621,6 +631,8 @@
                                         if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
                                         // check level parallel confidential
                                         if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id && Auth::user()->id != $item->requested_id) $config_confidential = true;
+                                        // check level own confidential
+                                        if ($item->is_confidential_own && Auth::user()->id != $item->owner->id && Auth::user()->id != $item->requested_id) $config_confidential = true;
                                     ?>
                                     <tr>
                                         <td>

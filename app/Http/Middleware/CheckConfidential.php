@@ -66,6 +66,16 @@ class CheckConfidential
             ) {
                 return abort(401);
             }
+
+            // check confidential own
+            if (
+                in_array(explode('@', Route::getCurrentRoute()->getActionName())[1], $confidentials)
+                && $transaction->is_confidential_own
+                && auth()->id() != $transaction->owner->id
+                && auth()->id() != $transaction->requested_id
+            ) {
+                return abort(401);
+            }
         }
 
         return $next($request);

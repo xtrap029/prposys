@@ -11,6 +11,8 @@
             if (Auth::user()->ualevel->code < $transaction->owner->ualevel->code) $config_confidential2 = true;
             // check level parallel confidential
             if (Auth::user()->ualevel->code == $transaction->owner->ualevel->code && $transaction->is_confidential && Auth::user()->id != $transaction->owner->id) $config_confidential2 = true;
+            // check level own confidential
+            if ($transaction->is_confidential_own && Auth::user()->id != $transaction->owner->id) $config_confidential2 = true;
         ?>
 
         @if (!$config_confidential2)   

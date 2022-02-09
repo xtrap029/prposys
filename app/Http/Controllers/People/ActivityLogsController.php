@@ -31,6 +31,9 @@ class ActivityLogsController extends Controller {
             $activity[$key]->is_confidential = 0;
             if ($value->subject_type == 'App\Transaction') {
                 $activity[$key]->is_confidential = Transaction::find($value->subject_id)->is_confidential;
+                if ($activity[$key]->is_confidential == 0) {
+                    $activity[$key]->is_confidential = Transaction::find($value->subject_id)->is_confidential_own;
+                }
                 $activity[$key]->owner_id = Transaction::find($value->subject_id)->owner_id;
             }
         }

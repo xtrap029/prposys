@@ -471,6 +471,21 @@
                                             </td>
                                         </tr>
                                     @endif
+                                    @if ($ua['trans_toggle_conf_own'] == $non || ($ua['trans_toggle_conf_own'] == $own && $transaction->owner_id != Auth::user()->id && $transaction->requested_id != Auth::user()->id))
+                                    @else
+                                        <tr>
+                                            <td class="font-weight-bold text-gray">Is Confidential (Own)?</td>
+                                            <td class="font-weight-bold">
+                                                <a href="/transaction/toggle-visibility-own/{{ $transaction->id }}" class="mr-1" onclick="return confirm('Toggle visibility?');">
+                                                    @if ($transaction->is_confidential_own == 0)
+                                                        <i class="material-icons font-weight-bold text-xl text-gray vlign--middle" title="Visible">toggle_off</i>
+                                                    @else
+                                                        <i class="material-icons font-weight-bold text-xl text-danger vlign--middle" title="Hidden">toggle_on</i>
+                                                    @endif
+                                                </a> 
+                                            </td>
+                                        </tr>
+                                    @endif
                                     <tr>
                                         <td colspan="2">
                                             <span class="font-weight-bold text-gray">Purpose</span>

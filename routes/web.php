@@ -320,6 +320,15 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
         });
     });
 
+    // Seq Transaction Toggle Confidential Own
+    Route::middleware('CheckUserAccess:trans_toggle_conf_own')->group(function () {
+        Route::prefix('transaction')->group(function () {
+            $url = 'Admin\TransactionsController';
+
+            Route::get('/toggle-visibility-own/{id}', $url.'@toggle_confidential_own')->name('transaction');
+        });
+    });
+
     // Seq Transaction Form Create
     Route::middleware('CheckUserAccess:form_add')->group(function () {
         Route::prefix('transaction-form')->group(function () {

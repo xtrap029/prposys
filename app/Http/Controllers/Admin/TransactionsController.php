@@ -138,7 +138,13 @@ class TransactionsController extends Controller {
             if ($_GET['user_req'] != "") $transactions = $transactions->where('requested_id', $_GET['user_req']);
             if ($_GET['user_prep'] != "") $transactions = $transactions->where('owner_id', $_GET['user_prep']);
             if ($_GET['project'] != "") $transactions = $transactions->where('project_id', $_GET['project']);
-            if ($_GET['is_confidential'] != "") $transactions = $transactions->where('is_confidential', $_GET['is_confidential']);
+            if ($_GET['is_confidential'] != "") {
+                if ($_GET['is_confidential'] == "2") {
+                    $transactions = $transactions->where('is_confidential_own', 1);
+                } else {
+                    $transactions = $transactions->where('is_confidential', $_GET['is_confidential']);
+                }
+            }
             if ($_GET['due_from'] != "") $transactions = $transactions->whereDate('due_at', '>=', $_GET['due_from']);
             if ($_GET['due_to'] != "") $transactions = $transactions->whereDate('due_at', '<=', $_GET['due_to']);
 
@@ -300,7 +306,13 @@ class TransactionsController extends Controller {
         if ($request->project != "") $transactions = $transactions->where('project_id', $request->project);
         if ($request->due_from != "") $transactions = $transactions->whereDate('due_at', '>=', $request->due_from);
         if ($request->due_to != "") $transactions = $transactions->whereDate('due_at', '<=', $request->due_to);
-        if ($request->is_confidential != "") $transactions = $transactions->where('is_confidential', $request->is_confidential);
+        if ($request->is_confidential != "") {
+            if ($request->is_confidential == "2") {
+                $transactions = $transactions->where('is_confidential_own', 1);
+            } else {
+                $transactions = $transactions->where('is_confidential', $request->is_confidential);
+            }
+        }
 
         if ($request->category != "") {
             if ($request->category == 'is_reg') {
@@ -340,6 +352,8 @@ class TransactionsController extends Controller {
                 if (User::find(auth()->id())->ualevel->code < $value->owner->ualevel->code) $confidential = 1;
                 // check level parallel confidential
                 if (User::find(auth()->id())->ualevel->code == $value->owner->ualevel->code && $value->is_confidential && auth()->id() != $value->owner->id) $confidential = 1;
+                // check level own confidential
+                if ($value->is_confidential_own && auth()->id() != $value->owner->id) $confidential = 1;
             }
 
             $transactions[$key]->trans_seq = sprintf("%05d", $value->trans_seq);
@@ -414,6 +428,7 @@ class TransactionsController extends Controller {
                 'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
                 'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
                 'is_confidential' => ['required', 'between:0,1'],
+                'is_confidential_own' => ['required', 'between:0,1'],
             ];
 
             // if ($trans_type == 'pc') {
@@ -855,6 +870,23 @@ class TransactionsController extends Controller {
         }
     }
 
+    public function toggle_confidential_own($id) {
+        $transaction = Transaction::where('id', $id)->first();
+        
+        if (
+            (UAHelper::get()['trans_toggle_conf_own'] == config('global.ua_own') && auth()->id() != $transaction->owner_id && $transaction->requested_id != auth()->id())
+            || UAHelper::get()['trans_toggle_conf_own'] == config('global.ua_none')
+        ) {
+            return back()->with('error', __('messages.invalid_command'));
+        } else {   
+            $is_confidential_own = $transaction->is_confidential_own;
+            $transaction = Transaction::where('id', $id)->first();
+            $transaction->is_confidential_own = $is_confidential_own == 1 ? 0 : 1;
+            $transaction->save();
+            return back()->with('success', 'Transaction'.__('messages.edit_success'));
+        }
+    }
+
     public function report() {
         switch ($_GET['type']) {
             case 'pr':
@@ -1241,6 +1273,7 @@ class TransactionsController extends Controller {
                         // if (User::find(auth()->id())->ualevel->code < $item->owner->ualevel->code) $confidential = 1;
                         // check level parallel confidential
                         if (User::find(auth()->id())->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && auth()->id() != $item->owner->id) $confidential = 1;
+                        if ($item->is_confidential_own && auth()->id() != $item->owner->id) $confidential = 1;
                     }
 
                     if (!$confidential) {

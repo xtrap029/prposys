@@ -97,13 +97,28 @@
                         <input type="file" name="soa" class="soa form_control" {{ $trans_type == 'po' ? 'required' : '' }}>
                     </div>
                 </div>
-                <div class="form-row mb-3">
-                    <div class="col-sm-4 col-lg-4 mb-2 {{ $ua['trans_toggle_conf'] == $non ? 'd-none' : '' }}">             
+                <div class="form-row mb-3 {{ $ua['trans_toggle_conf'] == $non ? 'd-none' : '' }}">
+                    <div class="col-sm-12 col-lg-4 mb-2">             
                         <label for="">Is Confidential?</label>
                         <select name="is_confidential" class="form-control">
                             <option value="0" selected>No</option>
                             <option value="1">Yes</option>
-                        </select>                        
+                        </select>     
+                    </div>
+                    <div class="col-lg-4 pt-3">
+                        <code>Setting to "Yes" will make the transaction visible only to users with level higher than the creator.</code>                
+                    </div>
+                </div>
+                <div class="form-row mb-3 {{ $ua['trans_toggle_conf_own'] == $non ? 'd-none' : '' }}">
+                    <div class="col-sm-12 col-lg-4 mb-2">             
+                        <label for="">Is Confidential (Own)?</label>
+                        <select name="is_confidential_own" class="form-control">
+                            <option value="0" selected>No</option>
+                            <option value="1">Yes</option>
+                        </select>                                                            
+                    </div>
+                    <div class="col-lg-4 pt-3">
+                        <code>Setting to "Yes" will make the transaction visible only to creator.</code>                 
                     </div>
                 </div>
                 <div class="form-row mb-3">
