@@ -22,7 +22,7 @@
                                         <div class="direct-chat-text">
                                             <div class="notes-content">
                                                 {{ $item->content }}
-                                                <span class="float-right">
+                                                <span class="d-block text-right">
                                                     <a href="#" class="mx-1 editNote">
                                                         <i class="align-middle font-weight-bolder material-icons text-md text-white-50">edit</i>
                                                     </a>
