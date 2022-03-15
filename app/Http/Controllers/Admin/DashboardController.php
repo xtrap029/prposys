@@ -17,7 +17,6 @@ class DashboardController extends Controller {
         $user = User::where('id', auth()->id())->first();
         $companies = Company::orderBy('name', 'asc')->get();
         $company_id = $user->company_id;
-
         $generated = [];
         $unliquidated = [];
         $cleared = [];
@@ -99,8 +98,8 @@ class DashboardController extends Controller {
             }
             $deposited = $deposited->orderBy('updated_at', 'desc')->limit(6)->get();
         }
-        $unliquidated_bal = TransactionHelper::check_unliquidated_balance(auth()->id());
-        $liquidated_bal = TransactionHelper::check_liquidated_balance(auth()->id());
+        $unliquidated_bal = TransactionHelper::check_unliquidated_balance(auth()->id(), $user->company_id);
+        $liquidated_bal = TransactionHelper::check_liquidated_balance(auth()->id(), $user->company_id);
         // $logs = Activity::where('causer_id', auth()->id())
         //         ->orderBy('id', 'desc')
         //         ->limit(10)->get();

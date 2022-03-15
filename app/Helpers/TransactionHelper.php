@@ -9,14 +9,21 @@ use App\TransactionsNote;
 use App\User;
 
 final class TransactionHelper {
-    public static function check_liquidated_balance($user) {
+    public static function check_liquidated_balance($user, $company = null) {
         $user = User::where('id', $user)->first();
 
         $transactions = Transaction::where('requested_id', $user->id)
                         ->where('trans_type', 'pr')
                         ->where('is_reimbursement', 0)
-                        ->whereIn('status_id', config('global.liquidation_cleared'))->get();
+                        ->whereIn('status_id', config('global.liquidation_cleared'));
+                        
+        if ($company) {
+            $transactions = $transactions->join('company_projects', 'transactions.project_id', '=', 'company_projects.id')
+                            ->where('company_projects.company_id', $company);
+        }
 
+        $transactions = $transactions->get();
+                                        
         $trans_liq_bal['liq_amount_sum'] = 0;
         foreach ($transactions as $value) {
             $liq_sum = TransactionsLiquidation::where('transaction_id', $value->id)
@@ -38,7 +45,7 @@ final class TransactionHelper {
         return $trans_liq_bal;
     }
 
-    public static function check_unliquidated_balance($user) {
+    public static function check_unliquidated_balance($user, $company = null) {
         $user = User::where('id', $user)->first();
 
         if ($user->LIMIT_UNLIQUIDATEDPR_AMOUNT) {
@@ -56,6 +63,12 @@ final class TransactionHelper {
         $transactions = Transaction::where('requested_id', $user->id)
                         ->where('trans_type', 'pr')
                         ->whereIn('status_id', config('global.unliquidated'));
+
+        if ($company) {
+            $transactions = $transactions->join('company_projects', 'transactions.project_id', '=', 'company_projects.id')
+                            ->where('company_projects.company_id', $company);
+        }
+
         $trans_amount = $transactions->sum('amount');
         $trans_count = $transactions->count();
 

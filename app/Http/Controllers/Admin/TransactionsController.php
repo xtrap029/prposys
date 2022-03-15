@@ -477,7 +477,7 @@ class TransactionsController extends Controller {
 
             // if non admin requestor, validate limit applicable for pr only
             if (User::where('id', $data['requested_id'])->first()->role_id != 1 && $trans_type == 'pr') {
-                $trans_bal = TransactionHelper::check_unliquidated_balance($data['requested_id']);
+                $trans_bal = TransactionHelper::check_unliquidated_balance($data['requested_id'], $trans_company);
 
                 $validator = \Validator::make(request()->all(), []);
 
@@ -679,9 +679,11 @@ class TransactionsController extends Controller {
         // $data['is_deposit'] = $request->has('is_deposit') ?: '0';
 
         // if not pr, not admin, amount does exceed limit
+        $trans_company = CompanyProject::where('id', $data['project_id'])->first()->company_id;
+        
         if ($transaction->trans_type == 'pr' 
             && $transaction->requested->role_id != 1
-            && $data['amount'] > TransactionHelper::check_unliquidated_balance($transaction->requested_id)['amount'] + $transaction->amount) {
+            && $data['amount'] > TransactionHelper::check_unliquidated_balance($transaction->requested_id, $trans_company)['amount'] + $transaction->amount) {
 
             $validator = \Validator::make(request()->all(), []);    
             $validator->errors()->add('amount', __('messages.exceed_amount_unliq'));
