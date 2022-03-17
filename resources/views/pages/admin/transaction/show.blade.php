@@ -117,6 +117,11 @@
                                                     @foreach ($users as $user)
                                                         <option value="{{ $user->id }}" {{ $user->id == $transaction->owner_id ? 'selected' : '' }}>{{ $user->name }}</option>
                                                     @endforeach
+                                                    <optgroup label="Inactive" class="bg-gray-light">
+                                                        @foreach ($users_inactive as $item)
+                                                            <option value="{{ $item->id }}" {{ app('request')->input('user_req') == $item->id ? 'selected' : '' }} class="bg-gray-light">{{ $item->name }}</option>
+                                                        @endforeach
+                                                    </optgroup>
                                                 </select>
                                             </div>
                                             <div class="col-md-6 form-group">
@@ -125,6 +130,11 @@
                                                     @foreach ($users as $user)
                                                         <option value="{{ $user->id }}" {{ $user->id == $transaction->requested_id ? 'selected' : '' }}>{{ $user->name }}</option>
                                                     @endforeach
+                                                    <optgroup label="Inactive" class="bg-gray-light">
+                                                        @foreach ($users_inactive as $item)
+                                                            <option value="{{ $item->id }}" {{ app('request')->input('user_req') == $item->id ? 'selected' : '' }} class="bg-gray-light">{{ $item->name }}</option>
+                                                        @endforeach
+                                                    </optgroup>
                                                 </select>
                                             </div>
                                             <div class="col-md-6 form-group">

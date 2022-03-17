@@ -272,7 +272,7 @@ class TransactionsLiquidationController extends Controller {
             'attachment_description.*' => ['required']
         ];
 
-        if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr && !$transaction->is_bank) {
+        if (!$transaction->is_deposit && !$transaction->is_hr && !$transaction->is_bank) {
             $validate['date.*'] = ['required', 'date'];
             $validate['project_id.*'] = ['required', 'exists:company_projects,id'];
             $validate['expense_type_id.*'] = ['required', 'exists:expense_types,id'];
@@ -297,7 +297,7 @@ class TransactionsLiquidationController extends Controller {
         // validate input
         $data = $request->validate($validate);
 
-        if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr && !$transaction->is_bank) {
+        if (!$transaction->is_deposit && !$transaction->is_hr && !$transaction->is_bank) {
             $attr_liq['transaction_id'] = $transaction->id;
             $attr_liq['owner_id'] = auth()->id();
             $attr_liq['updated_id'] = auth()->id();

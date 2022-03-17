@@ -193,7 +193,7 @@
                 </div>
             </div>
             <div class="row row--print">
-                @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr && !$transaction->is_bank)
+                @if (!$transaction->is_deposit && !$transaction->is_hr && !$transaction->is_bank)
                     <div class="col-12 {{ $config_confidential ? 'd-none' : '' }}">
                         <table class="table table-sm mb-0">
                             <tr class="font-weight-bold">

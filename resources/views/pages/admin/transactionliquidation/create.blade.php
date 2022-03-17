@@ -111,7 +111,7 @@
                         </button>
                     </div>
                 @endif
-                @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr && !$transaction->is_bank)
+                @if (!$transaction->is_deposit && !$transaction->is_hr && !$transaction->is_bank)
                     <div class="jsReplicate jsMath mt-5">
                         <h4 class="text-center">Items</h4>
                         <div class="table-responsive">
@@ -423,7 +423,7 @@
                 </div>
             </form>
 
-            @if (!$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr && !$transaction->is_bank)
+            @if (!$transaction->is_deposit && !$transaction->is_hr && !$transaction->is_bank)
                 <table class="d-none">
                     <tbody class="jsReplicate_template">
                         <tr class="jsReplicate_template_item">

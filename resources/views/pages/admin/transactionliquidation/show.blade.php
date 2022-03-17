@@ -572,7 +572,7 @@
                             </div>
                         </div>
                     @endif  
-                    <div class="card {{ $transaction->is_deposit || $transaction->is_bills || $transaction->is_hr || $transaction->is_bank ? 'd-none' : '' }}">
+                    <div class="card {{ $transaction->is_deposit || $transaction->is_hr || $transaction->is_bank ? 'd-none' : '' }}">
                         <div class="card-body table-responsive">
                             <table class="table table-bordered">
                                 <thead>

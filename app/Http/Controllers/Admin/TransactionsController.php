@@ -723,6 +723,7 @@ class TransactionsController extends Controller {
         );
 
         $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
+        $users_inactive = User::where('ua_level_id', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
         $releasing_users = ReleasedBy::orderBy('name', 'asc')->get();
 
         switch ($transaction->trans_type) {
@@ -744,6 +745,7 @@ class TransactionsController extends Controller {
             'perms' => $perms,
             'logs' => $logs,
             'users' => $users,
+            'users_inactive' => $users_inactive,
             'releasing_users' => $releasing_users,
             'trans_page' => $trans_page
         ]);
