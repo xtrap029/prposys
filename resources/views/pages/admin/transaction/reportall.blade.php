@@ -293,8 +293,21 @@
                                 <label for="">Date To</label>
                                 <input type="date" name="to" class="form-control form-control-sm" value="{{ !empty($_GET['to']) ? $_GET['to'] : '' }}">
                             </div>
-                            <div class="col-12 mt-3 mb-1">
-                                <input type="text" class="form-control" name="s" value="{{ app('request')->input('s') }}" autocomplete="off" placeholder="keyword here...">
+                            <div class="col-sm-6 col-md-3 my-1">
+                                <label for="">PR/PO # Year</label>
+                                <input type="number" name="series_year" class="form-control form-control-sm" min="1900" max="2100" value="{{ !empty($_GET['series_year']) ? $_GET['series_year'] : '' }}">
+                            </div>
+                            <div class="col-sm-6 col-md-3 my-1">
+                                <label for="">PR/PO # Series (Min)</label>
+                                <input type="number" name="series_min" class="form-control form-control-sm" min="0" value="{{ !empty($_GET['series_min']) ? $_GET['series_min'] : '' }}">
+                            </div>
+                            <div class="col-sm-6 col-md-3 my-1">
+                                <label for="">PR/PO # Series (Max)</label>
+                                <input type="number" name="series_max" class="form-control form-control-sm" min="0" value="{{ !empty($_GET['series_max']) ? $_GET['series_max'] : '' }}">
+                            </div>
+                            <div class="col-12 col-md-3 my-1">
+                                <label for="">Keyword</label>
+                                <input type="text" class="form-control form-control-sm" name="s" value="{{ app('request')->input('s') }}" autocomplete="off">
                             </div>
                         </div>
                     </div>

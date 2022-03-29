@@ -949,6 +949,9 @@ class TransactionsController extends Controller {
         $trans_company = '';
         $trans_from = '';
         $trans_to = '';
+        $trans_year = '';
+        $trans_min = '';
+        $trans_max = '';
         $trans_status = '';
         $trans_category = '';
         $trans_req = '';
@@ -1139,6 +1142,18 @@ class TransactionsController extends Controller {
             $transactions = $transactions->whereDate('released_at', '<=', $_GET['rel_to']);
             $trans_depo_type = $_GET['rel_to'];
         }        
+        if (!empty($_GET['series_year'])) {
+            $transactions = $transactions->where('trans_year', $_GET['series_year']);
+            $trans_year = $_GET['series_year'];
+        }
+        if (!empty($_GET['series_min'])) {
+            $transactions = $transactions->where('trans_seq', '>=', $_GET['series_min']);
+            $trans_min = $_GET['series_min'];
+        }
+        if (!empty($_GET['series_max'])) {
+            $transactions = $transactions->where('trans_seq', '<=', $_GET['series_max']);
+            $trans_max = $_GET['series_max'];
+        }
         if (!empty($_GET['user_req'])) {
             $transactions = $transactions->where('requested_id', $_GET['user_req']);
             $trans_req = $_GET['user_req'];
@@ -1319,6 +1334,9 @@ class TransactionsController extends Controller {
                 'trans_depo_to' => $trans_depo_to,
                 'trans_rel_from' => $trans_rel_from,
                 'trans_rel_to' => $trans_rel_to,
+                'trans_year' => $trans_year,
+                'trans_min' => $trans_min,
+                'trans_max' => $trans_max,
                 'trans_status' => $trans_status,
                 'trans_category' => $trans_category,
                 'trans_req' => $trans_req,
