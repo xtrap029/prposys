@@ -90,9 +90,7 @@
                         <h5>{{ $transaction->owner->name }}</h5>
                     </div>
                 </div>
-                <div class="form-row mb-3">
-                    {{-- ALLOW ALL CATEGORIES --}}
-                    {{-- <div class="col-sm-4 col-lg-4 mb-2 {{ $transaction->trans_type == 'po' || $transaction->is_bills ? '' : 'd-none' }}"> --}}
+                {{-- <div class="form-row mb-3">
                     <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Statement of Account/Invoice/Form</label>
                         @if ($transaction->soa)
@@ -100,10 +98,9 @@
                                 <i class="material-icons mr-2 align-bottom">attachment</i>
                             </a>
                         @endif
-                        {{-- <input type="file" name="soa" class="soa form_control" {{ ($transaction->trans_type == 'po' || $transaction->is_bills) && !$transaction->soa ? 'required' : '' }}> --}}
                         <input type="file" name="soa" class="soa form_control" {{ $transaction->trans_type == 'po' && !$transaction->soa ? 'required' : '' }}>
                     </div>
-                </div>
+                </div> --}}
                 <div class="form-row mb-3">
                     {{-- <div class="col-md-2">
                         <label for="">For Deposit?</label>
@@ -113,6 +110,55 @@
                         </div>
                         @include('errors.inline', ['message' => $errors->first('is_deposit')])
                     </div> --}}
+                    <div class="col-md-12 jsReplicate mt-5 pt-5">
+                        <h4 class="text-center">Statement of Account/Invoice/Form</h4>
+                        <div class="text-center mb-3">Attach receipts and documents here. Accepts .jpg, .png and .pdf file types, not more than 5mb each.</div>
+                        <div class="table-responsive">
+                            <table class="table bg-white" style="min-width: 1000px">
+                                <thead>
+                                    <tr>
+                                        <th class="w-25">File</th>
+                                        <th class="w-75">Description</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="jsReplicate_container">
+                                    @if (isset($transaction->transaction_soa[0]))
+                                        <tr class="jsReplicate_template_item">
+                                            <td>
+                                                <a href="/storage/public/attachments/soa/{{ $transaction->transaction_soa[0]->file }}" target="_blank">
+                                                    <i class="material-icons mr-2 align-bottom align-text-bottom">attachment</i>
+                                                </a>
+                                                <input type="file" name="file_old[]" class="form-control w-75 d-inline-block overflow-hidden">
+                                                <input type="hidden" name="attachment_id_old[]" value="{{ $transaction->transaction_soa[0]->id }}">
+                                            </td>
+                                            <td><input type="text" name="attachment_description_old[]" class="form-control" value="{{ $transaction->transaction_soa[0]->description }}" required></td>
+                                            <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                        </tr>
+                                    @endif
+                                    @foreach ($transaction->transaction_soa as $key => $item)
+                                        @if ($key > 0)
+                                            <tr class="jsReplicate_template_item">
+                                                <td>
+                                                    <a href="/storage/public/attachments/soa/{{ $item->file }}" target="_blank">
+                                                        <i class="material-icons mr-2 align-bottom align-text-bottom">attachment</i>
+                                                    </a>
+                                                    <input type="file" name="file_old[]" class="form-control w-75 d-inline-block overflow-hidden">
+                                                    <input type="hidden" name="attachment_id_old[]" value="{{ $item->id }}">
+                                                </td>
+                                                <td><input type="text" name="attachment_description_old[]" class="form-control" value="{{ $item->description }}" required></td>
+                                                <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center">
+                            <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
+                        </div>
+                    </div>
+
                     <div class="card col-md-12 mt-4">
                         <div class="card-header font-weight-bold">
                             Select Transaction Category
@@ -194,6 +240,16 @@
                     </div>
                 </div>
             </form>
+
+            <table class="d-none">
+                <tbody class="jsReplicate_template">
+                    <tr class="jsReplicate_template_item">
+                        <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
+                        <td><input type="text" name="attachment_description[]" class="form-control" required></td>
+                        <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </section>
 @endsection
@@ -201,22 +257,30 @@
 @section('script')
     <script type="text/javascript">
         $(function() {
-            $('.trans-category').change(function() {
-                if ('{{ $transaction->trans_type }}' != 'po') {
-                    if ($(this).val() == 'bp') {
-                        $('.soa').parent().removeClass('d-none')
-                        // if ('{{$transaction->soa}}' == '') {
-                        //     $('.soa').prop('required', 'true')
-                        // }
-                        $('.soa').removeAttr('required')
-                    } else {
-                        // ALLOW ALL CATEGORIES
-                        // $('.soa').parent().addClass('d-none')
-                        // $('.soa').val('')
-                        $('.soa').removeAttr('required')
-                    }
-                }
-            })
+            // $('.trans-category').change(function() {
+            //     if ('{{ $transaction->trans_type }}' != 'po') {
+            //         if ($(this).val() == 'bp') {
+            //             $('.soa').parent().removeClass('d-none')
+            //             $('.soa').removeAttr('required')
+            //         } else {
+            //             $('.soa').removeAttr('required')
+            //         }
+            //     }
+            // })
+
+            if ($('.jsReplicate')[0]){
+                cls = '.jsReplicate'
+                
+                $(cls+'_add').click(function() {
+                    container = $(this).parents(cls).find(cls+'_container')
+                    clsIndex = $(this).parents(cls).index(cls)
+                    $(cls+'_template:eq('+clsIndex+')').children().clone().appendTo(container)
+                })
+
+                $(document).on('click', cls+'_remove', function() {
+                    $(this).parents(cls+'_template_item').remove()
+                })
+            }
         })
     </script>
 @endsection

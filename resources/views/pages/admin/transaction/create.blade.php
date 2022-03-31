@@ -92,10 +92,10 @@
                     </div>
                     {{-- ALLOw ALL CATEGORIES --}}
                     {{-- <div class="col-sm-4 col-lg-4 mb-2 {{ $trans_type == 'po' ? '' : 'd-none' }}"> --}}
-                    <div class="col-sm-4 col-lg-4 mb-2">
+                    {{-- <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Statement of Account/Invoice/Form</label>
                         <input type="file" name="soa" class="soa form_control" {{ $trans_type == 'po' ? 'required' : '' }}>
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="form-row mb-3 {{ $ua['trans_toggle_conf'] == $non ? 'd-none' : '' }}">
                     <div class="col-sm-12 col-lg-4 mb-2">             
@@ -130,6 +130,43 @@
                         </div>
                         @include('errors.inline', ['message' => $errors->first('is_deposit')])
                     </div> --}}
+                    <div class="col-12 jsReplicate mt-5 pt-5">
+                        <h4 class="text-center">Statement of Account/Invoice/Form</h4>
+                        <div class="text-center mb-3">Attach receipts and documents here. Accepts .jpg, .png and .pdf file types, not more than 5mb each.</div>
+                        <div class="table-responsive">
+                            <table class="table bg-white" style="min-width: 1000px">
+                                <thead>
+                                    <tr>
+                                        <th class="w-25">File</th>
+                                        <th class="w-75">Description</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="jsReplicate_container">
+                                    <tr class="jsReplicate_template_item">
+                                        <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
+                                        <td><input type="text" name="attachment_description[]" class="form-control" value="{{ old('attachment_description.0') }}" required></td>
+                                        <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                    </tr>
+                                    @if (old('attachment_description'))
+                                        @foreach (old('attachment_description') as $key => $item)
+                                            @if ($key > 0)
+                                                <tr class="jsReplicate_template_item">
+                                                    <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
+                                                    <td><input type="text" name="attachment_description[]" class="form-control" value="{{ old('attachment_description.'.$key) }}" required></td>
+                                                    <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                                </tr>
+                                            @endif
+                                        @endforeach
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center">
+                            <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
+                        </div>
+                    </div>
+
                     <div class="card col-md-12 mt-4">
                         <div class="card-header font-weight-bold">
                             Select Transaction Category
@@ -211,6 +248,16 @@
                     </div>
                 </div>
             </form>
+
+            <table class="d-none">
+                <tbody class="jsReplicate_template">
+                    <tr class="jsReplicate_template_item">
+                        <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
+                        <td><input type="text" name="attachment_description[]" class="form-control" required></td>
+                        <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </section>
 @endsection
@@ -218,23 +265,34 @@
 @section('script')
     <script type="text/javascript">
         $(function() {
-            $('.trans-category').change(function() {
-                if ('{{ $trans_type }}' != 'po') {
-                    if ($(this).val() == 'bp') {
-                        $('.soa').parent().removeClass('d-none')
-                        $('.soa').removeAttr('required')
-                    } else {
-                        // ALLOW ALL CATEGORIES
-                        // $('.soa').parent().addClass('d-none')
-                        // $('.soa').val('')
-                        $('.soa').removeAttr('required')
-                    }
-                }
-            })
+            // $('.trans-category').change(function() {
+            //     if ('{{ $trans_type }}' != 'po') {
+            //         if ($(this).val() == 'bp') {
+            //             $('.soa').parent().removeClass('d-none')
+            //             $('.soa').removeAttr('required')
+            //         } else {
+            //             $('.soa').removeAttr('required')
+            //         }
+            //     }
+            // })
 
             if ("{{ isset($_GET['is_bills']) && $_GET['is_bills'] == 1 }}" == 1) {
                 $('.soa').parent().removeClass('d-none')
                 $('.soa').removeAttr('required')
+            }
+
+            if ($('.jsReplicate')[0]){
+                cls = '.jsReplicate'
+                
+                $(cls+'_add').click(function() {
+                    container = $(this).parents(cls).find(cls+'_container')
+                    clsIndex = $(this).parents(cls).index(cls)
+                    $(cls+'_template:eq('+clsIndex+')').children().clone().appendTo(container)
+                })
+
+                $(document).on('click', cls+'_remove', function() {
+                    $(this).parents(cls+'_template_item').remove()
+                })
             }
         })
     </script>

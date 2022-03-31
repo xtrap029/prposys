@@ -147,6 +147,10 @@ class Transaction extends Model {
         return $this->hasMany(TransactionsAttachment::class);
     }
 
+    public function transaction_soa() {
+        return $this->hasMany(TransactionsSoa::class);
+    }
+
     public function notes() {
         return $this->hasMany(TransactionsNote::class);
     }

@@ -12,6 +12,7 @@ use App\ReleasedBy;
 use App\ReportTemplate;
 use App\Settings;
 use App\Transaction;
+use App\TransactionsSoa;
 use App\TransactionStatus;
 use App\TransactionsNote;
 use App\User;
@@ -440,10 +441,9 @@ class TransactionsController extends Controller {
             $data = $request->validate($validation);
 
             // ALLOW ALL CATEGORIES
-            // if (($request->trans_type == 'po' || $request->trans_category == 'bp') && $request->file('soa')) {
-            if ($request->file('soa')) {
-                $data['soa'] = basename($request->file('soa')->store('public/attachments/soa'));
-            }
+            // if ($request->file('soa')) {
+            //     $data['soa'] = basename($request->file('soa')->store('public/attachments/soa'));
+            // }
 
             $data['is_deposit'] = 0;
             $data['is_bills'] = 0;
@@ -516,6 +516,24 @@ class TransactionsController extends Controller {
         $data['status_prev_id'] = 1;
 
         $transaction = Transaction::create($data);
+
+        $data_attach = $request->validate([
+            'file.*' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'attachment_description.*' => ['required']
+        ]);
+
+        $attr_file['transaction_id'] = $transaction->id;
+        $attr_file['owner_id'] = auth()->id();
+        $attr_file['updated_id'] = auth()->id();
+
+        if (isset($data_attach['attachment_description'])) {
+            foreach ($data_attach['attachment_description'] as $key => $value) {
+                $attr_file['description'] = $value;
+                $attr_file['file'] = basename($request->file('file')[$key]->store('public/attachments/soa'));
+                
+                TransactionsSoa::create($attr_file);
+            }
+        }
 
         if ($request->note_content && $request->note_content != "") {
             TransactionsNote::create([
@@ -640,13 +658,56 @@ class TransactionsController extends Controller {
 
         $data = $request->validate($validation);
 
-        // ALLOW ALL CATEGORIES
-        // if (($transaction->trans_type == 'po' || $request->trans_category == 'bp') && $request->file('soa')) {
-        if ($request->file('soa')) {
-            $data['soa'] = basename($request->file('soa')->store('public/attachments/soa'));
-        } else if ($transaction->trans_type != 'po' && $request->trans_category != 'bp') {
-            $data['soa'] = '';
+        $attach_liq = $request->validate([
+            'file.*' => ['mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'attachment_description_old.*' => ['required'],
+            'attachment_description.*' => ['sometimes', 'required'],
+            'attachment_id_old.*' => ['required']
+        ]);
+
+        $desc_key = 0;
+        $attach_liq['attachment_id_old'] = isset($attach_liq['attachment_id_old']) ? $attach_liq['attachment_id_old'] : [];
+        foreach ($transaction->transaction_soa as $key => $value) {
+            $transaction_attachment = TransactionsSoa::find($value->id);
+
+            // check if item is retained
+            if (in_array($value->id, $attach_liq['attachment_id_old'])) {
+                // check if item is replaced
+                if (!empty($request->file('file_old')) && array_key_exists($key, $request->file('file_old'))) {
+                    // item is replaced
+                    $transaction_attachment->file = basename($request->file('file_old')[$key]->store('public/attachments/soa'));        
+                    $transaction_attachment->updated_id = auth()->id();
+                }
+
+                // replace description
+                $transaction_attachment->description = $attach_liq['attachment_description_old'][$desc_key];
+                
+                // store changes
+                $transaction_attachment->save();
+                $desc_key++;
+            } else {
+                // the item is deleted
+                $transaction_attachment->delete();
+            }
         }
+
+        $attr_file['transaction_id'] = $transaction->id;
+        $attr_file['owner_id'] = auth()->id();
+        $attr_file['updated_id'] = auth()->id();
+
+        if (array_key_exists('attachment_description', $attach_liq)) {
+            foreach ($attach_liq['attachment_description'] as $key => $value) {
+                $attr_file['description'] = $value;
+                $attr_file['file'] = basename($request->file('file')[$key]->store('public/attachments/soa'));
+                TransactionsSoa::create($attr_file);
+            }
+        }
+
+        // if ($request->file('soa')) {
+        //     $data['soa'] = basename($request->file('soa')->store('public/attachments/soa'));
+        // } else if ($transaction->trans_type != 'po' && $request->trans_category != 'bp') {
+        //     $data['soa'] = '';
+        // }
 
         $data['is_deposit'] = 0;
         $data['is_bills'] = 0;

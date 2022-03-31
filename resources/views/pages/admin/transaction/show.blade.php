@@ -278,6 +278,9 @@
                                         <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
                                         <p class="text-dark">SOA</p>
                                     </a>
+                                    @if ($transaction->transaction_soa->count() > 0)
+                                        @include('pages.admin.transaction.show-attachment-2')
+                                    @endif
                                 @endif
                             </div>
                         </div>
