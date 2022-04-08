@@ -21,6 +21,7 @@ class User extends Authenticatable {
         'password',
         'role_id',
         'ua_level_id',
+        'ua_levels',
         'apps',
         'companies',
         'is_read_only',

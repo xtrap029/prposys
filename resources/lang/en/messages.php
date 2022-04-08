@@ -33,6 +33,7 @@ return [
     'make_not_allowed' => 'Transaction Code not available.',
     'required_attachment' => 'At least one attachment is required!',
     'required_amount' => 'Required amount should match total items amount.',
+    'user_level_change' => 'Please remember to return to your default level after switching.',
     'batch_upload' => '* Accepts .zip file only (50MB max).
         <br> * Zipped file should only have .jpg, .png or .pdf file types inside.
         <br> * Set file names of each file inside the zipped as your desired description.'

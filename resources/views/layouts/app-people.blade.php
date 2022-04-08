@@ -49,7 +49,20 @@
                                 </div>
                                 <div class="info">
                                     <a href="/my-account" class="d-block">{{ Auth::user()->name }}</a>
-                                    <span class="small text-secondary font-weight-bold">{{ Auth::user()->ualevel->name }}</span>
+                                    <span class="small text-secondary font-weight-bold">
+                                        <form action="/my-account" method="post" id="formLevel">
+                                            @csrf
+                                            @method('put')
+                                            <select name="ua_level_id" class="form-control form-control-sm" id="selectLevel" onchange="this.form.submit()">
+                                                <option value="{{ Auth::user()->ualevel->id }}">{{ Auth::user()->ualevel->name }}</option>
+                                                <optgroup label="Switch Level">
+                                                    @foreach (explode(',',Auth::user()->ua_levels) as $level)
+                                                        <option value="{{ $level }}">{{ App\UaLevel::where('id', $level)->first()->name }}</option>
+                                                    @endforeach
+                                                </optgroup>
+                                            </select>
+                                        </form>
+                                    </span>
                                 </div>
                             </div>
     

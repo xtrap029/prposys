@@ -195,6 +195,14 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="">User Level Options</label>
+                            <select name="ua_level_control[]" class="form-control form-control-sm chosen-select" multiple>
+                                @foreach ($levels as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="card col-md-12 mt-4 d-none">
                             <div class="card-header">
                                 App Access
@@ -301,8 +309,14 @@
     </section>
 @endsection
 
+@section('style')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.css" integrity="sha512-0nkKORjFgcyxv3HbE4rzFUlENUMNqic/EzDIeYCgsKa/nwqr2B91Vu/tNAu4Q0cBuG4Xe/D1f/freEci/7GDRA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+@endsection
+
 @section('script')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js" integrity="sha512-rMGGF4wg1R73ehtnxXBt5mbUfN9JUJwbk21KMlnLZDJh7BkPmeovBuddZCENJddHYYMkCh9hPFnPmS9sspki8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript">
+        $('.chosen-select').chosen();
         $(function() {
             $("#checkApp").click(function () {
                 $(".check-app").prop('checked', $(this).prop('checked'));

@@ -19,6 +19,7 @@
                     <tr>
                         <th colspan="2">List</th>
                         <th>Level</th>
+                        <th>Level Options</th>
                         <th class="text-right text-nowrap">
                             @if (!isset($_GET['all'])) <a href="/user?all=1" class="mr-5">Show Inactive</a>
                             @else <a href="/user" class="mr-5">Hide Inactive</a>
@@ -36,13 +37,18 @@
                                 <div class="text-info">{{ $item->email }}</div>
                             </td>
                             <td>{{ $item->ualevel->name }}</td>
+                            <td>
+                                @foreach ($levels as $level)
+                                    {{ in_array($level->id, explode(',',$item->ua_levels)) ? $level->name.', ' : '' }}
+                                @endforeach
+                            </td>
                             <td class="align-middle text-right">
                                 <a href="/user/{{ $item->id }}/edit" class="btn btn-link btn-sm">Edit</a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="text-center">{{ __('messages.empty') }}</td>
+                            <td colspan="5" class="text-center">{{ __('messages.empty') }}</td>
                         </tr>
                     @endforelse
                 </tbody>

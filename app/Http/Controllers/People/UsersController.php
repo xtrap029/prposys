@@ -21,11 +21,13 @@ class UsersController extends Controller {
         }
 
         $users = $users->get();
+        $levels = UaLevel::orderBy('order', 'asc')->get();
         // $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
         // $users_inactive = User::whereNull('role_id')->orderBy('name', 'asc')->get();
         
         return view('pages.people.users.index')->with([
             'users' => $users,
+            'levels' => $levels,
             // 'users_inactive' => $users_inactive
         ]);
     }
@@ -47,6 +49,7 @@ class UsersController extends Controller {
             'name' => ['required', 'string', 'max:255'],
             'role_id' => ['nullable', 'exists:roles,id'],
             'ua_level_id' => ['nullable', 'exists:ua_levels,id'],
+            'ua_level_control.*' => ['nullable'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'avatar' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
@@ -81,6 +84,7 @@ class UsersController extends Controller {
         $data['apps'] = $request->app_control ? implode(",", $request->app_control) : "";
         $data['companies'] = $request->company_control ? implode(",", $request->company_control) : "";
         $data['company_id'] = $request->company_control ? $request->company_control[0] : null;
+        $data['ua_levels'] = $request->ua_level_control ? implode(",", $request->ua_level_control) : "";
 
         $data['avatar'] = basename($request->file('avatar')->store('public/images/users'));
         User::create([
@@ -88,6 +92,7 @@ class UsersController extends Controller {
             'name' => $data['name'],
             'role_id' => $data['role_id'],
             'ua_level_id' => $data['ua_level_id'],
+            'ua_levels' => $data['ua_levels'],
             'apps' => $data['apps'],
             'companies' => $data['companies'],
             'is_read_only' => $data['role_id'] == 1 ? 0 : $data['is_read_only'],
@@ -138,6 +143,7 @@ class UsersController extends Controller {
         $validation_rules = [
             'role_id' => ['nullable', 'exists:roles,id'],
             'ua_level_id' => ['nullable', 'exists:ua_levels,id'],
+            'ua_level_control' => ['nullable'],
             // 'company_id' =>  ['required', 'exists:companies,id'],
             'name' => ['required', 'string', 'max:255'],
             'avatar' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
@@ -187,6 +193,7 @@ class UsersController extends Controller {
         unset($data['app_control']);
 
         $data['companies'] = $request->company_control ? implode(",", $request->company_control) : "";
+        $data['ua_levels'] = $request->ua_level_control ? implode(",", $request->ua_level_control) : "";
         $data['company_id'] = $request->company_control ? $request->company_control[0] : null;
         unset($data['company_control']);
 

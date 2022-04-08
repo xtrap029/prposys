@@ -34,8 +34,16 @@ class MyAccountController extends Controller {
         if ($request->password) {
             $validation_rules['password'] = ['required', 'string', 'min:8', 'confirmed'];
         }
-
+        
         $user = User::where('id', auth()->id())->first();
+
+        if ($request->ua_level_id) {
+            $validation_rules['ua_level_id'] = ['required', 'exists:ua_levels,id'];
+            
+            if (!in_array($request->ua_level_id, explode(',', $user->ua_levels))) {
+                return back()->with('error', 'Account '.__('messages.invalid_access'));
+            }
+        }
 
         $data = $request->validate($validation_rules);
 
@@ -50,6 +58,10 @@ class MyAccountController extends Controller {
 
         $user->update($data);
 
-        return back()->with('success', 'Account'.__('messages.edit_success'));
+        if ($request->ua_level_id) {
+            return redirect()->back()->with('success', __('messages.user_level_change'));
+        } else {
+            return back()->with('success', 'Account '.__('messages.edit_success'));
+        }
     }
 }
