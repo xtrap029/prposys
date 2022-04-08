@@ -55,11 +55,13 @@
                                             @method('put')
                                             <select name="ua_level_id" class="form-control form-control-sm" id="selectLevel" onchange="this.form.submit()">
                                                 <option value="{{ Auth::user()->ualevel->id }}">{{ Auth::user()->ualevel->name }}</option>
-                                                <optgroup label="Switch Level">
-                                                    @foreach (explode(',',Auth::user()->ua_levels) as $level)
-                                                        <option value="{{ $level }}">{{ App\UaLevel::where('id', $level)->first()->name }}</option>
-                                                    @endforeach
-                                                </optgroup>
+                                                @if (Auth::user()->ua_levels != '' && Auth::user()->ua_levels != null)
+                                                    <optgroup label="Switch Level">
+                                                        @foreach (explode(',',Auth::user()->ua_levels) as $level)
+                                                            <option value="{{ $level }}">{{ App\UaLevel::where('id', $level)->first()->name }}</option>
+                                                        @endforeach
+                                                    </optgroup>
+                                                @endif
                                             </select>
                                         </form>
                                     </span>
