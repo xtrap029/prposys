@@ -37,7 +37,7 @@
                     </thead>
                     <tbody>
                         @foreach ($ua_routes as $route)
-                            <tr>
+                            <tr class="{{ in_array($route->code, config('global.hidden_route_option')) ? 'd-none' : '' }}">
                                 <td class="text-nowrap">{{ $route->name }}</td>
                                 @foreach ($ua_levels as $level)
                                     @if ($level->id != config('global.ua_inactive'))

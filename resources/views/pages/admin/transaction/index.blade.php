@@ -108,7 +108,7 @@
                             <option value="-1" {{ app('request')->input('bal') == '-1' ? 'selected' : '' }}>( - ) Return Money</option>
                         </select>
                     </div>
-                    <div class="mb-2 col-md-8 {{ Auth::user()->is_smt ? 'col-xl-6' : 'col-xl-10' }}">
+                    <div class="mb-2 col-md-8 col-xl-6">
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="basic-addon1">Due From/To</span>
@@ -125,7 +125,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="mb-2 col-md-2 {{ Auth::user()->is_smt ? '' : 'd-none' }}">
+                    <div class="mb-2 col-md-2">
                         <select name="is_confidential" class="form-control filterSearch_select">
                             <option value="">All Visibility</option>
                             <option value="0" {{ app('request')->input('is_confidential') == '0' ? 'selected' : '' }}>Not Confidential</option>
