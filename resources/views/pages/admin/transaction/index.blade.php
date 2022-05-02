@@ -130,7 +130,6 @@
                             <option value="">All Visibility</option>
                             <option value="0" {{ app('request')->input('is_confidential') == '0' ? 'selected' : '' }}>Not Confidential</option>
                             <option value="1" {{ app('request')->input('is_confidential') == '1' ? 'selected' : '' }}>Confidential</option>
-                            <option value="2" {{ app('request')->input('is_confidential') == '2' ? 'selected' : '' }}>Confidential (Own)</option>
                         </select>
                     </div>
                     <div class="mb-2 col-md-4 col-xl-10">
