@@ -136,7 +136,7 @@ class Transaction extends Model {
     }
 
     public function liquidation() {
-        return $this->hasMany(TransactionsLiquidation::class);
+        return $this->hasMany(TransactionsLiquidation::class)->orderBy('date', 'asc');
     }
 
     public function liquidation_sum() {

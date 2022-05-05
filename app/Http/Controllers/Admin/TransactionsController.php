@@ -77,6 +77,14 @@ class TransactionsController extends Controller {
             });
         }
 
+        if (!isset($_GET['is_confidential']) || (isset($_GET['is_confidential']) && $_GET['is_confidential'] == "")) {
+            $transactions = $transactions->whereHas('owner', function($query) use($user_logged) {
+                $query->whereHas('ualevel', function($query2) use($user_logged) {
+                    $query2->where('code', '<=', $user_logged->ualevel->code);
+                });
+            });
+        }
+
         if (!empty($_GET['s'])
             || !empty($_GET['is_confidential'])
             || (isset($_GET['is_confidential']) && $_GET['is_confidential'] != "")
@@ -261,6 +269,14 @@ class TransactionsController extends Controller {
             });
         } else if (UAHelper::get()['trans_view'] == config('global.ua_none')) {
             $transactions = $transactions->where('id', 0);
+        }
+
+        if (!isset($request->is_confidential) || (isset($request->is_confidential) && $request->is_confidential == "")) {
+            $transactions = $transactions->whereHas('owner', function($query) use($user_logged) {
+                $query->whereHas('ualevel', function($query2) use($user_logged) {
+                    $query2->where('code', '<=', $user_logged->ualevel->code);
+                });
+            });
         }
 
         $transactions = $transactions->whereIn('trans_type', $trans_types)

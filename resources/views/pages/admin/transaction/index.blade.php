@@ -127,7 +127,7 @@
                     </div>
                     <div class="mb-2 col-md-2">
                         <select name="is_confidential" class="form-control filterSearch_select">
-                            <option value="">All Visibility</option>
+                            <option value="">All Visible</option>
                             <option value="0" {{ app('request')->input('is_confidential') == '0' ? 'selected' : '' }}>Not Confidential</option>
                             <option value="1" {{ app('request')->input('is_confidential') == '1' ? 'selected' : '' }}>Confidential</option>
                         </select>
