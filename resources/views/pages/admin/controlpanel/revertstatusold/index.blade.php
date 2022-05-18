@@ -19,29 +19,13 @@
                     @csrf
                     <input type="hidden" name="id" value="{{ $transaction->id }}">
                     <div class="alert alert-dark rounded">
-                        <h5>
-                            <span class="text-warning">
-                                <i class="nav-icon material-icons icon--list mr-1">warning</i>
-                                Changing status is irreversible!
-                            </span>
-                            Are you sure?
-                        </h5>
+                        <h5><i class="nav-icon material-icons icon--list mr-1">warning</i> Are you sure?</h5>
                         Transaction <code>{{ app('request')->input('trans') }}</code>'s
-                        current status is <code>{{ $transaction->status->name }}</code>.
+                        status <code>{{ $transaction->status->name }}</code>
+                        will be reverted to <code>{{ $transaction->status_prev->name }}</code>.
                     </div>
                     <div class="form-group">
-                        <select name="status" class="form-control" required>
-                            <option value="">- Select Status -</option>
-                            @foreach ($status as $item)
-                                @if (in_array($item->id, config('global.status_checkpoint')[$transaction->status_id]))
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"" placeholder="{{ __('messages.password_required') }}" required>
-                        @include('errors.inline', ['message' => $errors->first('password')])
+                        <input type="password" name="password" class="form-control" placeholder="{{ __('messages.password_required') }}" required>
                     </div>
                     <div class="form-group">
                         <input type="submit" value="Revert" class="btn btn-primary">
@@ -50,12 +34,6 @@
                 </form>
             @else
                 <form action="" method="get" class="col-md-7">
-                    <div class="alert alert-dark rounded">
-                        <h5 class="text-warning">
-                            <i class="nav-icon material-icons icon--list mr-1">warning</i>
-                            Regular Transactions are only allowed for Reversal.
-                        </h5>
-                    </div>
                     <div class="form-group">
                         <label for="">Company</label>
                         <select name="company_id" class="form-control">

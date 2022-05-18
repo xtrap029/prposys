@@ -268,7 +268,7 @@
                                             <div id="issue_slip" class="col-md-12 mb-2 {{ $transaction->is_reimbursement ? 'd-none' : '' }}">
                                                 <label for="" class="font-weight-bold">Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than 5mb. )</small></label>
                                                 <input type="file" name="issue_slip" class="form-control @error('issue_slip') is-invalid @enderror">
-                                                @include('errors.inline', ['message' => $errors->first('depo_slip')])
+                                                @include('errors.inline', ['message' => $errors->first('issue_slip')])
                                             </div>
                                             <div id="depo_slip" class="col-md-12 mb-2 {{ $transaction->is_reimbursement ? '' : 'd-none' }}">
                                                 <label for="" class="font-weight-bold">Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than 5mb. )</small></label>
