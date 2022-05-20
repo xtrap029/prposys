@@ -67,7 +67,12 @@ class ControlPanelsController extends Controller {
             }
         }
 
+        $status_order = [1,5,6,4,7,8];
         $status = TransactionStatus::orderBy('id', 'asc')->get();
+        $status = $status->sortBy(function($model) use ($status_order) {
+            return array_search($model->getKey(), $status_order);
+        });
+
         $companies = Company::orderBy('name', 'asc')->get();
 
         return view('pages.admin.controlpanel.revertstatus.index')->with([
