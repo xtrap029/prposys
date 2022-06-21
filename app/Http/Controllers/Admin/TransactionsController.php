@@ -61,13 +61,6 @@ class TransactionsController extends Controller {
         $transactions = new Transaction;
 
         $user_logged = User::where('id', auth()->id())->first();
-        // if (!in_array($user_logged->role_id, config('global.admin_subadmin'))) {
-        //     $user_id = $user_logged->id;
-        //     $transactions = $transactions->where(static function ($query) use ($user_id) {
-        //         $query->where('requested_id', $user_id)
-        //         ->orWhere('owner_id',  $user_id);
-        //     });
-        // }
 
         if (UAHelper::get()['trans_view'] == config('global.ua_own')) {
             $user_id = $user_logged->id;
@@ -78,11 +71,11 @@ class TransactionsController extends Controller {
         }
 
         if (!isset($_GET['is_confidential']) || (isset($_GET['is_confidential']) && $_GET['is_confidential'] == "")) {
-            $transactions = $transactions->whereHas('owner', function($query) use($user_logged) {
-                $query->whereHas('ualevel', function($query2) use($user_logged) {
-                    $query2->where('code', '<=', $user_logged->ualevel->code);
-                });
-            });
+            // $transactions = $transactions->whereHas('owner', function($query) use($user_logged) {
+            //     $query->whereHas('ualevel', function($query2) use($user_logged) {
+            //         $query2->where('code', '<=', $user_logged->ualevel->code);
+            //     });
+            // });
         }
 
         if (!empty($_GET['s'])
@@ -272,11 +265,11 @@ class TransactionsController extends Controller {
         }
 
         if (!isset($request->is_confidential) || (isset($request->is_confidential) && $request->is_confidential == "")) {
-            $transactions = $transactions->whereHas('owner', function($query) use($user_logged) {
-                $query->whereHas('ualevel', function($query2) use($user_logged) {
-                    $query2->where('code', '<=', $user_logged->ualevel->code);
-                });
-            });
+            // $transactions = $transactions->whereHas('owner', function($query) use($user_logged) {
+            //     $query->whereHas('ualevel', function($query2) use($user_logged) {
+            //         $query2->where('code', '<=', $user_logged->ualevel->code);
+            //     });
+            // });
         }
 
         $transactions = $transactions->whereIn('trans_type', $trans_types)
@@ -366,9 +359,10 @@ class TransactionsController extends Controller {
             // if req by
             if (auth()->id() != $value->requested_id) {
                 // check levels
-                if (User::find(auth()->id())->ualevel->code < $value->owner->ualevel->code) $confidential = 1;
+                // if (User::find(auth()->id())->ualevel->code < $value->owner->ualevel->code) $confidential = 1;
                 // check level parallel confidential
-                if (User::find(auth()->id())->ualevel->code == $value->owner->ualevel->code && $value->is_confidential && auth()->id() != $value->owner->id) $confidential = 1;
+                // if (User::find(auth()->id())->ualevel->code == $value->owner->ualevel->code && $value->is_confidential && auth()->id() != $value->owner->id) $confidential = 1;
+                if (User::find(auth()->id())->ualevel->code <= $value->owner->ualevel->code && $value->is_confidential && auth()->id() != $value->owner->id) $confidential = 1;
                 // check level own confidential
                 if ($value->is_confidential_own && auth()->id() != $value->owner->id) $confidential = 1;
             }

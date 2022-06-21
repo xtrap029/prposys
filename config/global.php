@@ -99,4 +99,5 @@
         'ua_own' => '2',
         'ua_inactive' => '6',
         'hidden_route_option' => ['trans_toggle_conf_own'],
+        'leaves_link' => 'https://docs.google.com/forms/d/e/1FAIpQLSdmvYUWmgQWug6MZ3uuSIvHVLPKVpmZlca31oexwktG3OfDvQ/viewform?embedded=true',
     ];

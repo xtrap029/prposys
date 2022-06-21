@@ -24,6 +24,7 @@ class CheckConfidential
         $transaction = Route::current()->parameter('transaction');
 
         if ($transaction && in_array($prefix, ['/transaction', '/transaction-form', '/transaction-liquidation'])) {
+            
             $confidentials = [
                 'duplicate',
                 'edit',
@@ -53,13 +54,17 @@ class CheckConfidential
                         && auth()->id() != $transaction->requested_id
                     )
                 ) {
-                return abort(401);
+
+                if (explode('@', Route::getCurrentRoute()->getActionName())[1] != 'show') {
+                    return abort(401);
+                }
             }
 
             // check confidential parallel
             if (
                 in_array(explode('@', Route::getCurrentRoute()->getActionName())[1], $confidentials)
-                && User::find(auth()->id())->ualevel->code == $transaction->owner->ualevel->code
+                // && User::find(auth()->id())->ualevel->code == $transaction->owner->ualevel->code
+                && User::find(auth()->id())->ualevel->code <= $transaction->owner->ualevel->code
                 && $transaction->is_confidential
                 && auth()->id() != $transaction->owner->id
                 && auth()->id() != $transaction->requested_id

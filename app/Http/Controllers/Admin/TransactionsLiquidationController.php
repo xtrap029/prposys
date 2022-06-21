@@ -1002,6 +1002,12 @@ class TransactionsLiquidationController extends Controller {
                 $result2 = $result->count();
 
                 if ($result2 == 0) $can_create = false;
+
+            }
+
+            if ($result->count() > 0) {
+                $user = User::where('id', auth()->id())->first();
+                if ($user->ualevel->code <= $result->first()->owner->ualevel->code && $user->id != $result->first()->owner->id) $can_create = false;
             }
         } else {
             $can_create = false;
@@ -1036,6 +1042,8 @@ class TransactionsLiquidationController extends Controller {
             || UAHelper::get()['liq_edit'] == config('global.ua_none')
         ) {
             $can_edit = false;
+        } else {
+            if ($user->ualevel->code <= $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_edit = false;
         }
 
         // check if unliquidated
@@ -1114,6 +1122,8 @@ class TransactionsLiquidationController extends Controller {
             || UAHelper::get()['liq_approval'] == config('global.ua_none')
         ) {
             $can_approve = false;
+        } else {
+            if ($user->ualevel->code <= $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_approve = false;
         }
 
         // check if unliquidated
@@ -1174,6 +1184,8 @@ class TransactionsLiquidationController extends Controller {
             || UAHelper::get()['liq_clear'] == config('global.ua_none')
         ) {
             $can_clear = false;
+        } else {
+            if ($user->ualevel->code <= $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_clear = false;
         }
         
         return $can_clear;

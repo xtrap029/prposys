@@ -14,7 +14,7 @@
                     <img src="{{ config('global.site_icon_people') }}" class="img-size-64 pb-2" alt=""><br>
                     People
                 </a>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdmvYUWmgQWug6MZ3uuSIvHVLPKVpmZlca31oexwktG3OfDvQ/viewform?embedded=true" target="_blank" class="text-bold text-gray-dark text-decoration-none d-inline-block m-3">
+                <a href="{{ config('global.leaves_link') }}" target="_blank" class="text-bold text-gray-dark text-decoration-none d-inline-block m-3">
                     <img src="{{ config('global.site_icon_leaves') }}" class="img-size-64 pb-2" alt=""><br>
                     Leaves
                 </a>

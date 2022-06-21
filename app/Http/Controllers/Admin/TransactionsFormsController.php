@@ -1299,6 +1299,11 @@ class TransactionsFormsController extends Controller {
                 $result = $result->count();
 
                 if ($result == 0) $can_create = false;
+            } else {
+                $user_id = auth()->id();
+                $user = User::where('id', $user_id)->first();
+                
+                if ($user->ualevel->code <= $result->first()->owner->ualevel->code && $user->id != $result->first()->owner->id) $can_create = false;
             }
         } else {
             $can_create = false;
@@ -1353,6 +1358,8 @@ class TransactionsFormsController extends Controller {
             || UAHelper::get()['form_cancel'] == config('global.ua_none')
         ) {
             $can_cancel = false;
+        } else {
+            if ($user->ualevel->code <= $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_cancel = false;
         }
 
         return $can_cancel;
@@ -1378,6 +1385,8 @@ class TransactionsFormsController extends Controller {
             || UAHelper::get()['form_edit'] == config('global.ua_none')
         ) {
             $can_edit = false;
+        } else {
+            if ($user->ualevel->code <= $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_edit = false;
         }
 
         // if reimbursement
@@ -1452,6 +1461,8 @@ class TransactionsFormsController extends Controller {
                 || UAHelper::get()['form_approval'] == config('global.ua_none')
             ) {
                 $can_approve = false;
+            } else {
+                if ($user->ualevel->code <= $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_approve = false;
             }
         } else {
             $can_approve = false;
@@ -1505,6 +1516,8 @@ class TransactionsFormsController extends Controller {
             || UAHelper::get()['form_edit_issued'] == config('global.ua_none')
         ) {
             $admin_subadmin = false;
+        } else {
+            if ($user->ualevel->code <= $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $admin_subadmin = false;
         }
 
         return $admin_subadmin;
@@ -1533,6 +1546,8 @@ class TransactionsFormsController extends Controller {
             || UAHelper::get()['form_issue'] == config('global.ua_none')
         ) {
             $can_issue = false;
+        } else {
+            if ($user->ualevel->code <= $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_issue = false;
         }
         
         return $can_issue;
