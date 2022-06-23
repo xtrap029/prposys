@@ -1447,6 +1447,8 @@ class TransactionsController extends Controller {
                 || UAHelper::get()['trans_edit'] == config('global.ua_none')
             ) {
                 $can_edit = false;
+            } else {
+                if ($user->ualevel->code <= $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_edit = false;
             }
         } else {
             $can_edit = false;
@@ -1473,6 +1475,8 @@ class TransactionsController extends Controller {
                 || UAHelper::get()['trans_cancel'] == config('global.ua_none')
             ) {
                 $can_cancel = false;
+            } else {
+                if ($user->ualevel->code <= $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_cancel = false;
             }
         } else {
             $can_cancel = false;

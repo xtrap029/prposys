@@ -35,7 +35,7 @@
                             Leaves
                         </a> --}}
                     @endif
-                    <a class="dropdown-item px-3" href="{{ config('global.leaves_link') }}">
+                    <a class="dropdown-item px-3" href="{{ config('global.leaves_link') }}" target="_blank">
                         <img src="{{ config('global.site_icon_leaves') }}" alt="" class="img-size-32 mr-2">
                         Leaves
                     </a>
