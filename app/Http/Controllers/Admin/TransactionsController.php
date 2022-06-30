@@ -127,13 +127,13 @@ class TransactionsController extends Controller {
                                             ->orWhere('control_no', 'like', "%{$key}%")
                                             ->orWhere('control_type', 'like', "%{$key}%")
                                             ->orWhere('cancellation_reason', 'like', "%{$key}%")
-                                            ->orWhere('cancellation_number', 'like', "%{$key}%")
-                                            ->orWhere('amount_issued', 'like', str_replace(',', '', "%{$key}%"))
-                                            ->orWhere('amount_issued', '=', str_replace(',', '', $key))
-                                            ->orWhere('form_amount_payable', 'like', str_replace(',', '', "%{$key}%"))
-                                            ->orWhere('form_amount_payable', '=', str_replace(',', '', $key))
-                                            ->orWhere('amount', 'like', str_replace(',', '', "%{$key}%"))
-                                            ->orWhere('amount', '=', str_replace(',', '', $key));
+                                            ->orWhere('cancellation_number', 'like', "%{$key}%");
+                                            // ->orWhere('amount_issued', 'like', str_replace(',', '', "%{$key}%"))
+                                            // ->orWhere('amount_issued', '=', str_replace(',', '', $key))
+                                            // ->orWhere('form_amount_payable', 'like', str_replace(',', '', "%{$key}%"))
+                                            // ->orWhere('form_amount_payable', '=', str_replace(',', '', $key))
+                                            // ->orWhere('amount', 'like', str_replace(',', '', "%{$key}%"))
+                                            // ->orWhere('amount', '=', str_replace(',', '', $key));
                                     });
                                     
             if ($_GET['status'] != "") $transactions = $transactions->whereIn('status_id', explode(',', $_GET['status']));
@@ -301,11 +301,11 @@ class TransactionsController extends Controller {
                                         ->orWhere('control_no', 'like', "%{$key}%")
                                         ->orWhere('control_type', 'like', "%{$key}%")
                                         ->orWhere('cancellation_reason', 'like', "%{$key}%")
-                                        ->orWhere('cancellation_number', 'like', "%{$key}%")
-                                        ->orWhere('amount_issued', 'like', str_replace(',', '', "%{$key}%"))
-                                        ->orWhere('amount_issued', '=', str_replace(',', '', $key))
-                                        ->orWhere('form_amount_payable', 'like', str_replace(',', '', "%{$key}%"))
-                                        ->orWhere('form_amount_payable', '=', str_replace(',', '', $key));
+                                        ->orWhere('cancellation_number', 'like', "%{$key}%");
+                                        // ->orWhere('amount_issued', 'like', str_replace(',', '', "%{$key}%"))
+                                        // ->orWhere('amount_issued', '=', str_replace(',', '', $key))
+                                        // ->orWhere('form_amount_payable', 'like', str_replace(',', '', "%{$key}%"))
+                                        // ->orWhere('form_amount_payable', '=', str_replace(',', '', $key))
                                         // ->orWhere('amount', 'like', str_replace(',', '', "%{$key}%"))
                                         // ->orWhere('amount', '=', str_replace(',', '', $key));
                                 });
