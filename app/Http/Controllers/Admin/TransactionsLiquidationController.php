@@ -1043,7 +1043,7 @@ class TransactionsLiquidationController extends Controller {
         ) {
             $can_edit = false;
         } else {
-            if ($user->ualevel->code <= $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_edit = false;
+            if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_edit = false;
         }
 
         // check if unliquidated
@@ -1123,7 +1123,7 @@ class TransactionsLiquidationController extends Controller {
         ) {
             $can_approve = false;
         } else {
-            if ($user->ualevel->code <= $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_approve = false;
+            if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_approve = false;
         }
 
         // check if unliquidated
@@ -1185,7 +1185,7 @@ class TransactionsLiquidationController extends Controller {
         ) {
             $can_clear = false;
         } else {
-            if ($user->ualevel->code <= $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_clear = false;
+            if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_clear = false;
         }
         
         return $can_clear;

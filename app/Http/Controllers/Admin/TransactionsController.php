@@ -1448,7 +1448,7 @@ class TransactionsController extends Controller {
             ) {
                 $can_edit = false;
             } else {
-                if ($user->ualevel->code <= $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_edit = false;
+                if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_edit = false;
             }
         } else {
             $can_edit = false;
@@ -1476,7 +1476,7 @@ class TransactionsController extends Controller {
             ) {
                 $can_cancel = false;
             } else {
-                if ($user->ualevel->code <= $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_cancel = false;
+                if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_cancel = false;
             }
         } else {
             $can_cancel = false;
