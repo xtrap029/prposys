@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
 use App\User;
+use App\UaLevelRoute;
 use App\Transaction;
 
 class CheckConfidential
@@ -60,6 +61,9 @@ class CheckConfidential
                 }
             }
 
+            $user = User::where('id', auth()->id())->first();
+            $ua_level_route = UaLevelRoute::select('ua_route_option_id')->where('ua_route_id', config('global.ua_trans_view_conf'))->where('ua_level_id', $user->ualevel->id)->first();
+
             // check confidential parallel
             if (
                 in_array(explode('@', Route::getCurrentRoute()->getActionName())[1], $confidentials)
@@ -69,7 +73,9 @@ class CheckConfidential
                 && auth()->id() != $transaction->owner->id
                 && auth()->id() != $transaction->requested_id
             ) {
-                return abort(401);
+                if ($ua_level_route->ua_route_option_id != config('global.is_yesno_id')[0] || explode('@', Route::getCurrentRoute()->getActionName())[1] != 'show') {
+                    return abort(401);
+                }
             }
 
             // check confidential own

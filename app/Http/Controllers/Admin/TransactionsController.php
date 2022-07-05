@@ -17,6 +17,7 @@ use App\TransactionStatus;
 use App\TransactionsNote;
 use App\User;
 use App\VatType;
+use App\UaLevelRoute;
 use App\Helpers\TransactionHelper;
 use App\Helpers\UserHelper;
 use App\Helpers\UAHelper;
@@ -224,6 +225,7 @@ class TransactionsController extends Controller {
             'projects' => $projects,
             'users' => $users,
             'users_inactive' => $users_inactive,
+            'can_view_confidential' => $this->check_can_view_confidential(),
             'transactions' => $transactions
         ]);
     }
@@ -352,6 +354,7 @@ class TransactionsController extends Controller {
 
         $transactions = $transactions->orderBy('id', 'desc')->limit(5)->get();
 
+        $can_view_confidential = $this->check_can_view_confidential();
 
         foreach ($transactions as $key => $value) {
             $confidential = 0;
@@ -362,7 +365,7 @@ class TransactionsController extends Controller {
                 // if (User::find(auth()->id())->ualevel->code < $value->owner->ualevel->code) $confidential = 1;
                 // check level parallel confidential
                 // if (User::find(auth()->id())->ualevel->code == $value->owner->ualevel->code && $value->is_confidential && auth()->id() != $value->owner->id) $confidential = 1;
-                if (User::find(auth()->id())->ualevel->code <= $value->owner->ualevel->code && $value->is_confidential && auth()->id() != $value->owner->id) $confidential = 1;
+                if (User::find(auth()->id())->ualevel->code <= $value->owner->ualevel->code && $value->is_confidential && auth()->id() != $value->owner->id && !$can_view_confidential) $confidential = 1;
                 // check level own confidential
                 if ($value->is_confidential_own && auth()->id() != $value->owner->id) $confidential = 1;
             }
@@ -1529,5 +1532,22 @@ class TransactionsController extends Controller {
         }
 
         return $can_reassign;
+    }
+
+    private function check_can_view_confidential($user = '') {
+        $can_view = true;
+
+        if (!$user) {
+            $user = auth()->id();
+        }
+
+        $user = User::where('id', $user)->first();
+
+        $ua_level_route = UaLevelRoute::select('ua_route_option_id')->where('ua_route_id', config('global.ua_trans_view_conf'))->where('ua_level_id', $user->ualevel->id)->first();
+        if ($ua_level_route->ua_route_option_id != config('global.is_yesno_id')[0]) {
+            $can_view = false;
+        }
+
+        return $can_view;
     }
 }
