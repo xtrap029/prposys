@@ -1007,7 +1007,7 @@ class TransactionsLiquidationController extends Controller {
 
             if ($result->count() > 0) {
                 $user = User::where('id', auth()->id())->first();
-                if ($user->ualevel->code <= $result->first()->owner->ualevel->code && $user->id != $result->first()->owner->id) $can_create = false;
+                if ($user->ualevel->code < $result->first()->owner->ualevel->code && $user->id != $result->first()->owner->id) $can_create = false;
             }
         } else {
             $can_create = false;
