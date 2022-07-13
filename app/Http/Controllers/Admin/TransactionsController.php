@@ -1068,20 +1068,14 @@ class TransactionsController extends Controller {
             $transactions = $transactions->where('id', 0);
         } else {
             // $ua_code = User::find(auth()->id())->ualevel->code;
-            // $transactions = $transactions->whereHas('owner', function($q) use($ua_code) {
-            //     $q->whereHas('ualevel', function($q2) use($ua_code){
-            //         $q2->where('code', '<=', $ua_code);
-            //      });
+            // $transactions = $transactions->where(static function ($query) use ($user_id, $ua_code) {
+            //     $query->where('requested_id', $user_id)
+            //     ->orWhereHas('owner', function($q) use($ua_code) {
+            //         $q->whereHas('ualevel', function($q2) use($ua_code){
+            //             $q2->where('code', '<=', $ua_code);
+            //         });        
+            //     });
             // });
-            $ua_code = User::find(auth()->id())->ualevel->code;
-            $transactions = $transactions->where(static function ($query) use ($user_id, $ua_code) {
-                $query->where('requested_id', $user_id)
-                ->orWhereHas('owner', function($q) use($ua_code) {
-                    $q->whereHas('ualevel', function($q2) use($ua_code){
-                        $q2->where('code', '<=', $ua_code);
-                    });        
-                });
-            });
         }
 
 
@@ -1365,7 +1359,8 @@ class TransactionsController extends Controller {
                         // check levels
                         // if (User::find(auth()->id())->ualevel->code < $item->owner->ualevel->code) $confidential = 1;
                         // check level parallel confidential
-                        if (User::find(auth()->id())->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && auth()->id() != $item->owner->id) $confidential = 1;
+                        // if (User::find(auth()->id())->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && auth()->id() != $item->owner->id) $confidential = 1;
+                        if (User::find(auth()->id())->ualevel->code <= $item->owner->ualevel->code && $item->is_confidential && auth()->id() != $item->owner->id && !$this->check_can_view_confidential()) $confidential = true;
                         if ($item->is_confidential_own && auth()->id() != $item->owner->id) $confidential = 1;
                     }
 
@@ -1427,7 +1422,8 @@ class TransactionsController extends Controller {
                 'trans_project' => $trans_project,
                 'trans_template' => $trans_template,
                 'trans_s' => $trans_s,
-                'status_name' => $status_name
+                'status_name' => $status_name,
+                'can_view_confidential' => $this->check_can_view_confidential(),
             ]);
         }
     }

@@ -101,5 +101,5 @@
         'ua_trans_view_conf' => '58',
         'hidden_route_option' => ['trans_toggle_conf_own'],
         'leaves_link' => 'https://docs.google.com/forms/d/e/1FAIpQLSdmvYUWmgQWug6MZ3uuSIvHVLPKVpmZlca31oexwktG3OfDvQ/viewform?embedded=true',
-        'issue_attachment_note' => "If CHECK, upload the check copy and deposit slip. If UB ONLINE, upload the UB confirmation payment.",
+        'issue_attachment_note' => "If CHECK, upload the check copy and deposit slip.<br>If UB ONLINE, upload the UB confirmation payment.",
     ];

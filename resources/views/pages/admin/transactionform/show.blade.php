@@ -277,7 +277,7 @@
                                             </div>
                                             <div class="col-12 mb-2">
                                                 <div class="alert alert-default-warning rounded text-center" role="alert">
-                                                   {{ config('global.issue_attachment_note') }} 
+                                                   {!! config('global.issue_attachment_note') !!} 
                                                 </div>
                                             </div>
                                             <div class="col-12 text-center mt-2">

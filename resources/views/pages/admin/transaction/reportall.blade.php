@@ -442,7 +442,8 @@
                                     // check levels
                                     // if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential2 = true;
                                     // check level parallel confidential
-                                    if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential2 = true;
+                                    // if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential2 = true;
+                                    if (Auth::user()->ualevel->code <= $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id && !$can_view_confidential) $config_confidential2 = true;
                                     // check level own confidential
                                     if ($item->is_confidential_own && Auth::user()->id != $item->owner->id) $config_confidential2 = true;
                                 }
