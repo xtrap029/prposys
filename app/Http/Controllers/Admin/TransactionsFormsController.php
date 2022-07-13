@@ -1180,21 +1180,29 @@ class TransactionsFormsController extends Controller {
 
     public function issue(Request $request, Transaction $transaction) {
         if ($this->check_can_issue($transaction->id)) {
-            $data = $request->validate([
+            $validation = [
                 'control_type' => ['required'],
                 'control_no' => ['required'],
                 'released_at' => ['required', 'date'],
                 'amount_issued' => ['required', 'min:0'],
                 'amount' => ['required', 'min:0'],
                 'payor' => [''],
-                'depo_slip' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
-                'issue_slip' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
                 'released_by_id' => ['required', 'exists:released_by,id'],
                 'form_company_id' => ['required', 'exists:companies,id'],
                 'currency_2' => ['required'],
                 'currency_2_rate' => ['required', 'min:0'],
                 'form_service_charge' => ['required', 'min:0'],
-            ]);
+            ];
+
+            if ($transaction->is_reimbursement) {
+                $validation['depo_slip'] = ['required', 'mimes:jpeg,png,jpg,pdf', 'max:6048'];
+                $issue_slip['issue_slip'] = ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048']; 
+            } else {
+                $validation['issue_slip'] = ['required', 'mimes:jpeg,png,jpg,pdf', 'max:6048'];
+                $issue_slip['depo_slip'] = ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048']; 
+            }
+
+            $data = $request->validate($validation);
 
             if (($transaction->is_reimbursement || $transaction->is_bank) && $request->file('depo_slip')) {
                 $data['depo_slip'] = basename($request->file('depo_slip')->store('public/attachments/deposit_slip'));
