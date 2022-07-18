@@ -157,7 +157,7 @@
                                             @if ($config_confidential)
                                                 -
                                             @else
-                                                {{ number_format($transaction->form_service_charge, 2, '.', ',') }}
+                                                {{ $transaction->form_service_charge_currency_id.' '.number_format($transaction->form_service_charge, 2, '.', ',') }}
                                             @endif
                                         </td>
                                     </tr>

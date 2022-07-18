@@ -246,8 +246,17 @@
                                                 </div>
                                                 <div class="col-12 mb-4"></div>
                                             @endif
-                                            <div class="col-md-12 mb-2 {{ $transaction->is_bank ? '' : 'd-none' }} {{ $config_confidential ? 'd-none' : '' }}">
+                                            <div class="col-md-4 mb-2 {{ $config_confidential ? 'd-none' : '' }}">
                                                 <label for="" class="font-weight-bold">Service Charge</label>
+                                                <select name="form_service_charge_currency_id" class="form-control @error('form_service_charge_currency_id') is-invalid @enderror">
+                                                    @foreach (config('global.currency') as $key => $item)
+                                                        <option value="{{ config('global.currency_label')[$key] }}" {{ $transaction->form_service_charge_currency_id == config('global.currency_label')[$key] ? 'selected' : '' }}>{{ $item }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @include('errors.inline', ['message' => $errors->first('form_service_charge_currency_id')])
+                                            </div>
+                                            <div class="col-md-8 mb-2 {{ $config_confidential ? 'd-none' : '' }}">
+                                                <label for="" class="font-weight-bold">&nbsp;</label>
                                                 <input type="number" class="form-control @error('form_service_charge') is-invalid @enderror" step="0.01" name="form_service_charge" value="0" required>
                                                 @include('errors.inline', ['message' => $errors->first('form_service_charge')])
                                             </div>
@@ -621,7 +630,7 @@
                                     @if ($transaction->form_service_charge && $transaction->form_service_charge > 0)
                                         <tr class="{{ $config_confidential ? 'd-none' : '' }}">
                                             <td class="font-weight-bold text-gray">Service Charge</td>
-                                            <td class="font-weight-bold">{{ number_format($transaction->form_service_charge, 2, '.', ',') }}</td>
+                                            <td class="font-weight-bold">{{ $transaction->form_service_charge_currency_id.' '.number_format($transaction->form_service_charge, 2, '.', ',') }}</td>
                                         </tr>
                                     @endif
                                 </table>

@@ -119,7 +119,7 @@
                                             @if ($config_confidential)
                                                 -
                                             @else
-                                                {{ number_format($transaction->form_service_charge, 2, '.', ',') }}
+                                                {{ $transaction->form_service_charge_currency_id.' '.number_format($transaction->form_service_charge, 2, '.', ',') }}
                                             @endif
                                         </td>
                                     </tr>
@@ -143,6 +143,23 @@
                                                 -
                                             @else
                                                 {{ $transaction->currency_2 ?: $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}
+                                            @endif
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    @elseif($transaction->form_service_charge && $transaction->form_service_charge > 0)
+                        <div class="row">
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td class="font-weight-bold">Service Charge</td>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $transaction->form_service_charge_currency_id.' '.number_format($transaction->form_service_charge, 2, '.', ',') }}
                                             @endif
                                         </td>
                                     </tr>

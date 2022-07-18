@@ -1192,6 +1192,7 @@ class TransactionsFormsController extends Controller {
                 'currency_2' => ['required'],
                 'currency_2_rate' => ['required', 'min:0'],
                 'form_service_charge' => ['required', 'min:0'],
+                'form_service_charge_currency_id' => ['required'],
             ];
 
             if ($transaction->is_reimbursement) {

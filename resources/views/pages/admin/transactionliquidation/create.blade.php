@@ -92,7 +92,7 @@
                     @if ($transaction->form_service_charge && $transaction->form_service_charge > 0)
                         <div class="col-lg-3">
                             <label for="" class="font-weight-bold">Service Charge</label>
-                            <p>{{ number_format($transaction->form_service_charge, 2, '.', ',') }}</p>
+                            <p>{{ $transaction->form_service_charge_currency_id.' '.number_format($transaction->form_service_charge, 2, '.', ',') }}</p>
                         </div>
                     @endif
                 </div>
