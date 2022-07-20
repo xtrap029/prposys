@@ -1196,11 +1196,11 @@ class TransactionsFormsController extends Controller {
             ];
 
             if ($transaction->is_reimbursement) {
-                $validation['depo_slip'] = ['required', 'mimes:jpeg,png,jpg,pdf', 'max:6048'];
-                $issue_slip['issue_slip'] = ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048']; 
+                $validation['depo_slip'] = ['required', 'mimes:jpeg,png,jpg,pdf,zip', 'max:6048'];
+                $issue_slip['issue_slip'] = ['sometimes', 'mimes:jpeg,png,jpg,pdf,zip', 'max:6048']; 
             } else {
-                $validation['issue_slip'] = ['required', 'mimes:jpeg,png,jpg,pdf', 'max:6048'];
-                $issue_slip['depo_slip'] = ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048']; 
+                $validation['issue_slip'] = ['required', 'mimes:jpeg,png,jpg,pdf,zip', 'max:6048'];
+                $issue_slip['depo_slip'] = ['sometimes', 'mimes:jpeg,png,jpg,pdf,zip', 'max:6048']; 
             }
 
             $data = $request->validate($validation);

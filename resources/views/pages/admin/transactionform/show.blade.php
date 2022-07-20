@@ -275,12 +275,12 @@
                                                 @include('errors.inline', ['message' => $errors->first('released_by_id')])
                                             </div>
                                             <div id="issue_slip" class="col-md-12 mb-2 {{ $transaction->is_reimbursement ? 'd-none' : '' }}">
-                                                <label for="" class="font-weight-bold">Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than 5mb. )</small></label>
+                                                <label for="" class="font-weight-bold">Attachment <small>( Accepts .jpg, .png, .pdf, .zip file types, not more than 5mb. )</small></label>
                                                 <input type="file" name="issue_slip" class="form-control @error('issue_slip') is-invalid @enderror" {{ $transaction->is_reimbursement ? '' : 'required' }}>
                                                 @include('errors.inline', ['message' => $errors->first('issue_slip')])
                                             </div>
                                             <div id="depo_slip" class="col-md-12 mb-2 {{ $transaction->is_reimbursement ? '' : 'd-none' }}">
-                                                <label for="" class="font-weight-bold">Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than 5mb. )</small></label>
+                                                <label for="" class="font-weight-bold">Attachment <small>( Accepts .jpg, .png, .pdf, .zip file types, not more than 5mb. )</small></label>
                                                 <input type="file" name="depo_slip" class="form-control @error('depo_slip') is-invalid @enderror" {{ $transaction->is_reimbursement ? 'required' : '' }}>
                                                 @include('errors.inline', ['message' => $errors->first('depo_slip')])
                                             </div>
@@ -288,6 +288,9 @@
                                                 <div class="alert alert-default-warning rounded text-center" role="alert">
                                                    {!! config('global.issue_attachment_note') !!} 
                                                 </div>
+                                                <div class="alert alert-default-warning rounded text-center" role="alert">
+                                                    {!! config('global.issue_attachment_note_2') !!} 
+                                                 </div>
                                             </div>
                                             <div class="col-12 text-center mt-2">
                                                 <input type="submit" class="btn btn-success" value="{{ $transaction->is_deposit ? 'Save' : 'Issue Now' }}">

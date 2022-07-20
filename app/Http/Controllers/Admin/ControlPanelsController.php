@@ -16,32 +16,32 @@ use \DB;
 
 class ControlPanelsController extends Controller {
     
-    // public function revert_status() {
-    //     $transaction = null;
+    public function revert_status_prev() {
+        $transaction = null;
 
-    //     if (!empty($_GET['company_id']) && !empty($_GET['trans'])) {
-    //         $key = $_GET['trans'];
-    //         $trans_company = $_GET['company_id'];
+        if (!empty($_GET['company_id']) && !empty($_GET['trans'])) {
+            $key = $_GET['trans'];
+            $trans_company = $_GET['company_id'];
 
-    //         $transaction = Transaction::whereHas('project', function($query) use($trans_company) {
-    //                                     $query->where('company_id', $trans_company);
-    //                                 })
-    //                                 ->where(static function ($query) use ($key) {
-    //                                     $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$key."%");
-    //                                 })->first();
+            $transaction = Transaction::whereHas('project', function($query) use($trans_company) {
+                                        $query->where('company_id', $trans_company);
+                                    })
+                                    ->where(static function ($query) use ($key) {
+                                        $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$key."%");
+                                    })->first();
 
-    //         if (!$transaction || !$transaction->status_prev_id) {
-    //             return back()->with('error', __('messages.not_found'));
-    //         }
-    //     }
+            if (!$transaction || !$transaction->status_prev_id) {
+                return back()->with('error', __('messages.not_found'));
+            }
+        }
 
-    //     $companies = Company::orderBy('name', 'asc')->get();
+        $companies = Company::orderBy('name', 'asc')->get();
 
-    //     return view('pages.admin.controlpanel.revertstatus.index')->with([
-    //         'companies' => $companies,
-    //         'transaction' => $transaction
-    //     ]);
-    // }
+        return view('pages.admin.controlpanel.revertstatusprev.index')->with([
+            'companies' => $companies,
+            'transaction' => $transaction
+        ]);
+    }
 
     public function revert_status() {
         $transaction = null;
@@ -62,8 +62,10 @@ class ControlPanelsController extends Controller {
                                         $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$key."%");
                                     })->first();
 
-            if (!$transaction || $transaction->status_id == config('global.cancelled')) {
+            if ($transaction && $transaction->status_id == config('global.cancelled')) {
                 return back()->with('error', __('messages.not_found'));
+            } else if (!$transaction) {
+                return redirect('/control-panel/revert-status-prev?company_id='.$_GET['company_id'].'&trans='.$_GET['trans']);
             }
         }
 
@@ -82,27 +84,27 @@ class ControlPanelsController extends Controller {
         ]);
     }
 
-    // public function revert_status_store(Request $request) {
-    //     $data = $request->validate([
-    //         'id' => ['required'],
-    //         'password' => ['required'],
-    //     ]);
+    public function revert_status_store_prev(Request $request) {
+        $data = $request->validate([
+            'id' => ['required'],
+            'password' => ['required'],
+        ]);
 
-    //     $user = User::where('id', auth()->id())->first();
-    //     $request->request->add(['email' => $user->email]);
+        $user = User::where('id', auth()->id())->first();
+        $request->request->add(['email' => $user->email]);
         
-    //     $credentials = $request->only('email', 'password');
+        $credentials = $request->only('email', 'password');
 
-    //     if (Auth::attempt($credentials)) {
-    //         $transaction = Transaction::where('id', $data['id'])->first();
-    //         $transaction->status_id = $transaction->status_prev_id;
-    //         $transaction->save();
+        if (Auth::attempt($credentials)) {
+            $transaction = Transaction::where('id', $data['id'])->first();
+            $transaction->status_id = $transaction->status_prev_id;
+            $transaction->save();
 
-    //         return redirect('/control-panel/revert-status')->with('success', 'Transaction '.__('messages.edit_success'));
-    //     } else {
-    //         return back()->with('error', __('messages.invalid_access'));
-    //     }
-    // }
+            return redirect('/control-panel/revert-status')->with('success', 'Transaction '.__('messages.edit_success'));
+        } else {
+            return back()->with('error', __('messages.invalid_access'));
+        }
+    }
 
     public function revert_status_store(Request $request) {
         $data = $request->validate([

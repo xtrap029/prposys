@@ -18,9 +18,9 @@
                 <form action="" method="post" class="col-md-7">
                     @csrf
                     <input type="hidden" name="id" value="{{ $transaction->id }}">
-                    <div class="alert alert-dark rounded">
+                    <div class="alert alert-default-warning rounded" role="alert">
                         <h5>
-                            <span class="text-warning">
+                            <span class="text-danger">
                                 <i class="nav-icon material-icons icon--list mr-1">warning</i>
                                 Changing status is irreversible!
                             </span>
@@ -49,13 +49,11 @@
                     </div>
                 </form>
             @else
-                <form action="" method="get" class="col-md-7">
-                    <div class="alert alert-dark rounded">
-                        <h5 class="text-warning">
-                            <i class="nav-icon material-icons icon--list mr-1">warning</i>
-                            Regular Transactions are only allowed for Reversal.
-                        </h5>
-                    </div>
+            <form action="" method="get" class="col-md-7">
+                    <div class="alert alert-default-warning rounded" role="alert">
+                        <i class="nav-icon material-icons icon--list mr-1">warning</i>
+                        Only Regular transactions can choose a status to revert to. All other transaction types can only revert to its previous status.
+                     </div>
                     <div class="form-group">
                         <label for="">Company</label>
                         <select name="company_id" class="form-control">

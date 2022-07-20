@@ -18,7 +18,7 @@
                 <form action="" method="post" class="col-md-7">
                     @csrf
                     <input type="hidden" name="id" value="{{ $transaction->id }}">
-                    <div class="alert alert-dark rounded">
+                    <div class="alert alert-default-warning rounded" role="alert">
                         <h5><i class="nav-icon material-icons icon--list mr-1">warning</i> Are you sure?</h5>
                         Transaction <code>{{ app('request')->input('trans') }}</code>'s
                         status <code>{{ $transaction->status->name }}</code>

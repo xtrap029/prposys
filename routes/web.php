@@ -68,6 +68,9 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
             $url = 'Admin\ControlPanelsController';
             Route::get('/revert-status', $url.'@revert_status')->name('revertstatus');
             Route::post('/revert-status', $url.'@revert_status_store');
+
+            Route::get('/revert-status-prev', $url.'@revert_status_prev')->name('revertstatus');
+            Route::post('/revert-status-prev', $url.'@revert_status_store_prev');
         });
         
         Route::middleware('CheckUserAccess:seq_force_cancel')->group(function () {
