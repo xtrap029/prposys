@@ -45,6 +45,7 @@ class ControlPanelsController extends Controller {
 
     public function revert_status() {
         $transaction = null;
+        $excluded_status = [];
 
         if (!empty($_GET['company_id']) && !empty($_GET['trans'])) {
             $key = $_GET['trans'];
@@ -53,9 +54,6 @@ class ControlPanelsController extends Controller {
             $transaction = Transaction::whereHas('project', function($query) use($trans_company) {
                                         $query->where('company_id', $trans_company);
                                     })
-                                    ->where('is_deposit', 0)
-                                    ->where('is_bills', 0)
-                                    ->where('is_hr', 0)
                                     ->where('is_reimbursement', 0)
                                     ->where('is_bank', 0)
                                     ->where(static function ($query) use ($key) {
@@ -67,10 +65,16 @@ class ControlPanelsController extends Controller {
             } else if (!$transaction) {
                 return redirect('/control-panel/revert-status-prev?company_id='.$_GET['company_id'].'&trans='.$_GET['trans']);
             }
+            
+            if ($transaction->is_bills == 1
+                || $transaction->is_hr == 1
+                || $transaction->is_deposit == 1
+            ) $excluded_status = [7, 8];
         }
 
         $status_order = [1,5,6,4,7,8];
-        $status = TransactionStatus::orderBy('id', 'asc')->get();
+
+        $status = TransactionStatus::whereNotIn('id', $excluded_status)->orderBy('id', 'asc')->get();
         $status = $status->sortBy(function($model) use ($status_order) {
             return array_search($model->getKey(), $status_order);
         });
