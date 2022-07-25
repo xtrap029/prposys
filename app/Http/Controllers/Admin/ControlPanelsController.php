@@ -54,8 +54,6 @@ class ControlPanelsController extends Controller {
             $transaction = Transaction::whereHas('project', function($query) use($trans_company) {
                                         $query->where('company_id', $trans_company);
                                     })
-                                    ->where('is_reimbursement', 0)
-                                    ->where('is_bank', 0)
                                     ->where(static function ($query) use ($key) {
                                         $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$key."%");
                                     })->first();
@@ -69,7 +67,12 @@ class ControlPanelsController extends Controller {
             if ($transaction->is_bills == 1
                 || $transaction->is_hr == 1
                 || $transaction->is_deposit == 1
-            ) $excluded_status = [7, 8];
+                || $transaction->is_bank == 1
+            ) {
+                $excluded_status = [7, 8];
+            } else if ($transaction->is_reimbursement == 1) {
+                $excluded_status = [4, 7, 8];
+            }
         }
 
         $status_order = [1,5,6,4,7,8];
