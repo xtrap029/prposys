@@ -607,7 +607,7 @@
                                     </tr>  
                                     <tr>
                                         <td class="font-weight-bold text-gray">{{ $transaction->is_deposit ? 'Issued By' : 'Released By' }}</td>
-                                        <td class="font-weight-bold">{{ $transaction->releasedby->name }}</td>
+                                        <td class="font-weight-bold">{{ $transaction->released_by_id ? $transaction->releasedby->name : '' }}</td>
                                     </tr>                    
                                     @if ($transaction->is_bank)        
                                         <tr class="{{ $config_confidential ? 'd-none' : '' }}">
