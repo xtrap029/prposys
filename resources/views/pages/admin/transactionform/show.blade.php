@@ -357,7 +357,7 @@
                                         </tr>
                                     @endif
                                     <!-- if fund transfer and issued status -->
-                                    @if ($transaction->is_bank && in_array($transaction->status_id, config('global.form_issued')))
+                                    @if ($transaction->is_bank && in_array($transaction->status_id, config('global.form_issued')) && $transaction->form_company_id)
                                         <tr>
                                             <td class="font-weight-bold text-gray">Transfer to</td>
                                             <td class="font-weight-bold">
