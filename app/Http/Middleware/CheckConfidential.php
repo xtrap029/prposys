@@ -48,6 +48,28 @@ class CheckConfidential
                 'clear_edit',
             ];
 
+            $confidentials_2 = [
+                'duplicate',
+                // 'edit',
+                // 'edit_reimbursement',
+                // 'update',
+                // 'update_reimbursement',
+                // 'update_issued',
+                // 'update_issued_company',
+                // 'update_issued_clear',
+                'show',
+                'manage',
+                'note',
+                'destroy_note',
+                'reset',
+                'cancel',
+                'approval',
+                'print',
+                // 'issue',
+                'clear',
+                'clear_edit',
+            ];
+
             // check levels
             if (in_array(explode('@', Route::getCurrentRoute()->getActionName())[1], $confidentials)
                 && (
@@ -66,7 +88,7 @@ class CheckConfidential
 
             // check confidential parallel
             if (
-                in_array(explode('@', Route::getCurrentRoute()->getActionName())[1], $confidentials)
+                in_array(explode('@', Route::getCurrentRoute()->getActionName())[1], $confidentials_2)
                 // && User::find(auth()->id())->ualevel->code == $transaction->owner->ualevel->code
                 && User::find(auth()->id())->ualevel->code <= $transaction->owner->ualevel->code
                 && $transaction->is_confidential
