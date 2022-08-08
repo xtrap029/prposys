@@ -276,7 +276,7 @@
                             </div>
                         </div>
 
-                        <div class="form-row mb-3">
+                        {{-- <div class="form-row mb-3">
                             <div class="col-md-6">
                                 <label for="">Unliquidated PR amount limit</label>
                             </div>
@@ -293,6 +293,28 @@
                                 <input type="number" class="form-control @error('LIMIT_UNLIQUIDATEDPR_COUNT') is-invalid @enderror" name="LIMIT_UNLIQUIDATEDPR_COUNT" value="{{ old('LIMIT_UNLIQUIDATEDPR_COUNT') }}" placeholder="{{ __('messages.leave_blank') }}">
                                 @include('errors.inline', ['message' => $errors->first('LIMIT_UNLIQUIDATEDPR_COUNT')])
                             </div>
+                        </div> --}}
+
+                        <div class="py-5">
+                            <div class="form-row mb-3">
+                                <div class="col-md-5 font-weight-bold">Company</div>
+                                <div class="col-md-4 font-weight-bold">Unliquidated PR amount limit</div>
+                                <div class="col-md-3 font-weight-bold">Unliquidated PR transactions limit</div>
+                            </div>
+                            @foreach ($companies as $key => $item)
+                                <div class="form-row mb-3">
+                                    <div class="col-md-5">
+                                        {{ $item->name }}
+                                        <input type="hidden" class="form-control" name="LIMIT_UNLIQUIDATEDPR_COMPANY_ID[]" value="{{ $item->id }}">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="number" class="form-control" name="LIMIT_UNLIQUIDATEDPR_AMOUNT[]" placeholder="{{ __('messages.leave_blank') }}" min="0">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="number" class="form-control" name="LIMIT_UNLIQUIDATEDPR_COUNT[]" placeholder="{{ __('messages.leave_blank') }}" min="0" step="1">
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
 

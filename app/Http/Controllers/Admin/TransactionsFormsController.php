@@ -1311,7 +1311,7 @@ class TransactionsFormsController extends Controller {
             } else {
                 $user_id = auth()->id();
                 $user = User::where('id', $user_id)->first();
-                
+
                 if ($user->ualevel->code < $result->first()->owner->ualevel->code && $user->id != $result->first()->owner->id) $can_create = false;
             }
         } else {

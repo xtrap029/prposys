@@ -158,4 +158,8 @@ class User extends Authenticatable {
     public function leavesadjustmenttotalpast() {
         return $this->belongsTo(ViewLeavesAdjustmentsPastData::class, 'id');
     }
+
+    public function transactionlimit() {
+        return $this->hasMany(UserTransactionLimit::class);
+    }
 }

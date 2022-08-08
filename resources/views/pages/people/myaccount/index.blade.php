@@ -162,14 +162,34 @@
                                 @endforeach
                             </h6>
                         </div>
-                        <div class="form-group border p-2 mb-0 col-lg-6">
+                        @if ($user->transactionlimit)
+                            <div class="form-group border p-0 mb-0 col-12">
+                                <table class="table table-bordered table-striped mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Company</th>
+                                            <th class="text-center">Unliq. PR Amount Limit</th>
+                                            <th class="text-center">Unliq. PR Transaction Limit</th>
+                                        </tr>
+                                    </thead>
+                                    @foreach ($user->transactionlimit as $item)
+                                        <tr>
+                                            <td>{{ $item->company->name }}</td>
+                                            <td class="text-center">{{ $item->amount_limit }}</td>
+                                            <td class="text-center">{{ $item->transaction_limit }}</td>
+                                        </tr>
+                                    @endforeach
+                                </table>
+                            </div>
+                        @endif
+                        {{-- <div class="form-group border p-2 mb-0 col-lg-6">
                             <label for="" class="text-gray">Unliquidated PR amount limit</label>
                             <h6>{{ $user->LIMIT_UNLIQUIDATEDPR_AMOUNT }}</h6>
                         </div>
                         <div class="form-group border p-2 mb-0 col-lg-6 d-none">
                             <label for="" class="text-gray">Unliquidated PR transactions limit</label>
                             <h6>{{ $user->LIMIT_UNLIQUIDATEDPR_COUNT }}</h6>
-                        </div>                          
+                        </div>                           --}}
                     </div>
 
                     <h5 class="my-4 text-right">Leaves</h5>

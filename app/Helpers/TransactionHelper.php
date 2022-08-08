@@ -7,6 +7,7 @@ use App\Transaction;
 use App\TransactionsLiquidation;
 use App\TransactionsNote;
 use App\User;
+use App\UserTransactionLimit;
 
 final class TransactionHelper {
     public static function check_liquidated_balance($user, $company = null) {
@@ -48,14 +49,17 @@ final class TransactionHelper {
     public static function check_unliquidated_balance($user, $company = null) {
         $user = User::where('id', $user)->first();
 
-        if ($user->LIMIT_UNLIQUIDATEDPR_AMOUNT) {
-            $trans_amount_limit = $user->LIMIT_UNLIQUIDATEDPR_AMOUNT;
+        $user_limit = UserTransactionLimit::where('user_id', $user->id)
+            ->where('company_id', $user->company_id)->first();
+
+        if ($user_limit) {
+            $trans_amount_limit = $user_limit->amount_limit;
         } else {
             $trans_amount_limit = Settings::where('type', 'LIMIT_UNLIQUIDATEDPR_AMOUNT')->first()->value;
         }
         
-        if ($user->LIMIT_UNLIQUIDATEDPR_COUNT) {
-            $trans_count_limit = $user->LIMIT_UNLIQUIDATEDPR_COUNT;
+        if ($user_limit) {
+            $trans_count_limit = $user_limit->transaction_limit;
         } else {
             $trans_count_limit = Settings::where('type', 'LIMIT_UNLIQUIDATEDPR_COUNT')->first()->value;
         }

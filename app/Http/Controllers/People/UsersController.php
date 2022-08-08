@@ -6,6 +6,7 @@ use App\Company;
 use App\Role;
 use App\UaLevel;
 use App\User;
+use App\UserTransactionLimit;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -54,8 +55,8 @@ class UsersController extends Controller {
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'avatar' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
             // 'company_id' =>  ['required', 'exists:companies,id'],
-            'LIMIT_UNLIQUIDATEDPR_AMOUNT' => ['nullable', 'integer'],
-            'LIMIT_UNLIQUIDATEDPR_COUNT' => ['nullable', 'integer'],
+            // 'LIMIT_UNLIQUIDATEDPR_AMOUNT' => ['nullable', 'integer'],
+            // 'LIMIT_UNLIQUIDATEDPR_COUNT' => ['nullable', 'integer'],
             'e_emp_no' => ['nullable'],
             'e_hire_date' => ['nullable', 'date'],
             'e_emp_status' => ['nullable'],
@@ -79,6 +80,10 @@ class UsersController extends Controller {
             'app_control.*' => ['nullable'],
             'company_control.*' => ['nullable'],
             'is_read_only' => ['boolean'],
+
+            'LIMIT_UNLIQUIDATEDPR_COMPANY_ID.*' => ['required', 'exists:companies,id'],
+            'LIMIT_UNLIQUIDATEDPR_AMOUNT.*' => ['nullable', 'numeric'],
+            'LIMIT_UNLIQUIDATEDPR_COUNT.*' => ['nullable', 'integer'],
         ]);
 
         $data['apps'] = $request->app_control ? implode(",", $request->app_control) : "";
@@ -87,7 +92,7 @@ class UsersController extends Controller {
         $data['ua_levels'] = $request->ua_level_control ? implode(",", $request->ua_level_control) : "";
 
         $data['avatar'] = basename($request->file('avatar')->store('public/images/users'));
-        User::create([
+        $user = User::create([
             'avatar' => $data['avatar'],
             'name' => $data['name'],
             'role_id' => $data['role_id'],
@@ -99,8 +104,8 @@ class UsersController extends Controller {
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'company_id' => $data['company_id'],
-            'LIMIT_UNLIQUIDATEDPR_AMOUNT' => $data['LIMIT_UNLIQUIDATEDPR_AMOUNT'],
-            'LIMIT_UNLIQUIDATEDPR_COUNT' => $data['LIMIT_UNLIQUIDATEDPR_COUNT'],
+            // 'LIMIT_UNLIQUIDATEDPR_AMOUNT' => $data['LIMIT_UNLIQUIDATEDPR_AMOUNT'],
+            // 'LIMIT_UNLIQUIDATEDPR_COUNT' => $data['LIMIT_UNLIQUIDATEDPR_COUNT'],
             'e_emp_no' => $data['e_emp_no'],
             'e_hire_date' => $data['e_hire_date'],
             'e_emp_status' => $data['e_emp_status'],
@@ -122,6 +127,17 @@ class UsersController extends Controller {
             'e_phic' => $data['e_phic'],
             'e_hmdf' => $data['e_hmdf'],
         ]);
+
+        foreach ($request->LIMIT_UNLIQUIDATEDPR_COMPANY_ID as $key => $value) {
+            UserTransactionLimit::create([
+                'user_id' => $user->id,
+                'company_id' => $value,
+                'amount_limit' => $request->LIMIT_UNLIQUIDATEDPR_AMOUNT[$key],
+                'transaction_limit' => $request->LIMIT_UNLIQUIDATEDPR_COUNT[$key],
+                'owner_id' => auth()->id(),
+                'updated_id' => auth()->id(),
+            ]);
+        }
 
         return redirect('/user')->with('success', 'User'.__('messages.create_success'));
     }
@@ -147,8 +163,8 @@ class UsersController extends Controller {
             // 'company_id' =>  ['required', 'exists:companies,id'],
             'name' => ['required', 'string', 'max:255'],
             'avatar' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'LIMIT_UNLIQUIDATEDPR_AMOUNT' => ['nullable', 'integer'],
-            'LIMIT_UNLIQUIDATEDPR_COUNT' => ['nullable', 'integer'],
+            // 'LIMIT_UNLIQUIDATEDPR_AMOUNT' => ['nullable', 'integer'],
+            // 'LIMIT_UNLIQUIDATEDPR_COUNT' => ['nullable', 'integer'],
             'e_emp_no' => ['nullable'],
             'e_hire_date' => ['nullable', 'date'],
             'e_emp_status' => ['nullable'],
@@ -172,6 +188,10 @@ class UsersController extends Controller {
             'app_control.*' => ['nullable'],
             'company_control.*' => ['nullable'],
             'is_read_only' => ['boolean'],
+
+            'LIMIT_UNLIQUIDATEDPR_COMPANY_ID.*' => ['required', 'exists:companies,id'],
+            'LIMIT_UNLIQUIDATEDPR_AMOUNT.*' => ['nullable', 'numeric'],
+            'LIMIT_UNLIQUIDATEDPR_COUNT.*' => ['nullable', 'integer'],
         ];
 
         if ($request->password) {
@@ -200,6 +220,18 @@ class UsersController extends Controller {
         $data['is_read_only'] = $data['role_id'] == 1 ? 0 : $data['is_read_only'];
 
         $user->update($data);
+
+        UserTransactionLimit::where('user_id', $user->id)->delete();
+        foreach ($request->LIMIT_UNLIQUIDATEDPR_COMPANY_ID as $key => $value) {
+            UserTransactionLimit::create([
+                'user_id' => $user->id,
+                'company_id' => $value,
+                'amount_limit' => $request->LIMIT_UNLIQUIDATEDPR_AMOUNT[$key],
+                'transaction_limit' => $request->LIMIT_UNLIQUIDATEDPR_COUNT[$key],
+                'owner_id' => auth()->id(),
+                'updated_id' => auth()->id(),
+            ]);
+        }
 
         return redirect('/user')->with('success', 'User'.__('messages.edit_success'));
     }
