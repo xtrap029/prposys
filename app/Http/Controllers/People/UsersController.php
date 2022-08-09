@@ -21,7 +21,11 @@ class UsersController extends Controller {
             $users = $users->where('ua_level_id', '!=', config('global.ua_inactive'));
         }
 
-        $users = $users->get();
+        $users = $users->paginate(10);
+        if (!empty($_GET['all'])) {
+            $users->appends(['all' => $_GET['all']]);
+        }
+
         $levels = UaLevel::orderBy('order', 'asc')->get();
         // $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
         // $users_inactive = User::whereNull('role_id')->orderBy('name', 'asc')->get();

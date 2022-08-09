@@ -41,7 +41,7 @@
                                     </div>
                                 </div>
                             @break
-                            @case('LIMIT_EDIT_GENPR_USER_2')
+                            {{-- @case('LIMIT_EDIT_GENPR_USER_2')
                                 <hr>
                                 <div class="mb-3"><b>User Changes Limit</b></div>
                                 <div class="form-row mb-3">
@@ -131,7 +131,7 @@
                                         @include('errors.inline', ['message' => $errors->first('LIMIT_EDIT_DEPOSIT_USER_2')])
                                     </div>
                                 </div>
-                            @break
+                            @break --}}
                             @case('AUTHORIZED_BY')
                                 <hr>
                                 <div class="form-row mb-3">

@@ -24,13 +24,13 @@ class SettingsController extends Controller {
         $data = $request->validate([
             'LIMIT_UNLIQUIDATEDPR_AMOUNT' => ['required', 'integer'],
             'LIMIT_UNLIQUIDATEDPR_COUNT' => ['required', 'integer'],
-            'LIMIT_EDIT_GENPR_USER_2' => ['required', 'integer'],
-            'LIMIT_EDIT_GENPR_USER_3' => ['required', 'integer'],
-            'LIMIT_EDIT_PRPOFORM_USER_2' => ['required', 'integer'],
-            'LIMIT_EDIT_PRPOFORM_USER_3' => ['required', 'integer'],
-            'LIMIT_EDIT_LIQFORM_USER_2' => ['required', 'integer'],
-            'LIMIT_EDIT_LIQFORM_USER_3' => ['required', 'integer'],
-            'LIMIT_EDIT_DEPOSIT_USER_2' => ['required', 'integer'],
+            // 'LIMIT_EDIT_GENPR_USER_2' => ['required', 'integer'],
+            // 'LIMIT_EDIT_GENPR_USER_3' => ['required', 'integer'],
+            // 'LIMIT_EDIT_PRPOFORM_USER_2' => ['required', 'integer'],
+            // 'LIMIT_EDIT_PRPOFORM_USER_3' => ['required', 'integer'],
+            // 'LIMIT_EDIT_LIQFORM_USER_2' => ['required', 'integer'],
+            // 'LIMIT_EDIT_LIQFORM_USER_3' => ['required', 'integer'],
+            // 'LIMIT_EDIT_DEPOSIT_USER_2' => ['required', 'integer'],
             'AUTHORIZED_BY' => ['required', 'exists:users,id'],
         ]);
 

@@ -53,6 +53,11 @@
                     @endforelse
                 </tbody>
             </table>
+            <div class="overflow-auto position-relative text-center">
+                <div class="d-inline-block">
+                    {{ $users->links() }}
+                </div>
+            </div>
         </div>
     </section>
 @endsection
