@@ -66,8 +66,8 @@ class CheckConfidential
                 'approval',
                 'print',
                 // 'issue',
-                'clear',
-                'clear_edit',
+                // 'clear',
+                // 'clear_edit',
             ];
 
             // check levels
