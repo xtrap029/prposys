@@ -469,6 +469,9 @@ class TransactionsFormsController extends Controller {
             return abort(401);
         }
 
+        if (in_array($transaction->status_id, config('global.page_generated'))) return redirect('/transaction/view/'.$transaction->id);
+        if (in_array($transaction->status_id, config('global.page_liquidation'))) return redirect('/transaction-liquidation/view/'.$transaction->id);
+
         $logs = Activity::where('subject_id', $transaction->id)
                 ->where('subject_type', 'App\Transaction')
                 ->orderBy('id', 'desc')->paginate(15)->onEachSide(1);
@@ -1312,7 +1315,10 @@ class TransactionsFormsController extends Controller {
                 $user_id = auth()->id();
                 $user = User::where('id', $user_id)->first();
 
-                if ($user->ualevel->code < $result->first()->owner->ualevel->code && $user->id != $result->first()->owner->id) $can_create = false;
+                if ($result->count() == 0) $can_create = false;
+                else {
+                    if ($user->ualevel->code < $result->first()->owner->ualevel->code && $user->id != $result->first()->owner->id) $can_create = false;
+                }
             }
         } else {
             $can_create = false;

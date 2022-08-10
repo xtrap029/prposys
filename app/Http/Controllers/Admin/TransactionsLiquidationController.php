@@ -356,6 +356,9 @@ class TransactionsLiquidationController extends Controller {
             return abort(401);
         }
 
+        if (in_array($transaction->status_id, config('global.page_generated'))) return redirect('/transaction/view/'.$transaction->id);
+        if (in_array($transaction->status_id, config('global.page_form'))) return redirect('/transaction-form/view/'.$transaction->id);
+
         $transaction_liquidations = TransactionsLiquidation::where('transaction_id', $transaction->id)->pluck('id')->toArray();
         $transaction_attachments = TransactionsAttachment::where('transaction_id', $transaction->id)->pluck('id')->toArray();
         $transaction_id = $transaction->id;

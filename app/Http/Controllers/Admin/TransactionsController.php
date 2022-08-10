@@ -783,6 +783,9 @@ class TransactionsController extends Controller {
             ||
             (UAHelper::get()['trans_view'] == config('global.ua_own') && $transaction->requested_id != auth()->id() && $transaction->owner_id != auth()->id())
          ) return abort(401);
+
+        if (in_array($transaction->status_id, config('global.page_form'))) return redirect('/transaction-form/view/'.$transaction->id);
+        if (in_array($transaction->status_id, config('global.page_liquidation'))) return redirect('/transaction-liquidation/view/'.$transaction->id);
          
         $logs = Activity::where('subject_id', $transaction->id)
                 ->where('subject_type', 'App\Transaction')
