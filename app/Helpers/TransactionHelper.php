@@ -52,13 +52,13 @@ final class TransactionHelper {
         $user_limit = UserTransactionLimit::where('user_id', $user->id)
             ->where('company_id', $user->company_id)->first();
 
-        if ($user_limit) {
+        if ($user_limit && $user_limit->amount_limit != NULL && $user_limit->amount_limit > 0) {
             $trans_amount_limit = $user_limit->amount_limit;
         } else {
             $trans_amount_limit = Settings::where('type', 'LIMIT_UNLIQUIDATEDPR_AMOUNT')->first()->value;
         }
         
-        if ($user_limit) {
+        if ($user_limit && $user_limit->transaction_limit != NULL && $user_limit->transaction_limit > 0) {
             $trans_count_limit = $user_limit->transaction_limit;
         } else {
             $trans_count_limit = Settings::where('type', 'LIMIT_UNLIQUIDATEDPR_COUNT')->first()->value;
