@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Spatie\Activitylog\Models\Activity;
 use App\Http\Controllers\Controller;
 use App\User;
+use App\Settings;
 use Carbon\Carbon;
 
 class DashboardController extends Controller {
@@ -34,6 +35,8 @@ class DashboardController extends Controller {
             ->whereMonth('e_dob', Carbon::now()->month)
             ->orderBy('e_dob', 'asc')
             ->get();
+
+        $announcement = Settings::where('type', 'ANNOUNCEMENT')->first()->value;
         
         return view('pages.people.dashboard.index')->with([
             'user' => $user,
@@ -41,6 +44,7 @@ class DashboardController extends Controller {
             'user_oldest' => $user_oldest,
             'activity' => $activity,
             'user_bday' => $user_bday,
+            'announcement' => $announcement,
         ]);
     }
 }

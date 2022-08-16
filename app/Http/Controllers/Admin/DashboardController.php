@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Company;
 use App\Transaction;
 use App\User;
+use App\Settings;
 use App\Helpers\TransactionHelper;
 use App\Helpers\UAHelper;
 
@@ -115,6 +116,8 @@ class DashboardController extends Controller {
         // $stats['liquidation'] = Transaction::where('trans_type', '!=', 'pc')->whereIn('status_id', config('global.liquidations'))->where('requested_id', auth()->id())->count();
         $stats['cleared'] = Transaction::where('trans_type', '!=', 'pc')->whereIn('status_id', config('global.liquidation_cleared'))->where('requested_id', auth()->id())->count();
 
+        $announcement = Settings::where('type', 'ANNOUNCEMENT')->first()->value;
+
         return view('pages.admin.dashboard.index')->with([
             'user' => $user,
             'companies' => $companies,
@@ -128,7 +131,8 @@ class DashboardController extends Controller {
             // 'prepared' => $prepared,
             'cleared' => $cleared,
             'deposited' => $deposited,
-            'stats' => $stats
+            'announcement' => $announcement,
+            'stats' => $stats,
         ]);
     }
 }

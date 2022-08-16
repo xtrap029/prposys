@@ -138,6 +138,16 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
     Route::middleware('CheckUserAccess:peo_user')->group(function () {
         Route::resource('user', 'People\UsersController', ['names' => ['index' => 'user', 'create' => 'user', 'edit' => 'user']]);
     });
+
+    // Peo Announcement
+    Route::middleware('CheckUserAccess:peo_announcement')->group(function () {
+        Route::prefix('people-announcement')->group(function () {
+            $url = 'People\AnnouncementController';
+
+            Route::get('/', $url.'@index')->name('people-announcement');
+            Route::post('/', $url.'@update')->name('people-announcement');
+        });
+    });
             
     // Peo Settings
     Route::middleware('CheckUserAccess:peo_settings')->group(function () {

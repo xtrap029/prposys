@@ -70,6 +70,20 @@
                         background-position:center;
                         margin-right: -1px;
                         min-height: 200px;">
+
+                        @if ($announcement != '')
+                            <h4 class="bg-dark p-3 rounded text-center">
+                                <i class="nav-icon material-icons icon--list mr-2 text-danger">announcement</i>
+                                Announcement
+                            </h4>
+                            <div class="p-3 rounded bg-white" style="
+                                max-height: 300px;
+                                overflow-y: scroll;
+                            ">
+                                {!! $announcement !!}
+                            </div>
+                        @endif
+
                     </div>
                 </div>
             </div>

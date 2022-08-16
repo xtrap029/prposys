@@ -101,6 +101,11 @@
                                             <i class="nav-icon material-icons icon--list">rule</i><p>User Level Route</p>
                                         </a>
                                     </li> 
+                                    <li class="nav-item {{ $ua['peo_announcement'] == $non ? 'd-none' : '' }}">
+                                        <a href="/people-announcement" class="nav-link {{ Route::currentRouteName() == 'people-announcement' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">announcement</i><p>Announcement</p>
+                                        </a>
+                                    </li>
                                     <li class="nav-item {{ $ua['peo_settings'] == $non ? 'd-none' : '' }}">
                                         <a href="/people-settings" class="nav-link {{ Route::currentRouteName() == 'people-settings' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">settings</i><p>Settings</p>
