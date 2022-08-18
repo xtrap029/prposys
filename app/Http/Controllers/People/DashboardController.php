@@ -33,7 +33,7 @@ class DashboardController extends Controller {
         
         $user_bday = User::where('ua_level_id', '!=', config('global.ua_inactive'))
             ->whereMonth('e_dob', Carbon::now()->month)
-            ->orderBy('e_dob', 'asc')
+            ->orderByRaw('DAY(e_dob)')
             ->get();
 
         $announcement = Settings::where('type', 'ANNOUNCEMENT')->first()->value;
