@@ -52,6 +52,7 @@
                             <i class="align-middle font-weight-bolder material-icons text-md">speaker_notes</i> Notes
                             <span class="badge badge-danger {{ $transaction->notes->count() > 0 ? '' : 'd-none' }}">{{$transaction->notes->count()}}</span>
                         </a>
+                        <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto {{ $transaction->status_id == config('global.cancelled')[0] ? '' : 'd-none' }}" onclick="window.open('/transaction/print-cancelled/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print</a>
                         <a href="/transaction-form/create{{ $transaction->is_reimbursement ? '-reimbursement' : '' }}?company={{ $transaction->project->company_id }}&key={{ strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq) }}" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto {{ $perms['can_create'] ? '' : 'd-none' }}">
                             <i class="align-middle font-weight-bolder material-icons text-md">add</i> 
                             @if ($transaction->is_deposit)

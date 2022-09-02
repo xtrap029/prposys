@@ -1019,6 +1019,15 @@ class TransactionsController extends Controller {
         ]);
     }
 
+    public function print_cancelled(Transaction $transaction) {
+        if (!in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies))) return abort(401);
+
+        return view('pages.admin.transaction.printcancelled')->with([
+            'transaction' => $transaction,
+            'company' => $transaction->project->company
+        ]);
+    }
+
     public function report_all() {
         $trans_page = '';
         $status_sel = '';

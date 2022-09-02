@@ -515,16 +515,18 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
         Route::prefix('transaction')->group(function () {
             $url = 'Admin\TransactionsController';
 
+            Route::get('/print-cancelled/{transaction}', $url.'@print_cancelled')->where('transaction', '[0-9]+')->name('transaction');
             Route::get('/view/{transaction}', $url.'@show')->where('transaction', '[0-9]+')->name('transaction');
             Route::get('/{trans_page}/{trans_company?}', $url.'@index')->where('trans_company', '[0-9]+')->name('transaction');
-
+            
             Route::post('/api-search', $url.'@api_search');
-
+            
             Route::put('/note/{transaction}', $url.'@note')->where('transaction', '[0-9]+');
             Route::put('/edit_note/{transaction}/{transaction_note}', $url.'@edit_note')->where('transaction_note', '[0-9]+');
             Route::get('/delete_note/{transaction}/{transaction_note}', $url.'@destroy_note')->where('transaction_note', '[0-9]+');
-
+            
             Route::put('/edit-company/', $url.'@update_company')->name('transaction');
+            
         });
 
         Route::prefix('transaction-form')->group(function () {
