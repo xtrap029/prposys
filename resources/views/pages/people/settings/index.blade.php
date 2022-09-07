@@ -147,7 +147,60 @@
                                         @include('errors.inline', ['message' => $errors->first('SITE_COLOR_PEOPLE')])
                                     </div>
                                 </div>
-                            @break                         
+                            @break    
+                            @case('SITE_LOGO_LOGOUT')
+                                <hr>
+                                <div class="form-row mb-3">
+                                    <div class="col-6 col-sm-4">
+                                        <label for="">
+                                            Logout Icon
+                                            <div class="small">Image with 500kb max size</div>
+                                        </label>                                        
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 mb-2 align-self-end">
+                                        <img src="/storage/public/images/site settings/{{ $item->value }}" class="img-size-32" alt="">
+                                    </div>
+                                    <div class="col-6 col-sm-4">
+                                        <input type="file" name="SITE_LOGO_LOGOUT" class="form-control-file @error('SITE_LOGO_LOGOUT') is-invalid @enderror d-inline-block mt-2">
+                                        @include('errors.inline', ['message' => $errors->first('SITE_LOGO_LOGOUT')])
+                                    </div>
+                                </div>
+                            @break   
+                            @case('SITE_BANNER_LOGIN')
+                                <hr>
+                                <div class="form-row mb-3">
+                                    <div class="col-6 col-sm-4">
+                                        <label for="">
+                                            Login Banner
+                                            <div class="small">Image with 5000kb max size</div>
+                                        </label>                                        
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 mb-2 align-self-end">
+                                        <img src="/storage/public/images/site settings/{{ $item->value }}" class="img-size-64" alt="">
+                                    </div>
+                                    <div class="col-6 col-sm-4">
+                                        <input type="file" name="SITE_BANNER_LOGIN" class="form-control-file @error('SITE_BANNER_LOGIN') is-invalid @enderror d-inline-block mt-2">
+                                        @include('errors.inline', ['message' => $errors->first('SITE_BANNER_LOGIN')])
+                                    </div>
+                                </div>
+                            @break
+                            @case('SITE_BANNER_HOME')
+                                <div class="form-row mb-3">
+                                    <div class="col-6 col-sm-4">
+                                        <label for="">
+                                            Login Banner
+                                            <div class="small">Image with 5000kb max size</div>
+                                        </label>                                        
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 mb-2 align-self-end">
+                                        <img src="/storage/public/images/site settings/{{ $item->value }}" class="img-size-64" alt="">
+                                    </div>
+                                    <div class="col-6 col-sm-4">
+                                        <input type="file" name="SITE_BANNER_HOME" class="form-control-file @error('SITE_BANNER_HOME') is-invalid @enderror d-inline-block mt-2">
+                                        @include('errors.inline', ['message' => $errors->first('SITE_BANNER_HOME')])
+                                    </div>
+                                </div>
+                            @break                   
                             @default
                     @endswitch            
                 @endforeach

@@ -72,3 +72,11 @@
     }
 
 }
+
+.img-size-64--100 {
+    transition: width 0.3s;
+}
+
+.img-size-64--100:hover {
+    width: 100px;
+}
