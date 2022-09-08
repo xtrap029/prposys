@@ -172,7 +172,7 @@
                                     <div class="col-6 col-sm-4">
                                         <label for="">
                                             Login Banner
-                                            <div class="small">Image with 5000kb max size</div>
+                                            <div class="small">Image with 15000kb max size</div>
                                         </label>                                        
                                     </div>
                                     <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 mb-2 align-self-end">
@@ -188,8 +188,8 @@
                                 <div class="form-row mb-3">
                                     <div class="col-6 col-sm-4">
                                         <label for="">
-                                            Login Banner
-                                            <div class="small">Image with 5000kb max size</div>
+                                            Home Banner
+                                            <div class="small">Image with 15000kb max size</div>
                                         </label>                                        
                                     </div>
                                     <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 mb-2 align-self-end">
@@ -198,6 +198,31 @@
                                     <div class="col-6 col-sm-4">
                                         <input type="file" name="SITE_BANNER_HOME" class="form-control-file @error('SITE_BANNER_HOME') is-invalid @enderror d-inline-block mt-2">
                                         @include('errors.inline', ['message' => $errors->first('SITE_BANNER_HOME')])
+                                    </div>
+                                </div>
+                            @break
+                            @case('SITE_DASHBOARD_SLIDER')
+                                <hr>
+                                <div class="form-row mb-3">
+                                    <div class="col-6 col-sm-4">
+                                        <label for="">
+                                            Dashboard Slider
+                                            <div class="small">
+                                                Separate each image url by adding new line
+                                                <code class="d-block">
+                                                    link.com/image.png<br>
+                                                    link.com/image2.jpg<br>
+                                                    link.com/image3.png<bt>
+                                                </code>
+                                            </div>
+                                        </label>                                        
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4"></div>
+                                    <div class="col-sm-4">
+                                        <textarea name="SITE_DASHBOARD_SLIDER"
+                                            class="form-control @error('SITE_DASHBOARD_SLIDER') is-invalid @enderror d-inline-block mt-2" 
+                                            rows="5" required>{{ $item->value }}</textarea>
+                                        @include('errors.inline', ['message' => $errors->first('SITE_DASHBOARD_SLIDER')])
                                     </div>
                                 </div>
                             @break                   

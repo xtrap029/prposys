@@ -6,6 +6,7 @@
 
 require('./bootstrap');
 require('fastselect');
+require('slick-carousel');
 
 window.Vue = require('vue');
 

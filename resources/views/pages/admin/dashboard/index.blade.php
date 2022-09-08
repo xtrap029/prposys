@@ -55,37 +55,7 @@
                 </div>
             </div>
             <div class="col-md-6 col-lg-8 d-flex">
-                {{-- <div class="card jsInspire w-100">
-                    <div class="card-body h-100 d-table">
-                        <div class="text-white d-table-cell vlign--middle text-center">
-                            <h5 class="jsInspire_quote"></h5>
-                            <h6 class="jsInspire_author"></h6>
-                        </div>
-                    </div>
-                </div> --}}
-                <div class="card w-100">
-                    <div class="card-body rounded h-100 d-table" style="
-                        background-image:url('{{ config('global.site_banner') }}');
-                        background-size:cover;
-                        background-position:center;
-                        margin-right: -1px;
-                        min-height: 200px;">
-
-                        @if ($announcement != '')
-                            <h4 class="bg-yellow p-3 rounded text-center">
-                                <i class="nav-icon material-icons icon--list mr-2 text-danger">announcement</i>
-                                Announcement
-                            </h4>
-                            <div class="p-3 rounded bg-white" style="
-                                max-height: 300px;
-                                overflow-y: scroll;
-                            ">
-                                {!! $announcement !!}
-                            </div>
-                        @endif
-
-                    </div>
-                </div>
+                @include('layouts.sections.slick')
             </div>
             
             <div class="col-md-6">

@@ -28,8 +28,9 @@ class SettingsController extends Controller {
             'SITE_LOGO_PEOPLE' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:548'],
             'SITE_COLOR_PEOPLE' => ['required'],
             'SITE_LOGO_LOGOUT' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:548'],
-            'SITE_BANNER_LOGIN' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:5480'],
-            'SITE_BANNER_HOME' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:5480'],
+            'SITE_BANNER_LOGIN' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:15480'],
+            'SITE_BANNER_HOME' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:15480'],
+            'SITE_DASHBOARD_SLIDER' => ['required'],
         ]);
 
         if ($request->file('SITE_LOGO')) {

@@ -27,6 +27,7 @@
         "admin-lte": "^3.0.5",
         "chart.js": "^2.9.3",
         "fastselect": "^0.7.3",
-        "material-components-web": "^6.0.0"
+        "material-components-web": "^6.0.0",
+        "slick-carousel": "^1.8.1"
     }
 }

@@ -40,29 +40,7 @@
                 </div>
             </div>
             <div class="col-md-6 col-lg-8 d-flex">
-                <div class="card w-100">
-                    <div class="card-body rounded h-100 d-table" style="
-                        background-image:url('{{ config('global.site_banner') }}');
-                        background-size:cover;
-                        background-position:center;
-                        margin-right: -1px;
-                        min-height: 200px;">
-
-                        @if ($announcement != '')
-                            <h4 class="bg-yellow p-3 rounded text-center">
-                                <i class="nav-icon material-icons icon--list mr-2 text-danger">announcement</i>
-                                Announcement
-                            </h4>
-                            <div class="p-3 rounded bg-white" style="
-                                max-height: 300px;
-                                overflow-y: scroll;
-                            ">
-                                {!! $announcement !!}
-                            </div>
-                        @endif
-
-                    </div>
-                </div>
+                @include('layouts.sections.slick')
             </div>
             <div class="col-md-6 col-lg-4">
                 <div class="card card-widget">

@@ -38,5 +38,6 @@ class AppServiceProvider extends ServiceProvider
 
         config(['global.site_banner_login' => '/storage/public/images/site settings/'.\App\Settings::where('type', 'SITE_BANNER_LOGIN')->first()->value]);
         config(['global.site_banner_home' => '/storage/public/images/site settings/'.\App\Settings::where('type', 'SITE_BANNER_HOME')->first()->value]);
+        config(['global.SITE_DASHBOARD_SLIDER' => \App\Settings::where('type', 'SITE_DASHBOARD_SLIDER')->first()->value]);
     }
 }
