@@ -12,7 +12,7 @@
     <div class="col-lg-4 bg-white">
         <div class="p-5 m-lg-5 text-center">
             <img src="/images/logo-tecc.png" class="w-40" alt="">
-            <h2 class="text-center my-5 text-bold">{{ config('global.site_login_greeting')[rand(0, 2)] }}</h2>
+            <h2 class="text-center my-5 text-bold">{{ config('global.site_login_greeting')[rand(0, count(config('global.site_login_greeting'))-1)] }}</h2>
             <form method="POST" action="{{ route('login') }}" class="p-3">
                 @csrf
 
