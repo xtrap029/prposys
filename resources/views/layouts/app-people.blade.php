@@ -35,10 +35,12 @@
                             Sequence
                         </a>
                     @endif
-                    <a class="dropdown-item px-3" href="{{ config('global.leaves_link') }}" target="_blank">
-                        <img src="{{ config('global.site_icon_leaves') }}" alt="" class="img-size-32 mr-2">
-                        Leaves
-                    </a>
+                    @foreach (config('global.site_app_externals') as $item)
+                        <a class="dropdown-item px-3" href="{{ $item->url }}" target="_blank">
+                            <img src="/storage/public/images/app-externals/{{ $item->icon }}" alt="" class="img-size-32 mr-2">
+                            {{ $item->name }}
+                        </a>
+                    @endforeach
                 </div>
             </div>
     

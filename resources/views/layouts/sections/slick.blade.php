@@ -1,4 +1,4 @@
-<div class="card w-100 banner">
+<div class="card w-100 banner bg-transparent border-0">
     @forelse (config('global.site_dashboard_slider') as $item)
         <div class="card-body d-table" style="
             background-image:url('{{ $item }}');

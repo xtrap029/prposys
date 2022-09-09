@@ -41,5 +41,7 @@ class AppServiceProvider extends ServiceProvider
         
         config(['global.site_dashboard_slider' => preg_split("/\\r\\n|\\r|\\n/",\App\Settings::where('type', 'SITE_DASHBOARD_SLIDER')->first()->value)]);
         config(['global.site_login_greeting' => preg_split("/\\r\\n|\\r|\\n/",\App\Settings::where('type', 'SITE_LOGIN_GREETING')->first()->value)]);
+
+        config(['global.site_app_externals' => \App\AppExternal::orderBy('id', 'asc')->get()]);
     }
 }

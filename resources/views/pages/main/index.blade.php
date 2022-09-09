@@ -13,10 +13,15 @@
                     <span>People</span>                 
                     <img src="{{ config('global.site_icon_people') }}" class="img-size-64 img-size-64--100 pb-2" alt="">  
                 </a>
-                <a href="{{ config('global.leaves_link') }}" target="_blank" class="text-bold text-gray-dark text-decoration-none d-inline-block my-1">
-                    <span>Leaves</span>  
-                    <img src="{{ config('global.site_icon_leaves') }}" class="img-size-64 img-size-64--100 pb-2" alt="">
-                </a>
+                @if (count($app_externals))
+                    <div class="nav-ios-icon__divider"></div>
+                    @foreach ($app_externals as $item)
+                        <a href="{{ $item->url }}" target="_blank" class="text-bold text-gray-dark text-decoration-none d-inline-block my-1">
+                            <span>{{ $item->name }}</span>  
+                            <img src="/storage/public/images/app-externals/{{ $item->icon }}" class="img-size-64 img-size-64--100 pb-2" alt="">
+                        </a>
+                    @endforeach
+                @endif
                 <div class="nav-ios-icon__divider"></div>
                 <a href="{{ route('logout') }}" target="_blank" class="text-bold text-gray-dark text-decoration-none d-inline-block my-1"
                     onclick="event.preventDefault();

@@ -14,7 +14,7 @@
     </section>
     <section class="content">
         <div class="container-fluid">
-            <form action="/people-settings" method="post" enctype="multipart/form-data">
+            <form action="/people-settings" method="post" enctype="multipart/form-data" class="jsPreventMultiple">
                 @csrf
                 @foreach ($settings as $item)
                     @switch($item->type)
@@ -254,10 +254,85 @@
                             @default
                     @endswitch            
                 @endforeach
+
+                <hr>
+                <div class="form-row mb-3">
+                    <div class="col-sm-6 col-md-4">
+                        <label for="">External Applications</label>
+                    </div>
+                    <div class="col-6 col-sm-3 col-md-2"></div>
+                    <div class="col-6 col-sm-3 col-md-6 jsReplicate">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Icon <small>(~500kb)</small></th>
+                                    <th>Path</th>
+                                    <th style="width: 100px;"><button type="button" class="btn btn-success btn-block jsReplicate_add">Add</button></th>
+                                </tr>
+                            </thead>
+                            <tbody class="jsReplicate_container">
+                                @foreach ($app_externals as $item)
+                                    <tr class="jsReplicate_template_item">
+                                        <td>
+                                            <input type="hidden" name="app_externals_id[]" value="{{ $item->id }}">
+                                            <input class="form-control" name="app_externals_name[]" value="{{ $item->name }}" required>
+                                        </td>
+                                        <td>
+                                            <img src="/storage/public/images/app-externals/{{ $item->icon }}" alt="" class="img-size-32 d-inline-block">
+                                            <input type="file" name="app_externals_icon[]" class="form-control-file d-inline-block w-75">
+                                        </td>
+                                        <td>
+                                            <input class="form-control" name="app_externals_path[]" value="{{ $item->url }}" required>
+                                        </td>
+                                        <td><button type="button" class="btn btn-danger btn-block jsReplicate_remove">Remove</button></td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <div class="py-5 text-right">
                     <input type="submit" class="btn btn-primary" value="Save"> 
                 </div>
             </form>
+
+            <table class="d-none">
+                <tbody class="jsReplicate_template">
+                    <tr class="jsReplicate_template_item">
+                        <td>
+                            <input class="form-control" name="app_externals_name[]" required>
+                        </td>
+                        <td>
+                            <input type="file" name="app_externals_icon[]" class="form-control-file" required>
+                        </td>
+                        <td>
+                            <input class="form-control" name="app_externals_path[]" required>
+                        </td>
+                        <td><button type="button" class="btn btn-danger btn-block jsReplicate_remove">Remove</button></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </section>
+@endsection
+
+@section('script')
+    <script type="text/javascript">
+        $(function() {
+            if ($('.jsReplicate')[0]){
+                cls = '.jsReplicate'
+                
+                $(cls+'_add').click(function() {
+                    container = $(this).parents(cls).find(cls+'_container')
+                    clsIndex = $(this).parents(cls).index(cls)
+                    $(cls+'_template:eq('+clsIndex+')').children().clone().appendTo(container)
+                })
+
+                $(document).on('click', cls+'_remove', function() {
+                    $(this).parents(cls+'_template_item').remove()
+                })
+            }
+        })
+    </script>
 @endsection
