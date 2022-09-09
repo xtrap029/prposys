@@ -31,6 +31,7 @@ class SettingsController extends Controller {
             'SITE_BANNER_LOGIN' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:15480'],
             'SITE_BANNER_HOME' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:15480'],
             'SITE_DASHBOARD_SLIDER' => ['required'],
+            'SITE_LOGIN_GREETING' => ['required'],
         ]);
 
         if ($request->file('SITE_LOGO')) {

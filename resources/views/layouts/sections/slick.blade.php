@@ -1,5 +1,5 @@
 <div class="card w-100 banner">
-    @forelse (preg_split("/\\r\\n|\\r|\\n/", config('global.SITE_DASHBOARD_SLIDER')) as $item)
+    @forelse (config('global.site_dashboard_slider') as $item)
         <div class="card-body d-table" style="
             background-image:url('{{ $item }}');
             background-size:cover;

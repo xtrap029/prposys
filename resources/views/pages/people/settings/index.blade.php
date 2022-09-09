@@ -225,7 +225,32 @@
                                         @include('errors.inline', ['message' => $errors->first('SITE_DASHBOARD_SLIDER')])
                                     </div>
                                 </div>
-                            @break                   
+                            @break      
+                            @case('SITE_LOGIN_GREETING')
+                                <hr>
+                                <div class="form-row mb-3">
+                                    <div class="col-6 col-sm-4">
+                                        <label for="">
+                                            Login Greeting
+                                            <div class="small">
+                                                Separate each phrase by adding new line
+                                                <code class="d-block">
+                                                    Hi there!<br>
+                                                    Hello!<br>
+                                                    Ola!<bt>
+                                                </code>
+                                            </div>
+                                        </label>                                        
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4"></div>
+                                    <div class="col-sm-4">
+                                        <textarea name="SITE_LOGIN_GREETING"
+                                            class="form-control @error('SITE_LOGIN_GREETING') is-invalid @enderror d-inline-block mt-2" 
+                                            rows="5" required>{{ $item->value }}</textarea>
+                                        @include('errors.inline', ['message' => $errors->first('SITE_LOGIN_GREETING')])
+                                    </div>
+                                </div>
+                            @break               
                             @default
                     @endswitch            
                 @endforeach
