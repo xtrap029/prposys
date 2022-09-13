@@ -147,6 +147,41 @@
                                         @include('errors.inline', ['message' => $errors->first('SITE_COLOR_PEOPLE')])
                                     </div>
                                 </div>
+                            @break 
+                            @case('SITE_LOGO_RESOURCES')
+                                <hr>
+                                <div class="form-row mb-3">
+                                    <div class="col-6 col-sm-4">
+                                        <label for="">
+                                            Resources Icon
+                                            <div class="small">Image with 500kb max size</div>
+                                        </label>                                        
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 mb-2 align-self-end">
+                                        <img src="/storage/public/images/site settings/{{ $item->value }}" class="img-size-32" alt="">
+                                    </div>
+                                    <div class="col-6 col-sm-4">
+                                        <input type="file" name="SITE_LOGO_RESOURCES" class="form-control-file @error('SITE_LOGO_RESOURCES') is-invalid @enderror d-inline-block mt-2">
+                                        @include('errors.inline', ['message' => $errors->first('SITE_LOGO_RESOURCES')])
+                                    </div>
+                                </div>
+                            @break
+                            @case('SITE_COLOR_RESOURCES')
+                                <div class="form-row mb-3">
+                                    <div class="col-6 col-sm-8">
+                                        <label for="">
+                                            Resources Color
+                                        </label>                                        
+                                    </div>
+                                    <div class="col-6 col-sm-4">
+                                        <select name="SITE_COLOR_RESOURCES" class="form-control">
+                                            @foreach (config('global.site_colors') as $item2)
+                                                <option class="option--{{ $item2 }}" {{ $item->value == $item2 ? 'selected' : '' }} value="{{ $item2 }}">{{ $item2 }}</option>                        
+                                            @endforeach
+                                        </select>
+                                        @include('errors.inline', ['message' => $errors->first('SITE_COLOR_RESOURCES')])
+                                    </div>
+                                </div>
                             @break    
                             @case('SITE_LOGO_LOGOUT')
                                 <hr>

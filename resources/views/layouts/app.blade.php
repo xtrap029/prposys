@@ -29,6 +29,12 @@
                             People
                         </a>
                     @endif
+                    @if (in_array(config('global.apps')[3], explode(',', Auth::user()->apps)))
+                        <a class="dropdown-item px-3" href="{{ config('global.dashboard_resources') }}">
+                            <img src="{{ config('global.site_icon_resources') }}" alt="" class="img-size-32 mr-2">
+                            Resources
+                        </a>
+                    @endif
                     @if (in_array(config('global.apps')[0], explode(',', Auth::user()->apps)))
                         {{-- <a class="dropdown-item px-3" href="{{ config('global.dashboard_leaves') }}">
                             <img src="{{ config('global.site_icon_leaves') }}" alt="" class="img-size-32 mr-2">

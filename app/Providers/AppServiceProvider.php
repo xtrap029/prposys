@@ -34,6 +34,9 @@ class AppServiceProvider extends ServiceProvider
         config(['global.site_icon_leaves' => '/storage/public/images/site settings/'.\App\Settings::where('type', 'SITE_LOGO_LEAVES')->first()->value]);
         config(['global.site_color_leaves' => \App\Settings::where('type', 'SITE_COLOR_LEAVES')->first()->value]);
 
+        config(['global.site_icon_resources' => '/storage/public/images/site settings/'.\App\Settings::where('type', 'SITE_LOGO_RESOURCES')->first()->value]);
+        config(['global.site_color_resources' => \App\Settings::where('type', 'SITE_COLOR_RESOURCES')->first()->value]);
+
         config(['global.site_icon_logout' => '/storage/public/images/site settings/'.\App\Settings::where('type', 'SITE_LOGO_LOGOUT')->first()->value]);
 
         config(['global.site_banner_login' => '/storage/public/images/site settings/'.\App\Settings::where('type', 'SITE_BANNER_LOGIN')->first()->value]);

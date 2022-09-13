@@ -1,4 +1,4 @@
-@section('title', 'People')
+@section('title', 'Resources')
 
 @include('layouts.sections.head')
 
@@ -10,12 +10,12 @@
         <?php $non = config('global.ua_none'); ?>
         
         <!-- Main Sidebar Container -->
-        <aside class="main-sidebar elevation-4 sidebar--tecc sidebar--{{ config('global.site_color_people') }}">
+        <aside class="main-sidebar elevation-4 sidebar--tecc sidebar--{{ config('global.site_color_resources') }}">
             
             <div class="dropdown show">
                 <a class="brand-link navbar-white" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img src="{{ config('global.site_icon_people') }}" alt="" class="brand-image">
-                    <span class="brand-text font-weight-light">People</span>
+                    <img src="{{ config('global.site_icon_resources') }}" alt="" class="brand-image">
+                    <span class="brand-text font-weight-light">Resources</span>
                     <i class="nav-icon material-icons icon--list ml-5 pl-4 text-gray">arrow_drop_down</i>
                 </a>
                 <div class="dropdown-menu w-100 border-0 shadow" aria-labelledby="dropdownMenuLink">
@@ -35,10 +35,10 @@
                             Sequence
                         </a>
                     @endif
-                    @if (in_array(config('global.apps')[3], explode(',', Auth::user()->apps)))
-                        <a class="dropdown-item px-3" href="{{ config('global.dashboard_resources') }}">
-                            <img src="{{ config('global.site_icon_resources') }}" alt="" class="img-size-32 mr-2">
-                            Resources
+                    @if (in_array(config('global.apps')[2], explode(',', Auth::user()->apps)))
+                        <a class="dropdown-item px-3" href="{{ config('global.dashboard_people') }}">
+                            <img src="{{ config('global.site_icon_people') }}" alt="" class="img-size-32 mr-2">
+                            People
                         </a>
                     @endif
                     @foreach (config('global.site_app_externals') as $item)
@@ -84,49 +84,19 @@
                             <nav class="mt-2">
                                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                                     <li class="nav-item">
-                                        <a href="{{ config('global.dashboard_people') }}" class="nav-link {{ Route::currentRouteName() == 'people-dashboard' ? 'active' : '' }}">
+                                        <a href="{{ config('global.dashboard_resources') }}" class="nav-link {{ Route::currentRouteName() == 'resources-dashboard' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">dashboard</i><p>Dashboard</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a href="/faqs" class="nav-link {{ Route::currentRouteName() == 'faq' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">quiz</i><p>FAQs</p>
+                                        </a>
+                                    </li>
                                     <li class="nav-item py-3"></li>
-                                    <li class="nav-item {{ $ua['peo_user'] == $non ? 'd-none' : '' }}">
-                                        <a href="/user" class="nav-link {{ Route::currentRouteName() == 'user' ? 'active' : '' }}">
-                                            <i class="nav-icon material-icons icon--list">face</i><p>User</p>
-                                        </a>
-                                    </li>                                            
-                                    <li class="nav-item {{ $ua['peo_ua_route'] == $non ? 'd-none' : '' }}">
-                                        <a href="/ua-route" class="nav-link {{ Route::currentRouteName() == 'uaroute' ? 'active' : '' }}">
-                                            <i class="nav-icon material-icons icon--list">route</i><p>User Route</p>
-                                        </a>
-                                    </li> 
-                                    <li class="nav-item {{ $ua['peo_ua_level'] == $non ? 'd-none' : '' }}">
-                                        <a href="/ua-level" class="nav-link {{ Route::currentRouteName() == 'ualevel' ? 'active' : '' }}">
-                                            <i class="nav-icon material-icons icon--list">leaderboard</i><p>User Level</p>
-                                        </a>
-                                    </li> 
-                                    <li class="nav-item {{ $ua['peo_ua_level_route'] == $non ? 'd-none' : '' }}">
-                                        <a href="/ua-level-route" class="nav-link {{ Route::currentRouteName() == 'ualevelroute' ? 'active' : '' }}">
-                                            <i class="nav-icon material-icons icon--list">rule</i><p>User Level Route</p>
-                                        </a>
-                                    </li> 
-                                    <li class="nav-item {{ $ua['peo_announcement'] == $non ? 'd-none' : '' }}">
-                                        <a href="/people-announcement" class="nav-link {{ Route::currentRouteName() == 'people-announcement' ? 'active' : '' }}">
-                                            <i class="nav-icon material-icons icon--list">announcement</i><p>Announcement</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item {{ $ua['peo_settings'] == $non ? 'd-none' : '' }}">
-                                        <a href="/people-settings" class="nav-link {{ Route::currentRouteName() == 'people-settings' ? 'active' : '' }}">
-                                            <i class="nav-icon material-icons icon--list">settings</i><p>Settings</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item {{ $ua['peo_activity'] == $non ? 'd-none' : '' }}">
-                                        <a href="/activity-log" class="nav-link {{ Route::currentRouteName() == 'activitylog' ? 'active' : '' }}">
-                                            <i class="nav-icon material-icons icon--list">history</i><p>Activity Log</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item {{ $ua['peo_db'] == $non ? 'd-none' : '' }}">
-                                        <a href="/db-backups" class="nav-link {{ Route::currentRouteName() == 'dbbackups' ? 'active' : '' }}">
-                                            <i class="nav-icon material-icons icon--list">storage</i><p>Database</p>
+                                    <li class="nav-item {{ $ua['res_faq_manage'] == $non ? 'd-none' : '' }}">
+                                        <a href="/faqs-manage" class="nav-link {{ Route::currentRouteName() == 'faqmanage' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">quiz</i><p>Manage FAQs</p>
                                         </a>
                                     </li>
                                 </ul>

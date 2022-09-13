@@ -29,6 +29,8 @@ class SettingsController extends Controller {
             'SITE_COLOR_LEAVES' => ['required'],
             'SITE_LOGO_PEOPLE' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:548'],
             'SITE_COLOR_PEOPLE' => ['required'],
+            'SITE_LOGO_RESOURCES' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:548'],
+            'SITE_COLOR_RESOURCES' => ['required'],
             'SITE_LOGO_LOGOUT' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:548'],
             'SITE_BANNER_LOGIN' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:15480'],
             'SITE_BANNER_HOME' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:15480'],
@@ -49,6 +51,11 @@ class SettingsController extends Controller {
         if ($request->file('SITE_LOGO_PEOPLE')) {
             Storage::delete('public/images/site settings/' . Settings::where('type', 'SITE_LOGO_PEOPLE')->first()->value);
             $data['SITE_LOGO_PEOPLE'] = basename($request->file('SITE_LOGO_PEOPLE')->store('public/images/site settings'));
+        }
+
+        if ($request->file('SITE_LOGO_RESOURCES')) {
+            Storage::delete('public/images/site settings/' . Settings::where('type', 'SITE_LOGO_RESOURCES')->first()->value);
+            $data['SITE_LOGO_RESOURCES'] = basename($request->file('SITE_LOGO_RESOURCES')->store('public/images/site settings'));
         }
 
         if ($request->file('SITE_LOGO_LOGOUT')) {

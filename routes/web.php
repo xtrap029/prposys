@@ -24,6 +24,7 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
     Route::get('/sequence-dashboard', 'Admin\DashboardController@index')->name('sequence-dashboard');
     Route::get('/people-dashboard', 'People\DashboardController@index')->name('people-dashboard');
     Route::get('/leaves-dashboard', 'Leaves\DashboardController@index')->name('leaves-dashboard');
+    Route::get('/resources-dashboard', 'Resources\DashboardController@index')->name('resources-dashboard');
 
     Route::get('my-account', 'People\MyAccountController@index')->name('myaccount');
     Route::put('my-account', 'People\MyAccountController@update')->name('myaccount');
@@ -198,6 +199,18 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
     Route::middleware('CheckUserAccess:peo_ua_level_route')->group(function () {
         Route::get('/ua-level-route', 'People\UaLevelRoutesController@index')->name('ualevelroute');
         Route::put('/ua-level-route', 'People\UaLevelRoutesController@update');
+    });
+
+    // Resources FAQ
+    Route::get('/faqs', 'Resources\FaqsController@index')->name('faq');
+    
+    Route::middleware('CheckUserAccess:res_faq_manage')->group(function () {
+        Route::get('/faqs-manage', 'Resources\FaqsController@manage_index')->name('faqmanage');
+        // Route::get('/create', $url.'@create')->name('bank');
+        // Route::post('/', $url.'@store');
+        // Route::get('/edit/{bank_branch}', $url.'@edit')->where('bank_branch', '[0-9]+')->name('bank');
+        // Route::put('/{bank_branch}', $url.'@update')->where('bank_branch', '[0-9]+');
+        // Route::delete('/{bank_branch}', $url.'@destroy')->where('bank_branch', '[0-9]+');
     });
 
     // Lea Settings

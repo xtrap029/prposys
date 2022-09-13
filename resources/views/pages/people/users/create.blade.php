@@ -203,7 +203,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="card col-md-12 mt-4 d-none">
+                        <div class="card col-md-12 mt-4">
                             <div class="card-header">
                                 App Access
                                 <span class="float-right">
