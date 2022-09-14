@@ -205,12 +205,16 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
     Route::get('/faqs', 'Resources\FaqsController@index')->name('faq');
     
     Route::middleware('CheckUserAccess:res_faq_manage')->group(function () {
-        Route::get('/faqs-manage', 'Resources\FaqsController@manage_index')->name('faqmanage');
-        // Route::get('/create', $url.'@create')->name('bank');
-        // Route::post('/', $url.'@store');
-        // Route::get('/edit/{bank_branch}', $url.'@edit')->where('bank_branch', '[0-9]+')->name('bank');
-        // Route::put('/{bank_branch}', $url.'@update')->where('bank_branch', '[0-9]+');
-        // Route::delete('/{bank_branch}', $url.'@destroy')->where('bank_branch', '[0-9]+');
+        Route::prefix('faqs-manage')->group(function () {
+            $url = 'Resources\FaqsController';
+
+            Route::get('/', $url.'@manage_index')->name('faqmanage');
+            Route::get('/create', $url.'@create')->name('faqmanage');
+            Route::post('/', $url.'@store');
+            Route::get('/{faq}/edit', $url.'@edit')->where('faq', '[0-9]+')->name('faqmanage');
+            Route::put('/{faq}', $url.'@update')->where('faq', '[0-9]+');
+            Route::delete('/{faq}', $url.'@destroy')->where('faq', '[0-9]+');
+        });
     });
 
     // Lea Settings

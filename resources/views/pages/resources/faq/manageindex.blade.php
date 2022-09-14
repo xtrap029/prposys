@@ -19,6 +19,7 @@
                     <tr>
                         <th>Title</th>
                         <th>Category</th>
+                        <th class="text-right"><a href="/faqs-manage/create">Create</a></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -26,6 +27,14 @@
                         <tr>
                             <td>{{ $item->title }}</td>
                             <td>{{ $item->category }}</td>
+                            <td class="text-right">
+                                <a href="/faqs-manage/{{ $item->id }}/edit" class="btn btn-link btn-sm d-inline-block">Edit</a>
+                                <form action="/faqs-manage/{{ $item->id }}" method="post" class="d-inline-block">
+                                    @csrf
+                                    @method('delete')
+                                    <input type="submit" class="btn btn-link btn-sm" value="Delete" onclick="return confirm('Are you sure?')">
+                                </form>
+                            </td>
                         </tr>
                     @empty
                         <tr>

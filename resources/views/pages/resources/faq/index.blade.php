@@ -14,26 +14,57 @@
     </section>
     <section class="content">
         <div class="container-fluid">  
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Category</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($faqs as $item)
-                        <tr>
-                            <td>{{ $item->title }}</td>
-                            <td>{{ $item->category }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="text-center">{{ __('messages.empty') }}</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            <div id="accordion">
+                @foreach ($categories as $item)
+                    <div class="card mb-0">
+                        <div class="card-header" id="heading{{ $item->category }}">
+                            <h5 class="mb-0">
+                            <button class="btn btn-link btn-block text-left text-dark text-decoration-none collapsed" data-toggle="collapse" data-target="#collapse{{ $item->category }}" aria-expanded="true" aria-controls="collapse{{ $item->category }}">
+                                {{ $item->category }}
+                            </button>
+                            </h5>
+                        </div>
+                
+                        <div id="collapse{{ $item->category }}" class="collapse show" aria-labelledby="heading{{ $item->category }}" data-parent="#accordion">
+                            <div class="card-body">
+                                <ol>
+                                    @foreach ($item->faqs as $faq)
+                                        <li>
+                                            <h6>
+                                                <a href="#_" data-toggle="modal" data-target="#modal-{{ $faq->id }}">{{ $faq->title }}</a>
+                                            </h6>
+                                        </li>
+
+                                        <div class="modal fade" id="modal-{{ $faq->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                                            <div class="modal-dialog modal-md" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header border-0">
+                                                        <h5 class="modal-title">{{ $faq->title }}</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        {!! $faq->description !!}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
         </div>
     </section>
+@endsection
+
+@section('script')
+    <script type="text/javascript">
+        $(function() {
+            $('.collapse').collapse()
+        })
+    </script>
 @endsection

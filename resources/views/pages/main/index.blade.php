@@ -5,18 +5,24 @@
     <div class="h-100 row m-0 align-items-end">
         <div class="col text-center">
             <div class="nav-ios-icon">
-                <a href="{{ config('global.dashboard_sequence') }}" class="text-bold text-gray-dark text-decoration-none d-inline-block my-1">
-                    <span>Sequence</span>                  
-                    <img src="{{ config('global.site_icon') }}" class="img-size-64 img-size-64--100 pb-2" alt="">
-                </a>
-                <a href="{{ config('global.dashboard_people') }}" class="text-bold text-gray-dark text-decoration-none d-inline-block my-1">
-                    <span>People</span>                 
-                    <img src="{{ config('global.site_icon_people') }}" class="img-size-64 img-size-64--100 pb-2" alt="">  
-                </a>
-                <a href="{{ config('global.dashboard_resources') }}" class="text-bold text-gray-dark text-decoration-none d-inline-block my-1">
-                    <span>Resources</span>                 
-                    <img src="{{ config('global.site_icon_resources') }}" class="img-size-64 img-size-64--100 pb-2" alt="">  
-                </a>
+                @if (in_array(config('global.apps')[1], explode(',', Auth::user()->apps)))
+                    <a href="{{ config('global.dashboard_sequence') }}" class="text-bold text-gray-dark text-decoration-none d-inline-block my-1">
+                        <span>Sequence</span>                  
+                        <img src="{{ config('global.site_icon') }}" class="img-size-64 img-size-64--100 pb-2" alt="">
+                    </a>
+                @endif
+                @if (in_array(config('global.apps')[2], explode(',', Auth::user()->apps)))
+                    <a href="{{ config('global.dashboard_people') }}" class="text-bold text-gray-dark text-decoration-none d-inline-block my-1">
+                        <span>People</span>                 
+                        <img src="{{ config('global.site_icon_people') }}" class="img-size-64 img-size-64--100 pb-2" alt="">  
+                    </a>
+                @endif
+                @if (in_array(config('global.apps')[3], explode(',', Auth::user()->apps)))
+                    <a href="{{ config('global.dashboard_resources') }}" class="text-bold text-gray-dark text-decoration-none d-inline-block my-1">
+                        <span>Resources</span>                 
+                        <img src="{{ config('global.site_icon_resources') }}" class="img-size-64 img-size-64--100 pb-2" alt="">  
+                    </a>
+                @endif
                 @if (count($app_externals))
                     <div class="nav-ios-icon__divider"></div>
                     @foreach ($app_externals as $item)

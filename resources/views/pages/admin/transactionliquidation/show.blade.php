@@ -511,6 +511,12 @@
                                         <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
                                         <p class="text-dark">SOA</p>
                                     </a>
+                                    @if ($transaction->issue_slip)
+                                        <a class="btn btn-app p-2" href="/storage/public/attachments/issue_slip/{{ $transaction->issue_slip }}" target="_blank">
+                                            <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
+                                            <p class="text-dark">Slip</p>
+                                        </a>
+                                    @endif   
                                 @endif
                             </div>
                         </div>
@@ -739,12 +745,6 @@
                                     @endif
                                     @if ($transaction->depo_slip)
                                         <a class="btn btn-app p-2" href="/storage/public/attachments/deposit_slip/{{ $transaction->depo_slip }}" target="_blank">
-                                            <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
-                                            <p class="text-dark">Slip</p>
-                                        </a>
-                                    @endif   
-                                    @if ($transaction->issue_slip)
-                                        <a class="btn btn-app p-2" href="/storage/public/attachments/issue_slip/{{ $transaction->issue_slip }}" target="_blank">
                                             <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
                                             <p class="text-dark">Slip</p>
                                         </a>
