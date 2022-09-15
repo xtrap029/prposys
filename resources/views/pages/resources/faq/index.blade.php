@@ -17,15 +17,15 @@
             <div id="accordion">
                 @foreach ($categories as $item)
                     <div class="card mb-0">
-                        <div class="card-header" id="heading{{ $item->category }}">
+                        <div class="card-header p-0" id="heading{{ $item->random }}">
                             <h5 class="mb-0">
-                            <button class="btn btn-link btn-block text-left text-dark text-decoration-none collapsed" data-toggle="collapse" data-target="#collapse{{ $item->category }}" aria-expanded="true" aria-controls="collapse{{ $item->category }}">
-                                {{ $item->category }}
-                            </button>
+                                <button class="btn btn-link btn-block text-left text-dark text-decoration-none collapsed px-4 py-3" data-toggle="collapse" data-target="#collapse{{ $item->random }}" aria-expanded="true" aria-controls="collapse{{ $item->random }}">
+                                    {{ $item->category }}
+                                </button>
                             </h5>
                         </div>
                 
-                        <div id="collapse{{ $item->category }}" class="collapse show" aria-labelledby="heading{{ $item->category }}" data-parent="#accordion">
+                        <div id="collapse{{ $item->random }}" class="collapse show" aria-labelledby="heading{{ $item->random }}" data-parent="#accordion">
                             <div class="card-body">
                                 <ol>
                                     @foreach ($item->faqs as $faq)

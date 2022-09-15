@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Faq;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class FaqsController extends Controller {
     
@@ -15,6 +16,7 @@ class FaqsController extends Controller {
         foreach ($categories as $key => $value) {
             $faqs = Faq::where('category', $value->category)->orderBy('title', 'asc')->get();
             $categories[$key]->faqs = $faqs;
+            $categories[$key]->random = Str::random(10);
         }
 
         return view('pages.resources.faq.index')->with([
