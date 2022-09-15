@@ -47,6 +47,9 @@
                                                     <div class="modal-body">
                                                         {!! $faq->description !!}
                                                     </div>
+                                                    <div class="modal-footer border-0">
+                                                        <i class="small">Last Updated: {{ $faq->updated_at }}</i>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

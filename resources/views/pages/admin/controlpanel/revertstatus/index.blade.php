@@ -26,6 +26,7 @@
                             </span>
                             Are you sure?
                         </h5>
+                        Reverted transaction's attachments might not be recovered depending on checkpoint selected.
                         Transaction <code>{{ app('request')->input('trans') }}</code>'s
                         current status is <code>{{ $transaction->status->name }}</code>.
                     </div>
@@ -50,7 +51,7 @@
                 </form>
             @else
             <form action="" method="get" class="col-md-7">
-                    <div class="alert alert-default-warning rounded" role="alert">
+                    <div class="alert alert-default-warning rounded d-none" role="alert">
                         <i class="nav-icon material-icons icon--list mr-1">warning</i>
                         Only Regular transactions can choose a status to revert to. All other transaction types can only revert to its previous status.
                      </div>
