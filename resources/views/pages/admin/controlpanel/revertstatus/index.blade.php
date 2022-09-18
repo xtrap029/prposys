@@ -26,7 +26,7 @@
                             </span>
                             Are you sure?
                         </h5>
-                        Reverted transaction's attachments might not be recovered depending on checkpoint selected.
+                        Reverted transaction's attachments might not be recovered depending on selected status.
                         Transaction <code>{{ app('request')->input('trans') }}</code>'s
                         current status is <code>{{ $transaction->status->name }}</code>.
                     </div>
@@ -72,6 +72,9 @@
                     </div>
                 </form>
             @endif
+
+
+            {{-- <iframe src="https://drive.google.com/embeddedfolderview?id=1UR6ruialk8RpH7i6FfiJN1lRaR0hw18C#list" style="width:100%; height:600px; border:0;"></iframe> --}}
         </div>
     </section>
 @endsection

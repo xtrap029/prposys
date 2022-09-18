@@ -10,11 +10,22 @@ use Illuminate\Support\Str;
 
 class FaqsController extends Controller {
     
-    public function index() {
+    public function index(Request $request) {
         $categories = Faq::select('category')->groupBy('category')->orderBy('category', 'asc')->get();
         
+        
         foreach ($categories as $key => $value) {
-            $faqs = Faq::where('category', $value->category)->orderBy('title', 'asc')->get();
+            $faqs = Faq::where('category', $value->category);
+
+            if($request->s) {
+                $search = $request->s;
+                $faqs = $faqs->where(static function ($query) use ($search) {
+                    $query->where('title', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            }
+
+            $faqs = $faqs->orderBy('title', 'asc')->get();
             $categories[$key]->faqs = $faqs;
             $categories[$key]->random = Str::random(10);
         }
