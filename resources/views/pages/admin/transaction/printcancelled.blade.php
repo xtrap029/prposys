@@ -39,7 +39,7 @@
                                 </td>
                                 <td>{{ Carbon::parse($transaction->created_at)->format('Y-m-d') }}</td>
                                 <td>{{ $transaction->project->project }}</td>
-                                <td>{{ $transaction->coatagging->name }}</td>
+                                <td>{{ $transaction->coa_tagging_id ? $transaction->coatagging->name : '-' }}</td>
                                 <td>{{ $transaction->status->name }}</td>
                             </tr>
                         </tbody>
@@ -75,7 +75,7 @@
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold">Tax Type</td>
-                                    <td>{{ $transaction->form_vat_name ? $transaction->form_vat_name : $transaction->vattype->name }}</td>
+                                    <td>{{ $transaction->form_vat_name ? $transaction->form_vat_name : ($transaction->vat_type_id ? $transaction->vattype->name : '-') }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold">Cancellation Reason</td>
