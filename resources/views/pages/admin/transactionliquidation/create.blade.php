@@ -111,7 +111,7 @@
                         </button>
                     </div>
                 @endif
-                @if (!$transaction->is_deposit && !$transaction->is_hr && !$transaction->is_bank)
+                @if (!$transaction->is_deposit)
                     <div class="jsReplicate jsMath mt-5">
                         <h4 class="text-center">Items</h4>
                         <div class="table-responsive">
@@ -292,7 +292,8 @@
                             <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
                         </div>
                     </div>
-                @elseif($transaction->is_deposit || $transaction->is_bank)
+                @endif
+                @if($transaction->is_deposit || $transaction->is_bank)
                     <div class="row">                                            
                         <div class="col-md-3 mb-2">
                             <label for="" class="font-weight-bold">Mode</label>
@@ -343,30 +344,6 @@
                             @include('errors.inline', ['message' => $errors->first('depo_received_by')])
                         </div>
                     </div>
-                    {{-- <div class="row {{ !$transaction->is_bank ? 'd-none' : '' }}">
-                        <div class="col-md-3 mb-2">
-                            <label for="" class="font-weight-bold">Currency</label>
-                            <select name="currency_2" id="currencyChange" class="form-control @error('currency_2') is-invalid @enderror">
-                                @foreach (config('global.currency') as $key => $item)
-                                    <option value="{{ config('global.currency_label')[$key] }}" {{ $transaction->currency == config('global.currency_label')[$key] ? 'selected' : '' }}>{{ $item }}</option>
-                                @endforeach
-                            </select>
-                            @include('errors.inline', ['message' => $errors->first('currency_2')])
-                        </div>
-                        <div class="col-md-3 mb-2">
-                            <label for="" class="font-weight-bold">FX Rate</label>
-                            <input type="number" id="currencyFx" class="form-control @error('currency_2_rate') is-invalid @enderror" step="0.01" name="currency_2_rate" value="1" readonly required>
-                            @include('errors.inline', ['message' => $errors->first('currency_2_rate')])
-                        </div>
-                        <div class="col-md-3 mb-2">
-                            <label for="" class="font-weight-bold">Issued Amount (Converted)</label>
-                            <div class="pt-2">{{ $transaction->currency }} <span id="currencyAmount">{{ number_format($transaction->amount_issued, 2, '.', ',') }}</span></div>
-                        </div>
-                        <div class="col-md-3 mb-2">
-                            <label for="" class="font-weight-bold">Bank Transfer Amount</label>
-                            <div class="pt-2">{{ $transaction->currency }} {{ number_format($transaction->amount, 2, '.', ',') }}</div>
-                        </div>
-                    </div> --}}
                 @endif
                 <div class="jsReplicate mt-5 pt-5">
                     <h4 class="text-center">Attachments</h4>
@@ -423,7 +400,7 @@
                 </div>
             </form>
 
-            @if (!$transaction->is_deposit && !$transaction->is_hr && !$transaction->is_bank)
+            @if (!$transaction->is_deposit)
                 <table class="d-none">
                     <tbody class="jsReplicate_template">
                         <tr class="jsReplicate_template_item">
