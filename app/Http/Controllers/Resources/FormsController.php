@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Resources;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Form;
-use App\Ualevel;
+use App\UaLevel;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
@@ -58,7 +58,7 @@ class FormsController extends Controller {
 
     public function create() {
         $categories = Form::select('category')->groupBy('category')->orderBy('category', 'asc')->pluck('category')->toArray();
-        $ua_levels = Ualevel::orderBy('order', 'desc')->get();
+        $ua_levels = UaLevel::orderBy('order', 'desc')->get();
 
 
         return view('pages.resources.form.create')->with([
@@ -88,7 +88,7 @@ class FormsController extends Controller {
 
     public function edit(Form $form) {
         $categories = Form::select('category')->groupBy('category')->orderBy('category', 'asc')->pluck('category')->toArray();
-        $ua_levels = Ualevel::orderBy('order', 'desc')->get();
+        $ua_levels = UaLevel::orderBy('order', 'desc')->get();
 
         return view('pages.resources.form.edit')->with([
             'form' => $form,
