@@ -225,7 +225,7 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
             $url = 'Resources\FormsController';
 
             Route::get('/', $url.'@manage_index')->name('formmanage');
-            Route::get('/create', $url.'@create')->name('faqmanage');
+            Route::get('/create', $url.'@create')->name('formmanage');
             Route::post('/', $url.'@store');
             Route::get('/{form}/edit', $url.'@edit')->where('form', '[0-9]+')->name('faqmanage');
             Route::put('/{form}', $url.'@update')->where('form', '[0-9]+');
