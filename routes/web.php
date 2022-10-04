@@ -217,6 +217,22 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
         });
     });
 
+    // Resources Forms
+    Route::get('/forms', 'Resources\FormsController@index')->name('form');
+
+    Route::middleware('CheckUserAccess:res_faq_manage')->group(function () {
+        Route::prefix('forms-manage')->group(function () {
+            $url = 'Resources\FormsController';
+
+            Route::get('/', $url.'@manage_index')->name('formmanage');
+            Route::get('/create', $url.'@create')->name('faqmanage');
+            Route::post('/', $url.'@store');
+            Route::get('/{form}/edit', $url.'@edit')->where('form', '[0-9]+')->name('faqmanage');
+            Route::put('/{form}', $url.'@update')->where('form', '[0-9]+');
+            Route::delete('/{form}', $url.'@destroy')->where('form', '[0-9]+');
+        });
+    });
+
     // Lea Settings
     Route::middleware('CheckUserAccess:lea_settings')->group(function () {
         Route::prefix('leaves-settings')->group(function () {

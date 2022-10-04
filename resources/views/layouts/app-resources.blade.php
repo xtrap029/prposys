@@ -93,10 +93,20 @@
                                             <i class="nav-icon material-icons icon--list">quiz</i><p>FAQs</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a href="/forms" class="nav-link {{ Route::currentRouteName() == 'form' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">history_edu</i><p>Forms</p>
+                                        </a>
+                                    </li>
                                     <li class="nav-item py-3"></li>
                                     <li class="nav-item {{ $ua['res_faq_manage'] == $non ? 'd-none' : '' }}">
                                         <a href="/faqs-manage" class="nav-link {{ Route::currentRouteName() == 'faqmanage' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">quiz</i><p>Manage FAQs</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['res_form_manage'] == $non ? 'd-none' : '' }}">
+                                        <a href="/forms-manage" class="nav-link {{ Route::currentRouteName() == 'formmanage' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">history_edu</i><p>Manage Forms</p>
                                         </a>
                                     </li>
                                 </ul>

@@ -53,7 +53,7 @@
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
     <script>
         $('.wysiwyg').summernote({
-            placeholder: 'Drop your announcement here!',
+            placeholder: 'Drop your description here!',
             height: 300
         });
     </script>
