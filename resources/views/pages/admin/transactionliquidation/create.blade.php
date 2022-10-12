@@ -191,9 +191,19 @@
                                                 @endif
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
-                                                            <span class="input-group-text">{{ $transaction->currency }}</span>
+                                                            <span class="input-group-text">
+                                                                @if ($transaction->is_bank)
+                                                                    {{ $transaction->currency_2 }}
+                                                                @else
+                                                                    {{ $transaction->currency }}
+                                                                @endif
+                                                            </span>
                                                         </div>
-                                                        <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ $item->qty*$item->amount }}" required>
+                                                        @if ($transaction->is_bank)
+                                                            <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ ($item->qty*$item->amount) * $transaction->currency_2_rate }}" required>
+                                                        @else
+                                                            <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ $item->qty*$item->amount }}" required>
+                                                        @endif
                                                     </div>  
                                                 </td>
                                                 @if ($key != 0)
