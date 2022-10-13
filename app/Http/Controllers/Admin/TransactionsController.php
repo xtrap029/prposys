@@ -90,6 +90,7 @@ class TransactionsController extends Controller {
             || !empty($_GET['project'])
             || !empty($_GET['due_from'])
             || !empty($_GET['due_to'])
+            || !empty($_GET['amount'])
             || !empty($_GET['bal'])) {
             
             if ($_GET['type'] != "") {
@@ -150,6 +151,7 @@ class TransactionsController extends Controller {
             }
             if ($_GET['due_from'] != "") $transactions = $transactions->whereDate('due_at', '>=', $_GET['due_from']);
             if ($_GET['due_to'] != "") $transactions = $transactions->whereDate('due_at', '<=', $_GET['due_to']);
+            if ($_GET['amount'] != "") $transactions = $transactions->where('amount', $_GET['amount']);
 
             if ($_GET['category'] != "") {
                 if ($_GET['category'] == 'is_reg') {
@@ -188,6 +190,7 @@ class TransactionsController extends Controller {
             $transactions->appends(['project' => $_GET['project']]);
             $transactions->appends(['due_from' => $_GET['due_from']]);
             $transactions->appends(['due_to' => $_GET['due_to']]);
+            $transactions->appends(['amount' => $_GET['amount']]);
             $transactions->appends(['bal' => $_GET['bal']]);
             $transactions->appends(['is_confidential' => $_GET['is_confidential']]);
         } else {
@@ -318,6 +321,7 @@ class TransactionsController extends Controller {
         if ($request->project != "") $transactions = $transactions->where('project_id', $request->project);
         if ($request->due_from != "") $transactions = $transactions->whereDate('due_at', '>=', $request->due_from);
         if ($request->due_to != "") $transactions = $transactions->whereDate('due_at', '<=', $request->due_to);
+        if ($request->amount != "") $transactions = $transactions->where('amount', $request->amount);
         if ($request->is_confidential != "") {
             if ($request->is_confidential == "2") {
                 $transactions = $transactions->where('is_confidential_own', 1);

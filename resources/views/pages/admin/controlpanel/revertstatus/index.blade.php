@@ -74,7 +74,7 @@
             @endif
 
 
-            {{-- <iframe src="https://drive.google.com/embeddedfolderview?id=1UR6ruialk8RpH7i6FfiJN1lRaR0hw18C#list" style="width:100%; height:600px; border:0;"></iframe> --}}
+            {{-- <iframe src="https://drive.google.com/embeddedfolderview?id=1zu6gDpBz0SjCr_ZLiGd5YMhu0VviUbBe#list" style="width:100%; height:600px; border:0;"></iframe> --}}
         </div>
     </section>
 @endsection

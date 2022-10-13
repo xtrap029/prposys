@@ -132,7 +132,10 @@
                             <option value="1" {{ app('request')->input('is_confidential') == '1' ? 'selected' : '' }}>Confidential</option>
                         </select>
                     </div>
-                    <div class="mb-2 col-md-4 col-xl-10">
+                    <div class="mb-2 col-md-2">
+                        <input type="number" name="amount" class="form-control filterSearch_input" step="any" placeholder="Amount" value="{{ app('request')->input('amount') }}">
+                    </div>
+                    <div class="mb-2 col-md-4 col-xl-8">
                         <input type="text" class="form-control filterSearch_input" name="s" value="{{ app('request')->input('s') }}" autocomplete="off" placeholder="keyword here...">
                         <div class="d-none d-md-block position-relative">
                             <div class="card card-search bg-secondary font-weight-normal filterSearch_result" style="display: none">
@@ -316,6 +319,7 @@
                     || $('[name=project]').val() != ''
                     || $('[name=due_from]').val() != ''
                     || $('[name=due_to]').val() != ''
+                    || $('[name=amount]').val() != ''
                     || $('[name=bal]').val() != '') {
 
                     $(cls+'_data').hide()
@@ -340,6 +344,7 @@
                             'project': $('[name=project]').val(),
                             'due_from': $('[name=due_from]').val(),
                             'due_to': $('[name=due_to]').val(),
+                            'amount': $('[name=amount]').val(),
                             'bal': $('[name=bal]').val(),
                         },
                         success: function(res) {
