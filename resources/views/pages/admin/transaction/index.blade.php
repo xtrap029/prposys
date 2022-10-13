@@ -133,7 +133,7 @@
                         </select>
                     </div>
                     <div class="mb-2 col-md-2">
-                        <input type="number" name="amount" class="form-control filterSearch_input" step="any" placeholder="Amount" value="{{ app('request')->input('amount') }}">
+                        <input type="number" name="amount" class="form-control filterSearch_input" step="any" placeholder="Search Amount" value="{{ app('request')->input('amount') }}">
                     </div>
                     <div class="mb-2 col-md-4 col-xl-8">
                         <input type="text" class="form-control filterSearch_input" name="s" value="{{ app('request')->input('s') }}" autocomplete="off" placeholder="keyword here...">

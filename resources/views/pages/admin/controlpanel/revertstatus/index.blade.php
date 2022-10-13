@@ -74,7 +74,10 @@
             @endif
 
 
-            {{-- <iframe src="https://drive.google.com/embeddedfolderview?id=1zu6gDpBz0SjCr_ZLiGd5YMhu0VviUbBe#list" style="width:100%; height:600px; border:0;"></iframe> --}}
+            <div class="container mt-5">
+                <h1>Test Directory</h1>
+                <iframe src="https://drive.google.com/embeddedfolderview?id=1zu6gDpBz0SjCr_ZLiGd5YMhu0VviUbBe#list" style="width:100%; height:600px; border:0;"></iframe>
+            </div>
         </div>
     </section>
 @endsection
