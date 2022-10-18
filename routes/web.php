@@ -233,6 +233,22 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
         });
     });
 
+    // Resources Files
+    Route::get('/files', 'Resources\FilesController@index')->name('file');
+
+    Route::middleware('CheckUserAccess:res_file_manage')->group(function () {
+        Route::prefix('files-manage')->group(function () {
+            $url = 'Resources\FilesController';
+
+            Route::get('/', $url.'@manage_index')->name('filemanage');
+            Route::get('/create', $url.'@create')->name('filemanage');
+            Route::post('/', $url.'@store');
+            Route::get('/{file}/edit', $url.'@edit')->where('file', '[0-9]+')->name('filemanage');
+            Route::put('/{file}', $url.'@update')->where('file', '[0-9]+');
+            Route::delete('/{file}', $url.'@destroy')->where('file', '[0-9]+');
+        });
+    });
+
     // Lea Settings
     Route::middleware('CheckUserAccess:lea_settings')->group(function () {
         Route::prefix('leaves-settings')->group(function () {

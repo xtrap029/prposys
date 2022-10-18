@@ -98,6 +98,11 @@
                                             <i class="nav-icon material-icons icon--list">history_edu</i><p>Forms</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a href="/files" class="nav-link {{ Route::currentRouteName() == 'file' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">folder</i><p>Files</p>
+                                        </a>
+                                    </li>
                                     <li class="nav-item py-3"></li>
                                     <li class="nav-item {{ $ua['res_faq_manage'] == $non ? 'd-none' : '' }}">
                                         <a href="/faqs-manage" class="nav-link {{ Route::currentRouteName() == 'faqmanage' ? 'active' : '' }}">
@@ -107,6 +112,11 @@
                                     <li class="nav-item {{ $ua['res_form_manage'] == $non ? 'd-none' : '' }}">
                                         <a href="/forms-manage" class="nav-link {{ Route::currentRouteName() == 'formmanage' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">history_edu</i><p>Manage Forms</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['res_file_manage'] == $non ? 'd-none' : '' }}">
+                                        <a href="/files-manage" class="nav-link {{ Route::currentRouteName() == 'filemanage' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">folder</i><p>Manage Files</p>
                                         </a>
                                     </li>
                                 </ul>
