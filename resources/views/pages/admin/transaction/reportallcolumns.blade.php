@@ -14,7 +14,7 @@
     'AMT_BAL_UNSIGNED',
     'AMT_BAL_UNSIGNED_CURR',
 ])) > 0)
-    <div class="col-sm-6 col-md-2 my-1">
+    <div class="col-sm-6 col-md-4 my-1">
         <label for="">Currency</label>
         <select name="currency" class="form-control form-control-sm">
             <option value="">All</option>
@@ -23,14 +23,18 @@
             @endforeach
         </select>
     </div>
-    <div class="col-md-2 my-1">
-        <label for="">Amount</label>
+    <div class="col-md-4 my-1">
+        <label for="">Balance</label>
         <select name="bal" class="form-control form-control-sm">
             <option value="">All</option>
             <option value="0" {{ app('request')->input('bal') != "" && app('request')->input('bal') == 0 ? 'selected' : '' }}>No Return</option>
             <option value="1" {{ app('request')->input('bal') == '1' ? 'selected' : '' }}>( + ) For Reimbursement</option>
             <option value="-1" {{ app('request')->input('bal') == '-1' ? 'selected' : '' }}>( - ) Return Money</option>
         </select>
+    </div>
+    <div class="col-md-4 my-1">
+        <label for="">Amount</label>
+        <input type="number" name="amount" class="form-control form-control-sm" step="any" value="{{ !empty($_GET['amount']) ? $_GET['amount'] : '' }}">
     </div>
 @endif
 

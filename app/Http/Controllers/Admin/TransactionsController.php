@@ -1046,6 +1046,7 @@ class TransactionsController extends Controller {
         $trans_category = '';
         $trans_req = '';
         $trans_bal= '';
+        $trans_amount= '';
         $trans_template= '';
 
         $trans_s= '';
@@ -1295,6 +1296,10 @@ class TransactionsController extends Controller {
 
             $trans_bal = $_GET['bal'];
         }
+        if (!empty($_GET['amount'])) {
+            $transactions = $transactions->where('amount', $_GET['amount']);
+            $trans_amount = $_GET['amount'];
+        }
         if (!empty($_GET['project'])) {
             $transactions = $transactions->where('project_id', $_GET['project']);
             $trans_project = $_GET['project'];
@@ -1435,6 +1440,7 @@ class TransactionsController extends Controller {
                 'trans_particulars' => $trans_particulars,
                 'trans_currency' => $trans_currency,
                 'trans_bal' => $trans_bal,
+                'trans_amount' => $trans_amount,
                 'trans_project' => $trans_project,
                 'trans_template' => $trans_template,
                 'trans_s' => $trans_s,
