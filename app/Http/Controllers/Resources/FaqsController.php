@@ -35,6 +35,22 @@ class FaqsController extends Controller {
         ]);
     }
 
+    public function api_search(Request $request) {        
+        $key = $request->s;
+
+        $faqs = new Faq;
+
+        $faqs = $faqs->where(static function ($query) use ($key) {
+                                    $query->where('title', 'like', "%{$key}%")
+                                        ->orWhere('description', 'like', "%{$key}%")
+                                        ->orWhere('category', 'like', "%{$key}%");
+                                });
+
+        $faqs = $faqs->orderBy('title', 'asc')->limit(5)->get();
+
+        return $faqs->toJson();
+    }
+
     public function manage_index() {
         $faqs = Faq::orderBy('title', 'asc')->get();
 

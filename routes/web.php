@@ -203,6 +203,7 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
 
     // Resources FAQ
     Route::get('/faqs', 'Resources\FaqsController@index')->name('faq');
+    Route::post('/faqs/api-search', 'Resources\FaqsController@api_search');
     
     Route::middleware('CheckUserAccess:res_faq_manage')->group(function () {
         Route::prefix('faqs-manage')->group(function () {
