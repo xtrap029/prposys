@@ -242,7 +242,8 @@
                                         @if ($config_confidential)
                                             -
                                         @else
-                                            {{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}
+                                            {{-- {{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }} --}}
+                                            {{ number_format($item->amount, 2, '.', ',') }}
                                         @endif                                        
                                     </td>
                                     <td class="text-nowrap">{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
