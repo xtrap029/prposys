@@ -15,6 +15,7 @@ class SettingsController extends Controller {
     public function index() {
         return view('pages.people.settings.index')->with([
             'settings' => Settings::get(),
+            'media_source' => Settings::where('type', 'MEDIA_SOURCE')->first()->value,
             'app_externals' => AppExternal::orderBy('id', 'asc')->get(),
         ]);
     }
@@ -36,6 +37,9 @@ class SettingsController extends Controller {
             'SITE_BANNER_HOME' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:15480'],
             'SITE_DASHBOARD_SLIDER' => ['required'],
             'SITE_LOGIN_GREETING' => ['required'],
+            'MEDIA_SOURCE' => [],
+            'SITE_BANNER_LOGIN_DRIVEID' => [],
+            'SITE_BANNER_HOME_DRIVEID' => [],
         ]);
 
         if ($request->file('SITE_LOGO')) {

@@ -219,7 +219,32 @@
                                     </div>
                                 </div>
                             @break
+                            @case('SITE_BANNER_LOGIN_DRIVEID')
+                                <div class="form-row mb-3">
+                                    <div class="col-6 col-sm-4">
+                                        <label for="">
+                                            Login Banner ID
+                                            <div class="small">Google Drive link ID (leave blank if manual upload)</div>
+                                        </label>                                        
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 mb-2 align-self-end">
+                                        @if ($item->value != '')                                        
+                                            <img src="http://drive.google.com/uc?export=view&id={{ $item->value }}" class="img-size-64" alt="">
+                                        @endif
+                                    </div>
+                                    <div class="col-8 col-sm-3">
+                                        <input type="text" name="SITE_BANNER_LOGIN_DRIVEID" class="form-control @error('SITE_BANNER_LOGIN_DRIVEID') is-invalid @enderror d-inline-block mt-2" value="{{ $item->value }}">
+                                        @include('errors.inline', ['message' => $errors->first('SITE_BANNER_LOGIN_DRIVEID')])
+                                    </div>
+                                    <div class="col-4 col-sm-1">
+                                        <a href="#_" class="btn btn-default btn-block mt-2" data-toggle="modal" data-target="#modal-media">
+                                            <i class="nav-icon material-icons icon--list">folder</i> Open
+                                        </a>
+                                    </div>
+                                </div>
+                            @break
                             @case('SITE_BANNER_HOME')
+                                <hr>
                                 <div class="form-row mb-3">
                                     <div class="col-6 col-sm-4">
                                         <label for="">
@@ -233,6 +258,30 @@
                                     <div class="col-6 col-sm-4">
                                         <input type="file" name="SITE_BANNER_HOME" class="form-control-file @error('SITE_BANNER_HOME') is-invalid @enderror d-inline-block mt-2">
                                         @include('errors.inline', ['message' => $errors->first('SITE_BANNER_HOME')])
+                                    </div>
+                                </div>
+                            @break
+                            @case('SITE_BANNER_HOME_DRIVEID')
+                                <div class="form-row mb-3">
+                                    <div class="col-6 col-sm-4">
+                                        <label for="">
+                                            Home Banner ID
+                                            <div class="small">Google Drive link ID (leave blank if manual upload)</div>
+                                        </label>                                        
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 mb-2 align-self-end">
+                                        @if ($item->value != '')                                        
+                                            <img src="http://drive.google.com/uc?export=view&id={{ $item->value }}" class="img-size-64" alt="">
+                                        @endif
+                                    </div>
+                                    <div class="col-8 col-sm-3">
+                                        <input type="text" name="SITE_BANNER_HOME_DRIVEID" class="form-control @error('SITE_BANNER_HOME_DRIVEID') is-invalid @enderror d-inline-block mt-2" value="{{ $item->value }}">
+                                        @include('errors.inline', ['message' => $errors->first('SITE_BANNER_HOME_DRIVEID')])
+                                    </div>
+                                    <div class="col-4 col-sm-1">
+                                        <a href="#_" class="btn btn-default btn-block mt-2" data-toggle="modal" data-target="#modal-media">
+                                            <i class="nav-icon material-icons icon--list">folder</i> Open
+                                        </a>
                                     </div>
                                 </div>
                             @break
@@ -285,7 +334,23 @@
                                         @include('errors.inline', ['message' => $errors->first('SITE_LOGIN_GREETING')])
                                     </div>
                                 </div>
-                            @break               
+                            @break
+                            @case('MEDIA_SOURCE')
+                                <hr>
+                                <div class="form-row mb-3">
+                                    <div class="col-6 col-sm-4">
+                                        <label for="">
+                                            Media Source
+                                            <div class="small">Shareable google drive folder id</div>
+                                        </label>                                        
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4"></div>
+                                    <div class="col-6 col-sm-4">
+                                        <input type="text" name="MEDIA_SOURCE" class="form-control @error('MEDIA_SOURCE') is-invalid @enderror d-inline-block mt-2" value="{{ $item->value }}">
+                                        @include('errors.inline', ['message' => $errors->first('MEDIA_SOURCE')])
+                                    </div>
+                                </div>
+                            @break                  
                             @default
                     @endswitch            
                 @endforeach
@@ -296,7 +361,7 @@
                         <label for="">External Applications</label>
                     </div>
                     <div class="col-6 col-sm-3 col-md-2"></div>
-                    <div class="col-6 col-sm-3 col-md-6 jsReplicate">
+                    <div class="col-12 col-sm-3 col-md-6 jsReplicate">
                         <table class="table">
                             <thead>
                                 <tr>
@@ -350,6 +415,37 @@
             </table>
         </div>
     </section>
+
+    <div class="modal fade" id="modal-media" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Media Source</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center p-0">
+                    <div class="card direct-chat direct-chat-info mb-0">
+                        <div class="card-body">
+                            <div class="alert alert-default-info rounded" role="alert">
+                                <h5>
+                                    <span class="text-info">
+                                        <i class="nav-icon material-icons icon--list mr-1">help</i>                                        
+                                    </span>
+                                    How to grab Media ID?
+                                </h5>
+                                After clicking on on your preferred image, it will redirect you to your Google Drive page. Simply grab the ID from the url it redirected. I.e:
+                                <br>
+                                <code class="font-weight-bold text-primary">https://drive.google.com/file/d/<span class="text-pink">grab_this_id_from_link</span>/view</code>
+                            </div>
+                            <iframe src="https://drive.google.com/embeddedfolderview?id={{ $media_source }}#grid" style="width:100%; height: 50vh; border:0;"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('script')

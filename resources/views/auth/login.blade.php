@@ -6,7 +6,7 @@
 
 @section('content')
 <div class="row flex-column flex-lg-row vh-100 m-0">
-    <div class="col-lg-8 banner-cover px-0 px-lg-2 flex-grow-1" style="background-image: url('{{ config('global.site_banner_login') }}');">
+    <div class="col-lg-8 banner-cover px-0 px-lg-2 flex-grow-1" style="background-image: url('{{ config('global.site_banner_login_driveid') != '' ? 'http://drive.google.com/uc?export=view&id='.config('global.site_banner_login_driveid') : config('global.site_banner_login') }}');">
         <img src="/images/wave-divider.png" class="w-100 d-lg-none position-absolute" style="bottom: 0" alt="">
     </div>
     <div class="col-lg-4 bg-white">

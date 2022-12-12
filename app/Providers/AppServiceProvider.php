@@ -41,6 +41,9 @@ class AppServiceProvider extends ServiceProvider
 
         config(['global.site_banner_login' => '/storage/public/images/site settings/'.\App\Settings::where('type', 'SITE_BANNER_LOGIN')->first()->value]);
         config(['global.site_banner_home' => '/storage/public/images/site settings/'.\App\Settings::where('type', 'SITE_BANNER_HOME')->first()->value]);
+
+        config(['global.site_banner_login_driveid' => \App\Settings::where('type', 'SITE_BANNER_LOGIN_DRIVEID')->first()->value]);
+        config(['global.site_banner_home_driveid' => \App\Settings::where('type', 'SITE_BANNER_HOME_DRIVEID')->first()->value]);
         
         config(['global.site_dashboard_slider' => preg_split("/\\r\\n|\\r|\\n/",\App\Settings::where('type', 'SITE_DASHBOARD_SLIDER')->first()->value)]);
         config(['global.site_login_greeting' => preg_split("/\\r\\n|\\r|\\n/",\App\Settings::where('type', 'SITE_LOGIN_GREETING')->first()->value)]);

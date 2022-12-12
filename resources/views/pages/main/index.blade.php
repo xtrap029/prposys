@@ -1,7 +1,7 @@
 @extends('layouts.app-center')
 
 @section('content')
-<div class="vh-100 banner-cover" style="background-image:url('{{ config('global.site_banner_home') }}');">
+<div class="vh-100 banner-cover" style="background-image: url('{{ config('global.site_banner_home_driveid') != '' ? 'http://drive.google.com/uc?export=view&id='.config('global.site_banner_home_driveid') : config('global.site_banner_home') }}');">
     <div class="h-100 row m-0 align-items-end">
         <div class="col text-center">
             <div class="nav-ios-icon">
