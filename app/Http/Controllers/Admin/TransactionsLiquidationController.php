@@ -999,21 +999,26 @@ class TransactionsLiquidationController extends Controller {
         if (UAHelper::get()['liq_add'] != config('global.ua_none')) {
             if (UAHelper::get()['liq_add'] == config('global.ua_own')) {
                 $user_id = auth()->id();
-
+                
                 $result = $result->where(static function ($query) use ($user_id) {
                     $query->where('requested_id', $user_id)
                     ->orWhere('owner_id',  $user_id);
                 });
                 $result2 = $result->count();
+                if ($result2 == 0) $can_create = false; 
+            } else {
+                $user_id = auth()->id();
+                $user = User::where('id', $user_id)->first();
 
-                if ($result2 == 0) $can_create = false;
-
+                if ($result->count() == 0) $can_create = false;
+                else {
+                    if (
+                        $user->ualevel->code < $result->first()->owner->ualevel->code
+                        && $user->id != $result->first()->owner->id
+                    ) $can_create = false;
+                }
             }
-
-            if ($result->count() > 0) {
-                $user = User::where('id', auth()->id())->first();
-                if ($user->ualevel->code < $result->first()->owner->ualevel->code && $user->id != $result->first()->owner->id) $can_create = false;
-            }
+            
         } else {
             $can_create = false;
         }
@@ -1028,7 +1033,6 @@ class TransactionsLiquidationController extends Controller {
         if ($bank_validation && $bank_validation->project->company_id != $bank_validation->form_company_id) {
             $can_create = false;
         }
-
         return $can_create;
     }
 
@@ -1048,7 +1052,8 @@ class TransactionsLiquidationController extends Controller {
         ) {
             $can_edit = false;
         } else {
-            if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_edit = false;
+            // if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_edit = false;
+            if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id && $user->id != $transaction->requested_id) $can_edit = false;
         }
 
         // check if unliquidated
@@ -1128,7 +1133,8 @@ class TransactionsLiquidationController extends Controller {
         ) {
             $can_approve = false;
         } else {
-            if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_approve = false;
+            // if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_approve = false;
+            if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id && $user->id != $transaction->requested_id) $can_approve = false;
         }
 
         // check if unliquidated
@@ -1190,7 +1196,8 @@ class TransactionsLiquidationController extends Controller {
         ) {
             $can_clear = false;
         } else {
-            if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_clear = false;
+            // if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_clear = false;
+            if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id && $user->id != $transaction->requested_id) $can_clear = false;
         }
         
         return $can_clear;
