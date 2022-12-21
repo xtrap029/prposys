@@ -1156,8 +1156,9 @@ class TransactionsLiquidationController extends Controller {
         $transaction = Transaction::where('id', $transaction)->first();
 
         if (
-            (UAHelper::get()['liq_print'] == config('global.ua_own') && auth()->id() != $transaction->owner_id && auth()->id() != $transaction->requested_id)
-            || UAHelper::get()['liq_print'] == config('global.ua_none')
+            // (UAHelper::get()['liq_print'] == config('global.ua_own') && auth()->id() != $transaction->owner_id && auth()->id() != $transaction->requested_id)
+            // || UAHelper::get()['liq_print'] == config('global.ua_none')
+            UAHelper::get()['liq_print'] == config('global.ua_none')
         ) {
             $can_print = false;
         }

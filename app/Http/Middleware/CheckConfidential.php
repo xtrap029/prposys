@@ -42,8 +42,8 @@ class CheckConfidential
                 'reset',
                 'cancel',
                 'approval',
-                'print',
-                'issue',
+                // 'print',
+                // 'issue',
                 'clear',
                 'clear_edit',
             ];

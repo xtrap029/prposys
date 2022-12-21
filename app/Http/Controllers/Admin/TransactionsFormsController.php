@@ -1492,8 +1492,9 @@ class TransactionsFormsController extends Controller {
         $transaction = Transaction::where('id', $transaction)->first();
 
         if (
-            (UAHelper::get()['form_print'] == config('global.ua_own') && auth()->id() != $transaction->owner_id && auth()->id() != $transaction->requested_id)
-            || UAHelper::get()['form_print'] == config('global.ua_none')
+            // (UAHelper::get()['form_print'] == config('global.ua_own') && auth()->id() != $transaction->owner_id && auth()->id() != $transaction->requested_id)
+            // || UAHelper::get()['form_print'] == config('global.ua_none')
+            UAHelper::get()['form_print'] == config('global.ua_none')
         ) {
             $can_print = false;
         }
@@ -1557,12 +1558,13 @@ class TransactionsFormsController extends Controller {
         }
 
         if (
-            (UAHelper::get()['form_issue'] == config('global.ua_own') && $user->id != $transaction->owner_id && $user->id != $transaction->requested_id)
-            || UAHelper::get()['form_issue'] == config('global.ua_none')
+            // (UAHelper::get()['form_issue'] == config('global.ua_own') && $user->id != $transaction->owner_id && $user->id != $transaction->requested_id)
+            // || UAHelper::get()['form_issue'] == config('global.ua_none')
+            UAHelper::get()['form_issue'] == config('global.ua_none')
         ) {
             $can_issue = false;
-        } else {
-            if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_issue = false;
+        // } else {
+        //     if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_issue = false;
         }
         
         return $can_issue;
