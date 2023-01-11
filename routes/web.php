@@ -25,6 +25,7 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
     Route::get('/people-dashboard', 'People\DashboardController@index')->name('people-dashboard');
     Route::get('/leaves-dashboard', 'Leaves\DashboardController@index')->name('leaves-dashboard');
     Route::get('/resources-dashboard', 'Resources\DashboardController@index')->name('resources-dashboard');
+    Route::get('/travels-dashboard', 'Travels\DashboardController@index')->name('travels-dashboard');
 
     Route::get('my-account', 'People\MyAccountController@index')->name('myaccount');
     Route::put('my-account', 'People\MyAccountController@update')->name('myaccount');
@@ -247,6 +248,20 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
             Route::get('/{file}/edit', $url.'@edit')->where('file', '[0-9]+')->name('filemanage');
             Route::put('/{file}', $url.'@update')->where('file', '[0-9]+');
             Route::delete('/{file}', $url.'@destroy')->where('file', '[0-9]+');
+        });
+    });
+
+    // Travels Travels
+    Route::middleware('CheckUserAccess:trv_travel')->group(function () {
+        Route::prefix('travels')->group(function () {
+            $url = 'Travels\TravelsController';
+
+            Route::get('/', $url.'@index')->name('travel-travel');
+            Route::get('/create', $url.'@create')->name('travel-travel');
+            Route::post('/', $url.'@store');
+            Route::get('/{travel}/edit', $url.'@edit')->where('travel', '[0-9]+')->name('travel-travel');
+            Route::put('/{travel}', $url.'@update')->where('travel', '[0-9]+');
+            Route::delete('/{travel}', $url.'@destroy')->where('travel', '[0-9]+');
         });
     });
 

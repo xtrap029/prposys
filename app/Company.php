@@ -19,4 +19,8 @@ class Company extends Model {
     public function coataggings() {
         return $this->hasMany(CoaTagging::class)->orderBy('name');
     }
+
+    public function companyProject() {
+        return $this->hasMany(CompanyProject::class)->orderBy('project');
+    }
 }

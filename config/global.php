@@ -67,11 +67,12 @@
             '9' => ['8', '7', '4', '6', '5', '1'],
         ],
         'attachment_format' => ['jpg', 'jpeg', 'png', 'pdf'],
-        'apps' => ['leaves', 'sequence', 'people', 'resources'],
+        'apps' => ['leaves', 'sequence', 'people', 'resources', 'travels'],
         'dashboard_sequence' => '/sequence-dashboard',
         'dashboard_leaves' => '/leaves-dashboard',
         'dashboard_people' => '/people-dashboard',
         'dashboard_resources' => '/resources-dashboard',
+        'dashboard_travels' => '/travels-dashboard',
         'site_colors' => [
             'blue',
             'indigo',

@@ -23,6 +23,12 @@
                         <img src="{{ config('global.site_icon_resources') }}" class="img-size-64 img-size-64--100 pb-2" alt="">  
                     </a>
                 @endif
+                @if (in_array(config('global.apps')[4], explode(',', Auth::user()->apps)))
+                <a href="{{ config('global.dashboard_travels') }}" class="text-bold text-gray-dark text-decoration-none d-inline-block my-1">
+                    <span>Travels</span>                 
+                    <img src="{{ config('global.site_icon_travels') }}" class="img-size-64 img-size-64--100 pb-2" alt="">  
+                </a>
+            @endif
                 @if (count($app_externals))
                     <div class="nav-ios-icon__divider"></div>
                     @foreach ($app_externals as $item)

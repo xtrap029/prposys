@@ -183,6 +183,41 @@
                                     </div>
                                 </div>
                             @break    
+                            @case('SITE_LOGO_TRAVELS')
+                                <hr>
+                                <div class="form-row mb-3">
+                                    <div class="col-6 col-sm-4">
+                                        <label for="">
+                                            Travels Icon
+                                            <div class="small">Image with 500kb max size</div>
+                                        </label>                                        
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 mb-2 align-self-end">
+                                        <img src="/storage/public/images/site settings/{{ $item->value }}" class="img-size-32" alt="">
+                                    </div>
+                                    <div class="col-6 col-sm-4">
+                                        <input type="file" name="SITE_LOGO_TRAVELS" class="form-control-file @error('SITE_LOGO_TRAVELS') is-invalid @enderror d-inline-block mt-2">
+                                        @include('errors.inline', ['message' => $errors->first('SITE_LOGO_TRAVELS')])
+                                    </div>
+                                </div>
+                            @break
+                            @case('SITE_COLOR_TRAVELS')
+                                <div class="form-row mb-3">
+                                    <div class="col-6 col-sm-8">
+                                        <label for="">
+                                            Travels Color
+                                        </label>                                        
+                                    </div>
+                                    <div class="col-6 col-sm-4">
+                                        <select name="SITE_COLOR_TRAVELS" class="form-control">
+                                            @foreach (config('global.site_colors') as $item2)
+                                                <option class="option--{{ $item2 }}" {{ $item->value == $item2 ? 'selected' : '' }} value="{{ $item2 }}">{{ $item2 }}</option>                        
+                                            @endforeach
+                                        </select>
+                                        @include('errors.inline', ['message' => $errors->first('SITE_COLOR_TRAVELS')])
+                                    </div>
+                                </div>
+                            @break 
                             @case('SITE_LOGO_LOGOUT')
                                 <hr>
                                 <div class="form-row mb-3">
