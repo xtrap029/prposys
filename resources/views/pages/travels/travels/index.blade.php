@@ -17,6 +17,7 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
+                        <th>Travel ID</th>
                         <th>Traveler</th>
                         <th>Project</th>
                         <th>Destination</th>
@@ -28,6 +29,7 @@
                 <tbody>
                     @forelse ($travels as $item)
                         <tr>
+                            <td>{{ $item->id }}</td>
                             <td>{{ $item->name->name }}</td>
                             <td>{{ $item->companyProject->project.' - '. $item->companyProject->company->name }}</td>
                             <td>{{ $item->destination }}</td>
@@ -48,6 +50,10 @@
                                             <div class="modal-body">
                                                 <table class="table text-left">
                                                     <tr>
+                                                        <td>Travele ID</td>
+                                                        <td>{{ $item->id }}</td>
+                                                    </tr>
+                                                    <tr>
                                                         <td>Traveler</td>
                                                         <td>{{ $item->name->name }}</td>
                                                     </tr>
@@ -66,6 +72,10 @@
                                                     <tr>
                                                         <td>Date To</td>
                                                         <td>{{ $item->date_to }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Created / Updated</td>
+                                                        <td>{{ $item->owner->name }} / {{ $item->updatedby->name }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Traveling Users</td>
@@ -116,7 +126,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="text-center">{{ __('messages.empty') }}</td>
+                            <td colspan="6" class="text-center">{{ __('messages.empty') }}</td>
                         </tr>
                     @endforelse
                 </tbody>

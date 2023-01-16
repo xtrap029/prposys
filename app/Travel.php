@@ -28,4 +28,12 @@ class Travel extends Model {
     public function attachments() {
         return $this->hasMany(TravelsAttachment::class);
     }
+
+    public function owner() {
+        return $this->belongsTo(User::class);
+    }
+
+    public function updatedby() {
+        return $this->belongsTo(User::class, 'updated_id');
+    }
 }

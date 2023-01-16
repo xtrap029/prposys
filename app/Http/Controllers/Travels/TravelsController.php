@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 class TravelsController extends Controller {
     
     public function index(Request $request) {
-        $travels = Travel::orderBy('date_from', 'desc')->paginate(10);
+        $travels = Travel::orderBy('id', 'desc')->paginate(10);
 
         foreach ($travels as $key => $value) {
 
