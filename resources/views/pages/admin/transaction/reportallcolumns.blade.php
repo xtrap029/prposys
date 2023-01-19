@@ -37,7 +37,7 @@
         <input type="number" name="amount" class="form-control form-control-sm" step="any" value="{{ !empty($_GET['amount']) ? $_GET['amount'] : '' }}">
     </div>
     <div class="col-md-2 my-1">
-        <label for="">Amount Balance/Reimbursed</label>
+        <label for="">Balance/Reimbursed</label>
         <input type="number" name="amt_bal" class="form-control form-control-sm" step="any" value="{{ !empty($_GET['amt_bal']) ? $_GET['amt_bal'] : '' }}">
     </div>
 @endif
