@@ -1067,6 +1067,8 @@ class TransactionsController extends Controller {
         $trans_vat_type = '';
         $trans_particulars = '';
         $trans_currency = '';
+        $trans_control_no = '';
+        $trans_amt_bal = '';
 
         $status_name = [];
 
@@ -1279,6 +1281,10 @@ class TransactionsController extends Controller {
             $transactions = $transactions->where('currency', $_GET['currency']);
             $trans_currency = $_GET['currency'];
         }
+        if (!empty($_GET['control_no'])) {
+            $transactions = $transactions->where('control_no', $_GET['control_no']);
+            $trans_control_no = $_GET['control_no'];
+        }
         if (isset($_GET['bal'])) {
             if ($_GET['bal'] == "0" && $_GET['bal'] != "") {
                 $transactions = $transactions->whereHas('liquidation', function($query){
@@ -1304,6 +1310,16 @@ class TransactionsController extends Controller {
             $transactions = $transactions->where('project_id', $_GET['project']);
             $trans_project = $_GET['project'];
         }
+        if (!empty($_GET['amt_bal'])) {
+            // foreach ($transactions as $key => $value) {
+
+            // }
+
+            $transactions = $transactions->whereHas('liquidation', function($query){
+                $query->havingRaw('sum(amount) != transactions.amount_issued AND (sum(amount) - transactions.amount_issued) = '.$_GET['amt_bal']);
+            });
+            $trans_amt_bal = $_GET['amt_bal'];
+        }
 
         $report_template = ReportTemplate::orderBy('id', 'asc');
         if (isset($_GET['template'])) {
@@ -1319,6 +1335,7 @@ class TransactionsController extends Controller {
         }
 
         $transactions = $transactions->get();
+
         
         $users = User::where('ua_level_id', '!=', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
         $users_inactive = User::where('ua_level_id', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
@@ -1439,6 +1456,8 @@ class TransactionsController extends Controller {
                 'trans_vat_type' => $trans_vat_type,
                 'trans_particulars' => $trans_particulars,
                 'trans_currency' => $trans_currency,
+                'trans_control_no' => $trans_control_no,
+                'trans_amt_bal' => $trans_amt_bal,
                 'trans_bal' => $trans_bal,
                 'trans_amount' => $trans_amount,
                 'trans_project' => $trans_project,

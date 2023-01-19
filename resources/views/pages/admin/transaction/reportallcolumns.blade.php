@@ -32,9 +32,13 @@
             <option value="-1" {{ app('request')->input('bal') == '-1' ? 'selected' : '' }}>( - ) Return Money</option>
         </select>
     </div>
-    <div class="col-md-4 my-1">
+    <div class="col-md-2 my-1">
         <label for="">Amount</label>
         <input type="number" name="amount" class="form-control form-control-sm" step="any" value="{{ !empty($_GET['amount']) ? $_GET['amount'] : '' }}">
+    </div>
+    <div class="col-md-2 my-1">
+        <label for="">Amount Balance/Reimbursed</label>
+        <input type="number" name="amt_bal" class="form-control form-control-sm" step="any" value="{{ !empty($_GET['amt_bal']) ? $_GET['amt_bal'] : '' }}">
     </div>
 @endif
 
@@ -237,7 +241,15 @@
     </div>
 @endif
 
-{{-- CTRL_NO --}}
+@if (count(array_intersect($column_codes, [
+    'CTRL_NO',
+])) > 0)
+    <div class="col-md-2 my-1">
+        <label for="">Control/Reference No.</label>
+        <input type="text" name="control_no" class="form-control form-control-sm" value="{{ !empty($_GET['control_no']) ? $_GET['control_no'] : '' }}">
+    </div>
+@endif
+
 {{-- CTRL_TYPE --}}
 {{-- PAYEE --}}
 {{-- PAYOR --}}
