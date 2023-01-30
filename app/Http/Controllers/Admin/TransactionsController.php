@@ -1314,6 +1314,8 @@ class TransactionsController extends Controller {
             // foreach ($transactions as $key => $value) {
 
             // }
+            // return ($config_confidential ? '-' : (number_format(($item->liquidation->sum('amount') ?: 0) - ($item->amount_issued ?: 0), 2, '.', ',')));
+            // return ($config_confidential ? '-' : (($item->currency_2 ?: $item->currency).' '.number_format(($item->liquidation->sum('amount') ?: 0) - ($item->amount_issued ?: 0), 2, '.', ',')));
 
             $transactions = $transactions->whereHas('liquidation', function($query){
                 $query->havingRaw('sum(amount) != transactions.amount_issued AND (sum(amount) - transactions.amount_issued) = '.$_GET['amt_bal']);

@@ -7,6 +7,7 @@ use App\User;
 use App\Travel;
 use App\TravelsAttachment;
 use App\Company;
+use App\CompanyProject;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
@@ -14,7 +15,37 @@ use Illuminate\Support\Facades\Storage;
 class TravelsController extends Controller {
     
     public function index(Request $request) {
-        $travels = Travel::orderBy('id', 'desc')->paginate(10);
+        $travels = new Travel;
+
+        if (!empty($_GET['id'])
+            || !empty($_GET['name_id'])
+            || !empty($_GET['company_project_id'])
+            || !empty($_GET['destination'])
+            || !empty($_GET['date_from'])
+            || !empty($_GET['date_to'])) {
+                                    
+            if ($_GET['id'] != "") $travels = $travels->where('id', $_GET['id']);
+            if ($_GET['name_id'] != "") $travels = $travels->where('name_id', $_GET['name_id']);
+            if ($_GET['company_project_id'] != "") $travels = $travels->where('company_project_id', $_GET['company_project_id']);
+            if ($_GET['destination'] != "") $travels = $travels->where('destination', $_GET['destination']);            
+            if ($_GET['date_from'] != "") $travels = $travels->whereDate('date_from', $_GET['date_from']);
+            if ($_GET['date_to'] != "") $travels->whereDate('date_to', $_GET['date_to']);
+
+            $travels = $travels->orderBy('id', 'desc')->paginate(10);
+
+            $travels->appends(['id' => $_GET['id']]);
+            $travels->appends(['name_id' => $_GET['name_id']]);
+            $travels->appends(['company_project_id' => $_GET['company_project_id']]);
+            $travels->appends(['destination' => $_GET['destination']]);
+            $travels->appends(['date_from' => $_GET['date_from']]);
+            $travels->appends(['date_to' => $_GET['date_to']]);
+        } else {
+            $travels = $travels->orderBy('id', 'desc')->paginate(10);
+        }
+
+        $users = User::where('ua_level_id', '!=', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
+        $users_inactive = User::where('ua_level_id', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
+        $projects = CompanyProject::orderBy('project', 'asc')->get();
 
         foreach ($travels as $key => $value) {
 
@@ -29,7 +60,10 @@ class TravelsController extends Controller {
         }
         
         return view('pages.travels.travels.index')->with([
-            'travels' => $travels
+            'travels' => $travels,
+            'users' => $users,
+            'users_inactive' => $users_inactive,
+            'projects' => $projects,
         ]);
     }
     
