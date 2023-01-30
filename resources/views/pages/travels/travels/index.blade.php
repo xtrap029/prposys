@@ -14,7 +14,10 @@
     </section>
     <section class="content">
         <div class="container-fluid">
-            <form action="/travels" method="GET" class="row"> 
+            <form action="/travels" method="GET" class="row">
+                <div class="mb-2 col-6 col-md-2 col-xl-1">
+                    <a href="/travels/create" class="vlign--baseline-middle btn btn-success btn-block "><span class="font-weight-bold">+</span> New</a>
+                </div> 
                 <div class="mb-2 col-xl-1">
                     <input type="number" class="form-control" step="1" name="id" value="{{ app('request')->input('id') }}" placeholder="ID">
                 </div>
@@ -40,9 +43,9 @@
                     </select>
                 </div>
                 <div class="mb-2 col-md-4 col-xl-2">
-                    <input type="text" class="form-control" name="destination" value="{{ app('request')->input('destination') }}" placeholder="Destinatiion">
+                    <input type="text" class="form-control" name="destination" value="{{ app('request')->input('destination') }}" placeholder="Destination">
                 </div>
-                <div class="mb-2 col-md-6 col-xl-4">
+                <div class="mb-2 col-md-6 col-xl-3">
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="basic-addon1">From/To</span>
@@ -65,7 +68,7 @@
                             <th>Destination</th>
                             <th>Travel From</th>
                             <th>Travel To</th>
-                            <th class="text-right"><a href="/travels/create">Create</a></th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
