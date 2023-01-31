@@ -244,10 +244,10 @@
 @if (count(array_intersect($column_codes, [
     'CTRL_NO',
 ])) > 0)
-    <div class="col-md-2 my-1">
+    {{-- <div class="col-md-2 my-1">
         <label for="">Control/Reference No.</label>
         <input type="text" name="control_no" class="form-control form-control-sm" value="{{ !empty($_GET['control_no']) ? $_GET['control_no'] : '' }}">
-    </div>
+    </div> --}}
 @endif
 
 {{-- CTRL_TYPE --}}

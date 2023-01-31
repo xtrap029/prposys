@@ -304,8 +304,12 @@
                             <div class="col-sm-6 col-md-3 my-1">
                                 <label for="">PR/PO # Series (Max)</label>
                                 <input type="number" name="series_max" class="form-control form-control-sm" min="0" value="{{ !empty($_GET['series_max']) ? $_GET['series_max'] : '' }}">
-                            </div>
+                            </div>                            
                             <div class="col-12 col-md-3 my-1">
+                                <label for="">Control/Reference No.</label>
+                                <input type="text" name="control_no" class="form-control form-control-sm" value="{{ !empty($_GET['control_no']) ? $_GET['control_no'] : '' }}">
+                            </div>
+                            <div class="col-12 my-1">
                                 <label for="">Keyword</label>
                                 <input type="text" class="form-control form-control-sm" name="s" value="{{ app('request')->input('s') }}" autocomplete="off">
                             </div>
