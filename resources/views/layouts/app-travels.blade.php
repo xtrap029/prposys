@@ -99,6 +99,12 @@
                                             <i class="nav-icon material-icons icon--list">map</i><p>Travels</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item py-3"></li>
+                                    <li class="nav-item {{ $ua['trv_request_type'] == $non ? 'd-none' : '' }}">
+                                        <a href="/travels-request-type" class="nav-link {{ Route::currentRouteName() == 'travel-request-type' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">flight</i><p>Request Type</p>
+                                        </a>
+                                    </li>
                                 </ul>
                             </nav>
                         </div>

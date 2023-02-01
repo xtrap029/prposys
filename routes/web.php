@@ -265,6 +265,20 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
         });
     });
 
+    // Travels Request Types
+    Route::middleware('CheckUserAccess:trv_request_type')->group(function () {
+        Route::resource('travels-request-type', 'Travels\TravelsRequestTypesController', ['names' => ['index' => 'travel-request-type', 'create' => 'travel-request-type', 'edit' => 'travel-request-type']]);
+        Route::prefix('travels-request-type-option')->group(function () {
+            $url = 'Travels\TravelsRequestTypeOptionsController';
+    
+            Route::get('/create', $url.'@create')->name('travel-request-type');
+            Route::post('/', $url.'@store');
+            Route::get('/edit/{request_type_option}', $url.'@edit')->where('request_type_option', '[0-9]+')->name('travel-request-type');
+            Route::put('/{request_type_option}', $url.'@update')->where('request_type_option', '[0-9]+');
+            Route::delete('/{request_type_option}', $url.'@destroy')->where('request_type_option', '[0-9]+');
+        });
+    });
+
     // Lea Settings
     Route::middleware('CheckUserAccess:lea_settings')->group(function () {
         Route::prefix('leaves-settings')->group(function () {
