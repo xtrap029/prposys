@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\User;
 use App\Travel;
 use App\TravelsAttachment;
+use App\TravelsRequestType;
 use App\Company;
 use App\CompanyProject;
 use Illuminate\Http\Request;
@@ -18,14 +19,12 @@ class TravelsController extends Controller {
         $travels = new Travel;
 
         if (!empty($_GET['id'])
-            || !empty($_GET['name_id'])
             || !empty($_GET['company_project_id'])
             || !empty($_GET['destination'])
             || !empty($_GET['date_from'])
             || !empty($_GET['date_to'])) {
                                     
             if ($_GET['id'] != "") $travels = $travels->where('id', $_GET['id']);
-            if ($_GET['name_id'] != "") $travels = $travels->where('name_id', $_GET['name_id']);
             if ($_GET['company_project_id'] != "") $travels = $travels->where('company_project_id', $_GET['company_project_id']);
             if ($_GET['destination'] != "") $travels = $travels->where('destination', $_GET['destination']);            
             if ($_GET['date_from'] != "") $travels = $travels->whereDate('date_from', $_GET['date_from']);
@@ -34,7 +33,6 @@ class TravelsController extends Controller {
             $travels = $travels->orderBy('id', 'desc')->paginate(10);
 
             $travels->appends(['id' => $_GET['id']]);
-            $travels->appends(['name_id' => $_GET['name_id']]);
             $travels->appends(['company_project_id' => $_GET['company_project_id']]);
             $travels->appends(['destination' => $_GET['destination']]);
             $travels->appends(['date_from' => $_GET['date_from']]);
@@ -61,8 +59,6 @@ class TravelsController extends Controller {
         
         return view('pages.travels.travels.index')->with([
             'travels' => $travels,
-            'users' => $users,
-            'users_inactive' => $users_inactive,
             'projects' => $projects,
         ]);
     }
@@ -71,6 +67,7 @@ class TravelsController extends Controller {
         $users = User::where('ua_level_id', '!=', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
         $users_inactive = User::where('ua_level_id', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
         $companies = Company::orderBy('name', 'asc')->get();
+        $request_types = TravelsRequestType::orderBy('name', 'asc')->get();
 
         $comp = [];
         foreach ($companies as $key => $value) {
@@ -88,17 +85,19 @@ class TravelsController extends Controller {
         return view('pages.travels.travels.create')->with([
             'users' => $users,
             'users_inactive' => $users_inactive,
+            'request_types' => $request_types,
             'companies' => $companies
         ]);
     }
 
     public function store(Request $request) {
         $data = $request->validate([
-            'name_id' => ['required', 'exists:users,id'],
             'company_project_id' => ['required', 'exists:company_projects,id'],
+            'travels_request_type_id' => ['required', 'exists:travels_request_types,id'],
             'date_from' => ['required', 'before:date_to'],
             'date_to' => ['required', 'after:date_from'],
             'destination' => ['required'],
+            'purpose' => ['required'],
             'traveling_users.*' => ['nullable'],
             'traveling_users_static' => ['required'],
         ]);
@@ -139,6 +138,7 @@ class TravelsController extends Controller {
         $users = User::where('ua_level_id', '!=', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
         $users_inactive = User::where('ua_level_id', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
         $companies = Company::orderBy('name', 'asc')->get();
+        $request_types = TravelsRequestType::orderBy('name', 'asc')->get();
 
         $comp = [];
         foreach ($companies as $key => $value) {
@@ -162,6 +162,7 @@ class TravelsController extends Controller {
             'users' => $users,
             'users_inactive' => $users_inactive,
             'companies' => $companies,
+            'request_types' => $request_types,
             'travel' => $travel,
             'traveling_users' => $traveling_users
         ]);
@@ -169,11 +170,12 @@ class TravelsController extends Controller {
 
     public function update(Request $request, Travel $travel) {
         $data = $request->validate([
-            'name_id' => ['required', 'exists:users,id'],
             'company_project_id' => ['required', 'exists:company_projects,id'],
+            'travels_request_type_id' => ['required', 'exists:travels_request_types,id'],
             'date_from' => ['required', 'before:date_to'],
             'date_to' => ['required', 'after:date_from'],
             'destination' => ['required'],
+            'purpose' => ['required'],
             'traveling_users.*' => ['nullable'],
             'traveling_users_static' => ['required'],
         ]);

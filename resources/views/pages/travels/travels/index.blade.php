@@ -16,23 +16,10 @@
         <div class="container-fluid">
             <form action="/travels" method="GET" class="row">
                 <div class="mb-2 col-6 col-md-2 col-xl-1">
-                    <a href="/travels/create" class="vlign--baseline-middle btn btn-success btn-block "><span class="font-weight-bold">+</span> New</a>
+                    <a href="/travels/create" class="btn btn-success btn-block p-0"><i class="material-icons mt-1 text-white">add</i></a>
                 </div> 
                 <div class="mb-2 col-xl-1">
                     <input type="number" class="form-control" step="1" name="id" value="{{ app('request')->input('id') }}" placeholder="ID">
-                </div>
-                <div class="mb-2 col-md-4 col-xl-2">
-                    <select name="name_id" class="form-control">
-                        <option value="">Traveler</option>
-                        @foreach ($users as $item)
-                            <option value="{{ $item->id }}" {{ app('request')->input('name_id') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                        @endforeach
-                        <optgroup label="Inactive" class="bg-gray-light">
-                            @foreach ($users_inactive as $item)
-                                <option value="{{ $item->id }}" {{ app('request')->input('name_id') == $item->id ? 'selected' : '' }} class="bg-gray-light">{{ $item->name }}</option>
-                            @endforeach
-                        </optgroup>
-                    </select>
                 </div>
                 <div class="mb-2 col-md-6 col-xl-2">
                     <select name="company_project_id" class="form-control">
@@ -45,7 +32,7 @@
                 <div class="mb-2 col-md-4 col-xl-2">
                     <input type="text" class="form-control" name="destination" value="{{ app('request')->input('destination') }}" placeholder="Destination">
                 </div>
-                <div class="mb-2 col-md-6 col-xl-3">
+                <div class="mb-2 col-md-6 col-xl-4">
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="basic-addon1">From/To</span>
@@ -57,13 +44,16 @@
                 <div class="mb-2 col-6 col-md-2 col-xl-1">
                     <button class="btn btn-primary btn-block p-0" type="submit"><i class="material-icons mt-1">search</i></button>
                 </div>
+                <div class="mb-2 col-6 col-md-2 col-xl-1">
+                    <a href="/travels" class="btn btn-secondary btn-block p-0" type="submit"><i class="material-icons mt-1 text-white">clear</i></a>
+                </div>
             </form>
             <div class="table-responsive">
                 <table class="table table-striped table-sticky-first">
                     <thead>
                         <tr>
-                            <th>Travel ID</th>
-                            <th>Traveler</th>
+                            <th>ID</th>
+                            <th>Request Type</th>
                             <th>Project</th>
                             <th>Destination</th>
                             <th>Travel From</th>
@@ -75,8 +65,8 @@
                         @forelse ($travels as $item)
                             <tr>
                                 <td>{{ $item->id }}</td>
-                                <td>{{ $item->name->name }}</td>
-                                <td>{{ $item->companyProject->project.' - '. $item->companyProject->company->name }}</td>
+                                <td>{{ $item->requestType ? $item->requestType->name : '-' }}</td>
+                                <td>{{ $item->companyProject->project }}</td>
                                 <td>{{ $item->destination }}</td>
                                 <td>{{ $item->date_from }}</td>
                                 <td>{{ $item->date_to }}</td>
@@ -95,12 +85,12 @@
                                                 <div class="modal-body">
                                                     <table class="table text-left">
                                                         <tr>
-                                                            <td>Travele ID</td>
+                                                            <td>ID</td>
                                                             <td>{{ $item->id }}</td>
                                                         </tr>
                                                         <tr>
-                                                            <td>Traveler</td>
-                                                            <td>{{ $item->name->name }}</td>
+                                                            <td>Request Type</td>
+                                                            <td>{{ $item->requestType ? $item->requestType->name : '-' }}</td>
                                                         </tr>
                                                         <tr>
                                                             <td>Project</td>
@@ -109,6 +99,10 @@
                                                         <tr>
                                                             <td>Destination</td>
                                                             <td>{{ $item->destination }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Purpose</td>
+                                                            <td>{{ $item->purpose }}</td>
                                                         </tr>
                                                         <tr>
                                                             <td>Date From</td>

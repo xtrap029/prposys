@@ -13,13 +13,9 @@ class Travel extends Model {
     protected $table = 'travels';
 
     use LogsActivity;
-    protected static $logAttributes = ['name_id', 'date_from', 'date_to', 'company_project_id', 'destination', 'traveling_users', 'traveling_users_static'];
+    protected static $logAttributes = ['date_from', 'date_to', 'company_project_id', 'destination', 'traveling_users', 'traveling_users_static'];
     protected static $logName = 'Travel';
     protected static $logOnlyDirty = true;
-
-    public function name() {
-        return $this->belongsTo(User::class, 'name_id');
-    }
 
     public function companyProject() {
         return $this->belongsTo(CompanyProject::class, 'company_project_id');
@@ -27,6 +23,10 @@ class Travel extends Model {
 
     public function attachments() {
         return $this->hasMany(TravelsAttachment::class);
+    }
+
+    public function requestType() {
+        return $this->belongsTo(TravelsRequestType::class, 'travels_request_type_id');
     }
 
     public function owner() {

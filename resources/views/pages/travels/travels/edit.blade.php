@@ -19,16 +19,11 @@
                 @method('put')
                 <div class="form-row">
                     <div class="form-group col-md-3">
-                        <label for="">Traveler</label>
-                        <select name="name_id" class="form-control" required>
-                            @foreach ($users as $item)
-                                <option value="{{ $item->id }}" {{ $travel->name_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                        <label for="">Request Type</label>
+                        <select name="travels_request_type_id" class="form-control" required>
+                            @foreach ($request_types as $item)
+                                <option value="{{ $item->id }}" {{ $travel->travels_request_type_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                             @endforeach
-                            <optgroup label="Inactive" class="bg-gray-light">
-                                @foreach ($users_inactive as $item)
-                                    <option value="{{ $item->id }}" {{ $travel->name_id == $item->id ? 'selected' : '' }} class="bg-gray-light">{{ $item->name }}</option>
-                                @endforeach
-                            </optgroup>
                         </select>
                         @include('errors.inline', ['message' => $errors->first('name_id')])
                     </div>
@@ -61,6 +56,11 @@
                         @include('errors.inline', ['message' => $errors->first('date_to')])
                     </div>
                     <div class="form-group col-md-6">
+                        <label for="">Purpose / Trip Agenda</label>
+                        <input type="text" class="form-control @error('purpose') is-invalid @enderror" name="purpose" value="{{ $travel->purpose }}" required>
+                        @include('errors.inline', ['message' => $errors->first('purpose')])
+                    </div>
+                    <div class="form-group col-md-6">
                         <label for="">Traveling Users</label>
                         <select name="traveling_users[]" class="form-control chosen-select" multiple>
                             @foreach ($users as $item)
@@ -73,9 +73,9 @@
                             </optgroup>
                         </select>
                     </div>
-                    <div class="form-group col-12">
+                    <div class="form-group col-md-6">
                         <label for="">Other Travelers / Remarks</label>
-                        <textarea class="form-control" name="traveling_users_static" required>{{ $travel->traveling_users_static }}</textarea>
+                        <textarea class="form-control" name="traveling_users_static" rows="1" required>{{ $travel->traveling_users_static }}</textarea>
                         @include('errors.inline', ['message' => $errors->first('traveling_users_static')])
                     </div>
                     <div class="form-group col-md-12 jsReplicate mt-5">

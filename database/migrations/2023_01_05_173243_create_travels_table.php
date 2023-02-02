@@ -15,7 +15,6 @@ class CreateTravelsTable extends Migration
     {
         Schema::create('travels', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('name_id');
             $table->dateTime('date_from');
             $table->dateTime('date_to');
             $table->string('destination');
@@ -26,7 +25,6 @@ class CreateTravelsTable extends Migration
             $table->unsignedBigInteger('updated_id');
             $table->timestamps();
 
-            $table->foreign('name_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('owner_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('updated_id')->references('id')->on('users')->onDelete('cascade');
             $table->softDeletes();
