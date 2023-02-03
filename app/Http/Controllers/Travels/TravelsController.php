@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Travels;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Travel;
+use App\TravelsPassenger;
 use App\TravelsAttachment;
 use App\TravelsRequestType;
 use App\Company;
@@ -98,16 +99,9 @@ class TravelsController extends Controller {
             'date_to' => ['required', 'after:date_from'],
             'destination' => ['required'],
             'purpose' => ['required'],
-            'traveling_users.*' => ['nullable'],
             'traveling_users_static' => ['required'],
         ]);
-        if (!empty($data['traveling_users'])) {
-            foreach ($data['traveling_users'] as $key => $value) {
-                $data['traveling_users'][$key] = '-'.$value.'-';
-            }
-        }
 
-        $data['traveling_users'] = !empty($data['traveling_users']) ? implode("", $data['traveling_users']) : "";
         $data['owner_id'] = auth()->id();
         $data['updated_id'] = auth()->id();
 
@@ -128,6 +122,25 @@ class TravelsController extends Controller {
                 $attr_file['file'] = basename($request->file('file')[$key]->store('public/attachments/travel_attachment'));
                 
                 TravelsAttachment::create($attr_file);
+            }
+        }
+
+        $data_passenger = $request->validate([
+            'passenger_id.*' => ['nullable', 'exists:users,id'],
+            'travel_no.*' => ['nullable']
+        ]);
+
+        
+        if (count($data_passenger) > 0) {
+            $attr_passenger['travel_id'] = $travel->id;
+            $attr_passenger['owner_id'] = auth()->id();
+            $attr_passenger['updated_id'] = auth()->id();
+
+            foreach ($data_passenger['passenger_id'] as $key => $value) {
+                $attr_passenger['user_id'] = $value;
+                $attr_passenger['travel_no'] = $data_passenger['travel_no'][$key];
+    
+                TravelsPassenger::create($attr_passenger);
             }
         }
 
@@ -153,18 +166,12 @@ class TravelsController extends Controller {
         }
         $companies = $comp;
 
-        $traveling_users = explode('--', $travel->traveling_users);
-        foreach ($traveling_users as $key => $value) {
-            $traveling_users[$key] = str_replace('-', '', $value);
-        }
-
         return view('pages.travels.travels.edit')->with([
             'users' => $users,
             'users_inactive' => $users_inactive,
             'companies' => $companies,
             'request_types' => $request_types,
-            'travel' => $travel,
-            'traveling_users' => $traveling_users
+            'travel' => $travel
         ]);
     }
 
@@ -176,17 +183,9 @@ class TravelsController extends Controller {
             'date_to' => ['required', 'after:date_from'],
             'destination' => ['required'],
             'purpose' => ['required'],
-            'traveling_users.*' => ['nullable'],
             'traveling_users_static' => ['required'],
         ]);
 
-        if ($data['traveling_users']) {
-            foreach ($data['traveling_users'] as $key => $value) {
-                $data['traveling_users'][$key] = '-'.$value.'-';
-            }
-        }
-
-        $data['traveling_users'] = $data['traveling_users'] ? implode("", $data['traveling_users']) : "";
         $data['updated_id'] = auth()->id();
 
         $attach_travel = $request->validate([
@@ -231,6 +230,26 @@ class TravelsController extends Controller {
                 $attr_file['description'] = $value;
                 $attr_file['file'] = basename($request->file('file')[$key]->store('public/attachments/travel_attachment'));
                 TravelsAttachment::create($attr_file);
+            }
+        }
+
+        $data_passenger = $request->validate([
+            'passenger_id.*' => ['nullable', 'exists:users,id'],
+            'travel_no.*' => ['nullable']
+        ]);
+
+        TravelsPassenger::where('travel_id', $travel->id)->delete();
+
+        if (count($data_passenger) > 0) {
+            $attr_passenger['travel_id'] = $travel->id;
+            $attr_passenger['owner_id'] = auth()->id();
+            $attr_passenger['updated_id'] = auth()->id();
+
+            foreach ($data_passenger['passenger_id'] as $key => $value) {
+                $attr_passenger['user_id'] = $value;
+                $attr_passenger['travel_no'] = $data_passenger['travel_no'][$key];
+    
+                TravelsPassenger::create($attr_passenger);
             }
         }
 

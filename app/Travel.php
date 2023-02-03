@@ -13,7 +13,7 @@ class Travel extends Model {
     protected $table = 'travels';
 
     use LogsActivity;
-    protected static $logAttributes = ['date_from', 'date_to', 'company_project_id', 'destination', 'traveling_users', 'traveling_users_static'];
+    protected static $logAttributes = ['date_from', 'date_to', 'company_project_id', 'destination', 'traveling_users_static'];
     protected static $logName = 'Travel';
     protected static $logOnlyDirty = true;
 
@@ -23,6 +23,10 @@ class Travel extends Model {
 
     public function attachments() {
         return $this->hasMany(TravelsAttachment::class);
+    }
+
+    public function passengers() {
+        return $this->hasMany(TravelsPassenger::class);
     }
 
     public function requestType() {

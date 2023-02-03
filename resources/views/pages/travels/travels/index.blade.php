@@ -115,15 +115,21 @@
                                                         <tr>
                                                             <td>Created / Updated</td>
                                                             <td>{{ $item->owner->name }} / {{ $item->updatedby->name }}</td>
-                                                        </tr>
+                                                        </tr>                                                     
                                                         <tr>
-                                                            <td>Traveling Users</td>
+                                                            <td>Passenger Information</td>
                                                             <td>
-                                                                @forelse ($item->travelers as $travelers)
-                                                                    {{ $travelers->name }}<br>
-                                                                @empty
-                                                                    -
-                                                                @endforelse
+                                                                <table class="table table-bordered table-sm">
+                                                                    @forelse ($item->passengers as $item2)
+                                                                        <tr class="bg-white">
+                                                                            <td>{{ $item2->user->name }}</td>
+                                                                            <td class="text-center">{{ $item2->user->e_dob }}</td>
+                                                                            <td>{{ $item2->travel_no }}</td>
+                                                                        </tr>
+                                                                    @empty
+                                                                        <tr><td>-</td></tr>
+                                                                    @endforelse
+                                                                </table>
                                                             </td>
                                                         </tr>
                                                         <tr>

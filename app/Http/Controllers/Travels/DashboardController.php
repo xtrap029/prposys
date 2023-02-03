@@ -13,15 +13,6 @@ use Carbon\Carbon;
 class DashboardController extends Controller {
 
     public function index() {
-        $my_travels = Travel::where('name_id', auth()->id())->orderBy('id', 'desc')->limit('5')->get();
-        foreach ($my_travels as $key => $value) {
-            $traveling_users = explode('--', $value->traveling_users);
-            $travelers = [];
-            foreach ($traveling_users as $key2 => $value2) {
-                $travelers[] = str_replace('-', '', $value2);
-            }
-            $my_travels[$key]->travelers = User::select('name')->find($travelers);
-        }
 
         $created_travels = Travel::where('owner_id', auth()->id())->orderBy('id', 'desc')->limit('5')->get();
         foreach ($created_travels as $key => $value) {
@@ -49,7 +40,6 @@ class DashboardController extends Controller {
         return view('pages.travels.dashboard.index')->with([
             'user' => $user,
             'announcement' => $announcement,
-            'my_travels' => $my_travels,
             'created_travels' => $created_travels,
             'tagged_travels' => $tagged_travels,
         ]);

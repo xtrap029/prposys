@@ -60,23 +60,67 @@
                         <input type="text" class="form-control @error('purpose') is-invalid @enderror" name="purpose" value="{{ $travel->purpose }}" required>
                         @include('errors.inline', ['message' => $errors->first('purpose')])
                     </div>
-                    <div class="form-group col-md-6">
-                        <label for="">Traveling Users</label>
-                        <select name="traveling_users[]" class="form-control chosen-select" multiple>
-                            @foreach ($users as $item)
-                                <option value="{{ $item->id }}" {{ in_array($item->id, $traveling_users) ? 'selected' : '' }}>{{ $item->name }}</option>
-                            @endforeach
-                            <optgroup label="Inactive" class="bg-gray-light">
-                                @foreach ($users_inactive as $item)
-                                    <option value="{{ $item->id }}" {{ in_array($item->id, $traveling_users) ? 'selected' : '' }} class="bg-gray-light">{{ $item->name }}</option>
-                                @endforeach
-                            </optgroup>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-12">
                         <label for="">Other Travelers / Remarks</label>
-                        <textarea class="form-control" name="traveling_users_static" rows="1" required>{{ $travel->traveling_users_static }}</textarea>
+                        <textarea class="form-control" name="traveling_users_static" rows="2" required>{{ $travel->traveling_users_static }}</textarea>
                         @include('errors.inline', ['message' => $errors->first('traveling_users_static')])
+                    </div>
+                    <div class="form-group col-12 jsReplicate mt-5">
+                        <h4 class="text-center">Passenger Information</h4>
+                        <div class="table-responsive">
+                            <table class="table bg-white" style="min-width: 1000px">
+                                <thead>
+                                    <tr>
+                                        <th class="w-50">Traveler</th>
+                                        <th class="w-50">Mabuhay Miles / GetGo Number</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="jsReplicate_container">
+                                    @if (isset($travel->passengers[0]))
+                                        <tr class="jsReplicate_template_item">
+                                            <td>
+                                                <select name="passenger_id[]" class="form-control">
+                                                    @foreach ($users as $item)
+                                                        <option value="{{ $item->id }}" {{ $travel->passengers[0]->user->id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                    @endforeach
+                                                    <optgroup label="Inactive" class="bg-gray-light">
+                                                        @foreach ($users_inactive as $item)
+                                                            <option value="{{ $item->id }}" class="bg-gray-light"  {{ $travel->passengers[0]->user->id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                        @endforeach
+                                                    </optgroup>
+                                                </select>
+                                            </td>
+                                            <td><input type="text" name="travel_no[]" class="form-control" value="{{ $travel->passengers[0]->travel_no }}" required></td>
+                                            <td><button type="button" class="btn btn-danger jsReplicate_remove"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                        </tr>
+                                    @endif
+                                    @foreach ($travel->passengers as $key => $item)
+                                        @if ($key > 0)
+                                            <tr class="jsReplicate_template_item">
+                                                <td>
+                                                    <select name="passenger_id[]" class="form-control">
+                                                        @foreach ($users as $item2)
+                                                            <option value="{{ $item2->id }}" {{ $item->user->id == $item2->id ? 'selected' : '' }}>{{ $item2->name }}</option>
+                                                        @endforeach
+                                                        <optgroup label="Inactive" class="bg-gray-light">
+                                                            @foreach ($users_inactive as $item2)
+                                                                <option value="{{ $item2->id }}" class="bg-gray-light"  {{ $item->user->id == $item2->id ? 'selected' : '' }}>{{ $item2->name }}</option>
+                                                            @endforeach
+                                                        </optgroup>
+                                                    </select>
+                                                </td>
+                                                <td><input type="text" name="travel_no[]" class="form-control" value="{{ $item->travel_no }}" required></td>
+                                                <td><button type="button" class="btn btn-danger jsReplicate_remove"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center">
+                            <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
+                        </div>
                     </div>
                     <div class="form-group col-md-12 jsReplicate mt-5">
                         <h4 class="text-center">Attachments</h4>
@@ -101,7 +145,7 @@
                                                 <input type="hidden" name="attachment_id_old[]" value="{{ $travel->attachments[0]->id }}">
                                             </td>
                                             <td><input type="text" name="attachment_description_old[]" class="form-control" value="{{ $travel->attachments[0]->description }}" required></td>
-                                            <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                            <td><button type="button" class="btn btn-danger jsReplicate_remove"><i class="nav-icon material-icons icon--list">delete</i></button></td>
                                         </tr>
                                     @endif
                                     @foreach ($travel->attachments as $key => $item)
@@ -115,7 +159,7 @@
                                                     <input type="hidden" name="attachment_id_old[]" value="{{ $item->id }}">
                                                 </td>
                                                 <td><input type="text" name="attachment_description_old[]" class="form-control" value="{{ $item->description }}" required></td>
-                                                <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                                <td><button type="button" class="btn btn-danger jsReplicate_remove"><i class="nav-icon material-icons icon--list">delete</i></button></td>
                                             </tr>
                                         @endif
                                     @endforeach
@@ -133,9 +177,29 @@
             <table class="d-none">
                 <tbody class="jsReplicate_template">
                     <tr class="jsReplicate_template_item">
+                        <td>
+                            <select name="passenger_id[]" class="form-control">
+                                @foreach ($users as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                                <optgroup label="Inactive" class="bg-gray-light">
+                                    @foreach ($users_inactive as $item)
+                                        <option value="{{ $item->id }}" class="bg-gray-light">{{ $item->name }}</option>
+                                    @endforeach
+                                </optgroup>
+                            </select>
+                        </td>
+                        <td><input type="text" name="travel_no[]" class="form-control" placeholder="Leave 'n/a' if blank" required></td>
+                        <td><button type="button" class="btn btn-danger jsReplicate_remove"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="d-none">
+                <tbody class="jsReplicate_template">
+                    <tr class="jsReplicate_template_item">
                         <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
                         <td><input type="text" name="attachment_description[]" class="form-control" required></td>
-                        <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                        <td><button type="button" class="btn btn-danger jsReplicate_remove"><i class="nav-icon material-icons icon--list">delete</i></button></td>
                     </tr>
                 </tbody>
             </table>
@@ -150,8 +214,6 @@
 @section('script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js" integrity="sha512-rMGGF4wg1R73ehtnxXBt5mbUfN9JUJwbk21KMlnLZDJh7BkPmeovBuddZCENJddHYYMkCh9hPFnPmS9sspki8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
-        $('.chosen-select').chosen();
-
         $(function() {
             if ($('.jsReplicate')[0]){
                 cls = '.jsReplicate'
