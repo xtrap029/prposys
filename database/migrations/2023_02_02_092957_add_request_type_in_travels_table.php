@@ -14,7 +14,7 @@ class AddRequestTypeInTravelsTable extends Migration
     public function up()
     {
         Schema::table('travels', function (Blueprint $table) {
-            $table->unsignedBigInteger('travels_request_type_id')->after('name_id');
+            $table->unsignedBigInteger('travels_request_type_id');
             $table->text('purpose')->after('travels_request_type_id');
         });
     }

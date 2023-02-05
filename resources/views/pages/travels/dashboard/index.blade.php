@@ -55,7 +55,7 @@
                             @foreach ($created_travels as $item)
                                 <tr>
                                     <td>{{ $item->id }}</td>
-                                    <td>{{ $item->requestType->name }}</td>
+                                    <td>{{ $item->request_type_id ? $item->requestType->name : '-' }}</td>
                                     <td>{{ $item->date_from }}</td>
                                     <td>{{ $item->date_to }}</td>
                                     <td class="text-right">
@@ -78,7 +78,7 @@
                                                             </tr>
                                                             <tr>
                                                                 <td>Request Type</td>
-                                                                <td>{{ $item->requestType ? $item->requestType->name : '-' }}</td>
+                                                                <td>{{ $item->request_type_id ? $item->requestType->name : '-' }}</td>
                                                             </tr>
                                                             <tr>
                                                                 <td>Project</td>
@@ -168,7 +168,7 @@
                             @foreach ($tagged_travels as $item)
                                 <tr>
                                     <td>{{ $item->id }}</td>
-                                    <td>{{ $item->requestType->name }}</td>
+                                    <td>{{ $item->request_type_id ? $item->requestType->name : '-' }}</td>
                                     <td>{{ $item->date_from }}</td>
                                     <td>{{ $item->date_to }}</td>
                                     <td class="text-right">
@@ -191,7 +191,7 @@
                                                             </tr>
                                                             <tr>
                                                                 <td>Request Type</td>
-                                                                <td>{{ $item->requestType ? $item->requestType->name : '-' }}</td>
+                                                                <td>{{ $item->request_type_id ? $item->requestType->name : '-' }}</td>
                                                             </tr>
                                                             <tr>
                                                                 <td>Project</td>
