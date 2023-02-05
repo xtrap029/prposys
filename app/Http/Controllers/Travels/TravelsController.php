@@ -42,21 +42,7 @@ class TravelsController extends Controller {
             $travels = $travels->orderBy('id', 'desc')->paginate(10);
         }
 
-        $users = User::where('ua_level_id', '!=', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
-        $users_inactive = User::where('ua_level_id', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
         $projects = CompanyProject::orderBy('project', 'asc')->get();
-
-        foreach ($travels as $key => $value) {
-
-            $traveling_users = explode('--', $value->traveling_users);
-
-            $travelers = [];
-            foreach ($traveling_users as $key2 => $value2) {
-                $travelers[] = str_replace('-', '', $value2);
-            }
-
-            $travels[$key]->travelers = User::select('name')->find($travelers);
-        }
         
         return view('pages.travels.travels.index')->with([
             'travels' => $travels,
