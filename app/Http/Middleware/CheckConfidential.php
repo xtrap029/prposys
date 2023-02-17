@@ -70,6 +70,9 @@ class CheckConfidential
                 // 'clear_edit',
             ];
 
+            $user = User::where('id', auth()->id())->first();
+            $ua_level_route = UaLevelRoute::select('ua_route_option_id')->where('ua_route_id', config('global.ua_trans_view_conf'))->where('ua_level_id', $user->ualevel->id)->first();
+            
             // check levels
             if (in_array(explode('@', Route::getCurrentRoute()->getActionName())[1], $confidentials)
                 && (
@@ -78,13 +81,10 @@ class CheckConfidential
                     )
                 ) {
 
-                if (explode('@', Route::getCurrentRoute()->getActionName())[1] != 'show') {
+                if (explode('@', Route::getCurrentRoute()->getActionName())[1] != 'show' && !$user->is_accounting) {
                     return abort(401);
                 }
             }
-
-            $user = User::where('id', auth()->id())->first();
-            $ua_level_route = UaLevelRoute::select('ua_route_option_id')->where('ua_route_id', config('global.ua_trans_view_conf'))->where('ua_level_id', $user->ualevel->id)->first();
 
             // check confidential parallel
             if (

@@ -1318,6 +1318,9 @@ class TransactionsFormsController extends Controller {
                 if ($result->count() == 0) $can_create = false;
                 else {
                     if ($user->ualevel->code < $result->first()->owner->ualevel->code && $user->id != $result->first()->owner->id) $can_create = false;
+
+                    // bypass hierarchy check and check if is_accounting
+                    if ($user->is_accounting) $can_create = true;
                 }
             }
         } else {
@@ -1375,6 +1378,9 @@ class TransactionsFormsController extends Controller {
             $can_cancel = false;
         } else {
             if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_cancel = false;
+
+            // bypass hierarchy check and check if is_accounting
+            if ($user->is_accounting) $can_cancel = true;
         }
 
         return $can_cancel;
@@ -1402,6 +1408,9 @@ class TransactionsFormsController extends Controller {
             $can_edit = false;
         } else {
             if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_edit = false;
+
+            // bypass hierarchy check and check if is_accounting
+            if ($user->is_accounting) $can_edit = true;
         }
 
         // if reimbursement
@@ -1478,6 +1487,9 @@ class TransactionsFormsController extends Controller {
                 $can_approve = false;
             } else {
                 if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_approve = false;
+
+                // bypass hierarchy check and check if is_accounting
+                if ($user->is_accounting) $can_approve = true;
             }
         } else {
             $can_approve = false;
@@ -1534,6 +1546,9 @@ class TransactionsFormsController extends Controller {
             $admin_subadmin = false;
         } else {
             if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $admin_subadmin = false;
+
+            // bypass hierarchy check and check if is_accounting
+            if ($user->is_accounting) $admin_subadmin = true;
         }
 
         return $admin_subadmin;

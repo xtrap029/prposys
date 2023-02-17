@@ -142,6 +142,10 @@
                     
                     <h5 class="my-4 text-right">Sequence</h5>
                     <div class="form-row">
+                        <div class="form-group border p-2 mb-0 col-12">
+                            <label for="" class="text-gray">Is Accounting?</label>
+                            <h6>{{ $user->is_accounting ? 'Yes' : 'No' }}</h6>
+                        </div>
                         <div class="form-group border p-2 mb-0 col-lg-6 d-none">
                             <label for="" class="text-gray">Role</label>
                             <h6>{{ $user->role->name }} {{ $user->is_smt ? ' - SMT' : '' }}</h6>

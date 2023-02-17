@@ -252,6 +252,16 @@
                                 @include('errors.inline', ['message' => $errors->first('is_read_only')])
                             </div>
                         </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-4 mb-3">
+                                <label class="d-block">Is Accounting?</label>
+                                <select name="is_accounting" class="form-control @error('is_accounting') is-invalid @enderror">
+                                    <option value="0">No</option>  
+                                    <option value="1">Yes</option>  
+                                </select>
+                                @include('errors.inline', ['message' => $errors->first('is_accounting')])
+                            </div>
+                        </div>
                         <div class="card col-md-12 mt-4">
                             <div class="card-header">
                                 Company Access

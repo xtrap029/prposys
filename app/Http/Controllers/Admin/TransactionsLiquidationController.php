@@ -1054,6 +1054,9 @@ class TransactionsLiquidationController extends Controller {
         } else {
             // if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_edit = false;
             if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id && $user->id != $transaction->requested_id) $can_edit = false;
+        
+            // bypass hierarchy check and check if is_accounting
+            if ($user->is_accounting) $can_edit = true;
         }
 
         // check if unliquidated
@@ -1135,6 +1138,9 @@ class TransactionsLiquidationController extends Controller {
         } else {
             // if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_approve = false;
             if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id && $user->id != $transaction->requested_id) $can_approve = false;
+        
+            // bypass hierarchy check and check if is_accounting
+            if ($user->is_accounting) $can_approve = true;
         }
 
         // check if unliquidated
@@ -1199,6 +1205,9 @@ class TransactionsLiquidationController extends Controller {
         } else {
             // if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_clear = false;
             if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id && $user->id != $transaction->requested_id) $can_clear = false;
+        
+            // bypass hierarchy check and check if is_accounting
+            if ($user->is_accounting) $can_clear = true;
         }
         
         return $can_clear;

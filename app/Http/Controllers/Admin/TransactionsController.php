@@ -1491,6 +1491,9 @@ class TransactionsController extends Controller {
                 $can_edit = false;
             } else {
                 if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_edit = false;
+
+                // bypass hierarchy check and check if is_accounting
+                if ($user->is_accounting) $can_edit = true;
             }
         } else {
             $can_edit = false;
@@ -1519,6 +1522,9 @@ class TransactionsController extends Controller {
                 $can_cancel = false;
             } else {
                 if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_cancel = false;
+
+                // bypass hierarchy check and check if is_accounting
+                if ($user->is_accounting) $can_cancel = true;
             }
         } else {
             $can_cancel = false;
