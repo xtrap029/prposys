@@ -1016,6 +1016,9 @@ class TransactionsLiquidationController extends Controller {
                         $user->ualevel->code < $result->first()->owner->ualevel->code
                         && $user->id != $result->first()->owner->id
                     ) $can_create = false;
+
+                    // bypass hierarchy check and check if is_accounting
+                    if ($user->is_accounting) $can_create = true;
                 }
             }
             
