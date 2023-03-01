@@ -279,6 +279,12 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
         });
     });
 
+    // Travels Roles
+    Route::middleware('CheckUserAccess:trv_role')->group(function () {
+        Route::get('travels-role', 'Travels\TravelsRolesController@index')->name('travel-role');
+        Route::put('travels-role', 'Travels\TravelsRolesController@update');
+    });
+
     // Lea Settings
     Route::middleware('CheckUserAccess:lea_settings')->group(function () {
         Route::prefix('leaves-settings')->group(function () {

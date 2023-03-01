@@ -196,6 +196,24 @@
                         </div>                           --}}
                     </div>
 
+                    <h5 class="my-4 text-right">Travels</h5>
+                    <div class="form-row">
+                        <div class="form-group border p-2 mb-0 col-12">
+                            <label for="" class="text-gray">Roles</label>
+                            <h6>
+                                <table class="table">
+                                    @foreach ($travel_roles as $item)
+                                        @if (in_array($item->id, explode(',',$user->travel_roles)))
+                                            <tr>
+                                                <td>{{ $item->name }}</td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                </table>
+                            </h6>
+                        </div>
+                    </div>
+
                     <h5 class="my-4 text-right">Leaves</h5>
                     <div class="form-row">
                         <div class="form-group border p-2 mb-0 col-12">

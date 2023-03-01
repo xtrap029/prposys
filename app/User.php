@@ -22,6 +22,7 @@ class User extends Authenticatable {
         'role_id',
         'ua_level_id',
         'ua_levels',
+        'travel_roles',
         'apps',
         'companies',
         'is_read_only',
@@ -75,6 +76,8 @@ class User extends Authenticatable {
     protected static $logAttributes = [
         'name',
         'email',
+        'ua_levels',
+        'travel_roles',
         'avatar',
         'role.name',
         'apps',

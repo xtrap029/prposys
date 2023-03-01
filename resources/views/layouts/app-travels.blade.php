@@ -105,6 +105,11 @@
                                             <i class="nav-icon material-icons icon--list">flight</i><p>Request Type</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item {{ $ua['trv_role'] == $non ? 'd-none' : '' }}">
+                                        <a href="/travels-role" class="nav-link {{ Route::currentRouteName() == 'travel-role' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">badge</i><p>Role</p>
+                                        </a>
+                                    </li>
                                 </ul>
                             </nav>
                         </div>

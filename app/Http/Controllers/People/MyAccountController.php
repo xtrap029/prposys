@@ -5,6 +5,7 @@ namespace App\Http\Controllers\People;
 use App\Http\Controllers\Controller;
 use App\Company;
 use App\Role;
+use App\TravelRole;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -17,11 +18,13 @@ class MyAccountController extends Controller {
         $companies = Company::whereIn('id', $allowed_companies)->orderBy('name', 'asc')->get();
         $user = User::where('id', auth()->id())->first();
         $roles = Role::orderBy('id', 'desc')->get();
+        $travel_roles = TravelRole::orderBy('id', 'desc')->get();
 
         return view('pages.people.myaccount.index')->with([
             'companies' => $companies,
             'user' => $user,
-            'roles' => $roles
+            'roles' => $roles,
+            'travel_roles' => $travel_roles,
         ]);
     }
 

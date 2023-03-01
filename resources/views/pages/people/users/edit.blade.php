@@ -202,6 +202,14 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="">User Travel Roles</label>
+                            <select name="travel_role_control[]" class="form-control form-control-sm chosen-select" multiple>
+                                @foreach ($travel_roles as $item)
+                                    <option value="{{ $item->id }}" {{ in_array($item->id, explode(',',$user->travel_roles)) ? 'selected' : '' }}>{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="card col-md-12 mt-4">
                             <div class="card-header">
                                 App Access

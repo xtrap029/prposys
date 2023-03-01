@@ -21,6 +21,7 @@
                         <th>Level</th>
                         <th>Level Options</th>
                         <th>Is Accounting?</th>
+                        <th>Travel Roles</th>
                         <th class="text-right text-nowrap">
                             @if (!isset($_GET['all'])) <a href="/user?all=1" class="mr-5">Show Inactive</a>
                             @else <a href="/user" class="mr-5">Hide Inactive</a>
@@ -40,10 +41,15 @@
                             <td>{{ $item->ualevel->name }}</td>
                             <td>
                                 @foreach ($levels as $level)
-                                {{ in_array($level->id, explode(',',$item->ua_levels)) ? $level->name.', ' : '' }}
+                                    {{ in_array($level->id, explode(',',$item->ua_levels)) ? $level->name.', ' : '' }}
                                 @endforeach
                             </td>
                             <td class="{{ $item->is_accounting ? 'text-success' : 'text-danger' }}">{{ $item->is_accounting ? 'Yes' : 'No' }}</td>
+                            <td>
+                                @foreach ($travel_roles as $role)
+                                    {{ in_array($role->id, explode(',',$item->travel_roles)) ? $role->name.', ' : '' }}
+                                @endforeach
+                            </td>
                             <td class="align-middle text-right">
                                 <a href="/user/{{ $item->id }}/edit" class="btn btn-link btn-sm">Edit</a>
                             </td>

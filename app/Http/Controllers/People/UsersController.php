@@ -5,6 +5,7 @@ namespace App\Http\Controllers\People;
 use App\Company;
 use App\Role;
 use App\UaLevel;
+use App\TravelRole;
 use App\User;
 use App\UserTransactionLimit;
 use App\Http\Controllers\Controller;
@@ -27,12 +28,14 @@ class UsersController extends Controller {
         }
 
         $levels = UaLevel::orderBy('order', 'asc')->get();
+        $travel_roles = TravelRole::orderBy('id', 'asc')->get();
         // $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
         // $users_inactive = User::whereNull('role_id')->orderBy('name', 'asc')->get();
         
         return view('pages.people.users.index')->with([
             'users' => $users,
             'levels' => $levels,
+            'travel_roles' => $travel_roles,
             // 'users_inactive' => $users_inactive
         ]);
     }
@@ -41,11 +44,13 @@ class UsersController extends Controller {
         $companies = Company::orderBy('name', 'asc')->get();
         $roles = Role::orderBy('id', 'desc')->get();
         $levels = UaLevel::orderBy('order', 'asc')->get();
+        $travel_roles = TravelRole::orderBy('id', 'asc')->get();
 
         return view('pages.people.users.create')->with([
             'companies' => $companies,
             'roles' => $roles,
             'levels' => $levels,
+            'travel_roles' => $travel_roles,
         ]);
     }
 
@@ -55,6 +60,7 @@ class UsersController extends Controller {
             'role_id' => ['nullable', 'exists:roles,id'],
             'ua_level_id' => ['nullable', 'exists:ua_levels,id'],
             'ua_level_control.*' => ['nullable'],
+            'travel_role_control.*' => ['nullable'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'avatar' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
@@ -95,6 +101,7 @@ class UsersController extends Controller {
         $data['companies'] = $request->company_control ? implode(",", $request->company_control) : "";
         $data['company_id'] = $request->company_control ? $request->company_control[0] : null;
         $data['ua_levels'] = $request->ua_level_control ? implode(",", $request->ua_level_control) : "";
+        $data['travel_roles'] = $request->travel_role_control ? implode(",", $request->travel_role_control) : "";
 
         $data['avatar'] = basename($request->file('avatar')->store('public/images/users'));
         $user = User::create([
@@ -103,6 +110,7 @@ class UsersController extends Controller {
             'role_id' => $data['role_id'],
             'ua_level_id' => $data['ua_level_id'],
             'ua_levels' => $data['ua_levels'],
+            'travel_roles' => $data['travel_roles'],
             'apps' => $data['apps'],
             'companies' => $data['companies'],
             'is_read_only' => $data['role_id'] == 1 ? 0 : $data['is_read_only'],
@@ -152,12 +160,14 @@ class UsersController extends Controller {
         $roles = Role::orderBy('id', 'desc')->get();
         $companies = Company::orderBy('name', 'asc')->get();
         $levels = UaLevel::orderBy('order', 'asc')->get();
+        $travel_roles = TravelRole::orderBy('id', 'asc')->get();
 
         return view('pages.people.users.edit')->with([
             'user' => $user,
             'roles' => $roles,
             'companies' => $companies,
             'levels' => $levels,
+            'travel_roles' => $travel_roles,
         ]);
     }
 
@@ -166,6 +176,7 @@ class UsersController extends Controller {
             'role_id' => ['nullable', 'exists:roles,id'],
             'ua_level_id' => ['nullable', 'exists:ua_levels,id'],
             'ua_level_control' => ['nullable'],
+            'travel_role_control' => ['nullable'],
             // 'company_id' =>  ['required', 'exists:companies,id'],
             'name' => ['required', 'string', 'max:255'],
             'avatar' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
@@ -221,6 +232,7 @@ class UsersController extends Controller {
 
         $data['companies'] = $request->company_control ? implode(",", $request->company_control) : "";
         $data['ua_levels'] = $request->ua_level_control ? implode(",", $request->ua_level_control) : "";
+        $data['travel_roles'] = $request->travel_role_control ? implode(",", $request->travel_role_control) : "";
         $data['company_id'] = $request->company_control ? $request->company_control[0] : null;
         unset($data['company_control']);
 
