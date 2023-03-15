@@ -309,7 +309,15 @@
                                 <label for="">Control/Reference No.</label>
                                 <input type="text" name="control_no" class="form-control form-control-sm" value="{{ !empty($_GET['control_no']) ? $_GET['control_no'] : '' }}">
                             </div>
-                            <div class="col-12 my-1">
+                            <div class="col-12 col-md-3 my-1">
+                                <label for="">Visibility</label>
+                                <select name="is_confidential" class="form-control form-control-sm">
+                                    <option value="">All</option>
+                                    <option value="0" {{ ((!empty($_GET['is_confidential']) || (isset($_GET['is_confidential']) && $_GET['is_confidential'] != "")) && $_GET['is_confidential'] == '0') ? 'selected' : '' }}>Not Confidential</option>
+                                    <option value="1" {{ (!empty($_GET['is_confidential']) && $_GET['is_confidential'] == '1') ? 'selected' : '' }}>Confidential</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-9 my-1">
                                 <label for="">Keyword</label>
                                 <input type="text" class="form-control form-control-sm" name="s" value="{{ app('request')->input('s') }}" autocomplete="off">
                             </div>

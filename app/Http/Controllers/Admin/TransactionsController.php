@@ -1068,6 +1068,7 @@ class TransactionsController extends Controller {
         $trans_particulars = '';
         $trans_currency = '';
         $trans_control_no = '';
+        $trans_is_confidential = '';
         $trans_amt_bal = '';
 
         $status_name = [];
@@ -1285,6 +1286,14 @@ class TransactionsController extends Controller {
             $transactions = $transactions->where('control_no', $_GET['control_no']);
             $trans_control_no = $_GET['control_no'];
         }
+        if (!empty($_GET['is_confidential']) || (isset($_GET['is_confidential']) && $_GET['is_confidential'] != "")) {
+            $transactions = $transactions->whereDate('created_at', '>=', $_GET['is_confidential']);
+            $trans_is_confidential = $_GET['is_confidential'];
+
+            if ($_GET['is_confidential'] != "") {
+                $transactions = $transactions->where('is_confidential', $_GET['is_confidential']);
+            }
+        }
         if (isset($_GET['bal'])) {
             if ($_GET['bal'] == "0" && $_GET['bal'] != "") {
                 $transactions = $transactions->whereHas('liquidation', function($query){
@@ -1459,6 +1468,7 @@ class TransactionsController extends Controller {
                 'trans_particulars' => $trans_particulars,
                 'trans_currency' => $trans_currency,
                 'trans_control_no' => $trans_control_no,
+                'trans_is_confidential' => $trans_is_confidential,
                 'trans_amt_bal' => $trans_amt_bal,
                 'trans_bal' => $trans_bal,
                 'trans_amount' => $trans_amount,
