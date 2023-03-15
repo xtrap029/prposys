@@ -58,6 +58,7 @@
                             <th>Destination</th>
                             <th>Travel From</th>
                             <th>Travel To</th>
+                            <th>Status</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -70,103 +71,9 @@
                                 <td>{{ $item->destination }}</td>
                                 <td>{{ $item->date_from }}</td>
                                 <td>{{ $item->date_to }}</td>
+                                <td>{{ $item->status->name }}</td>
                                 <td class="text-right">
-                                    <a href="#_" class="btn btn-link btn-sm" data-toggle="modal" data-target="#modal-travel-view-{{ $item->id }}">View</a>
-
-                                    <div class="modal fade" id="modal-travel-view-{{ $item->id }}" tabindex="-1" role="dialog" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header border-0">
-                                                    <h5 class="modal-title">View Travel</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <table class="table text-left">
-                                                        <tr>
-                                                            <td>ID</td>
-                                                            <td>{{ $item->id }}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Request Type</td>
-                                                            <td>{{ $item->requestType ? $item->requestType->name : '-' }}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Project</td>
-                                                            <td>{{ $item->companyProject->project.' - '. $item->companyProject->company->name }}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Destination</td>
-                                                            <td>{{ $item->destination }}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Purpose</td>
-                                                            <td>{{ $item->purpose }}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Date From</td>
-                                                            <td>{{ $item->date_from }}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Date To</td>
-                                                            <td>{{ $item->date_to }}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Created / Updated</td>
-                                                            <td>{{ $item->owner->name }} / {{ $item->updatedby->name }}</td>
-                                                        </tr>                                                     
-                                                        <tr>
-                                                            <td>Passenger Information</td>
-                                                            <td>
-                                                                <table class="table table-bordered table-sm">
-                                                                    @forelse ($item->passengers as $item2)
-                                                                        <tr class="bg-white">
-                                                                            <td>{{ $item2->user->name }}</td>
-                                                                            <td class="text-center">{{ $item2->user->e_dob }}</td>
-                                                                            <td>{{ $item2->travel_no }}</td>
-                                                                        </tr>
-                                                                    @empty
-                                                                        <tr><td>-</td></tr>
-                                                                    @endforelse
-                                                                </table>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Other Travelers / Remarks</td>
-                                                            <td>{{ $item->traveling_users_static }}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Attachments</td>
-                                                            <td>
-                                                                @forelse ($item->attachments as $item2)
-                                                                    <a class="btn btn-block text-left border p-3" href="/storage/public/attachments/travel_attachment/{{ $item2->file }}" target="_blank">
-                                                                        <i class="align-middle font-weight-bolder material-icons text-orange">
-                                                                            @if (pathinfo($item2->file, PATHINFO_EXTENSION) == 'pdf')
-                                                                                picture_as_pdf
-                                                                            @else
-                                                                                insert_photo  
-                                                                            @endif
-                                                                        </i>
-                                                                        <span class="text-dark pl-2">{{ $item2->description }}</span>
-                                                                    </a>
-                                                                @empty
-                                                                    No attachment found.
-                                                                @endforelse
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <a href="/travels/{{ $item->id }}/edit" class="btn btn-link btn-sm d-inline-block">Edit</a>
-                                    <form action="/travels/{{ $item->id }}" method="post" class="d-inline-block">
-                                        @csrf
-                                        @method('delete')
-                                        <input type="submit" class="btn btn-link btn-sm" value="Delete" onclick="return confirm('Are you sure?')">
-                                    </form>
+                                    <a href="/travels/view/{{ $item->id }}" class="btn btn-link btn-sm d-inline-block">View</a>
                                 </td>
                             </tr>
                         @empty

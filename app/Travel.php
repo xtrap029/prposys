@@ -13,7 +13,16 @@ class Travel extends Model {
     protected $table = 'travels';
 
     use LogsActivity;
-    protected static $logAttributes = ['date_from', 'date_to', 'company_project_id', 'destination', 'traveling_users_static'];
+    protected static $logAttributes = [
+        'date_from',
+        'date_to',
+        'company_project_id',
+        'destination',
+        'traveling_users_static',
+        'cancellation_number',
+        'cancellation_reason',
+        'status_id',
+    ];
     protected static $logName = 'Travel';
     protected static $logOnlyDirty = true;
 
@@ -29,6 +38,14 @@ class Travel extends Model {
         return $this->hasMany(TravelsPassenger::class);
     }
 
+    public function flights() {
+        return $this->hasMany(TravelsFlight::class);
+    }
+
+    public function hotels() {
+        return $this->hasMany(TravelsHotel::class);
+    }
+
     public function requestType() {
         return $this->belongsTo(TravelsRequestType::class, 'travels_request_type_id');
     }
@@ -39,5 +56,9 @@ class Travel extends Model {
 
     public function updatedby() {
         return $this->belongsTo(User::class, 'updated_id');
+    }
+
+    public function status() {
+        return $this->belongsTo(TravelStatus::class);
     }
 }

@@ -26,6 +26,8 @@ return [
     'exceed_amount_unliq' => 'Unliquidated amount limit exceeded.',
     'exceed_count_unliq' => 'Unliquidated transactions limit exceeded.',
     'cancel_prompt' => 'Are you sure you want to cancel?',
+    'hotel_flight_prompt' => 'Select one Flight/Hotel',
+    'booked_prompt' => 'Add booking information',
     'manage_prompt' => 'Manage Transaction',
     'issue_prompt' => 'Issue Payment',
     'approval_prompt' => 'Send for approval',

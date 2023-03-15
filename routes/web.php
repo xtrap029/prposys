@@ -257,11 +257,18 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
             $url = 'Travels\TravelsController';
 
             Route::get('/', $url.'@index')->name('travel-travel');
+            Route::get('/view/{travel}', $url.'@show')->name('travel-travel');
             Route::get('/create', $url.'@create')->name('travel-travel');
             Route::post('/', $url.'@store');
             Route::get('/{travel}/edit', $url.'@edit')->where('travel', '[0-9]+')->name('travel-travel');
             Route::put('/{travel}', $url.'@update')->where('travel', '[0-9]+');
-            Route::delete('/{travel}', $url.'@destroy')->where('travel', '[0-9]+');
+            // Route::delete('/{travel}', $url.'@destroy')->where('travel', '[0-9]+');
+            Route::put('/cancel/{travel}', $url.'@cancel')->where('travel', '[0-9]+');
+
+            Route::get('/for-review/{travel}', $url.'@for_review')->where('travel', '[0-9]+');
+            Route::get('/for-approval/{travel}', $url.'@for_approval')->where('travel', '[0-9]+');
+            Route::put('/for-booking/{travel}', $url.'@for_booking')->where('travel', '[0-9]+');
+            Route::put('/booked/{travel}', $url.'@booked')->where('travel', '[0-9]+');
         });
     });
 
