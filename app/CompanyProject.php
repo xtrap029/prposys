@@ -18,4 +18,8 @@ class CompanyProject extends Model {
     public function company() {
         return $this->belongsTo(Company::class)->withTrashed();
     }
+
+    public function liquidations() {
+        return $this->hasMany(TransactionsLiquidation::class, 'project_id');
+    }
 }

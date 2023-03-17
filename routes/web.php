@@ -600,6 +600,11 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
             Route::get('/report-deposit/', $url.'@report_deposit');
             Route::get('/print-cleared/', $url.'@print_cleared');
         });
+
+        Route::prefix('transaction')->group(function () {
+            $url = 'Admin\TransactionsController';
+            Route::get('/report-projects/', $url.'@report_projects')->name('transactionreportproject');
+        });
     });    
     
     // Seq Transaction View

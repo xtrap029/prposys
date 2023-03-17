@@ -100,9 +100,16 @@
                                             <i class="nav-icon material-icons icon--list">toll</i><p>Transactions</p>
                                         </a>
                                     </li>
+
+                                    <li class="nav-item py-3"></li>
                                     <li class="nav-item {{ $ua['trans_report'] == $non ? 'd-none' : '' }}">
                                         <a href="/transaction/report-all?from={{ date('Y-m-01') }}&to={{ date('Y-m-t') }}" class="nav-link {{ Route::currentRouteName() == 'transactionreport' ? 'active' : '' }}">
-                                            <i class="nav-icon material-icons icon--list">assessment</i><p> Reports</p>
+                                            <i class="nav-icon material-icons icon--list">storage</i><p> Reports - Transactions</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['trans_report'] == $non ? 'd-none' : '' }}">
+                                        <a href="/transaction/report-projects?from={{ date('Y-m-01') }}&to={{ date('Y-m-t') }}" class="nav-link {{ Route::currentRouteName() == 'transactionreportproject' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">storage</i><p> Reports - Project</p>
                                         </a>
                                     </li>
                                     
