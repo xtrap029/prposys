@@ -26,25 +26,21 @@
                     </div>
                     <div class="card-body bg-gray-light">
                         <div class="row">
-                            <div class="col-sm-6 col-md-4 my-1">
-                                <label for="">Company</label>
+                            <div class="col-sm-6 col-md-3 my-1">
+                                <label for="">Company / Projects</label>
                                 <select name="company" class="form-control form-control-sm">
-                                    <option value="">All</option>
+                                    <option value="">All Companies</option>
                                     @foreach ($companies->whereIn('id', explode(',', Auth::user()->companies)) as $item)
-                                        <option value="{{ $item->id }}" {{ !empty($trans_company) ? $trans_company == $item->id ? 'selected' : '' : '' }}>{{ $item->name }}</option>
+                                        <optgroup label="{{ $item->name }}">
+                                            <option value="C{{ $item->id }}" {{ !empty($trans_company) ? $trans_company == 'C'.$item->id ? 'selected' : '' : '' }}>All Projects - {{ $item->name }}</option>
+                                            @foreach ($item->companyProject as $project)
+                                                <option value="{{ $project->id }}" {{ !empty($trans_company) ? $trans_company == $project->id ? 'selected' : '' : '' }}>{{ $project->project }}</option>
+                                            @endforeach
+                                        </optgroup>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-sm-6 col-md-4 my-1">
-                                <label for="">Projects</label>
-                                <select name="project" class="form-control form-control-sm">
-                                    <option value="">All</option>
-                                    @foreach ($projects as $item)
-                                        <option value="{{ $item->id }}" {{ !empty($trans_project) ? $trans_project == $item->id ? 'selected' : '' : '' }}>{{ $item->project }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-sm-6 col-md-4 my-1">
+                            <div class="col-sm-6 col-md-2 my-1">
                                 <label for="">Type</label>
                                 <select name="type" class="form-control form-control-sm">
                                     <option value="">All</option>
@@ -53,7 +49,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-sm-6 col-md-4 my-1">
+                            <div class="col-sm-6 col-md-3 my-1">
                                 <label for="">Status</label>
                                 <select name="status[]" class="form-control form-control-sm chosen-select" multiple>
                                     @foreach (config('global.status_filter_reports') as $item)
@@ -63,11 +59,11 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-sm-6 col-md-4 my-1">
+                            <div class="col-sm-6 col-md-2 my-1">
                                 <label for="">Date From</label>
                                 <input type="date" name="from" class="form-control form-control-sm" value="{{ !empty($_GET['from']) ? $_GET['from'] : '' }}">
                             </div>
-                            <div class="col-sm-6 col-md-4 my-1">
+                            <div class="col-sm-6 col-md-2 my-1">
                                 <label for="">Date To</label>
                                 <input type="date" name="to" class="form-control form-control-sm" value="{{ !empty($_GET['to']) ? $_GET['to'] : '' }}">
                             </div>
@@ -84,15 +80,14 @@
                 <div class="my-1 col-6 col-sm-3 col-lg-2 col-xl-1">
                     <input type="submit" value="Generate" class="btn btn-primary btn-block" form="filter">
                 </div>
-                {{-- <div class="my-1 col-6 offset-lg-4 offset-xl-8 col-sm-3 col-lg-2 col-xl-1"> --}}
-                <div class="my-1 col-6 offset-lg-6 offset-xl-9 col-sm-3 col-lg-2 col-xl-1">
+                <div class="my-1 col-6 offset-lg-4 offset-xl-8 col-sm-3 col-lg-2 col-xl-1">
                     <div class="btn-group btn-block" role="group">
                         <button type="button" class="btn btn-danger" onclick="window.print();">Print</button>
                     </div>
                 </div>
-                {{-- <div class="my-1 col-6 col-sm-3 col-lg-2 col-xl-1">
+                <div class="my-1 col-6 col-sm-3 col-lg-2 col-xl-1">
                     <a href="{{ url()->current().'?'.http_build_query(array_merge(request()->all(),['csv' => ''])) }}" class="btn btn-success btn-block" target="_blank">CSV</a>
-                </div> --}}
+                </div>
             </div>
             <div class="pb-4 pt-4 px-3 card">
                 <div class="mb-3">
@@ -130,7 +125,7 @@
                     @foreach ($query as $company)
                         <h5 class="font-weight-bold">{{ $company->name }}</h5>
                         <table class="table small table-sm">
-                            @forelse ((!empty($trans_project) ? $company->companyProject->where('id', $trans_project) : $company->companyProject) as $project)
+                            @forelse ((!empty($trans_company) && !str_starts_with($trans_company, 'C') ? $company->companyProject->where('id', $trans_company) : $company->companyProject) as $project)
                                 <tr>
                                     <td>
                                         <h6 class="bg-gray-light p-2 px-3">{{ $project->project }}</h6>
@@ -149,9 +144,12 @@
                                                     </tr>
                                                 </thead>
                                                 <?php
-                                                    $project_liquidations = $project->liquidations->sortBy('transaction_id');
+                                                    $project_liquidations = $project->liquidations->sortBy(function($item){ return $item->transaction_id.'#'.$item->date; });
                                                     if (!empty($trans_type)) {
                                                         $project_liquidations = $project_liquidations->where('transaction.trans_type', $trans_type);
+                                                    }
+                                                    if (!empty($trans_status)) {
+                                                        $project_liquidations = $project_liquidations->whereIn('transaction.status_id', $trans_status);
                                                     }
                                                     if (!empty($trans_from)) {
                                                         $project_liquidations = $project_liquidations->where('transaction.created_at', '>=', $trans_from);
@@ -165,8 +163,8 @@
                                                 ?>
                                                 @forelse ($project_liquidations as $liquidation)
                                                     <tr>
-                                                        <td>{{ $liquidation->date }}</td>
                                                         <td>{{ strtoupper($liquidation->transaction->trans_type).'-'.$liquidation->transaction->trans_year.'-'.sprintf('%05d',$liquidation->transaction->trans_seq) }}</td>
+                                                        <td>{{ $liquidation->date }}</td>
                                                         <td>{{ $liquidation->expenseType->name }}</td>
                                                         <td>{{ $liquidation->location }}</td>
                                                         <td>{{ $liquidation->receipt ? 'Y' : 'N' }}</td>
