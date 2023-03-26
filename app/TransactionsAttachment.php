@@ -17,7 +17,8 @@ class TransactionsAttachment extends Model {
                                         'transaction.trans_year',
                                         'transaction.trans_seq',
                                         'description',
-                                        'file'
+                                        'file',
+                                        'type'
                                         ];
     protected static $logName = 'Transaction Attachments';
     protected static $logOnlyDirty = true;

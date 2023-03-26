@@ -94,7 +94,7 @@
                     </div>
                 </div>
                 <div class="modal fade" id="modal-booked" tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog modal-md" role="document">
+                    <div class="modal-dialog modal-xl" role="document">
                         <div class="modal-content">
                             <div class="modal-header border-0">
                                 <h5 class="modal-title">{{ __('messages.booked_prompt') }}</h5>
@@ -103,12 +103,59 @@
                                 </button>
                             </div>
                             <div class="modal-body text-center">
-                                <p>Some fields...</p>
-                                <form action="/travels/booked/{{ $travel->id }}" method="post">
+                                <form action="/travels/booked/{{ $travel->id }}" method="post" enctype="multipart/form-data">
                                     @csrf
                                     @method('put')
+                                    <div class="form-group jsReplicate">
+                                        <div class="table-responsive">
+                                            <table class="table bg-white" style="min-width: 1000px">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="w-25 border-top-0">Type</th>
+                                                        <th class="w-25 border-top-0">File</th>
+                                                        <th class="w-50 border-top-0">Description</th>
+                                                        <th class="border-top-0"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="jsReplicate_container">
+                                                    <tr class="jsReplicate_template_item">
+                                                        <td>
+                                                            <select name="type[]" class="form-control">
+                                                                @foreach (config('global.travel_attachment_types') as $item)
+                                                                    <option value="{{ $item }}">{{ ucfirst($item) }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </td>
+                                                        <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
+                                                        <td><input type="text" name="attachment_description[]" class="form-control" required></td>
+                                                        <td><button type="button" class="btn btn-danger jsReplicate_remove"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="text-center">
+                                            <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
+                                            <div class="mt-5">Attach receipts and documents here. Accepts .jpg, .png and .pdf file types, not more than 5mb each.</div>
+                                        </div>
+                                    </div>
                                     <input type="submit" class="btn btn-success mt-2" value="Booked">
                                 </form>
+                                <table class="d-none">
+                                    <tbody class="jsReplicate_template">
+                                        <tr class="jsReplicate_template_item">
+                                            <td>
+                                                <select name="type[]" class="form-control">
+                                                    @foreach (config('global.travel_attachment_types') as $item)
+                                                        <option value="{{ $item }}">{{ ucfirst($item) }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td><input type="file" name="file[]" class="form-control overflow-hidden" required></td>
+                                            <td><input type="text" name="attachment_description[]" class="form-control" required></td>
+                                            <td><button type="button" class="btn btn-danger jsReplicate_remove"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -326,7 +373,9 @@
                                     <table class="table bg-white" style="min-width: 1000px">
                                         <thead>
                                             <tr>
-                                                <th class="border-top-0">File</th>
+                                                <th class="border-top-0 w-50">File</th>
+                                                <th class="border-top-0 w-25">Type</th>
+                                                <th class="border-top-0 w-25">Updated</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -338,6 +387,8 @@
                                                             <span class="vlign--middle ml-2">{{ $item->description }}</span>
                                                         </a>
                                                     </td>
+                                                    <td>{{ ucfirst($item->type) }}</td>
+                                                    <td>{{ $item->updated_at }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -488,4 +539,37 @@
             background-color: white !important;
         }
     </style>
+@endsection
+
+@section('script')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js" integrity="sha512-rMGGF4wg1R73ehtnxXBt5mbUfN9JUJwbk21KMlnLZDJh7BkPmeovBuddZCENJddHYYMkCh9hPFnPmS9sspki8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        $(function() {
+            if ($('.jsReplicate')[0]){
+                cls = '.jsReplicate'
+                
+                $(cls+'_add').click(function() {
+                    container = $(this).parents(cls).find(cls+'_container')
+                    clsIndex = $(this).parents(cls).index(cls)
+                    $(cls+'_template:eq('+clsIndex+')').children().clone().appendTo(container)
+
+                    reorder(clsIndex)
+                })
+                
+                $(document).on('click', cls+'_remove', function() {
+                    clsIndex = $(this).closest(cls).index(cls)
+                    $(this).parents(cls+'_template_item').remove()
+
+                    reorder(clsIndex)
+                })
+
+                // reorder
+                function reorder(index) {
+                    $(cls+':eq('+index+')').find(cls+'_order').each(function(index) {
+                        $(this).text(index+1)
+                    })
+                }
+            }
+        })
+    </script>
 @endsection

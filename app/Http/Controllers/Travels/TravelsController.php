@@ -478,9 +478,29 @@ class TravelsController extends Controller {
         return back()->with('success', 'Travel'.__('messages.edit_success'));
     }
 
-    public function booked(Travel $travel) {
+    public function booked(Request $request, Travel $travel) {
         if (!$this->check_can_booked($travel->id)) {
             return redirect('/travels/view/'.$travel->id)->with('error', __('messages.cant_edit'));
+        }
+
+        $data_attach = $request->validate([
+            'file.*' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'attachment_description.*' => ['required'],
+            'type' => ['required']
+        ]);
+
+        $attr_file['travel_id'] = $travel->id;
+        $attr_file['owner_id'] = auth()->id();
+        $attr_file['updated_id'] = auth()->id();
+
+        if (isset($data_attach['attachment_description'])) {
+            foreach ($data_attach['attachment_description'] as $key => $value) {
+                $attr_file['description'] = $value;
+                $attr_file['type'] = $data_attach['type'][$key];
+                $attr_file['file'] = basename($request->file('file')[$key]->store('public/attachments/travel_attachment'));
+                
+                TravelsAttachment::create($attr_file);
+            }
         }
 
         $data['status_id'] = config('global.travel_status_id_booked');
