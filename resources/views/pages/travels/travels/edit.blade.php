@@ -93,6 +93,7 @@
                         </ul>
                         <div class="tab-content bg-white border rounded border-top-0 py-4" id="myTabContent">
                             <div class="tab-pane fade show active" id="passenger" role="tabpanel" aria-labelledby="passenger-tab">
+                                <div class="tab-pane-alert"></div>
                                 <div class="form-group jsReplicate">
                                     <div class="table-responsive">
                                         <table class="table bg-white" style="min-width: 1000px">
@@ -151,6 +152,7 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="attachment" role="tabpanel" aria-labelledby="attachment-tab">
+                                <div class="tab-pane-alert"></div>
                                 <div class="form-group jsReplicate">
                                     <div class="table-responsive">
                                         <table class="table bg-white" style="min-width: 1000px">
@@ -201,6 +203,7 @@
                             </div>
                             @if ($perms['can_add_options'])
                                 <div class="tab-pane fade flightHotelOptionsItem" id="flight" role="tabpanel" aria-labelledby="flight-tab">
+                                    <div class="tab-pane-alert"></div>
                                     <div class="form-group jsReplicate">
                                         <div class="table-responsive">
                                             <table class="table bg-white" style="min-width: 1000px">
@@ -347,6 +350,7 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane fade flightHotelOptionsItem" id="hotel" role="tabpanel" aria-labelledby="hotel-tab">
+                                    <div class="tab-pane-alert"></div>
                                     <div class="form-group jsReplicate">
                                         <div class="table-responsive">
                                             <table class="table bg-white" style="min-width: 1000px">
@@ -469,7 +473,7 @@
                     </div>
                 </div>
                 <a href="/travels">Cancel</a>
-                <input type="submit" class="btn btn-primary float-right" value="Save">
+                <input type="submit" id="submitButton" class="btn btn-primary float-right" value="Save">
             </form>
             <table class="d-none">
                 <tbody class="jsReplicate_template">
@@ -713,6 +717,23 @@
             }
 
             $('[data-toggle="tooltip"]').tooltip()
+
+            $('#submitButton').click(function () {
+                $('input:invalid').each(function () {
+                    
+                    var $closest = $(this).closest('.tab-pane');
+                    var id = $closest.attr('id');
+
+                    $('.nav a[href="#' + id + '"]').tab('show');
+
+                    $(this).closest('.tab-pane').find('.tab-pane-alert').html('<div class="alert alert-default-danger mx-3 rounded">'
+                        + '<button type="button" class="close" data-dismiss="alert">×</button>'
+                        + 'Please fill in required fields.'
+                        +'</div>')
+
+                    return false;
+                });
+            });
         })
     </script>
 @endsection
