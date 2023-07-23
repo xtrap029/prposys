@@ -83,6 +83,10 @@
                         <div class="col-6">
                             <table class="table table-sm">
                                 <tr>
+                                    <td class="font-weight-bold">Cost Control No.</td>
+                                    <td>{{ $transaction->cost_control_no ?: '-' }}</td>
+                                </tr>
+                                <tr>
                                     <td class="font-weight-bold">Due Date</td>
                                     <td>{{ $transaction->due_at }}</td>
                                 </tr>

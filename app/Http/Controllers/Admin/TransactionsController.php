@@ -442,6 +442,7 @@ class TransactionsController extends Controller {
                 'purpose' => ['required'],
                 'project_id' => ['required', 'exists:company_projects,id'],
                 'payee' => ['required'],
+                'cost_control_no' => [],
                 'due_at' => ['required', 'date'],
                 'requested_id' => ['required', 'exists:users,id'],
                 'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
@@ -666,6 +667,7 @@ class TransactionsController extends Controller {
             'payee' => ['required'],
             'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
             'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'cost_control_no' => [],
         ];
 
         // if ($transaction->trans_type == 'pc') {

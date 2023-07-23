@@ -78,6 +78,11 @@
                 </div>
                 <div class="form-row mb-3">
                     <div class="col-sm-4 col-lg-4 mb-2">
+                        <label for="">Cost Control No.</label>
+                        <input type="text" class="form-control" name="cost_control_no" value="{{ $transaction->cost_control_no }}">
+                        @include('errors.inline', ['message' => $errors->first('cost_control_no')])
+                    </div>
+                    <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Due Date</label>
                         <input type="text" class="form-control" value="{{ $transaction->due_at }}" readonly>
                     </div>
@@ -85,6 +90,8 @@
                         <label for="">Requested by</label>
                         <input type="text" class="form-control" value="{{ $transaction->requested->name }}" readonly>
                     </div>
+                </div>
+                <div class="form-row mb-3">
                     <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Prepared by</label>
                         <h5>{{ $transaction->owner->name }}</h5>

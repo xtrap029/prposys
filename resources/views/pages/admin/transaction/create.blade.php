@@ -78,6 +78,11 @@
                 </div>
                 <div class="form-row mb-3">
                     <div class="col-sm-4 col-lg-4 mb-2">
+                        <label for="">Cost Control No.</label>
+                        <input type="text" class="form-control @error('cost_control_no') is-invalid @enderror" name="cost_control_no" value="{{ old('cost_control_no') ?: (isset($_GET['cost_control_no']) ? $_GET['cost_control_no'] : '') }}">
+                        @include('errors.inline', ['message' => $errors->first('cost_control_no')])
+                    </div>
+                    <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Requested by</label>
                         <select name="requested_id" class="form-control @error('requested_id') is-invalid @enderror">
                             @foreach ($users as $item)

@@ -377,6 +377,10 @@
                                         <td class="font-weight-bold text-gray">Due By</td>
                                         <td class="font-weight-bold">{{ $transaction->due_at }}</td>
                                     </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-gray">Cost Control No.</td>
+                                        <td class="font-weight-bold">{{ $transaction->cost_control_no ?: '-' }}</td>
+                                    </tr>
                                     @if (1==0)
                                         <tr>
                                             <td class="font-weight-bold text-gray">Particulars</td>
