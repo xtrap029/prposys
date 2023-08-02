@@ -112,6 +112,7 @@ class TransactionsController extends Controller {
                                                 $query->where('name', 'like', "%{$key}%");
                                             })
                                             ->orWhere('particulars_custom', 'like', "%{$key}%")
+                                            ->orWhere('cost_control_no', 'like', "%{$key}%")
                                             ->orWhere('purpose', 'like', "%{$key}%")
                                             ->orWhere('payee', 'like', "%{$key}%")
                                             ->orWhereHas('coatagging', function($query) use($key) {
@@ -289,6 +290,7 @@ class TransactionsController extends Controller {
                                             $query->where('name', 'like', "%{$key}%");
                                         })
                                         ->orWhere('particulars_custom', 'like', "%{$key}%")
+                                        ->orWhere('cost_control_no', 'like', "%{$key}%")
                                         ->orWhere('purpose', 'like', "%{$key}%")
                                         ->orWhere('payee', 'like', "%{$key}%")
                                         ->orWhereHas('coatagging', function($query) use($key) {

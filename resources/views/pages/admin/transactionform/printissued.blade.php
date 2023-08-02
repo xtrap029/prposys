@@ -293,6 +293,11 @@
                             <h5>{{ Carbon\Carbon::now()->toDateString() }}</h5>
                             <div class="mt-2 pt-2 border-top font-weight-bold">Date</div>
                         </div>
+                        <div class="col-3 small text-center my-4">
+                            <h5>&nbsp;</h5>
+                            <div class="mt-2 pt-2 border-top font-weight-bold">Received By</div>
+                            (signature over printed name)
+                        </div>
                     </div>
                 </div>
             </section> 
