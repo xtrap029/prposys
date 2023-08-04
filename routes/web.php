@@ -106,6 +106,11 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
     Route::middleware('CheckUserAccess:seq_rel_by')->group(function () {
         Route::resource('released-by', 'Admin\ReleasedByController', ['names' => ['index' => 'releasedby', 'create' => 'releasedby', 'edit' => 'releasedby']]);        
     });
+
+    // Seq Cost Type
+    Route::middleware('CheckUserAccess:seq_cost_type')->group(function () {
+        Route::resource('cost-type', 'Admin\CostTypesController', ['names' => ['index' => 'costtype', 'create' => 'costtype', 'edit' => 'costtype']]);        
+    });
     
     // Seq Bank / Bank Branch
     Route::middleware('CheckUserAccess:seq_bank')->group(function () {

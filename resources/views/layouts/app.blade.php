@@ -144,6 +144,11 @@
                                             <i class="nav-icon material-icons icon--list">receipt</i><p>Tax Type</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item {{ $ua['seq_cost_type'] == $non ? 'd-none' : '' }}">
+                                        <a href="/cost-type" class="nav-link {{ Route::currentRouteName() == 'costtype' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">money</i><p>Cost Type</p>
+                                        </a>
+                                    </li>
                                     <li class="nav-item {{ $ua['seq_rep_temp'] == $non ? 'd-none' : '' }}">
                                         <a href="/report-template" class="nav-link {{ Route::currentRouteName() == 'reporttemplates' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">extension</i><p>Report Template</p>
