@@ -46,12 +46,12 @@
                     </div>
                     <div class="form-group col-md-3">
                         <label for="">Date From</label>
-                        <input type="datetime-local" class="form-control @error('date_from') is-invalid @enderror" name="date_from" value="{{ old('date_from') }}" required>
+                        <input type="date" class="form-control @error('date_from') is-invalid @enderror" name="date_from" value="{{ old('date_from') }}" required>
                         @include('errors.inline', ['message' => $errors->first('date_from')])
                     </div>
                     <div class="form-group col-md-3">
                         <label for="">Date To</label>
-                        <input type="datetime-local" class="form-control @error('date_to') is-invalid @enderror" name="date_to" value="{{ old('date_to') }}" required>
+                        <input type="date" class="form-control @error('date_to') is-invalid @enderror" name="date_to" value="{{ old('date_to') }}" required>
                         @include('errors.inline', ['message' => $errors->first('date_to')])
                     </div>
                     <div class="form-group col-md-6">
