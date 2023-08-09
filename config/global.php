@@ -116,4 +116,5 @@
         'travel_status_id_booked' => '5',
         'travel_status_id_cancelled' => '6',
         'travel_attachment_types' => ['others', 'hotel', 'flight'],
+        'cost_control_v' => 'v01',
     ];

@@ -22,6 +22,16 @@
                     @include('errors.inline', ['message' => $errors->first('code')])
                 </div>
                 <div class="form-group">
+                    <label for="">QB Code</label>
+                    <input type="text" class="form-control @error('qb_code') is-invalid @enderror" name="qb_code" value="{{ old('qb_code') }}" required>
+                    @include('errors.inline', ['message' => $errors->first('qb_code')])
+                </div>
+                <div class="form-group">
+                    <label for="">QB No</label>
+                    <input type="number" class="form-control @error('qb_no') is-invalid @enderror" name="qb_no" value="{{ old('qb_no') }}" required>
+                    @include('errors.inline', ['message' => $errors->first('qb_no')])
+                </div>
+                <div class="form-group">
                     <label for="">Name</label>
                     <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required>
                     @include('errors.inline', ['message' => $errors->first('name')])

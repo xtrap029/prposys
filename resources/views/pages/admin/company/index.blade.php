@@ -27,7 +27,7 @@
                             <td><img src="storage/public/images/companies/{{ $item->logo }}" alt="" class="thumb thumb--xs"></td>
                             <td class="align-middle text-nowrap">
                                 {{ $item->name }}
-                                <div class="text-info">{{ $item->code }}</div>
+                                <div class="text-info">{{ $item->code }} / {{ $item->qb_code }} / {{ $item->qb_no }}</div>
                             </td>
                             <td class="align-middle text-nowrap"></td>
                             <td class="align-middle text-right text-nowrap">

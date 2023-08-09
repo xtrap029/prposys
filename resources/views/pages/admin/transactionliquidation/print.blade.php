@@ -130,7 +130,15 @@
                             <table class="table table-sm">
                                 <tr>
                                     <td class="font-weight-bold">Cost Control No.</td>
-                                    <td>{{ $transaction->cost_control_no ?: '-' }}</td>
+                                    <td>{{ $transaction->cost_type_id
+                                        ? $transaction->project->company->qb_code
+                                            .'.'
+                                            .$transaction->project->company->qb_no.$transaction->cost_type->control_no
+                                            .'.'
+                                            .sprintf("%03d", $transaction->cost_seq)
+                                            .'.'
+                                            .config('global.cost_control_v')
+                                        : '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold">Issue Type</td>

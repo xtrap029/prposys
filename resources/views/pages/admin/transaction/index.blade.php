@@ -165,6 +165,7 @@
                                 <th class="text-nowrap bg-light">{{ $trans_page == 'prpo' ? 'PR/PO' : 'PC' }} #</th>
                                 <th class="text-nowrap">Vendor/Payee</th>
                                 <th class="text-nowrap">Purpose</th>
+                                <th class="text-nowrap">Cost Control</th>
                                 <th class="text-nowrap text-center">Currency</th>
                                 <th class="text-nowrap text-right">Amount</th>
                                 <th class="text-nowrap">Date Gen.</th>
@@ -230,6 +231,18 @@
                                         @else
                                             {{ $item->purpose }}
                                         @endif
+                                    </td>
+                                    <td>
+                                        {{ $item->cost_type_id
+                                            ? $item->project->company->qb_code
+                                                .'.'
+                                                .$item->project->company->qb_no.$item->cost_type->control_no
+                                                .'.'
+                                                .sprintf("%03d", $item->cost_seq)
+                                                .'.'
+                                                .config('global.cost_control_v')
+                                            : '-' 
+                                        }}
                                     </td>
                                     <td class="text-center">
                                         @if ($config_confidential)

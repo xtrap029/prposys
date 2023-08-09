@@ -15,6 +15,8 @@ class Transaction extends Model {
     protected static $logAttributes = ['trans_type',
                                         'trans_year',
                                         'trans_seq',
+                                        'cost_type.name',
+                                        'cost_seq',
                                         'particulars.name',
                                         'particulars_custom',
                                         'currency',
@@ -75,6 +77,10 @@ class Transaction extends Model {
                                         ];
     protected static $logName = 'Transaction';
     protected static $logOnlyDirty = true;
+
+    public function cost_type() {
+        return $this->belongsTo(CostType::class)->withTrashed();
+    }
 
     public function particulars() {
         return $this->belongsTo(Particulars::class)->withTrashed();

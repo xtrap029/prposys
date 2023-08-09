@@ -25,6 +25,8 @@ class CompanyController extends Controller {
     public function store(Request $request) {
         $data = $request->validate([
             'code' => ['required', 'string', 'max:10', Rule::unique('companies')->whereNull('deleted_at')],
+            'qb_code' => ['required', 'string', 'max:10', Rule::unique('companies')->whereNull('deleted_at')],
+            'qb_no' => ['required', 'string', 'max:10', Rule::unique('companies')->whereNull('deleted_at')],
             'name' => ['required', 'string', 'max:150'],
             'logo' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ]);
@@ -47,6 +49,8 @@ class CompanyController extends Controller {
     public function update(Request $request, Company $company) {
         $data = $request->validate([
             'code' => ['required', 'string', 'max:10', Rule::unique('companies')->ignore($company->id)->whereNull('deleted_at')],
+            'qb_code' => ['required', 'string', 'max:10', Rule::unique('companies')->ignore($company->id)->whereNull('deleted_at')],
+            'qb_no' => ['required', 'string', 'max:10', Rule::unique('companies')->ignore($company->id)->whereNull('deleted_at')],
             'name' => ['required', 'string', 'max:150'],
             'logo' => ['sometimes', 'image', 'mimes:jpeg,png,jpg', 'max:2048']
         ]);
