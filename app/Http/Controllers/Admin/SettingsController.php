@@ -32,6 +32,8 @@ class SettingsController extends Controller {
             // 'LIMIT_EDIT_LIQFORM_USER_3' => ['required', 'integer'],
             // 'LIMIT_EDIT_DEPOSIT_USER_2' => ['required', 'integer'],
             'AUTHORIZED_BY' => ['required', 'exists:users,id'],
+            'SEQUENCE_ISSUED_NOTIFY_DAYS' => ['required', 'integer'],
+            'SEQUENCE_ISSUED_NOTIFY_DAYS_2' => ['required', 'integer'],
         ]);
 
         foreach ($data as $key => $value) {

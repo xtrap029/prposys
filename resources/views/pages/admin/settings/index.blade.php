@@ -150,6 +150,36 @@
                                         @include('errors.inline', ['message' => $errors->first('AUTHORIZED_BY')])
                                     </div>
                                 </div>
+                            @break    
+                            @case('SEQUENCE_ISSUED_NOTIFY_DAYS')
+                                <hr>
+                                <div class="form-row mb-3">
+                                    <div class="col-sm-6 col-md-4">
+                                        <label for="">Notification: Due Approaching</label>
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 align-self-end">
+                                        <label for="">Days</label>
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4">
+                                        <input type="number" class="form-control @error('SEQUENCE_ISSUED_NOTIFY_DAYS') is-invalid @enderror" name="SEQUENCE_ISSUED_NOTIFY_DAYS" step="1" min="1" value="{{ $item->value }}">
+                                        @include('errors.inline', ['message' => $errors->first('SEQUENCE_ISSUED_NOTIFY_DAYS')])
+                                    </div>
+                                </div>
+                            @break   
+                            @case('SEQUENCE_ISSUED_NOTIFY_DAYS_2')
+                                <hr>
+                                <div class="form-row mb-3">
+                                    <div class="col-sm-6 col-md-4">
+                                        <label for="">Notification: Past Due</label>
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 align-self-end">
+                                        <label for="">Days</label>
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4">
+                                        <input type="number" class="form-control @error('SEQUENCE_ISSUED_NOTIFY_DAYS_2') is-invalid @enderror" name="SEQUENCE_ISSUED_NOTIFY_DAYS_2" step="1" min="1" value="{{ $item->value }}">
+                                        @include('errors.inline', ['message' => $errors->first('SEQUENCE_ISSUED_NOTIFY_DAYS_2')])
+                                    </div>
+                                </div>
                             @break                  
                             @default
                     @endswitch            

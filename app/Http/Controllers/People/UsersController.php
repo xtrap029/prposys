@@ -91,6 +91,7 @@ class UsersController extends Controller {
             'company_control.*' => ['nullable'],
             'is_read_only' => ['boolean'],
             'is_accounting' => ['boolean'],
+            'is_accounting_head' => ['boolean'],
 
             'LIMIT_UNLIQUIDATEDPR_COMPANY_ID.*' => ['required', 'exists:companies,id'],
             'LIMIT_UNLIQUIDATEDPR_AMOUNT.*' => ['nullable', 'numeric'],
@@ -115,6 +116,7 @@ class UsersController extends Controller {
             'companies' => $data['companies'],
             'is_read_only' => $data['role_id'] == 1 ? 0 : $data['is_read_only'],
             'is_accounting' => $data['is_accounting'],
+            'is_accounting_head' => $data['is_accounting_head'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'company_id' => $data['company_id'],
@@ -206,6 +208,7 @@ class UsersController extends Controller {
             'company_control.*' => ['nullable'],
             'is_read_only' => ['boolean'],
             'is_accounting' => ['boolean'],
+            'is_accounting_head' => ['boolean'],
 
             'LIMIT_UNLIQUIDATEDPR_COMPANY_ID.*' => ['required', 'exists:companies,id'],
             'LIMIT_UNLIQUIDATEDPR_AMOUNT.*' => ['nullable', 'numeric'],

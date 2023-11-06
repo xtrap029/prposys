@@ -21,6 +21,7 @@
                         <th>Level</th>
                         <th>Level Options</th>
                         <th>Is Accounting?</th>
+                        <th>Can Follow Up?</th>
                         <th>Travel Roles</th>
                         <th class="text-right text-nowrap">
                             @if (!isset($_GET['all'])) <a href="/user?all=1" class="mr-5">Show Inactive</a>
@@ -45,6 +46,7 @@
                                 @endforeach
                             </td>
                             <td class="{{ $item->is_accounting ? 'text-success' : 'text-danger' }}">{{ $item->is_accounting ? 'Yes' : 'No' }}</td>
+                            <td class="{{ $item->is_accounting_head ? 'text-success' : 'text-danger' }}">{{ $item->is_accounting_head ? 'Yes' : 'No' }}</td>
                             <td>
                                 @foreach ($travel_roles as $role)
                                     {{ in_array($role->id, explode(',',$item->travel_roles)) ? $role->name.', ' : '' }}
