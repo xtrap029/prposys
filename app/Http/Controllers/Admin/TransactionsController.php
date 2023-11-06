@@ -556,6 +556,7 @@ class TransactionsController extends Controller {
 
         $data['owner_id'] = auth()->id();
         $data['updated_id'] = auth()->id();
+        $data['status_updated_at'] = now();
         $data['status_prev_id'] = 1;
 
         $transaction = Transaction::create($data);
@@ -637,6 +638,7 @@ class TransactionsController extends Controller {
 
         $new_trans->owner_id = auth()->id();
         $new_trans->updated_id = auth()->id();
+        $new_trans->status_updated_at = now();
         $new_trans->status_prev_id = 1;
 
         $new_trans->save(); 
@@ -975,6 +977,7 @@ class TransactionsController extends Controller {
             ]);
             
             $data['cancellation_number'] = rand(100000000, 999999999);
+            $data['status_updated_at'] = now();
             $data['status_prev_id'] = $transaction->status_id;
             $data['status_id'] = 3;
             $data['updated_id'] = auth()->id();

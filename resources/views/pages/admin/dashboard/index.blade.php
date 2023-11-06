@@ -129,6 +129,142 @@
                 </div>
             </div>
 
+            @if ($user->is_accounting_head)  
+                {{-- DUE --}}
+                <div class="col-12 col-md-6">
+                    <div class="card">
+                        <div class="card-header pb-2">
+                            <h3 class="card-title">Issued: Due Approaching ({{ $due_days }}+ days)</h3>
+                            <div class="card-tools">
+                                {{-- <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=6&category=&type=&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Show More</a>  --}}
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="material-icons text-primary">arrow_drop_up</i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0 table-responsive">
+                            <table class="table table-striped small m-0">
+                                <thead>
+                                    <tr>
+                                        <th>PO/PR #</th>
+                                        <th>Requestor</th>
+                                        <th class="text-right">Amount</th>
+                                        <th class="text-center">Days Since Issued</th>
+                                        <th class="text-center">Issued Date</th>
+                                    </tr>
+                                </thead>
+                                @foreach ($due as $item)
+                                    <?php 
+                                        $config_confidential = false;
+                                        if (Auth::user()->id != $item->requested_id) {
+                                            // check levels
+                                            // if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
+                                            // check level parallel confidential
+                                            // if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id && Auth::user()->id != $item->requested_id) $config_confidential = true;
+                                            if (Auth::user()->ualevel->code <= $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential = true;
+                                            // check level own confidential
+                                            if ($item->is_confidential_own && Auth::user()->id != $item->owner->id && Auth::user()->id != $item->requested_id) $config_confidential = true;
+                                        }
+                                    ?>
+                                    <tr>
+                                        <td>
+                                            @if ($config_confidential)
+                                                {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                            @else
+                                                <a href="transaction-form/view/{{ $item->id }}">
+                                                    {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                                </a>
+                                            @endif
+                                        </td>
+                                        <td>{{ $item->requested->name }}</td>
+                                        <td class="text-right">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            {{ $item->status_updated_at ? now()->diffInDays($item->status_updated_at) : '-' }}
+                                        </td>
+                                        <td class="text-center">
+                                            {{ $item->status_updated_at ?: '-' }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- DUE 2 --}}
+                <div class="col-12 col-md-6">
+                    <div class="card">
+                        <div class="card-header pb-2">
+                            <h3 class="card-title">Issued: Past Due ({{ $due_days_2 }}+ days)</h3>
+                            <div class="card-tools">
+                                {{-- <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=6&category=&type=&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Show More</a>  --}}
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="material-icons text-primary">arrow_drop_up</i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0 table-responsive">
+                            <table class="table table-striped small m-0">
+                                <thead>
+                                    <tr>
+                                        <th>PO/PR #</th>
+                                        <th>Requestor</th>
+                                        <th class="text-right">Amount</th>
+                                        <th class="text-center">Days Since Issued</th>
+                                        <th class="text-center">Issued Date</th>
+                                    </tr>
+                                </thead>
+                                @foreach ($due_2 as $item)
+                                    <?php 
+                                        $config_confidential = false;
+                                        if (Auth::user()->id != $item->requested_id) {
+                                            // check levels
+                                            // if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
+                                            // check level parallel confidential
+                                            // if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id && Auth::user()->id != $item->requested_id) $config_confidential = true;
+                                            if (Auth::user()->ualevel->code <= $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential = true;
+                                            // check level own confidential
+                                            if ($item->is_confidential_own && Auth::user()->id != $item->owner->id && Auth::user()->id != $item->requested_id) $config_confidential = true;
+                                        }
+                                    ?>
+                                    <tr>
+                                        <td>
+                                            @if ($config_confidential)
+                                                {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                            @else
+                                                <a href="transaction-form/view/{{ $item->id }}">
+                                                    {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                                </a>
+                                            @endif
+                                        </td>
+                                        <td>{{ $item->requested->name }}</td>
+                                        <td class="text-right">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }}
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            {{ $item->status_updated_at ? now()->diffInDays($item->status_updated_at) : '-' }}
+                                        </td>
+                                        <td class="text-center">
+                                            {{ $item->status_updated_at ?: '-' }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             @if ($ua['trans_view'] != $non)  
                 {{-- FOR APPROVAL --}}
                 <div class="col-12 col-md-12">

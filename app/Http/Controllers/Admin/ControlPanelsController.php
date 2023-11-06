@@ -104,6 +104,7 @@ class ControlPanelsController extends Controller {
 
         if (Auth::attempt($credentials)) {
             $transaction = Transaction::where('id', $data['id'])->first();
+            $transaction->status_updated_at = now();
             $transaction->status_id = $transaction->status_prev_id;
             $transaction->save();
 
@@ -177,6 +178,7 @@ class ControlPanelsController extends Controller {
             
             $transaction->updated_id = auth()->id();
             $transaction->status_id = $data['status'];
+            $transaction->status_updated_at = now();
 
             $transaction->save();
 
@@ -230,6 +232,7 @@ class ControlPanelsController extends Controller {
             $transaction = Transaction::where('id', $data['id'])->first();
             $transaction->status_prev_id = $transaction->status_id;
             $transaction->status_id = config('global.cancelled')[0];
+            $transaction->status_updated_at = now();
             $transaction->cancellation_number = rand(100000000, 999999999);
             $transaction->cancellation_reason = $data['cancellation_reason'];
             $transaction->save();

@@ -339,6 +339,7 @@ class TransactionsLiquidationController extends Controller {
             }
         }
         
+        $transaction->status_updated_at = now();
         $transaction->status_prev_id = $transaction->status_id;
         $transaction->status_id = !$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr && !$transaction->is_bank ? config('global.liquidation_generated')[0] : config('global.liquidation_cleared')[0];
         $transaction->edit_count = 0;
@@ -619,6 +620,7 @@ class TransactionsLiquidationController extends Controller {
             //     'liquidation_approver_id' => ['required', 'exists:users,id']
             // ]);
             
+            $data['status_updated_at'] = now();
             $data['status_prev_id'] = $transaction->status_id;
             $data['status_id'] = 8;
             $data['updated_id'] = auth()->id();
@@ -705,6 +707,7 @@ class TransactionsLiquidationController extends Controller {
                 $data['depo_slip'] = basename($request->file('depo_slip')->store('public/attachments/deposit_slip'));
             }
 
+            $data['status_updated_at'] = now();
             $data['status_prev_id'] = $transaction->status_id;
             $data['status_id'] = 9;
             $data['liquidation_approver_id'] = auth()->id();

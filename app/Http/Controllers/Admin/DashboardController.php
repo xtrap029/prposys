@@ -24,6 +24,8 @@ class DashboardController extends Controller {
         $for_issue = [];
         $for_clearing = [];
         $deposited = [];
+        $due = [];
+        $due_2 = [];
 
         if (UAHelper::get()['trans_view'] != config('global.ua_non')) {
             $generated = Transaction::whereHas('project', function($query) use($company_id) {
@@ -117,6 +119,29 @@ class DashboardController extends Controller {
         $stats['cleared'] = Transaction::where('trans_type', '!=', 'pc')->whereIn('status_id', config('global.liquidation_cleared'))->where('requested_id', auth()->id())->count();
 
         $announcement = Settings::where('type', 'ANNOUNCEMENT')->first()->value;
+        $due_days = Settings::where('type', 'SEQUENCE_ISSUED_NOTIFY_DAYS')->first()->value;
+        $due_days_2 = Settings::where('type', 'SEQUENCE_ISSUED_NOTIFY_DAYS_2')->first()->value;
+
+        if ($user->is_accounting_head) {
+            $due = Transaction::whereHas('project', function($query) use($company_id) {
+                $query->where('company_id', $company_id);
+            })
+            ->where('trans_type', '!=', 'pc')
+            ->whereRaw("DATEDIFF('".now()."',status_updated_at) > ".$due_days)
+            ->whereRaw("DATEDIFF('".now()."',status_updated_at) < ".$due_days_2)
+            ->whereIn('status_id', config('global.form_issued'))
+            ->orderBy('status_updated_at', 'asc')
+            ->get();
+
+            $due_2 = Transaction::whereHas('project', function($query) use($company_id) {
+                $query->where('company_id', $company_id);
+            })
+            ->where('trans_type', '!=', 'pc')
+            ->whereRaw("DATEDIFF('".now()."',status_updated_at) > ".$due_days_2)
+            ->whereIn('status_id', config('global.form_issued'))
+            ->orderBy('status_updated_at', 'asc')
+            ->get();
+        }
 
         return view('pages.admin.dashboard.index')->with([
             'user' => $user,
@@ -133,6 +158,10 @@ class DashboardController extends Controller {
             'deposited' => $deposited,
             'announcement' => $announcement,
             'stats' => $stats,
+            'due' => $due,
+            'due_2' => $due_2,
+            'due_days' => $due_days,
+            'due_days_2' => $due_days_2,
         ]);
     }
 }
