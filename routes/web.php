@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Support\Facades\Mail;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,6 +15,18 @@ Route::get('/',  function () {
     return redirect('/login');
 });
 
+Route::get('/mail',  function () {
+    Mail::queue(new \App\Mail\NotificationsAlmostDueMail([
+        'to' => 'kmbarsana@gmail.com',
+        'name' => 'name',
+        'url' => 'url',
+        'project' => 'project',
+        'no' => 'no',
+        'purpose' => 'purpose',
+        'amount' => 'amount',
+    ]));
+});
+
 Auth::routes();
 
 Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfidential']], function () {
@@ -26,7 +38,10 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
     Route::get('/leaves-dashboard', 'Leaves\DashboardController@index')->name('leaves-dashboard');
     Route::get('/resources-dashboard', 'Resources\DashboardController@index')->name('resources-dashboard');
     Route::get('/travels-dashboard', 'Travels\DashboardController@index')->name('travels-dashboard');
-
+    
+    Route::get('/notifications/almost-due', 'Admin\NotificationsController@almost_due')->name('notifications-almost-due');
+    Route::get('/notifications/past-due', 'Admin\NotificationsController@past_due')->name('notifications-past-due');
+    
     Route::get('my-account', 'People\MyAccountController@index')->name('myaccount');
     Route::put('my-account', 'People\MyAccountController@update')->name('myaccount');
     

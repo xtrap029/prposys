@@ -136,7 +136,7 @@
                         <div class="card-header pb-2">
                             <h3 class="card-title">Issued: Due Approaching ({{ $due_days }}+ days)</h3>
                             <div class="card-tools">
-                                {{-- <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=6&category=&type=&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Show More</a>  --}}
+                                <a class="small" href="{{ route('notifications-almost-due') }}" onclick="return confirm('Notify requestors via email?')">Notify All</a> 
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                     <i class="material-icons text-primary">arrow_drop_up</i>
                                 </button>
@@ -203,7 +203,7 @@
                         <div class="card-header pb-2">
                             <h3 class="card-title">Issued: Past Due ({{ $due_days_2 }}+ days)</h3>
                             <div class="card-tools">
-                                {{-- <a class="small" href="transaction/prpo/{{ $user->company_id }}?status=6&category=&type=&s=&user_req=&user_prep&bal&project&is_confidential&due_from&due_to">Show More</a>  --}}
+                                <a class="small" href="{{ route('notifications-past-due') }}" onclick="return confirm('Notify requestors via email?')">Notify All</a> 
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                     <i class="material-icons text-primary">arrow_drop_up</i>
                                 </button>
