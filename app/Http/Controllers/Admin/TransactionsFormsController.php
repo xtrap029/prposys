@@ -19,6 +19,7 @@ use App\User;
 use App\VatType;
 use App\Helpers\UAHelper;
 use App\Helpers\TransactionHelper;
+use App\Http\Controllers\Admin\NotificationsController;
 use Spatie\Activitylog\Models\Activity;
 use ZanySoft\Zip\Zip;
 use Illuminate\Http\Request;
@@ -1226,15 +1227,17 @@ class TransactionsFormsController extends Controller {
             }
 
             if ($transaction->is_reimbursement) {
-                $data['status_id'] = 9;
+                $data['status_id'] = config('global.liquidation_cleared')[0];
             } else {
-                $data['status_id'] = 4;
+                $data['status_id'] = config('global.form_issued')[0];
             }
             
             $data['status_updated_at'] = now();
             $data['status_prev_id'] = $transaction->status_id;
             $data['form_approver_id'] = auth()->id();
             $transaction->update($data);
+
+            (new NotificationsController)->issued($transaction);
 
             if ($transaction->is_reimbursement) {
                 return redirect('/transaction-liquidation/view/'.$transaction->id);

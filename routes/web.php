@@ -41,7 +41,7 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
     
     Route::get('/notifications/almost-due', 'Admin\NotificationsController@almost_due')->name('notifications-almost-due');
     Route::get('/notifications/past-due', 'Admin\NotificationsController@past_due')->name('notifications-past-due');
-    
+ 
     Route::get('my-account', 'People\MyAccountController@index')->name('myaccount');
     Route::put('my-account', 'People\MyAccountController@update')->name('myaccount');
     

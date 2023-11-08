@@ -84,4 +84,20 @@ class NotificationsController extends Controller {
             return abort(401);
         }
     }
+
+    public function issued($transaction) {
+        if ($transaction->status_id == config('global.form_issued')[0]) {
+            return Mail::queue(new \App\Mail\NotificationsIssuedMail([
+                'to' => $transaction->requested->email,
+                'name' => $transaction->requested->name,
+                'url' => env('APP_URL').'/transaction-form/view/'.$transaction->id,
+                'project' => $transaction->project->project,
+                'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
+                'purpose' => $transaction->purpose,
+                'amount' => $transaction->amount,
+            ]));
+        } else {
+            return abort(401);
+        }
+    }
 }
