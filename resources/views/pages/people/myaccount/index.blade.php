@@ -142,13 +142,17 @@
                     
                     <h5 class="my-4 text-right">Sequence</h5>
                     <div class="form-row">
-                        <div class="form-group border p-2 mb-0 col-12">
+                        <div class="form-group border p-2 mb-0 col-4">
                             <label for="" class="text-gray">Is Accounting?</label>
                             <h6>{{ $user->is_accounting ? 'Yes' : 'No' }}</h6>
                         </div>
-                        <div class="form-group border p-2 mb-0 col-12">
+                        <div class="form-group border p-2 mb-0 col-4">
                             <label for="" class="text-gray">Can Follow Up?</label>
                             <h6>{{ $user->is_accounting_head ? 'Yes' : 'No' }}</h6>
+                        </div>
+                        <div class="form-group border p-2 mb-0 col-4">
+                            <label for="" class="text-gray">Is External?</label>
+                            <h6>{{ $user->is_external ? 'Yes' : 'No' }}</h6>
                         </div>
                         <div class="form-group border p-2 mb-0 col-lg-6 d-none">
                             <label for="" class="text-gray">Role</label>

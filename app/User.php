@@ -30,6 +30,7 @@ class User extends Authenticatable {
         'company_id',
         'is_accounting',
         'is_accounting_head',
+        'is_external',
         'is_smt',
         'LIMIT_UNLIQUIDATEDPR_AMOUNT',
         'LIMIT_UNLIQUIDATEDPR_COUNT',
