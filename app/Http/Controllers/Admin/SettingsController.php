@@ -34,7 +34,18 @@ class SettingsController extends Controller {
             'AUTHORIZED_BY' => ['required', 'exists:users,id'],
             'SEQUENCE_ISSUED_NOTIFY_DAYS' => ['required', 'integer'],
             'SEQUENCE_ISSUED_NOTIFY_DAYS_2' => ['required', 'integer'],
+            'SEQUENCE_ISSUED_NOTIFY_CC' => [],
         ]);
+
+        $cc_emails = [];
+        foreach (explode(';', $data['SEQUENCE_ISSUED_NOTIFY_CC']) as $key => $value) {
+            $no_space = str_replace(' ', '', $value);
+            if (filter_var($no_space, FILTER_VALIDATE_EMAIL)) {
+                $cc_emails[] = $no_space;
+            }
+        }
+
+        $data['SEQUENCE_ISSUED_NOTIFY_CC'] = implode(';', $cc_emails);
 
         foreach ($data as $key => $value) {
             $settings = Settings::where('type', $key)->first();

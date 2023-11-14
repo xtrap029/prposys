@@ -19,6 +19,7 @@ class NotificationsController extends Controller {
 
         $due_days = Settings::where('type', 'SEQUENCE_ISSUED_NOTIFY_DAYS')->first()->value;
         $due_days_2 = Settings::where('type', 'SEQUENCE_ISSUED_NOTIFY_DAYS_2')->first()->value;
+        $cc = Settings::where('type', 'SEQUENCE_ISSUED_NOTIFY_CC')->first()->value;
 
         if ($user->is_accounting_head) {
             $due = Transaction::whereHas('project', function($query) use($company_id) {
@@ -40,6 +41,7 @@ class NotificationsController extends Controller {
                     'no' => strtoupper($value->trans_type)."-".$value->trans_year."-".sprintf('%05d',$value->trans_seq),
                     'purpose' => $value->purpose,
                     'amount' => $value->amount,
+                    'cc' => explode(';', $cc),
                 ]));
             }
 
@@ -56,6 +58,7 @@ class NotificationsController extends Controller {
 
         $due_days = Settings::where('type', 'SEQUENCE_ISSUED_NOTIFY_DAYS')->first()->value;
         $due_days_2 = Settings::where('type', 'SEQUENCE_ISSUED_NOTIFY_DAYS_2')->first()->value;
+        $cc = Settings::where('type', 'SEQUENCE_ISSUED_NOTIFY_CC')->first()->value;
 
         if ($user->is_accounting_head) {
             $due = Transaction::whereHas('project', function($query) use($company_id) {
@@ -76,6 +79,7 @@ class NotificationsController extends Controller {
                     'no' => strtoupper($value->trans_type)."-".$value->trans_year."-".sprintf('%05d',$value->trans_seq),
                     'purpose' => $value->purpose,
                     'amount' => $value->amount,
+                    'cc' => explode(';', $cc),
                 ]));
             }
 
@@ -87,6 +91,8 @@ class NotificationsController extends Controller {
 
     public function issued($transaction) {
         if ($transaction->status_id == config('global.form_issued')[0]) {
+            $cc = Settings::where('type', 'SEQUENCE_ISSUED_NOTIFY_CC')->first()->value;
+            
             return Mail::queue(new \App\Mail\NotificationsIssuedMail([
                 'to' => $transaction->requested->email,
                 'name' => $transaction->requested->name,
@@ -95,6 +101,7 @@ class NotificationsController extends Controller {
                 'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
                 'purpose' => $transaction->purpose,
                 'amount' => $transaction->amount,
+                'cc' => explode(';', $cc),
             ]));
         } else {
             return abort(401);

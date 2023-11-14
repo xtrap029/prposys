@@ -39,6 +39,7 @@ class NotificationsAlmostDueMail extends Mailable
                 'purpose' => $this->data['purpose'],
                 'amount' => $this->data['amount'],
             ])->subject('Due Date Approaching')
+            ->cc($this->data['cc'])
             ->to($this->data['to']);
     }
 }

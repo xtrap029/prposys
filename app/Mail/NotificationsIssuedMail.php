@@ -39,6 +39,7 @@ class NotificationsIssuedMail extends Mailable
                 'purpose' => $this->data['purpose'],
                 'amount' => $this->data['amount'],
             ])->subject('Issued')
+            ->cc($this->data['cc'])
             ->to($this->data['to']);
     }
 }

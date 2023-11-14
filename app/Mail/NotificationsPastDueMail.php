@@ -39,6 +39,7 @@ class NotificationsPastDueMail extends Mailable
                 'purpose' => $this->data['purpose'],
                 'amount' => $this->data['amount'],
             ])->subject('Past Due')
+            ->cc($this->data['cc'])
             ->to($this->data['to']);
     }
 }

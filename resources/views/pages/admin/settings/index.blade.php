@@ -167,7 +167,6 @@
                                 </div>
                             @break   
                             @case('SEQUENCE_ISSUED_NOTIFY_DAYS_2')
-                                <hr>
                                 <div class="form-row mb-3">
                                     <div class="col-sm-6 col-md-4">
                                         <label for="">Notification: Past Due</label>
@@ -180,7 +179,21 @@
                                         @include('errors.inline', ['message' => $errors->first('SEQUENCE_ISSUED_NOTIFY_DAYS_2')])
                                     </div>
                                 </div>
-                            @break                  
+                            @break     
+                            @case('SEQUENCE_ISSUED_NOTIFY_CC')
+                                <div class="form-row mb-3">
+                                    <div class="col-sm-6 col-md-4">
+                                        <label for="">Notification: CC</label>
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 align-self-end">
+                                        <label for="">Separate with semicolon(;)</label>
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4">
+                                        <input type="text" class="form-control @error('SEQUENCE_ISSUED_NOTIFY_CC') is-invalid @enderror" name="SEQUENCE_ISSUED_NOTIFY_CC" value="{{ $item->value }}">
+                                        @include('errors.inline', ['message' => $errors->first('SEQUENCE_ISSUED_NOTIFY_CC')])
+                                    </div>
+                                </div>
+                            @break                
                             @default
                     @endswitch            
                 @endforeach
