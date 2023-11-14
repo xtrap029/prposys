@@ -15,7 +15,7 @@ class Transaction extends Model {
     protected static $logAttributes = ['trans_type',
                                         'trans_year',
                                         'trans_seq',
-                                        'cost_type.name',
+                                        // 'cost_type.name',
                                         'cost_seq',
                                         'particulars.name',
                                         'particulars_custom',
