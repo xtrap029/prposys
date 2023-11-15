@@ -35,8 +35,18 @@ class DashboardController extends Controller {
                             ->where('owner_id', auth()->id())
                             ->whereIn('status_id', config('global.form_generated'))
                             ->orderBy('updated_at', 'desc')
-                            ->limit(6)
-                            ->get();
+                            ->limit(6);
+            if ($user->is_external) {
+                $user_id = $user->id;
+                $generated = $generated->where(static function ($query) use ($user_id) {
+                    $query->where('is_confidential', 0)
+                    ->orWhere(static function ($query2) use ($user_id) {
+                        $query2->where('is_confidential', 1)
+                        ->where('owner_id',  $user_id);
+                    });
+                });
+            }
+            $generated = $generated->get();
 
             $unliquidated = Transaction::whereHas('project', function($query) use($company_id) {
                                 $query->where('company_id', $company_id);
@@ -45,8 +55,18 @@ class DashboardController extends Controller {
                             ->where('requested_id', auth()->id())
                             ->whereIn('status_id', config('global.form_issued'))
                             ->orderBy('updated_at', 'desc')
-                            ->limit(6)
-                            ->get();
+                            ->limit(6);
+            if ($user->is_external) {
+                $user_id = $user->id;
+                $unliquidated = $unliquidated->where(static function ($query) use ($user_id) {
+                    $query->where('is_confidential', 0)
+                    ->orWhere(static function ($query2) use ($user_id) {
+                        $query2->where('is_confidential', 1)
+                        ->where('owner_id',  $user_id);
+                    });
+                });
+            }
+            $unliquidated = $unliquidated->get();
 
             $cleared = Transaction::whereHas('project', function($query) use($company_id) {
                                 $query->where('company_id', $company_id);
@@ -55,8 +75,18 @@ class DashboardController extends Controller {
                             ->where('requested_id', auth()->id())
                             ->whereIn('status_id', config('global.liquidation_cleared'))
                             ->orderBy('updated_at', 'desc')
-                            ->limit(6)
-                            ->get();
+                            ->limit(6);
+            if ($user->is_external) {
+                $user_id = $user->id;
+                $cleared = $cleared->where(static function ($query) use ($user_id) {
+                    $query->where('is_confidential', 0)
+                    ->orWhere(static function ($query2) use ($user_id) {
+                        $query2->where('is_confidential', 1)
+                        ->where('owner_id',  $user_id);
+                    });
+                });
+            }
+            $cleared = $cleared->get();   
 
             $for_issue = Transaction::whereHas('project', function($query) use($company_id) {
                                 $query->where('company_id', $company_id);
@@ -68,6 +98,16 @@ class DashboardController extends Controller {
                 $for_issue = $for_issue->where(static function ($query) use ($user_id) {
                     $query->where('requested_id', $user_id)
                     ->orWhere('owner_id',  $user_id);
+                });
+            }
+            if ($user->is_external) {
+                $user_id = $user->id;
+                $for_issue = $for_issue->where(static function ($query) use ($user_id) {
+                    $query->where('is_confidential', 0)
+                    ->orWhere(static function ($query2) use ($user_id) {
+                        $query2->where('is_confidential', 1)
+                        ->where('owner_id',  $user_id);
+                    });
                 });
             }
             $for_issue = $for_issue->orderBy('updated_at', 'desc')->limit(6)->get();
@@ -82,6 +122,16 @@ class DashboardController extends Controller {
                 $for_clearing = $for_clearing->where(static function ($query) use ($user_id) {
                     $query->where('requested_id', $user_id)
                     ->orWhere('owner_id',  $user_id);
+                });
+            }
+            if ($user->is_external) {
+                $user_id = $user->id;
+                $for_clearing = $for_clearing->where(static function ($query) use ($user_id) {
+                    $query->where('is_confidential', 0)
+                    ->orWhere(static function ($query2) use ($user_id) {
+                        $query2->where('is_confidential', 1)
+                        ->where('owner_id',  $user_id);
+                    });
                 });
             }
             $for_clearing = $for_clearing->orderBy('updated_at', 'desc')->limit(6)->get();
@@ -99,8 +149,19 @@ class DashboardController extends Controller {
                     ->orWhere('owner_id',  $user_id);
                 });
             }
+            if ($user->is_external) {
+                $user_id = $user->id;
+                $deposited = $deposited->where(static function ($query) use ($user_id) {
+                    $query->where('is_confidential', 0)
+                    ->orWhere(static function ($query2) use ($user_id) {
+                        $query2->where('is_confidential', 1)
+                        ->where('owner_id',  $user_id);
+                    });
+                });
+            }
             $deposited = $deposited->orderBy('updated_at', 'desc')->limit(6)->get();
         }
+
         $unliquidated_bal = TransactionHelper::check_unliquidated_balance(auth()->id(), $user->company_id);
         $liquidated_bal = TransactionHelper::check_liquidated_balance(auth()->id(), $user->company_id);
         // $logs = Activity::where('causer_id', auth()->id())

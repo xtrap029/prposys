@@ -64,12 +64,22 @@ class TransactionsController extends Controller {
         $transactions = new Transaction;
 
         $user_logged = User::where('id', auth()->id())->first();
+        $user_id = $user_logged->id;
 
         if (UAHelper::get()['trans_view'] == config('global.ua_own')) {
-            $user_id = $user_logged->id;
             $transactions = $transactions->where(static function ($query) use ($user_id) {
                 $query->where('requested_id', $user_id)
                 ->orWhere('owner_id',  $user_id);
+            });
+        }
+
+        if ($user_logged->is_external) {
+            $transactions = $transactions->where(static function ($query) use ($user_id) {
+                $query->where('is_confidential', 0)
+                ->orWhere(static function ($query2) use ($user_id) {
+                    $query2->where('is_confidential', 1)
+                    ->where('owner_id',  $user_id);
+                });
             });
         }
 
@@ -1401,6 +1411,17 @@ class TransactionsController extends Controller {
         $column_codes = [];
         foreach ($report_template->templatecolumn as $key => $value) {
              $column_codes[] = $value->column->name;
+        }
+
+        if ($user_logged->is_external) {
+            $user_id = $user_logged->id;
+            $transactions = $transactions->where(static function ($query) use ($user_id) {
+                $query->where('is_confidential', 0)
+                ->orWhere(static function ($query2) use ($user_id) {
+                    $query2->where('is_confidential', 1)
+                    ->where('owner_id',  $user_id);
+                });
+            });
         }
 
         $transactions = $transactions->get();
