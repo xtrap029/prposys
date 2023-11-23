@@ -77,7 +77,7 @@
                     </div>
                 </div>
                 <div class="form-row mb-3">
-                    <div class="col-sm-4 col-lg-4 mb-2">
+                    {{-- <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Cost Type</label>
                         <select name="cost_type_id" class="form-control @error('cost_type_id') is-invalid @enderror">
                             <option value="">No Cost Control No.</option>
@@ -86,8 +86,8 @@
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('cost_type_id')])
-                    </div>
-                    <div class="col-sm-4 col-lg-4 mb-2 d-none">
+                    </div> --}}
+                    <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Cost Control No.</label>
                         <input type="text" class="form-control" name="cost_control_no" value="{{ $transaction->cost_control_no }}">
                         @include('errors.inline', ['message' => $errors->first('cost_control_no')])

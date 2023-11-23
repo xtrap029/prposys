@@ -112,11 +112,11 @@
                     </div>
                 </div>
                 <div class="form-row">
-                    {{-- <div class="col-sm-4 col-lg-4 mb-2">
+                    <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Cost Control No.</label>
                         <input type="text" class="form-control" name="cost_control_no" value="{{ $transaction->cost_control_no }}">
                         @include('errors.inline', ['message' => $errors->first('cost_control_no')])
-                    </div> --}}
+                    </div>
                     <div class="col-md-4 mb-2">
                         <label for="">Due Date</label>
                         <input type="date" class="form-control @error('due_at') is-invalid @enderror" name="due_at" value="{{ $transaction->due_at }}" required>

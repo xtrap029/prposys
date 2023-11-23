@@ -232,7 +232,7 @@
                                             {{ $item->purpose }}
                                         @endif
                                     </td>
-                                    <td>
+                                    {{-- <td>
                                         {{ $item->cost_type_id
                                             ? $item->project->company->qb_code
                                                 .'.'
@@ -243,7 +243,8 @@
                                                 .config('global.cost_control_v')
                                             : '-' 
                                         }}
-                                    </td>
+                                    </td> --}}
+                                    <td>{{ $item->cost_control_no }}</td>
                                     <td class="text-center">
                                         @if ($config_confidential)
                                             -

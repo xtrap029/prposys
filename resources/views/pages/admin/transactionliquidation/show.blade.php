@@ -379,7 +379,7 @@
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Cost Control No.</td>
-                                        <td class="font-weight-bold">{{ $transaction->cost_type_id
+                                        {{-- <td class="font-weight-bold">{{ $transaction->cost_type_id
                                             ? $transaction->project->company->qb_code
                                                 .'.'
                                                 .$transaction->project->company->qb_no.$transaction->cost_type->control_no
@@ -388,7 +388,8 @@
                                                 .'.'
                                                 .config('global.cost_control_v')
                                             : '-' }}
-                                        </td>
+                                        </td> --}}
+                                        <td class="font-weight-bold">{{ $transaction->cost_control_no }}</td>
                                     </tr>
                                     @if (1==0)
                                         <tr>

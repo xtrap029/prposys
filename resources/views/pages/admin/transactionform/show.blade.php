@@ -437,7 +437,7 @@
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Cost Control No.</td>
-                                        <td class="font-weight-bold">{{ $transaction->cost_type_id
+                                        {{-- <td class="font-weight-bold">{{ $transaction->cost_type_id
                                             ? $transaction->project->company->qb_code
                                                 .'.'
                                                 .$transaction->project->company->qb_no.$transaction->cost_type->control_no
@@ -446,7 +446,8 @@
                                                 .'.'
                                                 .config('global.cost_control_v')
                                             : '-' }}
-                                        </td>
+                                        </td> --}}
+                                        <td class="font-weight-bold">{{ $transaction->cost_control_no }}</td>
                                     </tr>
                                     @if ($ua['trans_toggle_conf'] == $non || ($ua['trans_toggle_conf'] == $own && $transaction->owner_id != Auth::user()->id && $transaction->requested_id != Auth::user()->id))
                                     @else

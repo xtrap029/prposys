@@ -457,7 +457,8 @@ class TransactionsController extends Controller {
                 'purpose' => ['required'],
                 'project_id' => ['required', 'exists:company_projects,id'],
                 'payee' => ['required'],
-                'cost_type_id' => ['nullable', 'exists:cost_types,id'],
+                // 'cost_type_id' => ['nullable', 'exists:cost_types,id'],
+                'cost_control_no' => [],
                 'due_at' => ['required', 'date'],
                 'requested_id' => ['required', 'exists:users,id'],
                 'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
@@ -545,24 +546,24 @@ class TransactionsController extends Controller {
             $data['trans_seq'] = 1;
         }
         
-        if ($data['cost_type_id']) {
-            $latest_cost = Transaction::whereHas('project', function($query) use($trans_company) {
-                    $query->where('company_id', $trans_company);
-                })
-                ->orderBy('cost_seq', 'desc')->first();
+        // if ($data['cost_type_id']) {
+        //     $latest_cost = Transaction::whereHas('project', function($query) use($trans_company) {
+        //             $query->where('company_id', $trans_company);
+        //         })
+        //         ->orderBy('cost_seq', 'desc')->first();
     
-            if ($latest_cost->cost_seq) {
-                $latest_cost_seq = $latest_cost->cost_seq + 1;
-            } else {
-                $latest_cost_seq = 1;
-            }
+        //     if ($latest_cost->cost_seq) {
+        //         $latest_cost_seq = $latest_cost->cost_seq + 1;
+        //     } else {
+        //         $latest_cost_seq = 1;
+        //     }
 
-            $data['cost_seq'] = $latest_cost_seq;
+        //     $data['cost_seq'] = $latest_cost_seq;
 
-            $project = CompanyProject::where('id', $data['project_id'])->first();
-            $cost_type = CostType::find($data['cost_type_id']);
-            $data['cost_control_no'] = $project->company->qb_code.'.'.$project->company->qb_no.$cost_type->control_no.'.'.sprintf("%03d", $data['cost_seq']).'.'.config('global.cost_control_v');
-        }
+        //     $project = CompanyProject::where('id', $data['project_id'])->first();
+        //     $cost_type = CostType::find($data['cost_type_id']);
+        //     $data['cost_control_no'] = $project->company->qb_code.'.'.$project->company->qb_no.$cost_type->control_no.'.'.sprintf("%03d", $data['cost_seq']).'.'.config('global.cost_control_v');
+        // }
 
         $data['owner_id'] = auth()->id();
         $data['updated_id'] = auth()->id();
@@ -705,8 +706,8 @@ class TransactionsController extends Controller {
             'payee' => ['required'],
             'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
             'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
-            // 'cost_control_no' => [],
-            'cost_type_id' => ['nullable', 'exists:cost_types,id'],
+            'cost_control_no' => [],
+            // 'cost_type_id' => ['nullable', 'exists:cost_types,id'],
         ];
 
         // if ($transaction->trans_type == 'pc') {
@@ -751,29 +752,29 @@ class TransactionsController extends Controller {
         }        
 
         $trans_company = CompanyProject::where('id', $data['project_id'])->first()->company_id;
-        if ($data['cost_type_id'] && $transaction->cost_type_id == NULL) {
-            $latest_cost = Transaction::whereHas('project', function($query) use($trans_company) {
-                    $query->where('company_id', $trans_company);
-                })
-                ->orderBy('cost_seq', 'desc')->first();
+        // if ($data['cost_type_id'] && $transaction->cost_type_id == NULL) {
+        //     $latest_cost = Transaction::whereHas('project', function($query) use($trans_company) {
+        //             $query->where('company_id', $trans_company);
+        //         })
+        //         ->orderBy('cost_seq', 'desc')->first();
     
-            if ($latest_cost->cost_seq) {
-                $latest_cost_seq = $latest_cost->cost_seq + 1;
-            } else {
-                $latest_cost_seq = 1;
-            }
+        //     if ($latest_cost->cost_seq) {
+        //         $latest_cost_seq = $latest_cost->cost_seq + 1;
+        //     } else {
+        //         $latest_cost_seq = 1;
+        //     }
 
-            $data['cost_seq'] = $latest_cost_seq;
-        } else if ($data['cost_type_id'] == NULL) {
-            $data['cost_seq'] = NULL;
-            $data['cost_control_no'] = NULL;
-        } 
+        //     $data['cost_seq'] = $latest_cost_seq;
+        // } else if ($data['cost_type_id'] == NULL) {
+        //     $data['cost_seq'] = NULL;
+        //     $data['cost_control_no'] = NULL;
+        // } 
         
-        if ($data['cost_type_id']) {
-            $project = CompanyProject::where('id', $data['project_id'])->first();
-            $cost_type = CostType::find($data['cost_type_id']);
-            $data['cost_control_no'] = $project->company->qb_code.'.'.$project->company->qb_no.$cost_type->control_no.'.'.sprintf("%03d", isset($data['cost_seq']) ? $data['cost_seq'] : $transaction->cost_seq).'.'.config('global.cost_control_v');
-        }
+        // if ($data['cost_type_id']) {
+        //     $project = CompanyProject::where('id', $data['project_id'])->first();
+        //     $cost_type = CostType::find($data['cost_type_id']);
+        //     $data['cost_control_no'] = $project->company->qb_code.'.'.$project->company->qb_no.$cost_type->control_no.'.'.sprintf("%03d", isset($data['cost_seq']) ? $data['cost_seq'] : $transaction->cost_seq).'.'.config('global.cost_control_v');
+        // }
 
         $attr_file['transaction_id'] = $transaction->id;
         $attr_file['owner_id'] = auth()->id();
