@@ -107,6 +107,13 @@
                         <h5>{{ $transaction->owner->name }}</h5>
                     </div>
                 </div>
+                <div class="form-row mb-3 d-none">
+                    <div class="col-sm-4 col-lg-4 mb-2">
+                        <label for="">Bill/Statement No.</label>
+                        <input type="text" id="bill_statement_no" class="form-control @error('bill_statement_no') is-invalid @enderror" name="bill_statement_no" value="{{ $transaction->bill_statement_no }}">
+                        @include('errors.inline', ['message' => $errors->first('bill_statement_no')])
+                    </div>
+                </div>
                 {{-- <div class="form-row mb-3">
                     <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Statement of Account/Invoice/Form</label>
@@ -284,6 +291,22 @@
             //         }
             //     }
             // })
+            
+            if ("{{ $transaction->is_bills }}" === "1") {
+                $('#bill_statement_no').parent().parent().removeClass('d-none')
+                $('#bill_statement_no').attr('required', 'true')
+            }
+
+            $('.trans-category').change(function() {
+                if ($(this).val() == "{{ config('global.trans_category')[2] }}") {
+                    $('#bill_statement_no').parent().parent().removeClass('d-none')
+                    $('#bill_statement_no').attr('required', 'true')
+                } else {
+                    $('#bill_statement_no').removeAttr('required')
+                    $('#bill_statement_no').parent().parent().addClass('d-none')
+                }
+            })
+
 
             if ($('.jsReplicate')[0]){
                 cls = '.jsReplicate'

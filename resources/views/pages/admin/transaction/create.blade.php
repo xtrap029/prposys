@@ -134,6 +134,13 @@
                     </div>
                     <div class="col-lg-4 pt-3">
                         <code>Setting to "Yes" will make the transaction visible only to creator.</code>                 
+                    </div>                    
+                </div>
+                <div class="form-row mb-3 d-none">
+                    <div class="col-sm-4 col-lg-4 mb-2">
+                        <label for="">Bill/Statement No.</label>
+                        <input type="text" id="bill_statement_no" class="form-control @error('bill_statement_no') is-invalid @enderror" name="bill_statement_no" value="{{ old('bill_statement_no') ?: (isset($_GET['bill_statement_no']) ? $_GET['bill_statement_no'] : '') }}">
+                        @include('errors.inline', ['message' => $errors->first('bill_statement_no')])
                     </div>
                 </div>
                 <div class="form-row mb-3">
@@ -280,16 +287,15 @@
 @section('script')
     <script type="text/javascript">
         $(function() {
-            // $('.trans-category').change(function() {
-            //     if ('{{ $trans_type }}' != 'po') {
-            //         if ($(this).val() == 'bp') {
-            //             $('.soa').parent().removeClass('d-none')
-            //             $('.soa').removeAttr('required')
-            //         } else {
-            //             $('.soa').removeAttr('required')
-            //         }
-            //     }
-            // })
+            $('.trans-category').change(function() {
+                if ($(this).val() == "{{ config('global.trans_category')[2] }}") {
+                    $('#bill_statement_no').parent().parent().removeClass('d-none')
+                    $('#bill_statement_no').attr('required', 'true')
+                } else {
+                    $('#bill_statement_no').removeAttr('required')
+                    $('#bill_statement_no').parent().parent().addClass('d-none')
+                }
+            })
 
             if ("{{ isset($_GET['is_bills']) && $_GET['is_bills'] == 1 }}" == 1) {
                 $('.soa').parent().removeClass('d-none')

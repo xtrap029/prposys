@@ -200,6 +200,12 @@
                                         @endif
                                     </td>
                                 </tr>
+                                @if ($transaction->is_bills == 1)
+                                    <tr>
+                                        <td class="font-weight-bold">Bill/Statement No.</td>
+                                        <td>{{ $transaction->bill_statement_no }}</td>
+                                    </tr>
+                                @endif
                             </table>
                         </div>
                     </div>

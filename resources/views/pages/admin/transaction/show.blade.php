@@ -243,6 +243,12 @@
                                             : '-' }}</td> --}}
                                         <td class="font-weight-bold">{{ $transaction->cost_control_no }}</td>
                                     </tr>
+                                    @if ($transaction->is_bills == 1)
+                                        <tr>
+                                            <td class="font-weight-bold text-gray">Bill/Statement No.</td>
+                                            <td class="font-weight-bold">{{ $transaction->bill_statement_no }}</td>
+                                        </tr>
+                                    @endif
                                     @if ($ua['trans_toggle_conf'] == $non || ($ua['trans_toggle_conf'] == $own && $transaction->owner_id != Auth::user()->id && $transaction->requested_id != Auth::user()->id))
                                     @else
                                         <tr>

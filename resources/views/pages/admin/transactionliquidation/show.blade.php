@@ -391,6 +391,12 @@
                                         </td> --}}
                                         <td class="font-weight-bold">{{ $transaction->cost_control_no }}</td>
                                     </tr>
+                                    @if ($transaction->is_bills == 1)
+                                        <tr>
+                                            <td class="font-weight-bold text-gray">Bill/Statement No.</td>
+                                            <td class="font-weight-bold">{{ $transaction->bill_statement_no }}</td>
+                                        </tr>
+                                    @endif
                                     @if (1==0)
                                         <tr>
                                             <td class="font-weight-bold text-gray">Particulars</td>

@@ -656,14 +656,18 @@ class TransactionsFormsController extends Controller {
             // 'coa_notes' => ['nullable', 'string'],
         ];
 
-        // if ($transaction->trans_type == 'pc') {
-        //     $validation['particulars_custom'] = ['required'];
-        // } else {
-        //     $validation['particulars_id_single'] = ['required', 'exists:particulars,id'];
-        // }
+        $trans_category = $request->trans_category;
+
+        if ($trans_category == config('global.trans_category')[2]) {
+            $validation['bill_statement_no'] = ['required'];
+        }
 
         // validate input
         $data = $request->validate($validation);
+
+        if ($trans_category != config('global.trans_category')[2]) {
+            $data['bill_statement_no'] = '';
+        }
 
         if ($request->file('soa')) {
             $data['soa'] = basename($request->file('soa')->store('public/attachments/soa'));

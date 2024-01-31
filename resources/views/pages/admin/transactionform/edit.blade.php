@@ -143,6 +143,11 @@
                         {{-- <input type="file" name="soa" class="soa form_control" {{ ($transaction->trans_type == 'po' || $transaction->is_bills) && !$transaction->soa ? 'required' : '' }}> --}}
                         <input type="file" name="soa" class="soa form_control d-block" {{ $transaction->trans_type == 'po' && !$transaction->soa ? 'required' : '' }}>
                     </div>
+                    <div class="col-md-4 mb-2 d-none">
+                        <label for="">Bill/Statement No.</label>
+                        <input type="text" id="bill_statement_no" class="form-control @error('bill_statement_no') is-invalid @enderror" name="bill_statement_no" value="{{ $transaction->bill_statement_no }}">
+                        @include('errors.inline', ['message' => $errors->first('bill_statement_no')])
+                    </div>
                 </div>
                 <div class="form-row">
                     <div class="card col-md-12 mt-4">
@@ -153,7 +158,7 @@
                             <div class="col-md-6 col-xl-4">
                                 <div class="callout py-1 mx-1 row">
                                     <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[0] }}" class="vlign--baseline-middle m-auto outline-0" {{ $transaction->is_deposit == 0 && $transaction->is_bills == 0 && $transaction->is_hr == 0 && $transaction->is_reimbursement == 0 ? 'checked' : '' }}>
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[0] }}" class="trans-category vlign--baseline-middle m-auto outline-0" {{ $transaction->is_deposit == 0 && $transaction->is_bills == 0 && $transaction->is_hr == 0 && $transaction->is_reimbursement == 0 ? 'checked' : '' }}>
                                     </div>
                                     <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[0] }}</h6>
@@ -164,7 +169,7 @@
                             <div class="col-md-6 col-xl-4">
                                 <div class="callout py-1 mx-1 row">
                                     <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[1] }}" class="vlign--baseline-middle m-auto outline-0"  {{ $transaction->is_deposit == 1 ? 'checked' : '' }}>
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[1] }}" class="trans-category vlign--baseline-middle m-auto outline-0"  {{ $transaction->is_deposit == 1 ? 'checked' : '' }}>
                                     </div>
                                     <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[1] }}</h6>
@@ -175,7 +180,7 @@
                             <div class="col-md-6 col-xl-4">
                                 <div class="callout py-1 mx-1 row">
                                     <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[2] }}" class="vlign--baseline-middle m-auto outline-0"  {{ $transaction->is_bills == 1 ? 'checked' : '' }}>
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[2] }}" class="trans-category vlign--baseline-middle m-auto outline-0"  {{ $transaction->is_bills == 1 ? 'checked' : '' }}>
                                     </div>
                                     <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[2] }}</h6>          
@@ -186,7 +191,7 @@
                             <div class="col-md-6 col-xl-4">
                                 <div class="callout py-1 mx-1 row">
                                     <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[3] }}" class="vlign--baseline-middle m-auto outline-0"  {{ $transaction->is_hr == 1 ? 'checked' : '' }}>
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[3] }}" class="trans-category vlign--baseline-middle m-auto outline-0"  {{ $transaction->is_hr == 1 ? 'checked' : '' }}>
                                     </div>
                                     <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[3] }}</h6>          
@@ -197,7 +202,7 @@
                             <div class="col-md-6 col-xl-4">
                                 <div class="callout py-1 mx-1 row">
                                     <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[5] }}" class="vlign--baseline-middle m-auto outline-0"  {{ $transaction->is_bank == 1 ? 'checked' : '' }}>
+                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[5] }}" class="trans-category vlign--baseline-middle m-auto outline-0"  {{ $transaction->is_bank == 1 ? 'checked' : '' }}>
                                     </div>
                                     <div class="col-10 mt-2">
                                         <h6 class="font-weight-bold">{{ config('global.trans_category_label')[5] }}</h6>          
@@ -442,6 +447,21 @@
 @section('script')
     <script type="text/javascript">
         $(function() {
+            if ("{{ $transaction->is_bills }}" === "1") {
+                $('#bill_statement_no').parent().removeClass('d-none')
+                $('#bill_statement_no').attr('required', 'true')
+            }
+
+            $('.trans-category').change(function() {
+                if ($(this).val() == "{{ config('global.trans_category')[2] }}") {
+                    $('#bill_statement_no').parent().removeClass('d-none')
+                    $('#bill_statement_no').attr('required', 'true')
+                } else {
+                    $('#bill_statement_no').removeAttr('required')
+                    $('#bill_statement_no').parent().addClass('d-none')
+                }
+            })
+
             if ($('.jsReplicate')[0]){
                 cls = '.jsReplicate'
                 

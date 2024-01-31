@@ -312,6 +312,7 @@ class TransactionsController extends Controller {
                                         })
                                         ->orWhere('particulars_custom', 'like', "%{$key}%")
                                         ->orWhere('cost_control_no', 'like', "%{$key}%")
+                                        ->orWhere('bill_statement_no', 'like', "%{$key}%")
                                         ->orWhere('purpose', 'like', "%{$key}%")
                                         ->orWhere('payee', 'like', "%{$key}%")
                                         ->orWhereHas('coatagging', function($query) use($key) {
@@ -459,6 +460,7 @@ class TransactionsController extends Controller {
         // validation
         if (in_array($request->trans_type, ['pr', 'po', 'pc'])) {
             $trans_type = $request->trans_type;
+            $trans_category = $request->trans_category;
 
             $validation = [
                 'trans_type' => ['required', 'in:pr,po,pc'],
@@ -469,6 +471,7 @@ class TransactionsController extends Controller {
                 'payee' => ['required'],
                 // 'cost_type_id' => ['nullable', 'exists:cost_types,id'],
                 'cost_control_no' => [],
+                'bill_statement_no' => [],
                 'due_at' => ['required', 'date'],
                 'requested_id' => ['required', 'exists:users,id'],
                 'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
@@ -477,13 +480,15 @@ class TransactionsController extends Controller {
                 'is_confidential_own' => ['required', 'between:0,1'],
             ];
 
-            // if ($trans_type == 'pc') {
-            //     $validation['particulars_custom'] = ['required'];
-            // } else {
-            //     $validation['particulars_id'] = ['required', 'exists:particulars,id'];
-            // }
+            if ($trans_category == config('global.trans_category')[2]) {
+                $validation['bill_statement_no'] = ['required'];
+            }
             
             $data = $request->validate($validation);
+
+            if ($trans_category != config('global.trans_category')[2]) {
+                $data['bill_statement_no'] = '';
+            }
 
             // ALLOW ALL CATEGORIES
             // if ($request->file('soa')) {
@@ -720,13 +725,17 @@ class TransactionsController extends Controller {
             // 'cost_type_id' => ['nullable', 'exists:cost_types,id'],
         ];
 
-        // if ($transaction->trans_type == 'pc') {
-        //     $validation['particulars_custom'] = ['required'];
-        // } else {
-        //     $validation['particulars_id'] = ['required', 'exists:particulars,id'];
-        // }
+        $trans_category = $request->trans_category;
+
+        if ($trans_category == config('global.trans_category')[2]) {
+            $validation['bill_statement_no'] = ['required'];
+        }
 
         $data = $request->validate($validation);
+
+        if ($trans_category != config('global.trans_category')[2]) {
+            $data['bill_statement_no'] = '';
+        }
 
         $attach_liq = $request->validate([
             'file.*' => ['mimes:jpeg,png,jpg,pdf', 'max:6048'],
