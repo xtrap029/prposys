@@ -7,7 +7,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Generated Report</h1>
+                    <h1>Generated Reports</h1>
                 </div>
                 <div class="col-sm-6 text-right">
                     <a href="/transaction/{{ $trans_page }}/{{ $_GET['company'] ? $_GET['company'] : '' }}" class="btn btn-default"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>

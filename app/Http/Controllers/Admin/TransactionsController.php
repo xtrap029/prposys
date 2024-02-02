@@ -1131,6 +1131,7 @@ class TransactionsController extends Controller {
         $trans_min = '';
         $trans_max = '';
         $trans_status = '';
+        $trans_tax = '';
         $trans_category = '';
         $trans_req = '';
         $trans_bal= '';
@@ -1272,6 +1273,10 @@ class TransactionsController extends Controller {
             $status_name = implode(', ', $status_name);
         } else {
             $status_name = 'All';
+        }
+        if (!empty($_GET['tax'])) {
+            $transactions = $transactions->whereIn('vat_type_id', $_GET['tax']);
+            $trans_tax = $_GET['tax'];
         }
         if (!empty($_GET['category'])) {
             if ($_GET['category'] == 'is_reg') {
@@ -1454,7 +1459,7 @@ class TransactionsController extends Controller {
         $releasers = ReleasedBy::orderBy('name', 'asc')->get();
         $companies = Company::orderBy('name', 'asc')->get();
         $banks = Bank::orderBy('name', 'asc')->get();
-        $vat_types = VatType::orderBy('name', 'asc')->get();
+        $vat_types = VatType::orderBy('code', 'asc')->get();
         $status = TransactionStatus::whereIn('id', config('global.status'))->orderBy('id', 'asc')->get();
         $report_templates = ReportTemplate::orderBy('name', 'asc')->get();
 

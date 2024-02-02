@@ -317,7 +317,15 @@
                                     <option value="1" {{ (!empty($_GET['is_confidential']) && $_GET['is_confidential'] == '1') ? 'selected' : '' }}>Confidential</option>
                                 </select>
                             </div>
-                            <div class="col-12 col-md-9 my-1">
+                            <div class="col-12 col-md-6 my-1">
+                                <label for="">Tax Type</label>
+                                <select name="tax[]" class="form-control form-control-sm chosen-select" multiple>
+                                    @foreach ($vat_types as $item)
+                                        <option value="{{ $item->id }}" {{ !empty($_GET['tax']) && in_array($item->id, $_GET['tax']) ? 'selected' : '' }}>{{ $item->code }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-3 my-1">
                                 <label for="">Keyword</label>
                                 <input type="text" class="form-control form-control-sm" name="s" value="{{ app('request')->input('s') }}" autocomplete="off">
                             </div>
