@@ -242,4 +242,92 @@ class ControlPanelsController extends Controller {
             return back()->with('error', __('messages.invalid_access'));
         }
     }
+
+    public function force_renew() {
+        $transaction = null;
+
+        if (!empty($_GET['company_id']) && !empty($_GET['trans'])) {
+            $key = $_GET['trans'];
+            $trans_company = $_GET['company_id'];
+
+            $transaction = Transaction::whereHas('project', function($query) use($trans_company) {
+                                        $query->where('company_id', $trans_company);
+                                    })
+                                    ->whereIn('status_id', config('global.cancelled'))
+                                    ->where(static function ($query) use ($key) {
+                                        $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$key."%");
+                                    })->first();
+
+            if (!$transaction) {
+                return back()->with('error', __('messages.not_found'));
+            }
+        }
+
+        $companies = Company::orderBy('name', 'asc')->get();
+
+        return view('pages.admin.controlpanel.forcerenew.index')->with([
+            'companies' => $companies,
+            'transaction' => $transaction
+        ]);
+    }
+
+    public function force_renew_store(Request $request) {
+        $data = $request->validate([
+            'id' => ['required'],
+            'password' => ['required'],
+        ]);
+
+        $user = User::where('id', auth()->id())->first();
+        $request->request->add(['email' => $user->email]);
+        
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            $transaction = Transaction::where('id', $data['id'])->first();
+            $transaction->status_prev_id = $transaction->status_id;
+            $transaction->status_id = config('global.generated')[0];
+            $transaction->status_updated_at = now();
+            $transaction->cancellation_number = null;
+            $transaction->cancellation_reason = null;
+
+            $transaction->depo_type = null;
+            $transaction->depo_bank_branch_id = null;
+            $transaction->depo_ref = null;
+            $transaction->depo_received_by = null;
+            $transaction->depo_date = null;
+            $transaction->depo_slip = null;
+            $transaction->liquidation_approver_id = null;
+            TransactionsAttachment::where('transaction_id', $transaction->id)->delete();
+            TransactionsLiquidation::where('transaction_id', $transaction->id)->delete();
+            $transaction->control_type = null;
+            $transaction->control_no = null;
+            $transaction->released_at = null;
+            $transaction->amount_issued = null;
+            $transaction->depo_slip = null;
+            $transaction->issue_slip = null;
+            $transaction->released_by_id = null;
+            $transaction->form_company_id = null;
+            $transaction->currency_2 = null;
+            $transaction->currency_2_rate = null;
+            $transaction->form_service_charge = null;
+            $transaction->form_vat_code = null;
+            $transaction->form_vat_name = null;
+            $transaction->form_vat_vat = null;
+            $transaction->form_vat_wht = null;
+            $transaction->form_amount_unit = null;
+            $transaction->form_amount_vat = null;
+            $transaction->form_amount_wht = null;
+            $transaction->form_amount_subtotal = null;
+            $transaction->form_amount_payable = null;
+            $transaction->coa_tagging_id = null;
+            $transaction->vat_type_id = null;
+            TransactionsDescription::where('transaction_id', $transaction->id)->delete();
+
+            $transaction->save();
+
+            return redirect('/control-panel/force-cancel')->with('success', 'Transaction '.__('messages.cancel_success'));
+        } else {
+            return back()->with('error', __('messages.invalid_access'));
+        }
+    }
 }

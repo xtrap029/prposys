@@ -163,7 +163,7 @@
                                         <a href="/settings" class="nav-link {{ Route::currentRouteName() == 'settings' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">settings</i><p>Settings</p>
                                         </a>
-                                    </li>                               
+                                    </li>                      
                                     <li class="nav-item {{ $ua['seq_rev_stat'] == $non ? 'd-none' : '' }}">
                                         <a href="/control-panel/revert-status" class="nav-link {{ Route::currentRouteName() == 'revertstatus' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">history_edu</i><p>Revert Status</p>
@@ -172,6 +172,11 @@
                                     <li class="nav-item {{ $ua['seq_force_cancel'] == $non ? 'd-none' : '' }}">
                                         <a href="/control-panel/force-cancel" class="nav-link {{ Route::currentRouteName() == 'forcecancel' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">cancel</i><p>Force Cancel</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ $ua['seq_force_renew'] == $non ? 'd-none' : '' }}">
+                                        <a href="/control-panel/force-renew" class="nav-link {{ Route::currentRouteName() == 'forcerenew' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">check_circle</i><p>Force Renew</p>
                                         </a>
                                     </li>
                                 </ul>

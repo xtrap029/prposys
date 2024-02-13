@@ -79,7 +79,7 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
         });   
     });
 
-    // Seq Revert Status & Force Cancel
+    // Seq Revert Status & Force Cancel & Force Renew
     Route::prefix('control-panel')->group(function() {        
         Route::middleware('CheckUserAccess:seq_rev_stat')->group(function () {
             $url = 'Admin\ControlPanelsController';
@@ -94,6 +94,12 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
             $url = 'Admin\ControlPanelsController';
             Route::get('/force-cancel', $url.'@force_cancel')->name('forcecancel');
             Route::post('/force-cancel', $url.'@force_cancel_store');
+        });
+
+        Route::middleware('CheckUserAccess:seq_force_renew')->group(function () {
+            $url = 'Admin\ControlPanelsController';
+            Route::get('/force-renew', $url.'@force_renew')->name('forcerenew');
+            Route::post('/force-renew', $url.'@force_renew_store');
         });
     });
 
