@@ -50,11 +50,16 @@
                             <i class="align-middle font-weight-bolder material-icons text-md">speaker_notes</i> Notes
                             <span class="badge badge-danger {{ $transaction->notes->count() > 0 ? '' : 'd-none' }}">{{$transaction->notes->count()}}</span>
                         </a>
+
+                        {{-- <a href="/transaction-form/intercompany/{{ $transaction->id}}" class="btn mb-2 btn-sm btn-flat btn-primary col-12 col-lg-auto {{ $perms['can_intercompany'] ? '' : 'd-none' }}">
+                            <i class="align-middle font-weight-bolder material-icons text-md">file_copy</i>
+                            Intercompany
+                        </a> --}}
                         
                         <a href="/transaction-liquidation/create?company={{ $transaction->project->company_id }}&key={{ strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq) }}" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto {{ $perms['can_create'] ? '' : 'd-none' }}">
                             <i class="align-middle font-weight-bolder material-icons text-md">add</i>
                             {{ $transaction->is_bank ? 'Deposit' : 'Liquidate' }}
-                        </a>
+                        </a>                        
                     
                         <!-- if issued and bank and diff company-->
                         <a href="/transaction-form/edit-issued-clear/{{ $transaction->id }}" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto {{ !$perms['can_create'] && $transaction->is_bank && $transaction->form_company_id && !in_array($transaction->status_id, config('global.cancelled')) ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')">

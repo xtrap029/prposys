@@ -489,6 +489,10 @@ class TransactionsFormsController extends Controller {
             $transaction->project->company_id
         );
         $perms['can_edit_issued'] = $this->check_can_edit_issued($transaction->id);
+        // $perms['can_intercompany'] = app('App\Http\Controllers\Admin\TransactionsLiquidationController')->check_can_create(
+        //     $transaction->trans_type."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
+        //     $transaction->project->company_id
+        // ) && $transaction->is_deposit;
 
         $released_by = ReleasedBy::orderBy('name', 'asc')->get();
 
