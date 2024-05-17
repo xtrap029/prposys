@@ -28,7 +28,48 @@
                 <input type="hidden" name="trans_type" value="{{ $trans_type }}">
 
                 <div class="form-row mb-3">
-                    <div class="col-sm-5 col-lg-7 mb-2">
+                    <div class="col-lg-3 mb-2">
+                        <label for="">Transaction Category</label>
+                        <select name="trans_category" class="trans-category form-control @error('trans_category') is-invalid @enderror">
+                            <option 
+                                value="{{ config('global.trans_category')[0] }}"
+                            >
+                                {{ config('global.trans_category_label')[0] }}
+                            </option>
+                            <option 
+                                value="{{ config('global.trans_category')[1] }}"
+                                {{ isset($_GET['is_deposit']) && $_GET['is_deposit'] == 1 ? 'selected' : '' }}
+                            >
+                                {{ config('global.trans_category_label')[1] }}
+                            </option>
+                            <option 
+                                value="{{ config('global.trans_category')[2] }}"
+                                {{ isset($_GET['is_bills']) && $_GET['is_bills'] == 1 ? 'selected' : '' }}
+                            >
+                                {{ config('global.trans_category_label')[2] }}
+                            </option>
+                            <option 
+                                value="{{ config('global.trans_category')[3] }}"
+                                {{ isset($_GET['is_hr']) && $_GET['is_hr'] == 1 ? 'selected' : '' }}
+                            >
+                                {{ config('global.trans_category_label')[3] }}
+                            </option>
+                            <option 
+                                value="{{ config('global.trans_category')[4] }}"
+                                {{ isset($_GET['is_reimbursement']) && $_GET['is_reimbursement'] == 1 ? 'selected' : '' }}
+                            >
+                                {{ config('global.trans_category_label')[4] }}
+                            </option>
+                            <option 
+                                value="{{ config('global.trans_category')[5] }}"
+                                {{ isset($_GET['is_bank']) && $_GET['is_bank'] == 1 ? 'selected' : '' }}
+                            >
+                                {{ config('global.trans_category_label')[5] }}
+                            </option>
+                        </select>
+                        @include('errors.inline', ['message' => $errors->first('trans_category')])
+                    </div>
+                    <div class="col-sm-5 col-lg-4 mb-2">
                         <label for="">Project</label>
                         <select name="project_id" class="form-control @error('project_id') is-invalid @enderror">
                             @foreach ($projects as $item)
@@ -189,7 +230,7 @@
                         </div>
                     </div>
 
-                    <div class="card col-md-12 mt-4">
+                    <!-- <div class="card col-md-12 mt-4">
                         <div class="card-header font-weight-bold">
                             Select Transaction Category
                         </div>
@@ -261,7 +302,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="col-md-12 text-center">
                         <div class="my-4">
                             <a href="/transaction/{{ $trans_page }}/{{ $trans_company }}" class="mr-3">Cancel</a>
