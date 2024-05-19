@@ -132,6 +132,11 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
     Route::middleware('CheckUserAccess:seq_cost_type')->group(function () {
         Route::resource('cost-type', 'Admin\CostTypesController', ['names' => ['index' => 'costtype', 'create' => 'costtype', 'edit' => 'costtype']]);        
     });
+
+    // Seq Purpose Options
+    Route::middleware('CheckUserAccess:seq_purpose')->group(function () {
+        Route::resource('purpose', 'Admin\PurposesController', ['names' => ['index' => 'purpose', 'create' => 'purpose', 'edit' => 'purpose']]);        
+    });
     
     // Seq Bank / Bank Branch
     Route::middleware('CheckUserAccess:seq_bank')->group(function () {

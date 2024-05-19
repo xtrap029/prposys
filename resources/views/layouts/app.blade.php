@@ -149,6 +149,11 @@
                                             <i class="nav-icon material-icons icon--list">money</i><p>Cost Type</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item {{ $ua['seq_purpose'] == $non ? 'd-none' : '' }}">
+                                        <a href="/purpose" class="nav-link {{ Route::currentRouteName() == 'purpose' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">ads_click</i><p>Purpose</p>
+                                        </a>
+                                    </li>
                                     <li class="nav-item {{ $ua['seq_rep_temp'] == $non ? 'd-none' : '' }}">
                                         <a href="/report-template" class="nav-link {{ Route::currentRouteName() == 'reporttemplates' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">extension</i><p>Report Template</p>
