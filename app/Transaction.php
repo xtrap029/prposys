@@ -22,6 +22,7 @@ class Transaction extends Model {
                                         'currency',
                                         'amount',
                                         'purpose',
+                                        'purposeOption.name',
                                         'project.project',
                                         'payee',
                                         'due_at',
@@ -106,6 +107,10 @@ class Transaction extends Model {
 
     public function vattype() {
         return $this->belongsTo(VatType::class, 'vat_type_id')->withTrashed();
+    }
+
+    public function purposeOption() {
+        return $this->belongsTo(PurposeOption::class, 'purpose_option_id')->withTrashed();
     }
 
     public function requested() {

@@ -8,6 +8,7 @@ use App\Company;
 use App\CompanyProject;
 use App\ExpenseType;
 use App\Particulars;
+use App\PurposeOption;
 use App\ReleasedBy;
 use App\Settings;
 use App\Transaction;
@@ -566,6 +567,7 @@ class TransactionsFormsController extends Controller {
         $particulars = Particulars::where('type', $transaction->trans_type)->orderBy('name', 'asc')->get();
         $projects = CompanyProject::where('company_id', $transaction->project->company_id)->orderBy('project', 'asc')->get();
         $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
+        $purpose_options = PurposeOption::orderBy('code', 'asc')->get();
 
         if ($transaction->is_deposit)
             $page_title = config('global.trans_category_label_edit_form')[1];
@@ -589,6 +591,7 @@ class TransactionsFormsController extends Controller {
             'particulars' => $particulars,
             'expense_types' => $expense_types,
             'users' => $users,
+            'purpose_options' => $purpose_options,
             'projects' => $projects
         ]);
     }
@@ -620,6 +623,7 @@ class TransactionsFormsController extends Controller {
         $projects = CompanyProject::where('company_id', $transaction->project->company_id)->get();
         $users = User::whereNotNull('role_id')->get();
         $expense_types = ExpenseType::orderBy('name', 'asc')->get();
+        $purpose_options = PurposeOption::orderBy('code', 'asc')->get();
         
         return view('pages.admin.transactionform.editreimbursement')->with([
             'transaction' => $transaction,
@@ -630,6 +634,7 @@ class TransactionsFormsController extends Controller {
             'particulars' => $particulars,
             'expense_types' => $expense_types,
             'users' => $users,
+            'purpose_options' => $purpose_options,
             'projects' => $projects
         ]);
     }
@@ -648,6 +653,7 @@ class TransactionsFormsController extends Controller {
             'vat_type_id' => ['required', 'exists:vat_types,id'],
 
             'amount' => ['required', 'min:0'],
+            'purpose_option_id' => ['required', 'exists:purpose_options,id'],
             'purpose' => ['required'],
             'project_id' => ['required', 'exists:company_projects,id'],
             'payee' => ['required'],
@@ -776,6 +782,7 @@ class TransactionsFormsController extends Controller {
         $validation = [
             'coa_tagging_id' => ['required', 'exists:coa_taggings,id'],
             'amount' => ['required', 'min:0'],
+            'purpose_option_id' => ['required', 'exists:purpose_options,id'],
             'purpose' => ['required'],
             'project_id' => ['required', 'exists:company_projects,id'],
             'payee' => ['required'],

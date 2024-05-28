@@ -41,14 +41,26 @@
                     </tr>
                 </table>
                 <div class="col-md-6">
-                    <label for="" class="font-weight-bold">Purpose</label>
-                    <p>
-                        @if ($config_confidential)
-                            -
-                        @else
-                            {{ $transaction->purpose }}
-                        @endif
-                    </p>
+                    <div>
+                        <label for="" class="font-weight-bold">Purpose</label>
+                        <p>
+                            @if ($config_confidential)
+                                -
+                            @else
+                                {{ $transaction->purpose_option_id ? ($transaction->purposeOption->code.' - '.$transaction->purposeOption->name) : '-' }}
+                            @endif
+                        </p>
+                    </div>
+                    <div>
+                        <label for="" class="font-weight-bold">Purpose Details</label>
+                        <p>
+                            @if ($config_confidential)
+                                -
+                            @else
+                                {{ $transaction->purpose }}
+                            @endif
+                        </p>
+                    </div>
                 </div>
             </div>
             <form action="" method="post" enctype="multipart/form-data" id="pageForm" class="jsPreventMultiple">

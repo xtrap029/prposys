@@ -87,6 +87,16 @@
                                                 @if ($config_confidential)
                                                     -
                                                 @else
+                                                    {{ $transaction->purpose_option_id ? ($transaction->purposeOption->code.' - '.$transaction->purposeOption->name) : '-' }}
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold">Purpose Details</td>
+                                            <td>
+                                                @if ($config_confidential)
+                                                    -
+                                                @else
                                                     {{ $transaction->purpose }}
                                                 @endif
                                             </td>

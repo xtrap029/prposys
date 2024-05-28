@@ -94,8 +94,17 @@
                     </div>
                 </div>
                 <div class="form-row mb-3">
-                    <div class="col-sm-6 col-lg-8 mb-2">
+                    <div class="col-sm-6 col-lg-4 mb-2">
                         <label for="">Purpose</label>
+                        <select name="purpose_option_id" class="form-control @error('purpose_option_id') is-invalid @enderror">
+                            @foreach ($purpose_options as $item)
+                                <option value="{{ $item->id }}" {{ isset($_GET['purpose_option_id']) && $_GET['purpose_option_id'] == $item->id ? 'selected' : ($item->id == Auth::user()->id ? 'selected' : '') }}>{{ $item->code.' - '.$item->name }}</option>                                        
+                            @endforeach
+                        </select>
+                        @include('errors.inline', ['message' => $errors->first('purpose_option_id')])
+                    </div>
+                    <div class="col-sm-6 col-lg-4 mb-2">
+                        <label for="">Purpose Details</label>
                         <textarea name="purpose" rows="1" class="form-control @error('purpose') is-invalid @enderror" required>{{ old('purpose') ?: (isset($_GET['purpose']) ? $_GET['purpose'] : '') }}</textarea>
                         @include('errors.inline', ['message' => $errors->first('purpose')])
                     </div>

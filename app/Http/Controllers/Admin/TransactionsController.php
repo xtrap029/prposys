@@ -9,6 +9,7 @@ use App\CostType;
 use App\CompanyProject;
 use App\ExpenseType;
 use App\Particulars;
+use App\PurposeOption;
 use App\ReleasedBy;
 use App\ReportTemplate;
 use App\Settings;
@@ -443,6 +444,7 @@ class TransactionsController extends Controller {
         $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
         $company = Company::where('id', $trans_company)->first();
         $cost_types = CostType::orderBy('control_no', 'asc')->get();
+        $purpose_options = PurposeOption::orderBy('code', 'asc')->get();
 
         return view('pages.admin.transaction.create')->with([
             'trans_type' => $trans_type,
@@ -452,7 +454,8 @@ class TransactionsController extends Controller {
             'projects' => $projects,
             'users' => $users,
             'cost_types' => $cost_types,
-            'company' => $company
+            'company' => $company,
+            'purpose_options' => $purpose_options
         ]);
     }
 
@@ -466,6 +469,7 @@ class TransactionsController extends Controller {
                 'trans_type' => ['required', 'in:pr,po,pc'],
                 'currency' => ['required'],
                 'amount' => ['required', 'min:0'],
+                'purpose_option_id' => ['required', 'exists:purpose_options,id'],
                 'purpose' => ['required'],
                 'project_id' => ['required', 'exists:company_projects,id'],
                 'payee' => ['required'],
@@ -695,12 +699,14 @@ class TransactionsController extends Controller {
         // $particulars = Particulars::where('type', $transaction->trans_type)->get();
         $projects = CompanyProject::where('company_id', $transaction->project->company_id)->orderBy('project', 'asc')->get();
         $cost_types = CostType::orderBy('control_no', 'asc')->get();
+        $purpose_options = PurposeOption::orderBy('code', 'asc')->get();
         
         return view('pages.admin.transaction.edit')->with([
             'transaction' => $transaction,
             'company' => $transaction->project->company,
             'projects' => $projects,
             'cost_types' => $cost_types,
+            'purpose_options' => $purpose_options,
             'trans_page' => $trans_page
         ]);
     }
@@ -716,6 +722,7 @@ class TransactionsController extends Controller {
         $validation = [
             'amount' => ['required', 'min:0'],
             'currency' => ['required'],
+            'purpose_option_id' => ['required', 'exists:purpose_options,id'],
             'purpose' => ['required'],
             'project_id' => ['required', 'exists:company_projects,id'],
             'payee' => ['required'],

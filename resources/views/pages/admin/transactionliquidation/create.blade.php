@@ -43,6 +43,10 @@
                 <div class="col-md-6">
                     <div>
                         <label for="" class="font-weight-bold">Purpose</label>
+                        <p>{{ $transaction->purpose_option_id ? ($transaction->purposeOption->code.' - '.$transaction->purposeOption->name) : '-' }}</p>
+                    </div>
+                    <div>
+                        <label for="" class="font-weight-bold">Purpose Details</label>
                         <p>{{ $transaction->purpose }}</p>
                     </div>
                 </div>

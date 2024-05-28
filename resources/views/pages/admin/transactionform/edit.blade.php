@@ -141,8 +141,17 @@
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="col-md-8 mb-2 {{ $config_confidential ? 'd-none' : '' }}">
+                    <div class="col-md-4 mb-2 {{ $config_confidential ? 'd-none' : '' }}">
                         <label for="">Purpose</label>
+                        <select name="purpose_option_id" class="form-control @error('purpose_option_id') is-invalid @enderror">
+                            @foreach ($purpose_options as $item)
+                                <option value="{{ $item->id }}" {{ $item->id == $transaction->purpose_option_id ? 'selected' : '' }}>{{ $item->code.' - '.$item->name }}</option>                                        
+                            @endforeach
+                        </select>
+                        @include('errors.inline', ['message' => $errors->first('purpose_option_id')])
+                    </div>
+                    <div class="col-md-4 mb-2 {{ $config_confidential ? 'd-none' : '' }}">
+                        <label for="">Purpose Details</label>
                         <textarea name="purpose" rows="1" class="form-control @error('purpose') is-invalid @enderror" required>{{ $transaction->purpose }}</textarea>
                         @include('errors.inline', ['message' => $errors->first('purpose')])
                     </div>

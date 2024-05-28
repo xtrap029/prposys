@@ -280,8 +280,20 @@
                                         </tr>
                                     @endif
                                     <tr>
-                                        <td colspan="2">
+                                        <td>
                                             <span class="font-weight-bold text-gray">Purpose</span>
+                                        </td>
+                                        <td class="font-weight-bold">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $transaction->purpose_option_id ? ($transaction->purposeOption->code.' - '.$transaction->purposeOption->name) : '-' }}
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <span class="font-weight-bold text-gray">Purpose Details</span>
                                             <p class="mb-0">
                                                 @if ($config_confidential)
                                                     -

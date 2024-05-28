@@ -66,7 +66,7 @@
                                         @if ($config_confidential)
                                             -
                                         @else
-                                            {{ $transaction->purpose }}
+                                            {{ $transaction->purpose_option_id ? ($transaction->purposeOption->code.' - '.$transaction->purposeOption->name) : '-' }}
                                         @endif
                                     </td>
                                 </tr>
@@ -88,6 +88,16 @@
                         </div>
                         <div class="col-6">
                             <table class="table table-sm">
+                                <tr>
+                                    <td class="font-weight-bold">Purpose Details</td>
+                                    <td>
+                                        @if ($config_confidential)
+                                            -
+                                        @else
+                                            {{ $transaction->purpose }}
+                                        @endif
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td class="font-weight-bold">Cost Control No.</td>
                                     {{-- <td>{{ $transaction->cost_type_id
