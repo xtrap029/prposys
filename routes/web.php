@@ -138,6 +138,11 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
         Route::resource('purpose', 'Admin\PurposesController', ['names' => ['index' => 'purpose', 'create' => 'purpose', 'edit' => 'purpose']]);        
     });
     
+    // Seq Vendors
+    Route::middleware('CheckUserAccess:seq_vendor')->group(function () {
+        Route::resource('vendor', 'Admin\VendorsController', ['names' => ['index' => 'vendor', 'create' => 'vendor', 'edit' => 'vendor']]);        
+    });
+    
     // Seq Bank / Bank Branch
     Route::middleware('CheckUserAccess:seq_bank')->group(function () {
         Route::resource('bank', 'Admin\BanksController', ['names' => ['index' => 'bank', 'create' => 'bank', 'edit' => 'bank'], 'asd' => ['index' => 'bank1', 'create' => 'bank1', 'edit' => 'bank1']]);

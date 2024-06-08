@@ -48,7 +48,7 @@
                             <td class="text-nowrap">{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</td>
                             <td class="text-nowrap">{{ $transaction->project->project }}</td>
                             <td class="text-nowrap">{{ $transaction->due_at }}</td>
-                            <td class="text-nowrap">{{ $transaction->payee }}</td>
+                            <td class="text-nowrap">{{ $transaction->vendor_id ? $transaction->vendor->name : $transaction->payee }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -143,22 +143,30 @@
                 <div class="form-row">
                     <div class="col-md-4 mb-2 {{ $config_confidential ? 'd-none' : '' }}">
                         <label for="">Purpose</label>
-                        <select name="purpose_option_id" class="form-control @error('purpose_option_id') is-invalid @enderror">
+                        <select name="purpose_option_id" id="purposeOption" class="form-control @error('purpose_option_id') is-invalid @enderror">
                             @foreach ($purpose_options as $item)
-                                <option value="{{ $item->id }}" {{ $item->id == $transaction->purpose_option_id ? 'selected' : '' }}>{{ $item->code.' - '.$item->name }}</option>                                        
+                                <option value="{{ $item->id }}" {{ $item->id == $transaction->purpose_option_id ? 'selected' : '' }} data-description="{{ $item->description }}">{{ $item->code.' - '.$item->name }}</option>                                        
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('purpose_option_id')])
                     </div>
                     <div class="col-md-4 mb-2 {{ $config_confidential ? 'd-none' : '' }}">
                         <label for="">Purpose Details</label>
-                        <textarea name="purpose" rows="1" class="form-control @error('purpose') is-invalid @enderror" required>{{ $transaction->purpose }}</textarea>
+                        <textarea name="purpose" id="purposeDescription" rows="1" class="form-control @error('purpose') is-invalid @enderror" required>{{ $transaction->purpose }}</textarea>
                         @include('errors.inline', ['message' => $errors->first('purpose')])
                     </div>
                     <div class="col-md-4 mb-2">
                         <label for="">Payee Name</label>
-                        <input type="text" class="form-control @error('payee') is-invalid @enderror" name="payee" value="{{ $transaction->payee }}" required>
+                        <select name="vendor_id" class="form-control @error('vendor_id') is-invalid @enderror" required>
+                            @foreach ($vendors as $item)
+                                <option value="{{ $item->id }}" {{ $item->id == $transaction->vendor_id ? 'selected' : '' }}>{{ $item->name }}</option>                                        
+                            @endforeach
+                        </select>
                         @include('errors.inline', ['message' => $errors->first('payee')])
+
+                        {{-- <label for="">Payee Name</label>
+                        <input type="text" class="form-control @error('payee') is-invalid @enderror" name="payee" value="{{ $transaction->payee }}" required>
+                        @include('errors.inline', ['message' => $errors->first('payee')]) --}}
                     </div>
                 </div>
                 <div class="form-row">
@@ -497,6 +505,14 @@
 @section('script')
     <script type="text/javascript">
         $(function() {
+            $('#purposeOption').change(function() {
+                assignPurposeDescription()
+            })
+            
+            function assignPurposeDescription() {
+                $('#purposeDescription').val($('#purposeOption').find(':selected').data('description'))
+            }
+            
             if ("{{ $transaction->is_bills }}" === "1") {
                 $('#bill_statement_no').parent().removeClass('d-none')
                 $('#bill_statement_no').attr('required', 'true')

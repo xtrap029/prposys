@@ -73,7 +73,7 @@
                                         </tr>
                                         <tr>
                                             <td class="font-weight-bold">Vendor / Payee</td>
-                                            <td>{{ $transaction->payee }}</td>
+                                            <td>{{ $transaction->vendor_id ? $transaction->vendor->name : $transaction->payee }}</td>
                                         </tr>
                                         @if (1==0)
                                             <tr>

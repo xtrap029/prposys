@@ -17,7 +17,7 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th colspan="2">List</th>
+                        <th colspan="3">List</th>
                         <th class="text-right"><a href="/purpose/create">Create</a></th>
                     </tr>
                 </thead>
@@ -26,6 +26,7 @@
                         <tr>
                             <td>{{ $item->code }}</td>
                             <td>{{ $item->name }}</td>
+                            <td>{{ $item->description }}</td>
                             <td class="text-right">
                                 <a href="/purpose/{{ $item->id }}/edit" class="btn btn-link btn-sm d-inline-block">Edit</a>
                                 <form action="/purpose/{{ $item->id }}" method="post" class="d-inline-block">

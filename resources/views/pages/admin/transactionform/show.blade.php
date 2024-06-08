@@ -430,11 +430,11 @@
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Vendor / Payee</td>
-                                        <td class="font-weight-bold">{{ $transaction->payee }}</td>
+                                        <td class="font-weight-bold">{{ $transaction->vendor_id ? $transaction->vendor->name : $transaction->payee }}</td>
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Payor</td>
-                                        <td class="font-weight-bold">{{ $transaction->payee ?: 'n/a' }}</td>
+                                        <td class="font-weight-bold">{{ $transaction->vendor_id ? $transaction->vendor->name : $transaction->payee }}</td>
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Tax Type</td>

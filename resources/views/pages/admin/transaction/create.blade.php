@@ -96,23 +96,32 @@
                 <div class="form-row mb-3">
                     <div class="col-sm-6 col-lg-4 mb-2">
                         <label for="">Purpose</label>
-                        <select name="purpose_option_id" class="form-control @error('purpose_option_id') is-invalid @enderror">
+                        <select name="purpose_option_id" id="purposeOption" class="form-control @error('purpose_option_id') is-invalid @enderror">
                             @foreach ($purpose_options as $item)
-                                <option value="{{ $item->id }}" {{ isset($_GET['purpose_option_id']) && $_GET['purpose_option_id'] == $item->id ? 'selected' : ($item->id == Auth::user()->id ? 'selected' : '') }}>{{ $item->code.' - '.$item->name }}</option>                                        
+                                <option value="{{ $item->id }}" {{ isset($_GET['purpose_option_id']) && $_GET['purpose_option_id'] == $item->id ? 'selected' : '' }} data-description="{{ $item->description }}">{{ $item->code.' - '.$item->name }}</option>                                        
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('purpose_option_id')])
                     </div>
                     <div class="col-sm-6 col-lg-4 mb-2">
                         <label for="">Purpose Details</label>
-                        <textarea name="purpose" rows="1" class="form-control @error('purpose') is-invalid @enderror" required>{{ old('purpose') ?: (isset($_GET['purpose']) ? $_GET['purpose'] : '') }}</textarea>
+                        <textarea name="purpose" id="purposeDescription" rows="1" class="form-control @error('purpose') is-invalid @enderror" required>{{ old('purpose') ?: (isset($_GET['purpose']) ? $_GET['purpose'] : '') }}</textarea>
                         @include('errors.inline', ['message' => $errors->first('purpose')])
                     </div>
                     <div class="col-sm-6 col-lg-4 mb-2">
                         <label for="">Payee Name</label>
+                        <select name="vendor_id" class="form-control @error('vendor_id') is-invalid @enderror">
+                            @foreach ($vendors as $item)
+                                <option value="{{ $item->id }}" {{ isset($_GET['vendor_id']) && $_GET['vendor_id'] == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>                                        
+                            @endforeach
+                        </select>
+                        @include('errors.inline', ['message' => $errors->first('vendor_id')])
+                    </div>
+                    {{-- <div class="col-sm-6 col-lg-4 mb-2">
+                        <label for="">Payee Name</label>
                         <input type="text" class="form-control @error('payee') is-invalid @enderror" name="payee" value="{{ old('payee') ?: (isset($_GET['payee']) ? $_GET['payee'] : '') }}" required>
                         @include('errors.inline', ['message' => $errors->first('payee')])
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="form-row mb-3">
                     <div class="col-sm-6 col-lg-8 mb-2">
@@ -346,6 +355,15 @@
                     $('#bill_statement_no').parent().parent().addClass('d-none')
                 }
             })
+
+            assignPurposeDescription()
+            $('#purposeOption').change(function() {
+                assignPurposeDescription()
+            })
+            
+            function assignPurposeDescription() {
+                $('#purposeDescription').val($('#purposeOption').find(':selected').data('description'))
+            }
 
             if ("{{ isset($_GET['is_bills']) && $_GET['is_bills'] == 1 }}" == 1) {
                 $('.soa').parent().removeClass('d-none')

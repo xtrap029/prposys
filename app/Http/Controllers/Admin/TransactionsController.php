@@ -10,6 +10,7 @@ use App\CompanyProject;
 use App\ExpenseType;
 use App\Particulars;
 use App\PurposeOption;
+use App\Vendor;
 use App\ReleasedBy;
 use App\ReportTemplate;
 use App\Settings;
@@ -329,6 +330,9 @@ class TransactionsController extends Controller {
                                         ->orWhereHas('vattype', function($query) use($key) {
                                             $query->where('code', 'like', "%{$key}%");
                                         })
+                                        ->orWhereHas('vendor', function($query) use($key) {
+                                            $query->where('name', 'like', "%{$key}%");
+                                        })
                                         ->orWhere('control_no', 'like', "%{$key}%")
                                         ->orWhere('control_type', 'like', "%{$key}%")
                                         ->orWhere('cancellation_reason', 'like', "%{$key}%")
@@ -445,6 +449,7 @@ class TransactionsController extends Controller {
         $company = Company::where('id', $trans_company)->first();
         $cost_types = CostType::orderBy('control_no', 'asc')->get();
         $purpose_options = PurposeOption::orderBy('code', 'asc')->get();
+        $vendors = Vendor::orderBy('name', 'asc')->get();
 
         return view('pages.admin.transaction.create')->with([
             'trans_type' => $trans_type,
@@ -455,7 +460,8 @@ class TransactionsController extends Controller {
             'users' => $users,
             'cost_types' => $cost_types,
             'company' => $company,
-            'purpose_options' => $purpose_options
+            'purpose_options' => $purpose_options,
+            'vendors' => $vendors
         ]);
     }
 
@@ -470,9 +476,10 @@ class TransactionsController extends Controller {
                 'currency' => ['required'],
                 'amount' => ['required', 'min:0'],
                 'purpose_option_id' => ['required', 'exists:purpose_options,id'],
+                'vendor_id' => ['required', 'exists:vendors,id'],
                 'purpose' => ['required'],
                 'project_id' => ['required', 'exists:company_projects,id'],
-                'payee' => ['required'],
+                // 'payee' => ['required'],
                 // 'cost_type_id' => ['nullable', 'exists:cost_types,id'],
                 'cost_control_no' => [],
                 'bill_statement_no' => [],
@@ -700,6 +707,7 @@ class TransactionsController extends Controller {
         $projects = CompanyProject::where('company_id', $transaction->project->company_id)->orderBy('project', 'asc')->get();
         $cost_types = CostType::orderBy('control_no', 'asc')->get();
         $purpose_options = PurposeOption::orderBy('code', 'asc')->get();
+        $vendors = Vendor::orderBy('name', 'asc')->get();
         
         return view('pages.admin.transaction.edit')->with([
             'transaction' => $transaction,
@@ -707,6 +715,7 @@ class TransactionsController extends Controller {
             'projects' => $projects,
             'cost_types' => $cost_types,
             'purpose_options' => $purpose_options,
+            'vendors' => $vendors,
             'trans_page' => $trans_page
         ]);
     }
@@ -723,9 +732,10 @@ class TransactionsController extends Controller {
             'amount' => ['required', 'min:0'],
             'currency' => ['required'],
             'purpose_option_id' => ['required', 'exists:purpose_options,id'],
+            'vendor_id' => ['required', 'exists:vendors,id'],
             'purpose' => ['required'],
             'project_id' => ['required', 'exists:company_projects,id'],
-            'payee' => ['required'],
+            // 'payee' => ['required'],
             'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
             'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
             'cost_control_no' => [],

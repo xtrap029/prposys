@@ -11,7 +11,7 @@ class PurposeOption extends Model {
     protected $guarded = [];
 
     use LogsActivity;
-    protected static $logAttributes = ['code', 'name'];
+    protected static $logAttributes = ['code', 'name', 'description'];
     protected static $logName = 'Purpose Option';
     protected static $logOnlyDirty = true;
 }

@@ -27,6 +27,11 @@
                     <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ $purpose->name }}" required>
                     @include('errors.inline', ['message' => $errors->first('name')])
                 </div>
+                <div class="form-group">
+                    <label for="">Description</label>
+                    <input type="text" class="form-control @error('description') is-invalid @enderror" name="description" value="{{ $purpose->description }}" required>
+                    @include('errors.inline', ['message' => $errors->first('description')])
+                </div>
                 <a href="/purpose">Cancel</a>
                 <input type="submit" class="btn btn-primary float-right" value="Save">
             </form>

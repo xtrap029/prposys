@@ -23,6 +23,7 @@ class Transaction extends Model {
                                         'amount',
                                         'purpose',
                                         'purposeOption.name',
+                                        'vendor.name',
                                         'project.project',
                                         'payee',
                                         'due_at',
@@ -111,6 +112,10 @@ class Transaction extends Model {
 
     public function purposeOption() {
         return $this->belongsTo(PurposeOption::class, 'purpose_option_id')->withTrashed();
+    }
+
+    public function vendor() {
+        return $this->belongsTo(Vendor::class, 'vendor_id')->withTrashed();
     }
 
     public function requested() {

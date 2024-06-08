@@ -108,23 +108,32 @@
                 <div class="form-row mb-3">
                     <div class="col-sm-6 col-lg-4 mb-2">
                         <label for="">Purpose</label>
-                        <select name="purpose_option_id" class="form-control @error('purpose_option_id') is-invalid @enderror">
+                        <select name="purpose_option_id" id="purposeOption" class="form-control @error('purpose_option_id') is-invalid @enderror">
                             @foreach ($purpose_options as $item)
-                                <option value="{{ $item->id }}" {{ $item->id == $transaction->purpose_option_id ? 'selected' : '' }}>{{ $item->code.' - '.$item->name }}</option>                                        
+                                <option value="{{ $item->id }}" {{ $item->id == $transaction->purpose_option_id ? 'selected' : '' }} data-description="{{ $item->description }}">{{ $item->code.' - '.$item->name }}</option>                                        
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('purpose_option_id')])
                     </div>
                     <div class="col-sm-6 col-lg-4 mb-2">
                         <label for="">Purpose Details</label>
-                        <textarea name="purpose" rows="1" class="form-control @error('purpose') is-invalid @enderror {{ $config_confidential ? 'd-none' : '' }}" required>{{ $transaction->purpose }}</textarea>
+                        <textarea name="purpose" id="purposeDescription" rows="1" class="form-control @error('purpose') is-invalid @enderror {{ $config_confidential ? 'd-none' : '' }}" required>{{ $transaction->purpose }}</textarea>
                         @include('errors.inline', ['message' => $errors->first('purpose')])
                     </div>
                     <div class="col-sm-6 col-lg-4 mb-2">
                         <label for="">Payee Name</label>
-                        <input type="text" class="form-control @error('payee') is-invalid @enderror" name="payee" value="{{ $transaction->payee }}" required>
+                        <select name="vendor_id" class="form-control @error('vendor_id') is-invalid @enderror">
+                            @foreach ($vendors as $item)
+                                <option value="{{ $item->id }}" {{ $item->id == $transaction->vendor_id ? 'selected' : '' }}>{{ $item->name }}</option>                                        
+                            @endforeach
+                        </select>
                         @include('errors.inline', ['message' => $errors->first('payee')])
                     </div>
+                    {{-- <div class="col-sm-6 col-lg-4 mb-2">
+                        <label for="">Payee Name</label>
+                        <input type="text" class="form-control @error('payee') is-invalid @enderror" name="payee" value="{{ $transaction->payee }}" required>
+                        @include('errors.inline', ['message' => $errors->first('payee')])
+                    </div> --}}
                 </div>
                 <div class="form-row mb-3">
                     {{-- <div class="col-sm-4 col-lg-4 mb-2">
@@ -341,6 +350,14 @@
             //         }
             //     }
             // })
+
+            $('#purposeOption').change(function() {
+                assignPurposeDescription()
+            })
+            
+            function assignPurposeDescription() {
+                $('#purposeDescription').val($('#purposeOption').find(':selected').data('description'))
+            }
             
             if ("{{ $transaction->is_bills }}" === "1") {
                 $('#bill_statement_no').parent().parent().removeClass('d-none')

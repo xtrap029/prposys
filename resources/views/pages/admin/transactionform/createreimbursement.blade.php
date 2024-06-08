@@ -37,7 +37,7 @@
                             <td class="text-nowrap">{{ strtoupper($transaction->trans_type) }}-{{ $transaction->trans_year }}-{{ sprintf('%05d',$transaction->trans_seq) }}</td>
                             <td class="text-nowrap">{{ $transaction->project->project }}</td>
                             <td class="text-nowrap">{{ $transaction->due_at }}</td>
-                            <td class="text-nowrap">{{ $transaction->payee }}</td>
+                            <td class="text-nowrap">{{ $transaction->vendor_id ? $transaction->vendor->name : $transaction->payee }}</td>
                             <td class="text-nowrap text-right">
                                 @if ($config_confidential)
                                     -
@@ -60,7 +60,7 @@
                                 @if ($config_confidential)
                                     -
                                 @else
-                                    {{ $transaction->purpose }}
+                                    {{ $transaction->purpose_option_id ? $transaction->purposeOption->code.' - '.$transaction->purposeOption->name : $transaction->purpose }}
                                 @endif
                             </td>
                         </tr>

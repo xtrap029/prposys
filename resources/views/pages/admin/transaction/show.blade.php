@@ -228,7 +228,7 @@
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Payee Name</td>
-                                        <td class="font-weight-bold">{{ $transaction->payee }}</td>
+                                        <td class="font-weight-bold">{{ $transaction->vendor_id ? $transaction->vendor->name : $transaction->payee }}</td>
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Cost Control No.</td>

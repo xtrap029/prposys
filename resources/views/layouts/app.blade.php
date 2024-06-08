@@ -134,6 +134,11 @@
                                             <i class="nav-icon material-icons icon--list">description</i><p>Particulars</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item {{ $ua['seq_vendor'] == $non ? 'd-none' : '' }}">
+                                        <a href="/vendor" class="nav-link {{ Route::currentRouteName() == 'vendor' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">store_front</i><p>Vendor</p>
+                                        </a>
+                                    </li>
                                     <li class="nav-item {{ $ua['seq_rel_by'] == $non ? 'd-none' : '' }}">
                                         <a href="/released-by" class="nav-link {{ Route::currentRouteName() == 'releasedby' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">person_pin</i><p>Released By</p>

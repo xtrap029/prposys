@@ -70,11 +70,11 @@
                                         </tr>
                                         <tr>
                                             <td class="font-weight-bold">Vendor</td>
-                                            <td>{{ $transaction->payee }}</td>
+                                            <td>{{ $transaction->vendor_id ? $transaction->vendor->name : $transaction->payee }}</td>
                                         </tr>
                                         <tr>
                                             <td class="font-weight-bold">Payor</td>
-                                            <td>{{ $transaction->payor ?: 'n/a' }}</td>
+                                            <td>{{ $transaction->vendor_id ? $transaction->vendor->name : $transaction->payee }}</td>
                                         </tr>
                                         @if ($transaction->is_bills == 1)
                                             <tr>
