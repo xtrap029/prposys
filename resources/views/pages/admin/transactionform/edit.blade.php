@@ -145,7 +145,9 @@
                         <label for="">Purpose</label>
                         <select name="purpose_option_id" id="purposeOption" class="form-control @error('purpose_option_id') is-invalid @enderror">
                             @foreach ($purpose_options as $item)
-                                <option value="{{ $item->id }}" {{ $item->id == $transaction->purpose_option_id ? 'selected' : '' }} data-description="{{ $item->description }}">{{ $item->code.' - '.$item->name }}</option>                                        
+                                @if (in_array($company->id, explode(',', $item->companies))) 
+                                    <option value="{{ $item->id }}" {{ $item->id == $transaction->purpose_option_id ? 'selected' : '' }} data-description="{{ $item->description }}">{{ $item->code.' - '.$item->name }}</option>                                        
+                                @endif
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('purpose_option_id')])
