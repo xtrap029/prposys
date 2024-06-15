@@ -12,8 +12,11 @@ class PurposesController extends Controller {
 
     public function index() {
         $purposes = PurposeOption::orderBy('code', 'asc')->get();
+        $companies = Company::orderBy('name', 'asc')->get();
+
         return view('pages.admin.purpose.index')->with([
-            'purposes' => $purposes
+            'purposes' => $purposes,
+            'companies' => $companies,
         ]);
     }
 
@@ -28,8 +31,14 @@ class PurposesController extends Controller {
         $data = $request->validate([
             'code' => ['required', Rule::unique('purpose_options')->whereNull('deleted_at')],
             'name' => ['required', Rule::unique('purpose_options')->whereNull('deleted_at')],
-            'description' => ['required']
+            'description' => ['required'],
+            'companies.*' => [],
         ]);
+
+        if ($request->companies) {
+            $data['companies'] = implode(',',$data['companies']);
+        }
+
         $data['owner_id'] = auth()->id();
         $data['updated_id'] = auth()->id();
 
@@ -51,8 +60,10 @@ class PurposesController extends Controller {
         $data = $request->validate([
             'code' => ['required', Rule::unique('purpose_options')->ignore($purpose->id)->whereNull('deleted_at')],
             'name' => ['required', Rule::unique('purpose_options')->ignore($purpose->id)->whereNull('deleted_at')],
-            'description' => ['required']
+            'description' => ['required'],
+            'companies.*' => [],
         ]);
+        $data['companies'] = implode(',', $request->companies ? $data['companies'] : []);
         $data['updated_id'] = auth()->id();
 
         $purpose->update($data);

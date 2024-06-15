@@ -17,7 +17,7 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th colspan="3">List</th>
+                        <th colspan="4">List</th>
                         <th class="text-right"><a href="/purpose/create">Create</a></th>
                     </tr>
                 </thead>
@@ -27,6 +27,13 @@
                             <td>{{ $item->code }}</td>
                             <td>{{ $item->name }}</td>
                             <td>{{ $item->description }}</td>
+                            <td>
+                                @foreach ($companies as $company)
+                                    @if (in_array($company->id, explode(',', $item->companies)))
+                                        <span class="badge badge-pill py-1 px-2 mt-2 small bg-gray">{{ $company->code }}</span>
+                                    @endif
+                                @endforeach
+                            </td>
                             <td class="text-right">
                                 <a href="/purpose/{{ $item->id }}/edit" class="btn btn-link btn-sm d-inline-block">Edit</a>
                                 <form action="/purpose/{{ $item->id }}" method="post" class="d-inline-block">
