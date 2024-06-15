@@ -222,13 +222,15 @@
                                         @if ($config_confidential)
                                             -
                                         @else
-                                            {{ $item->payee }}
+                                            {{ $item->vendor_id ? $item->vendor->name : $item->payee }}
                                         @endif
                                     </td>
                                     <td>
                                         @if ($config_confidential)
                                             -
                                         @else
+                                            {{ $item->purpose_option_id ? $item->purposeOption->code.' - '.$item->purposeOption->name : '-'}}
+                                            <br>
                                             {{ $item->purpose }}
                                         @endif
                                     </td>
