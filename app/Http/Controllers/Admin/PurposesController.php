@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\PurposeOption;
+use App\Company;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -17,7 +18,10 @@ class PurposesController extends Controller {
     }
 
     public function create() {
-        return view('pages.admin.purpose.create');
+        $companies = Company::orderBy('name', 'asc')->get();
+        return view('pages.admin.purpose.create')->with([
+            'companies' => $companies
+        ]);
     }
 
     public function store(Request $request) {
@@ -35,8 +39,11 @@ class PurposesController extends Controller {
     }
 
     public function edit(PurposeOption $purpose) {
+        $companies = Company::orderBy('name', 'asc')->get();
+
         return view('pages.admin.purpose.edit')->with([
-            'purpose' => $purpose
+            'purpose' => $purpose,
+            'companies' => $companies
         ]);
     }
 

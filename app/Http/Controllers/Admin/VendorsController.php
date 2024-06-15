@@ -32,9 +32,13 @@ class VendorsController extends Controller {
             'account_bank' => ['required'],
             'account_name' => ['required'],
             'account_number' => ['required'],
-            'file' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'product' => ['required'],
+            'description' => ['required'],
+            'file' => ['mimes:jpeg,png,jpg,pdf', 'max:6048'],
         ]);
-        $data['file'] = basename($request->file('file')->store('public/attachments/2303'));
+        if ($request->file('file')) {
+            $data['file'] = basename($request->file('file')->store('public/attachments/2303'));
+        }
         $data['owner_id'] = auth()->id();
         $data['updated_id'] = auth()->id();
 
@@ -60,6 +64,8 @@ class VendorsController extends Controller {
             'account_bank' => ['required'],
             'account_name' => ['required'],
             'account_number' => ['required'],
+            'product' => ['required'],
+            'description' => ['required'],
             'file' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
         ]);
 

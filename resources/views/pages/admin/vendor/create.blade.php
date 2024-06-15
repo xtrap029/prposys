@@ -67,10 +67,22 @@
                         @include('errors.inline', ['message' => $errors->first('account_number')])
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="">2303</label>
-                    <input type="file" name="file" class="form-control-file @error('file') is-invalid @enderror" required>
-                    @include('errors.inline', ['message' => $errors->first('file')])
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="">Product</label>
+                        <input type="text" class="form-control @error('product') is-invalid @enderror" name="product" value="{{ old('product') }}" required>
+                        @include('errors.inline', ['message' => $errors->first('product')])
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="">Description</label>
+                        <input type="text" class="form-control @error('description') is-invalid @enderror" name="description" value="{{ old('description') }}" required>
+                        @include('errors.inline', ['message' => $errors->first('description')])
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="">2303</label>
+                        <input type="file" name="file" class="form-control-file @error('file') is-invalid @enderror">
+                        @include('errors.inline', ['message' => $errors->first('file')])
+                    </div>
                 </div>
                 <a href="/vendor">Cancel</a>
                 <input type="submit" class="btn btn-primary float-right" value="Save">

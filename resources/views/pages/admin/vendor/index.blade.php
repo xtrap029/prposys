@@ -17,17 +17,19 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th colspan="3">List</th>
+                        <th colspan="4">List</th>
                         <th class="text-right"><a href="/vendor/create">Create</a></th>
                     </tr>
-                </thead>
                 <tbody>
+                </thead>
                     @forelse ($vendors as $item)
                         <tr>
                             <td>
                                 <b>{{ $item->name }}</b><br>
                                 Address: {{ $item->address }}<br>
-                                File: <a href="/storage/public/attachments/2303/{{ $item->file }}" target="_blank">2303</a>
+                                @if ($item->file)
+                                    File: <a href="/storage/public/attachments/2303/{{ $item->file }}" target="_blank">2303</a>
+                                @endif
                             </td>
                             <td>
                                 Contact Person: {{ $item->contact_person }}<br>
@@ -38,6 +40,10 @@
                                 Bank: {{ $item->account_bank }}<br>
                                 Name: {{ $item->account_name }}<br>
                                 No.: {{ $item->account_number }}<br>
+                            </td>
+                            <td>
+                                Product: {{ $item->product }}<br>
+                                Description: {{ $item->description }}<br>
                             </td>
                             <td class="text-right">
                                 <a href="/vendor/{{ $item->id }}/edit" class="btn btn-link btn-sm d-inline-block">Edit</a>

@@ -22,6 +22,8 @@ class Vendor extends Model {
         'account_bank',
         'account_name',
         'account_number',
+        'product',
+        'description',
     ];
     protected static $logName = 'Vendor';
     protected static $logOnlyDirty = true;
