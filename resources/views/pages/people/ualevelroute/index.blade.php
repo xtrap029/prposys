@@ -13,11 +13,7 @@
         </div>
     </section>
     <section class="content">
-        <div class="container-fluid">
-            <form action="" method="post">
-                @csrf
-                @method('put')                
-                <input type="submit" class="btn btn-block btn-primary mb-3" value="Save Changes">
+        <div class="container-fluid">             
                 <div style="
                     overflow-x:auto;
                     max-height: 80vh;
@@ -49,26 +45,30 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($ua_routes as $route)
+                            @foreach ($ua_routes as $key => $route)
                                 <tr class="{{ in_array($route->code, config('global.hidden_route_option')) ? 'd-none' : '' }}">
                                     <td 
-                                        style="width: 250px;
-                                            min-width: 250px;
-                                            position: sticky;
-                                            left: 0;
-                                            background-color: white;"
-                                    >{{ $route->name }}</td>
+                                        class="text--auto-expand"
+                                        label="{{ $route->name }}"
+                                    >
+                                        <form action="" method="post" id="form{{ $key }}">
+                                            @csrf
+                                            @method('put')   
+                                            <input type="submit" class="btn btn-xs btn-primary vlign--top mr-2" value="Save">
+                                            {{ $route->name }}
+                                        </form>
+                                    </td>
                                     @foreach ($ua_levels as $level)
                                         @if ($level->id != config('global.ua_inactive'))
                                             <td class="p-1 vlign--middle" style="min-width: 150px;">
-                                                <input type="hidden" name="route[]" value="{{ $route->id }}">
-                                                <input type="hidden" name="level[]" value="{{ $level->id }}">
+                                                <input type="hidden" form="form{{ $key }}" name="route[]" value="{{ $route->id }}">
+                                                <input type="hidden" form="form{{ $key }}" name="level[]" value="{{ $level->id }}">
                                                 <?php
                                                     $selected = '';
                                                     $column = $ua_level_routes->where('ua_route_id', $route->id)->where('ua_level_id', $level->id);
                                                     if ($column->count() > 0) $selected = $column->first()->ua_route_option_id;
                                                 ?>  
-                                                <select name="option[]" class="form-control form-control-sm m-auto">
+                                                <select name="option[]" form="form{{ $key }}" class="form-control form-control-sm m-auto">
                                                     @foreach ($ua_options as $option)
                                                         @if (!$route->is_yesno || in_array($option->id, config('global.is_yesno_id')))
                                                             <option value="{{ $option->id }}" {{ $selected == $option->id ? 'selected' : '' }}>
@@ -91,7 +91,26 @@
                         </tbody>
                     </table>
                 </div>
-            </form>
+            
         </div>
     </section>
+@endsection
+
+@section('style')
+    <style>
+        .text--auto-expand {
+            width: 250px;
+            min-width: 250px;
+            position: sticky;
+            left: 0;
+            background-color: white;
+            white-space: nowrap;
+            overflow: hidden;
+            max-width: 250px;
+            text-overflow: ellipsis;
+        }
+        .text--auto-expand:hover {
+            max-width: unset;
+        }
+    </style>
 @endsection
