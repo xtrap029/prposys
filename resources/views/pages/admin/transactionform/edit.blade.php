@@ -194,7 +194,7 @@
                 </div>
                 <div class="form-row">
                     <div class="col-md-4 mb-2">
-                        <label for="">Statement of Account/Invoice/Form</label>
+                        <label for="">Statement of Account / Billing / Quotation</label>
                         @if ($transaction->soa)
                             <a href="/storage/public/attachments/soa/{{ $transaction->soa }}" target="_blank" class="vlign--top ml-1">
                                 <i class="material-icons mr-2 align-bottom">attachment</i>

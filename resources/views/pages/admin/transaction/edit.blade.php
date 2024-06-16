@@ -177,7 +177,7 @@
                 </div>
                 {{-- <div class="form-row mb-3">
                     <div class="col-sm-4 col-lg-4 mb-2">
-                        <label for="">Statement of Account/Invoice/Form</label>
+                        <label for="">Statement of Account / Billing / Quotation</label>
                         @if ($transaction->soa)
                             <a href="/storage/public/attachments/soa/{{ $transaction->soa }}" target="_blank" class="vlign--top ml-1">
                                 <i class="material-icons mr-2 align-bottom">attachment</i>
@@ -196,7 +196,7 @@
                         @include('errors.inline', ['message' => $errors->first('is_deposit')])
                     </div> --}}
                     <div class="col-md-12 jsReplicate mt-5 pt-5">
-                        <h4 class="text-center">Statement of Account/Invoice/Form</h4>
+                        <h4 class="text-center">Statement of Account / Billing / Quotation</h4>
                         <div class="text-center mb-3">Attach receipts and documents here. Accepts .jpg, .png and .pdf file types, not more than 5mb each.</div>
                         <div class="table-responsive">
                             <table class="table bg-white" style="min-width: 1000px">
