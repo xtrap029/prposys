@@ -666,6 +666,7 @@ class TransactionsFormsController extends Controller {
             'currency' => ['required'],
             'due_at' => ['required', 'date'],
             'cost_control_no' => [],
+            'bill_statement_no' => [],
             'requested_id' => ['required', 'exists:users,id'],
             'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
             'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
@@ -681,7 +682,7 @@ class TransactionsFormsController extends Controller {
         // validate input
         $data = $request->validate($validation);
 
-        if ($trans_category != config('global.trans_category')[2]) {
+        if (!in_array($trans_category, [config('global.trans_category')[1], config('global.trans_category')[2]])) {
             $data['bill_statement_no'] = '';
         }
 

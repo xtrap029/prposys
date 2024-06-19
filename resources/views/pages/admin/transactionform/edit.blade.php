@@ -518,12 +518,18 @@
             if ("{{ $transaction->is_bills }}" === "1") {
                 $('#bill_statement_no').parent().removeClass('d-none')
                 $('#bill_statement_no').attr('required', 'true')
+            } else if ("{{ $transaction->is_deposit }}" === "1") {
+                $('#bill_statement_no').parent().removeClass('d-none')
+                $('#bill_statement_no').removeAttr('required')
             }
 
             $('.trans-category').change(function() {
                 if ($(this).val() == "{{ config('global.trans_category')[2] }}") {
                     $('#bill_statement_no').parent().removeClass('d-none')
                     $('#bill_statement_no').attr('required', 'true')
+                } else if ($(this).val() == "{{ config('global.trans_category')[1] }}") {
+                    $('#bill_statement_no').parent().removeClass('d-none')
+                    $('#bill_statement_no').removeAttr('required')
                 } else {
                     $('#bill_statement_no').removeAttr('required')
                     $('#bill_statement_no').parent().addClass('d-none')

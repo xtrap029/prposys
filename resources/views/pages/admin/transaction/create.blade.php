@@ -352,6 +352,9 @@
                 if ($(this).val() == "{{ config('global.trans_category')[2] }}") {
                     $('#bill_statement_no').parent().parent().removeClass('d-none')
                     $('#bill_statement_no').attr('required', 'true')
+                } else if ($(this).val() == "{{ config('global.trans_category')[1] }}") {
+                    $('#bill_statement_no').parent().parent().removeClass('d-none')
+                    $('#bill_statement_no').removeAttr('required')
                 } else {
                     $('#bill_statement_no').removeAttr('required')
                     $('#bill_statement_no').parent().parent().addClass('d-none')

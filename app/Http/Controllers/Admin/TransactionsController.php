@@ -497,7 +497,7 @@ class TransactionsController extends Controller {
             
             $data = $request->validate($validation);
 
-            if ($trans_category != config('global.trans_category')[2]) {
+            if (!in_array($trans_category, [config('global.trans_category')[1], config('global.trans_category')[2]])) {
                 $data['bill_statement_no'] = '';
             }
 
@@ -571,25 +571,6 @@ class TransactionsController extends Controller {
         } else {
             $data['trans_seq'] = 1;
         }
-        
-        // if ($data['cost_type_id']) {
-        //     $latest_cost = Transaction::whereHas('project', function($query) use($trans_company) {
-        //             $query->where('company_id', $trans_company);
-        //         })
-        //         ->orderBy('cost_seq', 'desc')->first();
-    
-        //     if ($latest_cost->cost_seq) {
-        //         $latest_cost_seq = $latest_cost->cost_seq + 1;
-        //     } else {
-        //         $latest_cost_seq = 1;
-        //     }
-
-        //     $data['cost_seq'] = $latest_cost_seq;
-
-        //     $project = CompanyProject::where('id', $data['project_id'])->first();
-        //     $cost_type = CostType::find($data['cost_type_id']);
-        //     $data['cost_control_no'] = $project->company->qb_code.'.'.$project->company->qb_no.$cost_type->control_no.'.'.sprintf("%03d", $data['cost_seq']).'.'.config('global.cost_control_v');
-        // }
 
         $data['owner_id'] = auth()->id();
         $data['updated_id'] = auth()->id();
@@ -731,6 +712,7 @@ class TransactionsController extends Controller {
         $validation = [
             'amount' => ['required', 'min:0'],
             'currency' => ['required'],
+            'bill_statement_no' => [],
             'purpose_option_id' => ['required', 'exists:purpose_options,id'],
             'vendor_id' => ['required', 'exists:vendors,id'],
             'purpose' => ['required'],
@@ -750,7 +732,7 @@ class TransactionsController extends Controller {
 
         $data = $request->validate($validation);
 
-        if ($trans_category != config('global.trans_category')[2]) {
+        if (!in_array($trans_category, [config('global.trans_category')[1], config('global.trans_category')[2]])) {
             $data['bill_statement_no'] = '';
         }
 

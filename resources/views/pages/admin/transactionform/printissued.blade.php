@@ -76,10 +76,10 @@
                                             <td class="font-weight-bold">Payor</td>
                                             <td>{{ $transaction->vendor_id ? $transaction->vendor->name : $transaction->payee }}</td>
                                         </tr>
-                                        @if ($transaction->is_bills == 1)
+                                        @if ($transaction->is_bills == 1 || $transaction->is_deposit == 1)
                                             <tr>
                                                 <td class="font-weight-bold">Bill/Statement No.</td>
-                                                <td>{{ $transaction->bill_statement_no }}</td>
+                                                <td>{{ $transaction->bill_statement_no ?: '-' }}</td>
                                             </tr>
                                         @endif
                                     </table>
