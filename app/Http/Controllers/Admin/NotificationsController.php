@@ -93,6 +93,15 @@ class NotificationsController extends Controller {
         if ($transaction->status_id == config('global.form_issued')[0]) {
             $cc = Settings::where('type', 'SEQUENCE_ISSUED_NOTIFY_CC')->first()->value;
             
+            if ($transaction->vendor_id && !$transaction->is_reimbursement && $transaction->issue_slip) {             
+                Mail::queue(new \App\Mail\NotificationsIssuedVendorMail([
+                    'to' => $transaction->vendor->email,
+                    'name' => $transaction->vendor->name,
+                    'url' => env('APP_URL').'/storage/public/attachments/issue_slip/'.$transaction->issue_slip,
+                    'cc' => explode(';', $cc),
+                ]));
+            }
+            
             return Mail::queue(new \App\Mail\NotificationsIssuedMail([
                 'to' => $transaction->requested->email,
                 'name' => $transaction->requested->name,
