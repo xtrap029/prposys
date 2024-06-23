@@ -17,14 +17,45 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th colspan="4">List</th>
+                        <th colspan="4">
+                            <div class="form-row">
+                                <div class="dropdown show pr-2">
+                                    <a class="btn btn-sm btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        @if (app('request')->input('company'))
+                                            {{ $companies->find(app('request')->input('company'))->code }}
+                                        @else
+                                            Select Company 
+                                        @endif
+                                    </a>
+                                  
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                        <a class="dropdown-item" href="/purpose">Select Company</a>
+                                        @foreach ($companies as $company)
+                                            <a class="dropdown-item" href="?company={{ $company->id }}">{{ $company->code }}</a>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                @if (app('request')->input('company'))
+                                    <form action="purpose/batch" id="purposeCompanyForm" method="post">
+                                        @csrf
+                                        <input type="hidden" name="company_id" value="{{ app('request')->input('company') }}">
+                                        <input type="submit" class="btn btn-sm btn-primary" value="Save">
+                                    </form>
+                                @endif
+                            </div>
+                        </th>
                         <th class="text-right"><a href="/purpose/create">Create</a></th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($purposes as $item)
                         <tr>
-                            <td>{{ $item->code }}</td>
+                            <td>
+                                @if (app('request')->input('company'))
+                                    <input type="checkbox" name="purpose[]" form="purposeCompanyForm" value="{{ $item->id }}" class="vlign--middle mr-2 p-3" {{ in_array(app('request')->input('company'), explode(',', $item->companies)) ? 'checked' : '' }}>
+                                @endif
+                                {{ $item->code }}
+                            </td>
                             <td>{{ $item->name }}</td>
                             <td>{{ $item->description }}</td>
                             <td>

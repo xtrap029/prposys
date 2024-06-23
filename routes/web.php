@@ -135,7 +135,8 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
 
     // Seq Purpose Options
     Route::middleware('CheckUserAccess:seq_purpose')->group(function () {
-        Route::resource('purpose', 'Admin\PurposesController', ['names' => ['index' => 'purpose', 'create' => 'purpose', 'edit' => 'purpose']]);        
+        Route::resource('purpose', 'Admin\PurposesController', ['names' => ['index' => 'purpose', 'create' => 'purpose', 'edit' => 'purpose']]); 
+        Route::post('purpose/batch', 'Admin\PurposesController@batch');
     });
     
     // Seq Vendors

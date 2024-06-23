@@ -71,6 +71,33 @@ class PurposesController extends Controller {
         return redirect('/purpose')->with('success', 'Purpose'.__('messages.edit_success'));
     }
 
+    public function batch(Request $request) {
+        $data = $request->validate([
+            'company_id' => ['required', 'exists:companies,id'],
+            'purpose.*' => ['required', 'exists:purpose_options,id'],
+        ]);
+
+        foreach (PurposeOption::get() as $item) {
+            if (in_array($item->id, $data['purpose'])) {
+                if (!in_array($data['company_id'], explode(',', $item->companies))) {
+                    $purpose_companies = implode(',', array_merge(explode(',', $item->companies), [$data['company_id']]));
+                    $purpose_option = PurposeOption::find($item->id)->update([
+                        'companies' => $purpose_companies
+                    ]);
+                }
+            } else {
+                if (in_array($data['company_id'], explode(',', $item->companies))) {
+                    $purpose_companies =  implode(',', array_diff(explode(',', $item->companies), [$data['company_id']]));
+                    $purpose_option = PurposeOption::find($item->id)->update([
+                        'companies' => $purpose_companies
+                    ]);
+                }
+            }         
+        }
+        
+        return redirect('/purpose')->with('success', 'Purpose'.__('messages.edit_success'));
+    }
+
     public function destroy(PurposeOption $purpose) {
         $purpose->updated_id = auth()->id();
         $purpose->save();
