@@ -101,7 +101,6 @@ class NotificationsController extends Controller {
                     'cc' => array_filter(explode(';', $cc)),
                 ]));
             }
-            dd(env('MAIL_USERNAME'));
             
             return Mail::queue(new \App\Mail\NotificationsIssuedMail([
                 'to' => $transaction->requested->email,
