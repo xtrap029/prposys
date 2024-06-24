@@ -41,7 +41,7 @@ class NotificationsController extends Controller {
                     'no' => strtoupper($value->trans_type)."-".$value->trans_year."-".sprintf('%05d',$value->trans_seq),
                     'purpose' => $value->purpose,
                     'amount' => $value->amount,
-                    'cc' => explode(';', $cc),
+                    'cc' => array_filter(explode(';', $cc)),
                 ]));
             }
 
@@ -79,7 +79,7 @@ class NotificationsController extends Controller {
                     'no' => strtoupper($value->trans_type)."-".$value->trans_year."-".sprintf('%05d',$value->trans_seq),
                     'purpose' => $value->purpose,
                     'amount' => $value->amount,
-                    'cc' => explode(';', $cc),
+                    'cc' => array_filter(explode(';', $cc)),
                 ]));
             }
 
@@ -98,7 +98,7 @@ class NotificationsController extends Controller {
                     'to' => $transaction->vendor->email,
                     'name' => $transaction->vendor->name,
                     'url' => env('APP_URL').'/storage/public/attachments/issue_slip/'.$transaction->issue_slip,
-                    'cc' => explode(';', $cc),
+                    'cc' => array_filter(explode(';', $cc)),
                 ]));
             }
             
@@ -110,7 +110,7 @@ class NotificationsController extends Controller {
                 'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
                 'purpose' => $transaction->purpose,
                 'amount' => $transaction->amount,
-                'cc' => explode(';', $cc),
+                'cc' => array_filter(explode(';', $cc)),
             ]));
         } else {
             return abort(401);
