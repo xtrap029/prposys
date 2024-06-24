@@ -101,6 +101,7 @@ class NotificationsController extends Controller {
                     'cc' => array_filter(explode(';', $cc)),
                 ]));
             }
+            dd(env('MAIL_USERNAME'));
             
             return Mail::queue(new \App\Mail\NotificationsIssuedMail([
                 'to' => $transaction->requested->email,
@@ -110,7 +111,7 @@ class NotificationsController extends Controller {
                 'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
                 'purpose' => $transaction->purpose,
                 'amount' => $transaction->amount,
-                // 'cc' => array_filter(explode(';', $cc)),
+                'cc' => array_filter(explode(';', $cc)),
             ]));
         } else {
             return abort(401);
