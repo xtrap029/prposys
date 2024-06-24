@@ -59,7 +59,7 @@
                                 @endif
                                 {{ $item->code }}
                             </td>
-                            <td>{{ $item->name }}</td>
+                            <td class="purpose-description">{{ $item->name }}</td>
                             <td class="purpose-description" title="{{ $item->description }}">{{ $item->description }}</td>
                             <td>
                                 @foreach ($companies as $company)
@@ -90,8 +90,8 @@
 
 @section('style')
     <style>
-        .purpose-description {
-            max-width: 150px;
+        .purpose-shorten {
+            max-width: 200px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
