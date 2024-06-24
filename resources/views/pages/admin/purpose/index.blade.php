@@ -19,6 +19,9 @@
                     <tr>
                         <th colspan="4">
                             <div class="form-row">
+                                @if (app('request')->input('company'))
+                                    <input type="checkbox" id="purposeAll" class="vlign--middle ml-1 mr-2 p-3">
+                                @endif
                                 <div class="dropdown show pr-2">
                                     <a class="btn btn-sm btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         @if (app('request')->input('company'))
@@ -52,7 +55,7 @@
                         <tr>
                             <td>
                                 @if (app('request')->input('company'))
-                                    <input type="checkbox" name="purpose[]" form="purposeCompanyForm" value="{{ $item->id }}" class="vlign--middle mr-2 p-3" {{ in_array(app('request')->input('company'), explode(',', $item->companies)) ? 'checked' : '' }}>
+                                    <input type="checkbox" name="purpose[]" form="purposeCompanyForm" value="{{ $item->id }}" class="purposeOption vlign--middle mr-2 p-3" {{ in_array(app('request')->input('company'), explode(',', $item->companies)) ? 'checked' : '' }}>
                                 @endif
                                 {{ $item->code }}
                             </td>
@@ -83,4 +86,30 @@
             </table>
         </div>
     </section>
+@endsection
+
+@section('script')
+    <script type="text/javascript">
+        $(function() {
+            var purpose = $('#purposeAll')
+
+            verifyChecked()
+
+            purpose.click(() => {
+                $('.purposeOption').prop('checked', purpose.is(':checked'))
+            })
+            
+            $('.purposeOption').click(() => {
+                verifyChecked()
+            })
+
+            function verifyChecked() {
+                if ($('.purposeOption:checked').length == 0) {
+                    purpose.prop('checked', false)
+                } else if ($('.purposeOption').not(':checked').length == 0) {
+                    purpose.prop('checked', true)
+                }
+            }
+        })
+    </script>
 @endsection

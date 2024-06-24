@@ -77,6 +77,8 @@ class PurposesController extends Controller {
             'purpose.*' => ['required', 'exists:purpose_options,id'],
         ]);
 
+        $data['purpose'] = isset($data['purpose']) ? $data['purpose'] : [];
+
         foreach (PurposeOption::get() as $item) {
             if (in_array($item->id, $data['purpose'])) {
                 if (!in_array($data['company_id'], explode(',', $item->companies))) {
@@ -95,7 +97,7 @@ class PurposesController extends Controller {
             }         
         }
         
-        return redirect('/purpose')->with('success', 'Purpose'.__('messages.edit_success'));
+        return redirect('/purpose?company='.$data['company_id'])->with('success', 'Purpose'.__('messages.edit_success'));
     }
 
     public function destroy(PurposeOption $purpose) {
