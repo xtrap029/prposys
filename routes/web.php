@@ -15,6 +15,11 @@ Route::get('/',  function () {
     return redirect('/login');
 });
 
+Route::get('/clear-cache', function() {
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+});
+
 Route::get('/mail',  function () {
     Mail::queue(new \App\Mail\NotificationsAlmostDueMail([
         'to' => 'kmbarsana@gmail.com',
