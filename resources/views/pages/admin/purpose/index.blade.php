@@ -59,8 +59,8 @@
                                 @endif
                                 {{ $item->code }}
                             </td>
-                            <td class="purpose-description">{{ $item->name }}</td>
-                            <td class="purpose-description" title="{{ $item->description }}">{{ $item->description }}</td>
+                            <td class="purpose-shorten">{{ $item->name }}</td>
+                            <td class="purpose-shorten" title="{{ $item->description }}">{{ $item->description }}</td>
                             <td>
                                 @foreach ($companies as $company)
                                     @if (in_array($company->id, explode(',', $item->companies)))
