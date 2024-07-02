@@ -76,7 +76,7 @@
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold">Payor</td>
-                                    <td>{{ $transaction->vendor_id ? $transaction->vendor->name : $transaction->payee }}</td>
+                                    <td>{{ $transaction->is_deposit ? $transaction->payor : $transaction->project->company->name }}</td>
                                 </tr>
                                 @if ($transaction->is_bills == 1 || $transaction->is_deposit == 1)
                                     <tr>

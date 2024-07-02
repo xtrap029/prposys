@@ -405,7 +405,7 @@
                                     @endif
                                     <tr>
                                         <td class="font-weight-bold text-gray">{{ !$transaction->is_reimbursement ? 'Payor' : 'Payee' }}</td>
-                                        <td class="font-weight-bold">{{ $transaction->payor ?: 'n/a' }}</td>
+                                        <td class="font-weight-bold">{{ $transaction->payor ?: $transaction->project->company->name }}</td>
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Category / Class</td>

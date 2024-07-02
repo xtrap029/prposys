@@ -434,7 +434,7 @@
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Payor</td>
-                                        <td class="font-weight-bold">{{ $transaction->vendor_id ? $transaction->vendor->name : $transaction->payee }}</td>
+                                        <td class="font-weight-bold">{{ $transaction->is_deposit ? $transaction->payor : $transaction->project->company->name }}</td>
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Tax Type</td>

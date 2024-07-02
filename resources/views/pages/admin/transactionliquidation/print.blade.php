@@ -112,7 +112,7 @@
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold">{{ !$transaction->is_reimbursement ? 'Payor' : 'Payee' }}</td>
-                                    <td>{{ $transaction->payor ?: 'n/a' }}</td>
+                                    <td>{{ $transaction->payor ?: $transaction->project->company->name }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold">Transaction Category</td>
