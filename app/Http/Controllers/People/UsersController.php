@@ -17,15 +17,42 @@ class UsersController extends Controller {
 
     public function index() {
         $users = User::orderBy('name', 'asc');
-        
-        if (!isset($_GET['all'])) {
+
+        if (!empty($_GET['s'])
+            || !empty($_GET['status'])
+            || !empty($_GET['level'])
+            || !empty($_GET['is_accounting'])) {
+
+            $key = $_GET['s'];
+            
+            $users = $users->where(static function ($query) use ($key) {
+                $query->where('name', 'like', "%{$key}%")
+                    ->orWhere('email', 'like', "%{$key}%")
+                    ->orWhere('e_emp_no', 'like', "%{$key}%");
+            });
+
+            if ($_GET['status'] != "") {
+                if ($_GET['status'] == 2) $users = $users->where('ua_level_id', '=', config('global.ua_inactive'));
+            }
+
+            if ($_GET['level'] != "") $users = $users->where('ua_level_id', '=', $_GET['level']);
+
+            if ($_GET['is_accounting'] != "") {
+                if ($_GET['is_accounting'] == 1) $users = $users->where('is_accounting', '=', 1);
+                else if ($_GET['is_accounting'] == 2) $users = $users->where('is_accounting', '=', 0);
+            }
+
+            $users = $users->paginate(10);
+
+            $users->appends(['s' => $_GET['s']]);
+            $users->appends(['status' => $_GET['status']]);
+            $users->appends(['levle' => $_GET['level']]);
+            $users->appends(['is_accounting' => $_GET['is_accounting']]);
+        } else {
             $users = $users->where('ua_level_id', '!=', config('global.ua_inactive'));
+            $users = $users->paginate(10);
         }
 
-        $users = $users->paginate(10);
-        if (!empty($_GET['all'])) {
-            $users->appends(['all' => $_GET['all']]);
-        }
 
         $levels = UaLevel::orderBy('order', 'asc')->get();
         $travel_roles = TravelRole::orderBy('id', 'asc')->get();
