@@ -3,6 +3,7 @@
 @include('layouts.sections.head')
 
 <body class="sidebar-mini layout-footer-fixed">
+    @include('layouts.sections.dev')
     <div class="wrapper">
 
         @include('layouts.sections.nav')

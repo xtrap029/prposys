@@ -22,7 +22,7 @@
     @yield('style')
 </head>
 <body style="@yield('bodystyle', '')">
-    
+    @include('layouts.sections.dev')
     <div class="wrapper">
         @include('flashmessage')                
         @yield('content')
