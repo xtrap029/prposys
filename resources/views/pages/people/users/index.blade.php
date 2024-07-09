@@ -86,6 +86,7 @@
                                 @endforeach
                             </td>
                             <td class="align-middle text-right">
+                                <a href="/user/{{ $item->id }}" class="btn btn-link btn-sm">View</a>
                                 <a href="/user/{{ $item->id }}/edit" class="btn btn-link btn-sm">Edit</a>
                             </td>
                         </tr>

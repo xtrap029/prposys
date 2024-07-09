@@ -187,6 +187,20 @@ class UsersController extends Controller {
         return redirect('/user')->with('success', 'User'.__('messages.create_success'));
     }
 
+    public function show(User $user) {
+        $allowed_companies = explode(',', $user->companies);
+        $companies = Company::whereIn('id', $allowed_companies)->orderBy('name', 'asc')->get();
+        $roles = Role::orderBy('id', 'desc')->get();
+        $travel_roles = TravelRole::orderBy('id', 'desc')->get();
+
+        return view('pages.people.users.show')->with([
+            'companies' => $companies,
+            'user' => $user,
+            'roles' => $roles,
+            'travel_roles' => $travel_roles,
+        ]);
+    }
+
     public function edit(User $user) {
         $roles = Role::orderBy('id', 'desc')->get();
         $companies = Company::orderBy('name', 'asc')->get();

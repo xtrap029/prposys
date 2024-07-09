@@ -180,7 +180,7 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
     
     // Peo User
     Route::middleware('CheckUserAccess:peo_user')->group(function () {
-        Route::resource('user', 'People\UsersController', ['names' => ['index' => 'user', 'create' => 'user', 'edit' => 'user']]);
+        Route::resource('user', 'People\UsersController', ['names' => ['index' => 'user', 'show' => 'user', 'create' => 'user', 'edit' => 'user']]);
     });
 
     // Peo Announcement
