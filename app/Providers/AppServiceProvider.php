@@ -52,5 +52,12 @@ class AppServiceProvider extends ServiceProvider
         config(['global.site_login_greeting' => preg_split("/\\r\\n|\\r|\\n/",\App\Settings::where('type', 'SITE_LOGIN_GREETING')->first()->value)]);
 
         config(['global.site_app_externals' => \App\AppExternal::orderBy('id', 'asc')->get()]);
+
+        config(['global.max_t_file' => (\App\Settings::where('type', 'MAX_T_FILE')->first()->value/1024).'mb']);
+        config(['global.max_tf_reimbursement' => (\App\Settings::where('type', 'MAX_TF_REIMBURSEMENT')->first()->value/1024).'mb']);
+        config(['global.max_tf_issue' => (\App\Settings::where('type', 'MAX_TF_ISSUE')->first()->value/1024).'mb']);
+        config(['global.max_tl_file' => (\App\Settings::where('type', 'MAX_TL_FILE')->first()->value/1024).'mb']);
+        config(['global.max_tl_deposit' => (\App\Settings::where('type', 'MAX_TL_DEPOSIT')->first()->value/1024).'mb']);
+        config(['global.max_vendor' => (\App\Settings::where('type', 'MAX_VENDOR')->first()->value/1024).'mb']);
     }
 }

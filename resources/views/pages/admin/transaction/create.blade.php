@@ -215,7 +215,7 @@
                     </div> --}}
                     <div class="col-12 jsReplicate mt-5 pt-5">
                         <h4 class="text-center">Statement of Account / Billing / Quotation</h4>
-                        <div class="text-center mb-3">Attach receipts and documents here. Accepts .jpg, .png and .pdf file types, not more than 5mb each.</div>
+                        <div class="text-center mb-3">Attach receipts and documents here. Accepts .jpg, .png and .pdf file types, not more than {{ config('global.max_t_file') }} each.</div>
                         <div class="table-responsive">
                             <table class="table bg-white" style="min-width: 1000px">
                                 <thead>

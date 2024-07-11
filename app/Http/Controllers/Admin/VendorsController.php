@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Vendor;
+use App\Settings;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -34,7 +35,7 @@ class VendorsController extends Controller {
             'account_number' => ['required'],
             'product' => ['required'],
             'description' => ['required'],
-            'file' => ['mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'file' => ['mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_VENDOR')->select('value')->first()->value],
         ]);
         if ($request->file('file')) {
             $data['file'] = basename($request->file('file')->store('public/attachments/2303'));
@@ -66,7 +67,7 @@ class VendorsController extends Controller {
             'account_number' => ['required'],
             'product' => ['required'],
             'description' => ['required'],
-            'file' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'file' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_VENDOR')->select('value')->first()->value],
         ]);
 
         if($request->file('file')) {

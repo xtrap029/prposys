@@ -486,7 +486,7 @@ class TransactionsController extends Controller {
                 'due_at' => ['required', 'date'],
                 'requested_id' => ['required', 'exists:users,id'],
                 'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
-                'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
+                'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_T_FILE')->select('value')->first()->value],
                 'is_confidential' => ['required', 'between:0,1'],
                 'is_confidential_own' => ['required', 'between:0,1'],
             ];
@@ -580,7 +580,7 @@ class TransactionsController extends Controller {
         $transaction = Transaction::create($data);
 
         $data_attach = $request->validate([
-            'file.*' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'file.*' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_T_FILE')->select('value')->first()->value],
             'attachment_description.*' => ['required']
         ]);
 
@@ -719,7 +719,7 @@ class TransactionsController extends Controller {
             'project_id' => ['required', 'exists:company_projects,id'],
             // 'payee' => ['required'],
             'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
-            'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_T_FILE')->select('value')->first()->value],
             'cost_control_no' => [],
             // 'cost_type_id' => ['nullable', 'exists:cost_types,id'],
         ];
@@ -737,7 +737,7 @@ class TransactionsController extends Controller {
         }
 
         $attach_liq = $request->validate([
-            'file.*' => ['mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'file_old.*' => ['mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_T_FILE')->select('value')->first()->value],
             'attachment_description_old.*' => ['required'],
             'attachment_description.*' => ['sometimes', 'required'],
             'attachment_id_old.*' => ['required']

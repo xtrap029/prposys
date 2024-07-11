@@ -193,7 +193,92 @@
                                         @include('errors.inline', ['message' => $errors->first('SEQUENCE_ISSUED_NOTIFY_CC')])
                                     </div>
                                 </div>
-                            @break                
+                            @break
+                            @case('MAX_T_FILE')
+                                <hr>
+                                <div class="form-row mb-3">
+                                    <div class="col-sm-6 col-md-4">
+                                        <label for="">Transaction: File Attachment/s</label>
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 align-self-end">
+                                        <label for="">Max (mb)</label>
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4">
+                                        <input type="number" class="form-control @error('MAX_T_FILE') is-invalid @enderror" name="MAX_T_FILE" value="{{ $item->value/1024 }}">
+                                        @include('errors.inline', ['message' => $errors->first('MAX_T_FILE')])
+                                    </div>
+                                </div>
+                            @break
+                            @case('MAX_TF_REIMBURSEMENT')
+                                <div class="form-row mb-3">
+                                    <div class="col-sm-6 col-md-4">
+                                        <label for="">Transaction Form: Reimbursement Attachment/s</label>
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 align-self-end">
+                                        <label for="">Max (mb)</label>
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4">
+                                        <input type="number" class="form-control @error('MAX_TF_REIMBURSEMENT') is-invalid @enderror" name="MAX_TF_REIMBURSEMENT" value="{{ $item->value/1024 }}">
+                                        @include('errors.inline', ['message' => $errors->first('MAX_TF_REIMBURSEMENT')])
+                                    </div>
+                                </div>
+                            @break
+                            @case('MAX_TF_ISSUE')
+                                <div class="form-row mb-3">
+                                    <div class="col-sm-6 col-md-4">
+                                        <label for="">Transaction Form: Issue Payment Attachment</label>
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 align-self-end">
+                                        <label for="">Max (mb)</label>
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4">
+                                        <input type="number" class="form-control @error('MAX_TF_ISSUE') is-invalid @enderror" name="MAX_TF_ISSUE" value="{{ $item->value/1024 }}">
+                                        @include('errors.inline', ['message' => $errors->first('MAX_TF_ISSUE')])
+                                    </div>
+                                </div>
+                            @break
+                            @case('MAX_TL_FILE')
+                                <div class="form-row mb-3">
+                                    <div class="col-sm-6 col-md-4">
+                                        <label for="">Transaction Liquidation: File Attachment/s</label>
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 align-self-end">
+                                        <label for="">Max (mb)</label>
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4">
+                                        <input type="number" class="form-control @error('MAX_TL_FILE') is-invalid @enderror" name="MAX_TL_FILE" value="{{ $item->value/1024 }}">
+                                        @include('errors.inline', ['message' => $errors->first('MAX_TL_FILE')])
+                                    </div>
+                                </div>
+                            @break
+                            @case('MAX_TL_DEPOSIT')
+                                <div class="form-row mb-3">
+                                    <div class="col-sm-6 col-md-4">
+                                        <label for="">Transaction Liquidation: Deposit Slip Attachment</label>
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 align-self-end">
+                                        <label for="">Max (mb)</label>
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4">
+                                        <input type="number" class="form-control @error('MAX_TL_DEPOSIT') is-invalid @enderror" name="MAX_TL_DEPOSIT" value="{{ $item->value/1024 }}">
+                                        @include('errors.inline', ['message' => $errors->first('MAX_TL_DEPOSIT')])
+                                    </div>
+                                </div>
+                            @break
+                            @case('MAX_VENDOR')
+                                <div class="form-row mb-3">
+                                    <div class="col-sm-6 col-md-4">
+                                        <label for="">Transaction Vendor: 2303 Attachment</label>
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4 text-right pr-md-5 align-self-end">
+                                        <label for="">Max (mb)</label>
+                                    </div>
+                                    <div class="col-6 col-sm-3 col-md-4">
+                                        <input type="number" class="form-control @error('MAX_VENDOR') is-invalid @enderror" name="MAX_VENDOR" value="{{ $item->value/1024 }}">
+                                        @include('errors.inline', ['message' => $errors->first('MAX_VENDOR')])
+                                    </div>
+                                </div>
+                            @break
                             @default
                     @endswitch            
                 @endforeach

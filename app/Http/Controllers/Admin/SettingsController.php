@@ -31,10 +31,18 @@ class SettingsController extends Controller {
             // 'LIMIT_EDIT_LIQFORM_USER_2' => ['required', 'integer'],
             // 'LIMIT_EDIT_LIQFORM_USER_3' => ['required', 'integer'],
             // 'LIMIT_EDIT_DEPOSIT_USER_2' => ['required', 'integer'],
+
             'AUTHORIZED_BY' => ['required', 'exists:users,id'],
             'SEQUENCE_ISSUED_NOTIFY_DAYS' => ['required', 'integer'],
             'SEQUENCE_ISSUED_NOTIFY_DAYS_2' => ['required', 'integer'],
             'SEQUENCE_ISSUED_NOTIFY_CC' => [],
+
+            'MAX_T_FILE' => ['required', 'integer'],
+            'MAX_TF_REIMBURSEMENT' => ['required', 'integer'],
+            'MAX_TF_ISSUE' => ['required', 'integer'],
+            'MAX_TL_FILE' => ['required', 'integer'],
+            'MAX_TL_DEPOSIT' => ['required', 'integer'],
+            'MAX_VENDOR' => ['required', 'integer'],
         ]);
 
         $cc_emails = [];
@@ -48,6 +56,16 @@ class SettingsController extends Controller {
         $data['SEQUENCE_ISSUED_NOTIFY_CC'] = implode(';', $cc_emails);
 
         foreach ($data as $key => $value) {
+            if (in_array($key, [
+                "MAX_T_FILE",
+                "MAX_TF_REIMBURSEMENT",
+                "MAX_TF_ISSUE",
+                "MAX_TL_FILE",
+                "MAX_TL_DEPOSIT",
+                "MAX_VENDOR"
+            ])) {
+                $value = $value*1024;
+            }
             $settings = Settings::where('type', $key)->first();
             $settings->update(['value' => $value]);
         }

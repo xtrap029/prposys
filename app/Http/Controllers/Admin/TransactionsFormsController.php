@@ -377,7 +377,7 @@ class TransactionsFormsController extends Controller {
         $data = $request->validate($validation);
 
         $data_attach = $request->validate([
-            'file.*' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'file.*' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_TF_REIMBURSEMENT')->select('value')->first()->value],
             'attachment_description.*' => ['required']
         ]);
 
@@ -669,7 +669,7 @@ class TransactionsFormsController extends Controller {
             'bill_statement_no' => [],
             'requested_id' => ['required', 'exists:users,id'],
             'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
-            'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_T_FILE')->select('value')->first()->value],
             // 'coa_notes' => ['nullable', 'string'],
         ];
 
@@ -814,7 +814,7 @@ class TransactionsFormsController extends Controller {
 
         // validate input
         $attach_liq = $request->validate([
-            'file.*' => ['mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'file.*' => ['mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_TF_REIMBURSEMENT')->select('value')->first()->value],
             'attachment_description_old.*' => ['required'],
             'attachment_description.*' => ['sometimes', 'required'],
             'attachment_id_old.*' => ['required']
@@ -994,7 +994,7 @@ class TransactionsFormsController extends Controller {
         // validate input
         $data = $request->validate([
             'form_company_id' => ['required', 'exists:companies,id'],
-            'depo_slip' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'depo_slip' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_TF_ISSUE')->select('value')->first()->value],
         ]);
 
         if ($request->file('depo_slip') && $data['form_company_id'] != $transaction->project->company_id) {
@@ -1232,11 +1232,11 @@ class TransactionsFormsController extends Controller {
             ];
 
             if ($transaction->is_reimbursement) {
-                $validation['depo_slip'] = ['required', 'mimes:jpeg,png,jpg,pdf,zip', 'max:6048'];
-                $issue_slip['issue_slip'] = ['sometimes', 'mimes:jpeg,png,jpg,pdf,zip', 'max:6048']; 
+                $validation['depo_slip'] = ['required', 'mimes:jpeg,png,jpg,pdf,zip', 'max:'.Settings::where('type', 'MAX_TF_ISSUE')->select('value')->first()->value];
+                $issue_slip['issue_slip'] = ['sometimes', 'mimes:jpeg,png,jpg,pdf,zip', 'max:'.Settings::where('type', 'MAX_TF_ISSUE')->select('value')->first()->value]; 
             } else {
-                $validation['issue_slip'] = ['required', 'mimes:jpeg,png,jpg,pdf,zip', 'max:6048'];
-                $issue_slip['depo_slip'] = ['sometimes', 'mimes:jpeg,png,jpg,pdf,zip', 'max:6048']; 
+                $validation['issue_slip'] = ['required', 'mimes:jpeg,png,jpg,pdf,zip', 'max:'.Settings::where('type', 'MAX_TF_ISSUE')->select('value')->first()->value];
+                $issue_slip['depo_slip'] = ['sometimes', 'mimes:jpeg,png,jpg,pdf,zip', 'max:'.Settings::where('type', 'MAX_TF_ISSUE')->select('value')->first()->value]; 
             }
 
             $data = $request->validate($validation);

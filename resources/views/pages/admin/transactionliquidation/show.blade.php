@@ -211,7 +211,7 @@
                                                         @include('errors.inline', ['message' => $errors->first('depo_date')])
                                                     </div>
                                                     <div class="mt-4 col-md-8">
-                                                        <label for="" class="font-weight-bold">Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than 5mb. )</small></label>
+                                                        <label for="" class="font-weight-bold">Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than {{ config('global.max_tl_deposit') }}. )</small></label>
                                                         <input type="file" name="depo_slip" class="form-control @error('depo_slip') is-invalid @enderror" required>
                                                         @include('errors.inline', ['message' => $errors->first('depo_slip')])
                                                     </div>
@@ -313,7 +313,7 @@
                                                     </div>
                                                     @if (!$transaction->is_deposit)
                                                         <div class="mt-4 col-md-8">
-                                                            <label for="" class="font-weight-bold">Replace Slip Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than 5mb. )</small></label>
+                                                            <label for="" class="font-weight-bold">Replace Slip Attachment <small>( Accepts .jpg, .png and .pdf file types, not more than {{ config('global.max_tl_deposit') }}. )</small></label>
                                                             <input type="file" name="depo_slip" class="form-control @error('depo_slip') is-invalid @enderror">
                                                             @include('errors.inline', ['message' => $errors->first('depo_slip')])
                                                         </div>

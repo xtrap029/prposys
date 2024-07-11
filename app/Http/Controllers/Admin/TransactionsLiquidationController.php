@@ -268,7 +268,7 @@ class TransactionsLiquidationController extends Controller {
         }
         
         $validate = [
-            'file.*' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'file.*' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_TL_FILE')->select('value')->first()->value],
             'attachment_description.*' => ['required']
         ];
 
@@ -496,7 +496,7 @@ class TransactionsLiquidationController extends Controller {
             'location.*' => ['required'],
             'receipt.*' => ['in:1,0'],
             'amount.*' => ['required', 'min:0'],
-            'file.*' => ['mimes:jpeg,png,jpg,pdf', 'max:6048'],
+            'file.*' => ['mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_TL_FILE')->select('value')->first()->value],
             'attachment_description_old.*' => ['required'],
             'attachment_description.*' => ['sometimes', 'required'],
             'attachment_id_old.*' => ['required']
@@ -701,7 +701,7 @@ class TransactionsLiquidationController extends Controller {
                     'depo_ref' => [],
                     'depo_received_by' => ['required'],
                     'depo_date' => ['required', 'date'],
-                    'depo_slip' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:6048']
+                    'depo_slip' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_TL_DEPOSIT')->select('value')->first()->value]
                 ]);
                 
                 $data['depo_slip'] = basename($request->file('depo_slip')->store('public/attachments/deposit_slip'));
@@ -975,7 +975,7 @@ class TransactionsLiquidationController extends Controller {
                 'depo_ref' => [],
                 'depo_received_by' => ['required'],
                 'depo_date' => ['required', 'date'],
-                'depo_slip' => ['mimes:jpeg,png,jpg,pdf', 'max:6048']
+                'depo_slip' => ['mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_TL_DEPOSIT')->select('value')->first()->value]
             ]);
 
             if ($request->file('depo_slip')) {
