@@ -100,7 +100,12 @@
                                         <a href="/user" class="nav-link {{ Route::currentRouteName() == 'user' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">face</i><p>User</p>
                                         </a>
-                                    </li>                                            
+                                    </li>     
+                                    <li class="nav-item {{ $ua['peo_user'] == $non ? 'd-none' : '' }}">
+                                        <a href="/user-attribute" class="nav-link {{ Route::currentRouteName() == 'userattribute' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">apps</i><p>User Attribute</p>
+                                        </a>
+                                    </li>                                                                                   
                                     <li class="nav-item {{ $ua['peo_ua_route'] == $non ? 'd-none' : '' }}">
                                         <a href="/ua-route" class="nav-link {{ Route::currentRouteName() == 'uaroute' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">route</i><p>User Route</p>

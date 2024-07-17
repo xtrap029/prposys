@@ -7,6 +7,7 @@ use App\Company;
 use App\Role;
 use App\TravelRole;
 use App\User;
+use App\UserAttribute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -19,12 +20,21 @@ class MyAccountController extends Controller {
         $user = User::where('id', auth()->id())->first();
         $roles = Role::orderBy('id', 'desc')->get();
         $travel_roles = TravelRole::orderBy('id', 'desc')->get();
+        $user_attributes = UserAttribute::orderBy('order', 'asc')->get();
+
+        $attributes = [];
+
+        foreach ($user->user_attribute as $key => $value) {
+            $attributes[$value->user_attribute->name] = $value->value;
+        }
 
         return view('pages.people.myaccount.index')->with([
             'companies' => $companies,
             'user' => $user,
             'roles' => $roles,
             'travel_roles' => $travel_roles,
+            'user_attributes' => $user_attributes,
+            'attributes' => $attributes,
         ]);
     }
 

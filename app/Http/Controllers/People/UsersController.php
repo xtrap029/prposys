@@ -8,6 +8,8 @@ use App\UaLevel;
 use App\TravelRole;
 use App\User;
 use App\UserTransactionLimit;
+use App\UserAttribute;
+use App\UsersUserAttribute;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -72,12 +74,14 @@ class UsersController extends Controller {
         $roles = Role::orderBy('id', 'desc')->get();
         $levels = UaLevel::orderBy('order', 'asc')->get();
         $travel_roles = TravelRole::orderBy('id', 'asc')->get();
+        $user_attributes = UserAttribute::orderBy('order', 'asc')->get();
 
         return view('pages.people.users.create')->with([
             'companies' => $companies,
             'roles' => $roles,
             'levels' => $levels,
             'travel_roles' => $travel_roles,
+            'user_attributes' => $user_attributes,
         ]);
     }
 
@@ -124,6 +128,8 @@ class UsersController extends Controller {
             'LIMIT_UNLIQUIDATEDPR_COMPANY_ID.*' => ['required', 'exists:companies,id'],
             'LIMIT_UNLIQUIDATEDPR_AMOUNT.*' => ['nullable', 'numeric'],
             'LIMIT_UNLIQUIDATEDPR_COUNT.*' => ['nullable', 'integer'],
+
+            'user_attr.*' => ['nullable'],
         ]);
 
         $data['apps'] = $request->app_control ? implode(",", $request->app_control) : "";
@@ -173,6 +179,16 @@ class UsersController extends Controller {
             'e_hmdf' => $data['e_hmdf'],
         ]);
 
+        foreach ($data['user_attr'] as $key => $value) {
+            UsersUserAttribute::create([
+                'user_id' => $user->id,
+                'user_attribute_id' => $key,
+                'value' => $value,
+                'owner_id' => auth()->id(),
+                'updated_id' => auth()->id(),
+            ]);
+        }
+
         foreach ($request->LIMIT_UNLIQUIDATEDPR_COMPANY_ID as $key => $value) {
             UserTransactionLimit::create([
                 'user_id' => $user->id,
@@ -192,12 +208,21 @@ class UsersController extends Controller {
         $companies = Company::whereIn('id', $allowed_companies)->orderBy('name', 'asc')->get();
         $roles = Role::orderBy('id', 'desc')->get();
         $travel_roles = TravelRole::orderBy('id', 'desc')->get();
+        $user_attributes = UserAttribute::orderBy('order', 'asc')->get();
+
+        $attributes = [];
+
+        foreach ($user->user_attribute as $key => $value) {
+            $attributes[$value->user_attribute->name] = $value->value;
+        }
 
         return view('pages.people.users.show')->with([
             'companies' => $companies,
             'user' => $user,
             'roles' => $roles,
             'travel_roles' => $travel_roles,
+            'user_attributes' => $user_attributes,
+            'attributes' => $attributes,
         ]);
     }
 
@@ -206,6 +231,13 @@ class UsersController extends Controller {
         $companies = Company::orderBy('name', 'asc')->get();
         $levels = UaLevel::orderBy('order', 'asc')->get();
         $travel_roles = TravelRole::orderBy('id', 'asc')->get();
+        $user_attributes = UserAttribute::orderBy('order', 'asc')->get();
+
+        $attributes = [];
+
+        foreach ($user->user_attribute as $key => $value) {
+            $attributes[$value->user_attribute->name] = $value->value;
+        }
 
         return view('pages.people.users.edit')->with([
             'user' => $user,
@@ -213,6 +245,8 @@ class UsersController extends Controller {
             'companies' => $companies,
             'levels' => $levels,
             'travel_roles' => $travel_roles,
+            'user_attributes' => $user_attributes,
+            'attributes' => $attributes,
         ]);
     }
 
@@ -257,6 +291,8 @@ class UsersController extends Controller {
             'LIMIT_UNLIQUIDATEDPR_COMPANY_ID.*' => ['required', 'exists:companies,id'],
             'LIMIT_UNLIQUIDATEDPR_AMOUNT.*' => ['nullable', 'numeric'],
             'LIMIT_UNLIQUIDATEDPR_COUNT.*' => ['nullable', 'integer'],
+
+            'user_attr.*' => ['nullable'],
         ];
 
         if ($request->password) {
@@ -297,6 +333,24 @@ class UsersController extends Controller {
                 'owner_id' => auth()->id(),
                 'updated_id' => auth()->id(),
             ]);
+        }
+        
+        foreach ($data['user_attr'] as $key => $value) {
+            $user_attribute_found = UsersUserAttribute::where('user_attribute_id', $key)->where('user_id', $user->id);
+
+            if ($user_attribute_found->count() > 0) {
+                $user_attribute_found->update([
+                    'value' => $value
+                ]);
+            } else {
+                UsersUserAttribute::create([
+                    'user_id' => $user->id,
+                    'user_attribute_id' => $key,
+                    'value' => $value,
+                    'owner_id' => auth()->id(),
+                    'updated_id' => auth()->id(),
+                ]);
+            }
         }
 
         return redirect('/user')->with('success', 'User'.__('messages.edit_success'));

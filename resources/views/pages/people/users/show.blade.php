@@ -215,6 +215,20 @@
                             </h6>
                         </div>
                     </div>
+
+                    <h5 class="my-4 text-right">Others</h5>
+                    <div class="form-row">
+                        <div class="form-group border p-0 mb-0 col-12">
+                            <table class="table table-bordered table-striped mb-0">
+                                @foreach ($user_attributes as $item)
+                                    <tr>
+                                        <td>{{ $item->name }}</td>
+                                        <td>{{ array_key_exists($item->name, $attributes) ? $attributes[$item->name] : '-' }}</td>
+                                    </tr>
+                                @endforeach
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

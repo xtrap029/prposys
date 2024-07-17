@@ -170,4 +170,8 @@ class User extends Authenticatable {
     public function transactionlimit() {
         return $this->hasMany(UserTransactionLimit::class);
     }
+
+    public function user_attribute() {
+        return $this->hasMany(UsersUserAttribute::class);
+    }
 }

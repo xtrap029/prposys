@@ -31,6 +31,9 @@
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="leaves-tab" data-toggle="tab" href="#leaves" role="tab" aria-controls="contact" aria-selected="false">Leaves</a>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="others-tab" data-toggle="tab" href="#others" role="tab" aria-controls="contact" aria-selected="false">Others</a>
+                    </li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active m-4" id="profile" role="tabpanel" aria-labelledby="profile-tab">
@@ -359,6 +362,14 @@
                         </div>
                     </div>
                     <div class="tab-pane fade m-4" id="leaves" role="tabpanel" aria-labelledby="leaves-tab">...</div>
+                    <div class="tab-pane fade m-4" id="others" role="tabpanel" aria-labelledby="others-tab">
+                        @foreach ($user_attributes as $item)
+                            <div class="form-group">
+                                <label for="">{{ $item->name }}</label>
+                                <input type="text" class="form-control" name="user_attr[{{ $item->id }}]" value="{{ array_key_exists($item->name, $attributes) ? $attributes[$item->name] : '' }}">
+                            </div>
+                        @endforeach
+                    </div>
                 </div>    
                 <div class="m-4">
                     <a href="/user">Cancel</a>

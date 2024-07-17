@@ -192,6 +192,11 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
             Route::post('/', $url.'@update')->name('people-announcement');
         });
     });
+
+    // Peo User Attributes
+    Route::middleware('CheckUserAccess:peo_user')->group(function () {
+        Route::resource('user-attribute', 'People\UserAttributesController', ['names' => ['index' => 'userattribute', 'create' => 'userattribute', 'edit' => 'userattribute']]);        
+    });
             
     // Peo Settings
     Route::middleware('CheckUserAccess:peo_settings')->group(function () {
