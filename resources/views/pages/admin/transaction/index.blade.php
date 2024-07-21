@@ -75,7 +75,7 @@
                         </select>
                     </div>
                     <div class="mb-2 col-md-4 col-xl-2">
-                        <select name="user_req" class="form-control filterSearch_select">
+                        <select name="user_req" class="form-control chosen-select filterSearch_select">
                             <option value="">Requested By</option>
                             @foreach ($users as $item)
                                 <option value="{{ $item->id }}" {{ app('request')->input('user_req') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
@@ -88,7 +88,7 @@
                         </select>
                     </div>
                     <div class="mb-2 col-md-4 col-xl-2">
-                        <select name="user_prep" class="form-control filterSearch_select">
+                        <select name="user_prep" class="form-control chosen-select filterSearch_select">
                             <option value="">Prepared By</option>
                             @foreach ($users as $item)
                                 <option value="{{ $item->id }}" {{ app('request')->input('user_prep') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
@@ -118,7 +118,7 @@
                         </div>
                     </div>
                     <div class="mb-2 col-md-2">
-                        <select name="project" class="form-control filterSearch_select">
+                        <select name="project" class="form-control chosen-select filterSearch_select">
                             <option value="">All Projects</option>
                             @foreach ($projects as $item)
                                 <option value="{{ $item->id }}" {{ app('request')->input('project') == $item->id ? 'selected' : '' }} class="bg-gray-light">{{ $item->project }}</option>
@@ -305,8 +305,15 @@
     </section>
 @endsection
 
+@section('style')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.css" integrity="sha512-0nkKORjFgcyxv3HbE4rzFUlENUMNqic/EzDIeYCgsKa/nwqr2B91Vu/tNAu4Q0cBuG4Xe/D1f/freEci/7GDRA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+@endsection
+
 @section('script')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js" integrity="sha512-rMGGF4wg1R73ehtnxXBt5mbUfN9JUJwbk21KMlnLZDJh7BkPmeovBuddZCENJddHYYMkCh9hPFnPmS9sspki8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript">
+        $('.chosen-select').chosen();
+        
         $(function() {
             if ($('.filterSearch_input')[0]){
                 cls = '.filterSearch'

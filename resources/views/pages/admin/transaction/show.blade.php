@@ -114,7 +114,7 @@
                                         <div class="row">
                                             <div class="col-md-6 form-group">
                                                 <label for="">Prepared by</label>
-                                                <select name="owner_id" class="form-control" required>
+                                                <select name="owner_id" class="form-control chosen-select" required>
                                                     @foreach ($users as $user)
                                                         <option value="{{ $user->id }}" {{ $user->id == $transaction->owner_id ? 'selected' : '' }}>{{ $user->name }}</option>
                                                     @endforeach
@@ -127,7 +127,7 @@
                                             </div>
                                             <div class="col-md-6 form-group">
                                                 <label for="">Requested by</label>
-                                                <select name="requested_id" class="form-control" required>
+                                                <select name="requested_id" class="form-control chosen-select" required>
                                                     @foreach ($users as $user)
                                                         <option value="{{ $user->id }}" {{ $user->id == $transaction->requested_id ? 'selected' : '' }}>{{ $user->name }}</option>
                                                     @endforeach
@@ -433,8 +433,15 @@
     </section>
 @endsection
 
+@section('style')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.css" integrity="sha512-0nkKORjFgcyxv3HbE4rzFUlENUMNqic/EzDIeYCgsKa/nwqr2B91Vu/tNAu4Q0cBuG4Xe/D1f/freEci/7GDRA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+@endsection
+
 @section('script')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js" integrity="sha512-rMGGF4wg1R73ehtnxXBt5mbUfN9JUJwbk21KMlnLZDJh7BkPmeovBuddZCENJddHYYMkCh9hPFnPmS9sspki8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript">
+        $('.chosen-select').chosen();
+
         $(function() {
             $('[data-toggle="tooltip"]').tooltip()
 

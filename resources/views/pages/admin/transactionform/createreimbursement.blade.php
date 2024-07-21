@@ -90,7 +90,7 @@
                     @endif
                     <div class="col-md-6 mb-2">
                         <label for="">Category / Class</label>
-                        <select name="coa_tagging_id" id="coa_tagging_id" class="form-control @error('coa_tagging_id') is-invalid @enderror" required>
+                        <select name="coa_tagging_id" id="coa_tagging_id" class="form-control chosen-select @error('coa_tagging_id') is-invalid @enderror" required>
                             @foreach ($coa_taggings as $item)
                                 <option value="{{ $item->id }}" {{ $item->id == old('coa_tagging_id') ? 'selected' : '' }} data-notes="{{ $item->notes }}">{{ $item->name }}</option>
                             @endforeach
@@ -297,8 +297,15 @@
     </section>
 @endsection
 
+@section('style')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.css" integrity="sha512-0nkKORjFgcyxv3HbE4rzFUlENUMNqic/EzDIeYCgsKa/nwqr2B91Vu/tNAu4Q0cBuG4Xe/D1f/freEci/7GDRA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+@endsection
+
 @section('script')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js" integrity="sha512-rMGGF4wg1R73ehtnxXBt5mbUfN9JUJwbk21KMlnLZDJh7BkPmeovBuddZCENJddHYYMkCh9hPFnPmS9sspki8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript">
+        $('.chosen-select').chosen();
+        
         $(function() {
             if ($('.jsReplicate')[0]){
                 cls = '.jsReplicate'

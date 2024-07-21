@@ -83,7 +83,7 @@
                     </div>
                     <div class="col-sm-5 col-lg-4 mb-2">
                         <label for="">Project</label>
-                        <select name="project_id" class="form-control @error('project_id') is-invalid @enderror">
+                        <select name="project_id" class="form-control chosen-select @error('project_id') is-invalid @enderror">
                             @foreach ($projects as $item)
                                 <option value="{{ $item->id }}" {{ $item->id == $transaction->project_id ? 'selected' : '' }}>{{ $item->project }}</option>                                        
                             @endforeach
@@ -108,7 +108,7 @@
                 <div class="form-row mb-3">
                     <div class="col-sm-6 col-lg-4 mb-2">
                         <label for="">Purpose</label>
-                        <select name="purpose_option_id" id="purposeOption" class="form-control @error('purpose_option_id') is-invalid @enderror">
+                        <select name="purpose_option_id" id="purposeOption" class="form-control chosen-select @error('purpose_option_id') is-invalid @enderror">
                             @foreach ($purpose_options as $item)
                                 @if (in_array($company->id, explode(',', $item->companies))) 
                                     <option value="{{ $item->id }}" {{ $item->id == $transaction->purpose_option_id ? 'selected' : '' }} data-description="{{ $item->description }}">{{ $item->code.' - '.$item->name }}</option>                                        
@@ -124,7 +124,7 @@
                     </div>
                     <div class="col-sm-6 col-lg-4 mb-2">
                         <label for="">Payee Name</label>
-                        <select name="vendor_id" class="form-control @error('vendor_id') is-invalid @enderror">
+                        <select name="vendor_id" class="form-control chosen-select @error('vendor_id') is-invalid @enderror">
                             @foreach ($vendors as $item)
                                 <option value="{{ $item->id }}" {{ $item->id == $transaction->vendor_id ? 'selected' : '' }}>{{ $item->name }}</option>                                        
                             @endforeach
@@ -339,8 +339,15 @@
     </section>
 @endsection
 
+@section('style')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.css" integrity="sha512-0nkKORjFgcyxv3HbE4rzFUlENUMNqic/EzDIeYCgsKa/nwqr2B91Vu/tNAu4Q0cBuG4Xe/D1f/freEci/7GDRA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+@endsection
+
 @section('script')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js" integrity="sha512-rMGGF4wg1R73ehtnxXBt5mbUfN9JUJwbk21KMlnLZDJh7BkPmeovBuddZCENJddHYYMkCh9hPFnPmS9sspki8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript">
+        $('.chosen-select').chosen();
+        
         $(function() {
             // $('.trans-category').change(function() {
             //     if ('{{ $transaction->trans_type }}' != 'po') {
