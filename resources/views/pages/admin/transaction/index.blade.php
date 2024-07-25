@@ -15,9 +15,13 @@
                 <form action="/transaction/edit-company" method="post" class="col-md-6 mt-3 mt-md-0">
                     @csrf
                     @method('put')
+                    <select name="density" class="form-control w-auto border-0 bg-transparent font-weight-bold outline-0 float-right" onchange="this.form.submit()">
+                        <option value="0" {{ Auth::user()->density == "0" ? 'selected' : '' }}>Default</option>
+                        <option value="1" {{ Auth::user()->density == "1" ? 'selected' : '' }}>Compact</option>
+                    </select>
                     <select name="company_id" class="form-control w-auto border-0 bg-transparent font-weight-bold outline-0 float-right" onchange="this.form.submit()">
                         @foreach ($companies->whereIn('id', explode(',', Auth::user()->companies)) as $item)
-                            <option value="{{ $item->id }}" {{ $company->id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                        <option value="{{ $item->id }}" {{ $company->id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                         @endforeach
                     </select>
                     <img src="/storage/public/images/companies/{{ $company->logo }}" alt="" class="thumb thumb--xxs mt-2 mr-2 vlign--baseline-middle float-right">
@@ -159,141 +163,269 @@
                     
                 </form>
                 <div class="table-responsive">
-                    <table class="table table-striped table-sticky-first">
-                        <thead>
-                            <tr>
-                                <th class="text-nowrap bg-light">{{ $trans_page == 'prpo' ? 'PR/PO' : 'PC' }} #</th>
-                                <th class="text-nowrap">Vendor/Payee</th>
-                                <th class="text-nowrap">Purpose</th>
-                                <th class="text-nowrap">Cost Control</th>
-                                <th class="text-nowrap text-center">Currency</th>
-                                <th class="text-nowrap text-right">Amount</th>
-                                <th class="text-nowrap">Date Gen.</th>
-                                <th class="text-nowrap">Date Due</th>
-                                <th class="text-nowrap">Trans. #</th>
-                                <th class="text-nowrap">Date Rel.</th>
-                                <th class="text-nowrap">Req. By</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($transactions as $item)
-                                <?php 
-                                    $config_confidential = false;
-                                    // if req by
-                                    if (Auth::user()->id != $item->requested_id) {
-                                        // check levels
-                                        // if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
-                                        // check level parallel confidential
-                                        // if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential = true;
-                                        if (Auth::user()->ualevel->code <= $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id && !$can_view_confidential) $config_confidential = true;
-                                        // check level own confidential
-                                        if ($item->is_confidential_own && Auth::user()->id != $item->owner->id) $config_confidential = true;
-                                    }
-                                ?>
-                                @include('pages.admin.transaction.notesmulti')
+                    @if (Auth::user()->density == "1")
+                        <table class="table table-hover table-sticky-first table-compact" style="font-size: 0.8rem;">
+                            <thead>
                                 <tr>
-                                    <th class="bg-light">
-                                        <div class="text-nowrap">
-                                            @if ($config_confidential)
-                                                {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
-                                            @else
-                                                <a href="/{{ $item->url_view }}/view/{{ $item->id }}?page={{ $transactions->currentPage() }}">
+                                    <th class="text-nowrap">{{ $trans_page == 'prpo' ? 'PR/PO' : 'PC' }} #</th>
+                                    <th class="text-nowrap">Vendor/Payee</th>
+                                    <th class="text-nowrap" style="width: 500px">Purpose</th>
+                                    <th class="text-nowrap">Cost Control</th>
+                                    <th class="text-nowrap text-right">Amount</th>
+                                    <th class="text-nowrap">Date Gen.</th>
+                                    <th class="text-nowrap">Dates</th>
+                                    <th class="text-nowrap">Trans. #</th>
+                                    <th class="text-nowrap">Req. By</th>
+                                </tr>
+                            </thead>
+                            <tbody style="line-height: 18px">
+                                @forelse ($transactions as $item)
+                                    <?php 
+                                        $config_confidential = false;
+                                        // if req by
+                                        if (Auth::user()->id != $item->requested_id) {
+                                            // check levels
+                                            // if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
+                                            // check level parallel confidential
+                                            // if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential = true;
+                                            if (Auth::user()->ualevel->code <= $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id && !$can_view_confidential) $config_confidential = true;
+                                            // check level own confidential
+                                            if ($item->is_confidential_own && Auth::user()->id != $item->owner->id) $config_confidential = true;
+                                        }
+                                    ?>
+                                    <tr class="tr-compact">
+                                        <th style="max-width: 95px">
+                                            <div class="text-nowrap">
+                                                @if ($config_confidential)
                                                     {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
-                                                </a>
+                                                @else
+                                                    <a href="/{{ $item->url_view }}/view/{{ $item->id }}?page={{ $transactions->currentPage() }}">
+                                                        {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                                    </a>
+                                                @endif
+                                            </div>        
+                                            @if ($item->is_deposit) <span class="badge badge-pill p-1 small bg-green float-left">DEPO</span>
+                                            @elseif ($item->is_bills) <span class="badge badge-pill p-1 small bg-blue float-left">BP</span>
+                                            @elseif ($item->is_hr) <span class="badge badge-pill p-1 small bg-orange float-left">SOW</span>
+                                            @elseif ($item->is_reimbursement) <span class="badge badge-pill p-1 small bg-pink float-left" style="color: white !important;">REIM</span>
+                                            @elseif ($item->is_bank) <span class="badge badge-pill p-1 small bg-purple float-left">FT</span>
+                                            @else <span class="badge badge-pill p-1 small bg-yellow">REG</span>
                                             @endif
-                                        </div>        
-                                        @if ($item->is_deposit) <span class="badge badge-pill py-1 px-2 mt-2 small bg-green">Deposit Transaction</span>
-                                        @elseif ($item->is_bills) <span class="badge badge-pill py-1 px-2 mt-2 small bg-blue">Bills Payment</span>
-                                        @elseif ($item->is_hr) <span class="badge badge-pill py-1 px-2 mt-2 small bg-orange">Salaries and Overhead Wages</span>
-                                        @elseif ($item->is_reimbursement) <span class="badge badge-pill py-1 px-2 mt-2 small bg-pink">Reimbursement</span>
-                                        @elseif ($item->is_bank) <span class="badge badge-pill py-1 px-2 mt-2 small bg-purple">Fund Transfer</span>
-                                        @else <span class="badge badge-pill py-1 px-2 mt-2 small bg-yellow">Regular Transaction</span>
-                                        @endif
 
-                                        <div class="mt-2 {{ $item->notes->count() == 0 || $config_confidential ? 'd-none' : '' }}">
-                                            <a href="#_" class="btn mb-2 btn-xs btn-flat btn-default col-12 col-lg-auto" data-toggle="modal" data-target="#modal-notes-{{ $item->id }}">
-                                                <i class="align-middle font-weight-bolder material-icons text-md">speaker_notes</i>
-                                                <span class="badge badge-danger">{{$item->notes->count()}}</span>
-                                            </a>
-                                        </div>
-                                    </th>
-                                    <td>
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{ $item->vendor_id ? $item->vendor->name : $item->payee }}
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{ $item->purpose_option_id ? $item->purposeOption->code.' - '.$item->purposeOption->name : '-'}}
+                                            <span class="badge badge-pill p-1 small bg-secondary float-right">
+                                                @switch($item->status->name)
+                                                    @case("GENERATED")
+                                                        GEN.
+                                                        @break
+                                                    @default
+                                                        {{ $item->status->name }}
+                                                @endswitch
+                                            </span>
+                                        </th>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->vendor_id ? $item->vendor->name : $item->payee }}
+                                            @endif
+                                        </td>
+                                        <td class="td-compact">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->purpose_option_id ? $item->purposeOption->code.' - '.$item->purposeOption->name : '-'}}
+                                                <br>
+                                                {{ $item->purpose }}
+                                            @endif
+                                        </td>
+                                        <td>{{ $item->cost_control_no }}</td>
+                                        <td class="text-right text-nowrap">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->currency }} {{ number_format($item->amount, 2, '.', ',') }}
+                                            @endif                                        
+                                        </td>
+                                        <td class="text-nowrap">{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
+                                        <td class="text-nowrap">
+                                            <strong>Due:</strong>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ Carbon::parse($item->due_at)->format('Y-m-d') }}
+                                            @endif
                                             <br>
-                                            {{ $item->purpose }}
-                                        @endif
-                                    </td>
-                                    {{-- <td>
-                                        {{ $item->cost_type_id
-                                            ? $item->project->company->qb_code
-                                                .'.'
-                                                .$item->project->company->qb_no.$item->cost_type->control_no
-                                                .'.'
-                                                .sprintf("%03d", $item->cost_seq)
-                                                .'.'
-                                                .config('global.cost_control_v')
-                                            : '-' 
-                                        }}
-                                    </td> --}}
-                                    <td>{{ $item->cost_control_no }}</td>
-                                    <td class="text-center">
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{ $item->currency }}
-                                        @endif
-                                    </td>
-                                    <td class="text-right text-nowrap">
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{-- {{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }} --}}
-                                            {{ number_format($item->amount, 2, '.', ',') }}
-                                        @endif                                        
-                                    </td>
-                                    <td class="text-nowrap">{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
-                                    <td class="text-nowrap">
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{ Carbon::parse($item->due_at)->format('Y-m-d') }}
-                                        @endif
-                                    </td>
-                                    <td class="break-word">
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{ $item->control_no }}
-                                        @endif
-                                    </td>
-                                    <td class="text-nowrap">
-                                        @if ($config_confidential)
-                                            -
-                                        @else
-                                            {{ $item->released_at ? Carbon::parse($item->released_at)->format('Y-m-d') : '' }}
-                                        @endif
-                                    </td>
-                                    <td>{{ $item->requested->name }}</td>
-                                    <td class="text-nowrap">{{ $item->status->name }}</td>
-                                </tr>
-                            @empty
+
+                                            <strong>Rel:</strong>&nbsp; 
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->released_at ? Carbon::parse($item->released_at)->format('Y-m-d') : '' }}
+                                            @endif
+                                            <br>
+                                        </td>
+                                        <td class="break-word">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->control_no }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            {{ $item->requested->name }} <br>
+                                            <div class="{{ $item->notes->count() == 0 || $config_confidential ? 'd-none' : '' }}">
+                                                <a href="#_" class="btn btn-xs btn-flat btn-default col-12 col-lg-auto" data-toggle="modal" data-target="#modal-notes-{{ $item->id }}">
+                                                    <i class="align-middle font-weight-bolder material-icons text-md">speaker_notes</i>
+                                                    <span class="badge badge-danger">{{$item->notes->count()}}</span>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="11" class="text-center">{{ __('messages.empty') }}</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    @endif
+                    @if (Auth::user()->density == "0")
+                        <table class="table table-striped table-sticky-first">
+                            <thead>
                                 <tr>
-                                    <td colspan="11" class="text-center">{{ __('messages.empty') }}</td>
+                                    <th class="text-nowrap bg-light">{{ $trans_page == 'prpo' ? 'PR/PO' : 'PC' }} #</th>
+                                    <th class="text-nowrap">Vendor/Payee</th>
+                                    <th class="text-nowrap">Purpose</th>
+                                    <th class="text-nowrap">Cost Control</th>
+                                    <th class="text-nowrap text-center">Currency</th>
+                                    <th class="text-nowrap text-right">Amount</th>
+                                    <th class="text-nowrap">Date Gen.</th>
+                                    <th class="text-nowrap">Date Due</th>
+                                    <th class="text-nowrap">Trans. #</th>
+                                    <th class="text-nowrap">Date Rel.</th>
+                                    <th class="text-nowrap">Req. By</th>
+                                    <th>Status</th>
                                 </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @forelse ($transactions as $item)
+                                    <?php 
+                                        $config_confidential = false;
+                                        // if req by
+                                        if (Auth::user()->id != $item->requested_id) {
+                                            // check levels
+                                            // if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
+                                            // check level parallel confidential
+                                            // if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential = true;
+                                            if (Auth::user()->ualevel->code <= $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id && !$can_view_confidential) $config_confidential = true;
+                                            // check level own confidential
+                                            if ($item->is_confidential_own && Auth::user()->id != $item->owner->id) $config_confidential = true;
+                                        }
+                                    ?>
+                                    @include('pages.admin.transaction.notesmulti')
+                                    <tr>
+                                        <th class="bg-light">
+                                            <div class="text-nowrap">
+                                                @if ($config_confidential)
+                                                    {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                                @else
+                                                    <a href="/{{ $item->url_view }}/view/{{ $item->id }}?page={{ $transactions->currentPage() }}">
+                                                        {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
+                                                    </a>
+                                                @endif
+                                            </div>        
+                                            @if ($item->is_deposit) <span class="badge badge-pill py-1 px-2 mt-2 small bg-green">Deposit Transaction</span>
+                                            @elseif ($item->is_bills) <span class="badge badge-pill py-1 px-2 mt-2 small bg-blue">Bills Payment</span>
+                                            @elseif ($item->is_hr) <span class="badge badge-pill py-1 px-2 mt-2 small bg-orange">Salaries and Overhead Wages</span>
+                                            @elseif ($item->is_reimbursement) <span class="badge badge-pill py-1 px-2 mt-2 small bg-pink">Reimbursement</span>
+                                            @elseif ($item->is_bank) <span class="badge badge-pill py-1 px-2 mt-2 small bg-purple">Fund Transfer</span>
+                                            @else <span class="badge badge-pill py-1 px-2 mt-2 small bg-yellow">Regular Transaction</span>
+                                            @endif
+
+                                            <div class="mt-2 {{ $item->notes->count() == 0 || $config_confidential ? 'd-none' : '' }}">
+                                                <a href="#_" class="btn mb-2 btn-xs btn-flat btn-default col-12 col-lg-auto" data-toggle="modal" data-target="#modal-notes-{{ $item->id }}">
+                                                    <i class="align-middle font-weight-bolder material-icons text-md">speaker_notes</i>
+                                                    <span class="badge badge-danger">{{$item->notes->count()}}</span>
+                                                </a>
+                                            </div>
+                                        </th>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->vendor_id ? $item->vendor->name : $item->payee }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->purpose_option_id ? $item->purposeOption->code.' - '.$item->purposeOption->name : '-'}}
+                                                <br>
+                                                {{ $item->purpose }}
+                                            @endif
+                                        </td>
+                                        {{-- <td>
+                                            {{ $item->cost_type_id
+                                                ? $item->project->company->qb_code
+                                                    .'.'
+                                                    .$item->project->company->qb_no.$item->cost_type->control_no
+                                                    .'.'
+                                                    .sprintf("%03d", $item->cost_seq)
+                                                    .'.'
+                                                    .config('global.cost_control_v')
+                                                : '-' 
+                                            }}
+                                        </td> --}}
+                                        <td>{{ $item->cost_control_no }}</td>
+                                        <td class="text-center">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->currency }}
+                                            @endif
+                                        </td>
+                                        <td class="text-right text-nowrap">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{-- {{ number_format($item->form_amount_payable ?: $item->amount, 2, '.', ',') }} --}}
+                                                {{ number_format($item->amount, 2, '.', ',') }}
+                                            @endif                                        
+                                        </td>
+                                        <td class="text-nowrap">{{ Carbon::parse($item->created_at)->format('Y-m-d') }}</td>
+                                        <td class="text-nowrap">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ Carbon::parse($item->due_at)->format('Y-m-d') }}
+                                            @endif
+                                        </td>
+                                        <td class="break-word">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->control_no }}
+                                            @endif
+                                        </td>
+                                        <td class="text-nowrap">
+                                            @if ($config_confidential)
+                                                -
+                                            @else
+                                                {{ $item->released_at ? Carbon::parse($item->released_at)->format('Y-m-d') : '' }}
+                                            @endif
+                                        </td>
+                                        <td>{{ $item->requested->name }}</td>
+                                        <td class="text-nowrap">{{ $item->status->name }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="11" class="text-center">{{ __('messages.empty') }}</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    @endif
                 </div>
                 <div class="overflow-auto position-relative text-center">
                     <div class="d-inline-block">
@@ -307,6 +439,20 @@
 
 @section('style')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.css" integrity="sha512-0nkKORjFgcyxv3HbE4rzFUlENUMNqic/EzDIeYCgsKa/nwqr2B91Vu/tNAu4Q0cBuG4Xe/D1f/freEci/7GDRA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .td-compact {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            height: 46px;
+            max-width: 500px;
+        }
+        .tr-compact td, .table-compact thead tr th {
+            padding: 8px;
+        }
+    </style>
 @endsection
 
 @section('script')

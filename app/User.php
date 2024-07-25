@@ -28,6 +28,7 @@ class User extends Authenticatable {
         'is_read_only',
         'avatar',
         'company_id',
+        'density',
         'is_accounting',
         'is_accounting_head',
         'is_external',

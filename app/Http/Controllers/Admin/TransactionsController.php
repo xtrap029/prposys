@@ -1018,7 +1018,7 @@ class TransactionsController extends Controller {
     }
 
     public function update_company(Request $request) {
-        if (UserHelper::switch_company($request->company_id)) {
+        if (UserHelper::switch_company($request->company_id, null, $request->density)) {
             return redirect('/transaction/prpo/'.$request->company_id);
         } else {
             return back()->with('error', __('messages.invalid_command'));
