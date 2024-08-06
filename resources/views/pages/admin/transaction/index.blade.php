@@ -194,7 +194,7 @@
                                         }
                                     ?>
                                     <tr class="tr-compact">
-                                        <th style="max-width: 95px">
+                                        <th style="max-width: 150px">
                                             <div class="text-nowrap">
                                                 @if ($config_confidential)
                                                     {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}
@@ -212,11 +212,11 @@
                                             @else <span class="badge badge-pill p-1 small bg-yellow">REG</span>
                                             @endif
 
-                                            <span class="badge badge-pill p-1 small bg-secondary float-right">
+                                            <span class="ml-2 badge badge-pill p-1 small bg-secondary">
                                                 @switch($item->status->name)
                                                     @case("GENERATED")
                                                         GEN.
-                                                        @break
+                                                    @break
                                                     @default
                                                         {{ $item->status->name }}
                                                 @endswitch
