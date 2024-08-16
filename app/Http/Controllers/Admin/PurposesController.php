@@ -30,7 +30,7 @@ class PurposesController extends Controller {
     public function store(Request $request) {
         $data = $request->validate([
             'code' => ['required', Rule::unique('purpose_options')->whereNull('deleted_at')],
-            'name' => ['required', Rule::unique('purpose_options')->whereNull('deleted_at')],
+            'name' => ['required'],
             'description' => ['required'],
             'companies.*' => [],
         ]);
@@ -59,7 +59,7 @@ class PurposesController extends Controller {
     public function update(Request $request, PurposeOption $purpose) {
         $data = $request->validate([
             'code' => ['required', Rule::unique('purpose_options')->ignore($purpose->id)->whereNull('deleted_at')],
-            'name' => ['required', Rule::unique('purpose_options')->ignore($purpose->id)->whereNull('deleted_at')],
+            'name' => ['required'],
             'description' => ['required'],
             'companies.*' => [],
         ]);

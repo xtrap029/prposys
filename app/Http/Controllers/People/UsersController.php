@@ -48,7 +48,7 @@ class UsersController extends Controller {
 
             $users->appends(['s' => $_GET['s']]);
             $users->appends(['status' => $_GET['status']]);
-            $users->appends(['levle' => $_GET['level']]);
+            $users->appends(['level' => $_GET['level']]);
             $users->appends(['is_accounting' => $_GET['is_accounting']]);
         } else {
             $users = $users->where('ua_level_id', '!=', config('global.ua_inactive'));

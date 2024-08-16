@@ -97,6 +97,9 @@ class NotificationsController extends Controller {
                 Mail::queue(new \App\Mail\NotificationsIssuedVendorMail([
                     'to' => $transaction->vendor->email,
                     'name' => $transaction->vendor->name,
+                    'purpose' => $transaction->purpose,
+                    'requestor_email' => $transaction->requested->email,
+                    'requestor_name' => $transaction->requested->name,
                     'url' => env('APP_URL').'/storage/public/attachments/issue_slip/'.$transaction->issue_slip,
                     'cc' => array_filter(explode(';', $cc)),
                 ]));

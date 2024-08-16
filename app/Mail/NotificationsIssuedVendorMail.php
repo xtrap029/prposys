@@ -34,7 +34,10 @@ class NotificationsIssuedVendorMail extends Mailable
             ->with([
                 'name' => $this->data['name'],
                 'url' => $this->data['url'],
-            ])->subject('Issued')
+                'purpose' => $this->data['purpose'],
+                'requestor_email' => $this->data['requestor_email'],
+                'requestor_name' => $this->data['requestor_name'],
+            ])->subject($this->data['name'].': Payment Notification')
             ->cc($this->data['cc'])
             ->to($this->data['to']);
     }
