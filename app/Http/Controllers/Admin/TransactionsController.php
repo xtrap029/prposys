@@ -60,8 +60,16 @@ class TransactionsController extends Controller {
         $companies = Company::orderBy('name', 'asc')->get();
         $company = Company::where('id', $trans_company)->first();
         $projects = CompanyProject::where('company_id', $trans_company)->get();
+        
         $users = User::where('ua_level_id', '!=', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
+        $users = $users->reject(function ($user) use ($trans_company) {
+            return !in_array($trans_company, explode(',', $user->companies));
+        });
+
         $users_inactive = User::where('ua_level_id', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
+        $users_inactive = $users_inactive->reject(function ($user_inactive) use ($trans_company) {
+            return !in_array($trans_company, explode(',', $user_inactive->companies));
+        });
 
         $transactions = new Transaction;
 
@@ -446,6 +454,10 @@ class TransactionsController extends Controller {
         // $particulars = Particulars::where('type', $trans_type)->get();
         $projects = CompanyProject::where('company_id', $trans_company)->orderBy('project', 'asc')->get();
         $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
+        $users = $users->reject(function ($user) use ($trans_company) {
+            return !in_array($trans_company, explode(',', $user->companies));
+        });
+
         $company = Company::where('id', $trans_company)->first();
         $cost_types = CostType::orderBy('control_no', 'asc')->get();
         $purpose_options = PurposeOption::orderBy('code', 'asc')->get();
@@ -889,8 +901,16 @@ class TransactionsController extends Controller {
             $transaction->project->company_id
         );
 
+        $trans_company = $transaction->project->company_id;
         $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
+        $users = $users->reject(function ($user) use ($trans_company) {
+            return !in_array($trans_company, explode(',', $user->companies));
+        });
         $users_inactive = User::where('ua_level_id', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
+        $users_inactive = $users_inactive->reject(function ($user_inactive) use ($trans_company) {
+            return !in_array($trans_company, explode(',', $user_inactive->companies));
+        });
+
         $releasing_users = ReleasedBy::orderBy('name', 'asc')->get();
 
         switch ($transaction->trans_type) {

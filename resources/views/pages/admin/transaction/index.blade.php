@@ -194,7 +194,7 @@
                                         }
                                     ?>
                                     <tr class="tr-compact">
-                                        <td style="max-width: 150px">
+                                        <td style="max-width: 150px; min-width: 150px"">
                                             <div class="text-nowrap">
                                                 @if ($config_confidential)
                                                     {{ strtoupper($item->trans_type) }}-{{ $item->trans_year }}-{{ sprintf('%05d',$item->trans_seq) }}

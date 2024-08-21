@@ -567,7 +567,13 @@ class TransactionsFormsController extends Controller {
         $vat_types = VatType::where('is_'.$transaction->trans_type, 1)->orderBy('name', 'asc')->get();
         $particulars = Particulars::where('type', $transaction->trans_type)->orderBy('name', 'asc')->get();
         $projects = CompanyProject::where('company_id', $transaction->project->company_id)->orderBy('project', 'asc')->get();
+        
+        $trans_company = $transaction->project->company_id;
         $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
+        $users = $users->reject(function ($user) use ($trans_company) {
+            return !in_array($trans_company, explode(',', $user->companies));
+        });
+
         $purpose_options = PurposeOption::orderBy('code', 'asc')->get();
         $vendors = Vendor::orderBy('name', 'asc')->get();
 
@@ -624,7 +630,13 @@ class TransactionsFormsController extends Controller {
         $coa_taggings = CoaTagging::where('company_id', $transaction->project->company_id)->orWhereNull('company_id')->orderBy('name', 'asc')->get();
         $particulars = Particulars::where('type', $transaction->trans_type)->get();
         $projects = CompanyProject::where('company_id', $transaction->project->company_id)->get();
-        $users = User::whereNotNull('role_id')->get();
+        
+        $trans_company = $transaction->project->company_id;
+        $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
+        $users = $users->reject(function ($user) use ($trans_company) {
+            return !in_array($trans_company, explode(',', $user->companies));
+        });
+
         $expense_types = ExpenseType::orderBy('name', 'asc')->get();
         $purpose_options = PurposeOption::orderBy('code', 'asc')->get();
         $vendors = Vendor::orderBy('name', 'asc')->get();

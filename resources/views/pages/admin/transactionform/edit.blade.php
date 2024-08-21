@@ -103,12 +103,6 @@
                                 {{ config('global.trans_category_label')[3] }}
                             </option>
                             <option 
-                                value="{{ config('global.trans_category')[4] }}"
-                                {{ $transaction->is_reimbursement == 1 ? 'selected' : '' }}
-                            >
-                                {{ config('global.trans_category_label')[4] }}
-                            </option>
-                            <option 
                                 value="{{ config('global.trans_category')[5] }}"
                                 {{ $transaction->is_bank == 1 ? 'selected' : '' }}
                             >
