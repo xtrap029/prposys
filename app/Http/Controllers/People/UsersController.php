@@ -35,6 +35,8 @@ class UsersController extends Controller {
 
             if ($_GET['status'] != "") {
                 if ($_GET['status'] == 2) $users = $users->where('ua_level_id', '=', config('global.ua_inactive'));
+            } else {
+                $users = $users->where('ua_level_id', '!=', config('global.ua_inactive'));
             }
 
             if ($_GET['level'] != "") $users = $users->where('ua_level_id', '=', $_GET['level']);
