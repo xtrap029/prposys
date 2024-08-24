@@ -161,7 +161,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="/transaction-form/issue/{{ $transaction->id }}" method="post" enctype="multipart/form-data" class="row">
+                                        <form action="/transaction-form/issue/{{ $transaction->id }}" method="post" enctype="multipart/form-data" class="row jsPreventMultiple">
                                             @csrf
                                             @method('put')
                                             <div class="col-md-5 mb-2">
