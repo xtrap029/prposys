@@ -93,14 +93,6 @@ class TransactionsController extends Controller {
             });
         }
 
-        if (!isset($_GET['is_confidential']) || (isset($_GET['is_confidential']) && $_GET['is_confidential'] == "")) {
-            // $transactions = $transactions->whereHas('owner', function($query) use($user_logged) {
-            //     $query->whereHas('ualevel', function($query2) use($user_logged) {
-            //         $query2->where('code', '<=', $user_logged->ualevel->code);
-            //     });
-            // });
-        }
-
         if (!empty($_GET['s'])
             || !empty($_GET['is_confidential'])
             || (isset($_GET['is_confidential']) && $_GET['is_confidential'] != "")
@@ -134,6 +126,7 @@ class TransactionsController extends Controller {
                                             })
                                             ->orWhere('particulars_custom', 'like', "%{$key}%")
                                             ->orWhere('cost_control_no', 'like', "%{$key}%")
+                                            ->orWhere('bill_statement_no', 'like', "%{$key}%")
                                             ->orWhere('purpose', 'like', "%{$key}%")
                                             ->orWhere('payee', 'like', "%{$key}%")
                                             ->orWhereHas('coatagging', function($query) use($key) {
@@ -149,22 +142,22 @@ class TransactionsController extends Controller {
                                             ->orWhereHas('vattype', function($query) use($key) {
                                                 $query->where('code', 'like', "%{$key}%");
                                             })
+                                            ->orWhereHas('vendor', function($query) use($key) {
+                                                $query->where('name', 'like', "%{$key}%");
+                                            })
                                             ->orWhere('control_no', 'like', "%{$key}%")
                                             ->orWhere('control_type', 'like', "%{$key}%")
                                             ->orWhere('cancellation_reason', 'like', "%{$key}%")
                                             ->orWhere('cancellation_number', 'like', "%{$key}%");
-                                            // ->orWhere('amount_issued', 'like', str_replace(',', '', "%{$key}%"))
-                                            // ->orWhere('amount_issued', '=', str_replace(',', '', $key))
-                                            // ->orWhere('form_amount_payable', 'like', str_replace(',', '', "%{$key}%"))
-                                            // ->orWhere('form_amount_payable', '=', str_replace(',', '', $key))
-                                            // ->orWhere('amount', 'like', str_replace(',', '', "%{$key}%"))
-                                            // ->orWhere('amount', '=', str_replace(',', '', $key));
                                     });
                                     
             if ($_GET['status'] != "") $transactions = $transactions->whereIn('status_id', explode(',', $_GET['status']));
             if ($_GET['user_req'] != "") $transactions = $transactions->where('requested_id', $_GET['user_req']);
             if ($_GET['user_prep'] != "") $transactions = $transactions->where('owner_id', $_GET['user_prep']);
             if ($_GET['project'] != "") $transactions = $transactions->where('project_id', $_GET['project']);
+            if ($_GET['due_from'] != "") $transactions = $transactions->whereDate('due_at', '>=', $_GET['due_from']);
+            if ($_GET['due_to'] != "") $transactions = $transactions->whereDate('due_at', '<=', $_GET['due_to']);
+            if ($_GET['amount'] != "") $transactions = $transactions->where('amount', $_GET['amount']);
             if ($_GET['is_confidential'] != "") {
                 if ($_GET['is_confidential'] == "2") {
                     $transactions = $transactions->where('is_confidential_own', 1);
@@ -172,9 +165,6 @@ class TransactionsController extends Controller {
                     $transactions = $transactions->where('is_confidential', $_GET['is_confidential']);
                 }
             }
-            if ($_GET['due_from'] != "") $transactions = $transactions->whereDate('due_at', '>=', $_GET['due_from']);
-            if ($_GET['due_to'] != "") $transactions = $transactions->whereDate('due_at', '<=', $_GET['due_to']);
-            if ($_GET['amount'] != "") $transactions = $transactions->where('amount', $_GET['amount']);
 
             if ($_GET['category'] != "") {
                 if ($_GET['category'] == 'is_reg') {
@@ -292,14 +282,6 @@ class TransactionsController extends Controller {
             $transactions = $transactions->where('id', 0);
         }
 
-        if (!isset($request->is_confidential) || (isset($request->is_confidential) && $request->is_confidential == "")) {
-            // $transactions = $transactions->whereHas('owner', function($query) use($user_logged) {
-            //     $query->whereHas('ualevel', function($query2) use($user_logged) {
-            //         $query2->where('code', '<=', $user_logged->ualevel->code);
-            //     });
-            // });
-        }
-
         if ($user_logged->is_external) {
             $transactions = $transactions->where(static function ($query) use ($user_id) {
                 $query->where('is_confidential', 0)
@@ -345,12 +327,6 @@ class TransactionsController extends Controller {
                                         ->orWhere('control_type', 'like', "%{$key}%")
                                         ->orWhere('cancellation_reason', 'like', "%{$key}%")
                                         ->orWhere('cancellation_number', 'like', "%{$key}%");
-                                        // ->orWhere('amount_issued', 'like', str_replace(',', '', "%{$key}%"))
-                                        // ->orWhere('amount_issued', '=', str_replace(',', '', $key))
-                                        // ->orWhere('form_amount_payable', 'like', str_replace(',', '', "%{$key}%"))
-                                        // ->orWhere('form_amount_payable', '=', str_replace(',', '', $key))
-                                        // ->orWhere('amount', 'like', str_replace(',', '', "%{$key}%"))
-                                        // ->orWhere('amount', '=', str_replace(',', '', $key));
                                 });
                                 
         if ($request->status != "") $transactions = $transactions->whereIn('status_id', explode(',', $request->status));
