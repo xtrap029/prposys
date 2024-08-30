@@ -395,6 +395,7 @@ class TransactionsController extends Controller {
             $transactions[$key]->amount = number_format($value->form_amount_payable ?: $value->amount, 2, '.', ',');
             $transactions[$key]->created = Carbon::parse($value->created_at)->format('Y-m-d');
             $transactions[$key]->released = Carbon::parse($value->released_at)->format('Y-m-d');
+            $transactions[$key]->payee = $value->vendor_id ? $value->vendor->name : $value->payee;
 
             $transactions[$key]->is_confidential = $confidential;
 
