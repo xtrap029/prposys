@@ -56,10 +56,11 @@
                         <th colspan="2">List</th>
                         <th>Level</th>
                         <th>Level Options</th>
+                        <th class="text-center">Department/s</th>
                         <th class="text-center">Accounting</th>
                         <th class="text-center">Follow Up</th>
                         <th class="text-center">External</th>
-                        <th>Travel Roles</th>
+                        {{-- <th>Travel Roles</th> --}}
                         <th class="text-right text-nowrap"></th>
                     </tr>
                 </thead>
@@ -77,14 +78,19 @@
                                     {{ in_array($level->id, explode(',',$item->ua_levels)) ? $level->name.', ' : '' }}
                                 @endforeach
                             </td>
+                            <td class="text-center">
+                                @foreach ($item->departmentuser as $deptartmentuser)
+                                    {{ $deptartmentuser->department->name }}<br>
+                                @endforeach
+                            </td>
                             <td class="text-center {{ $item->is_accounting ? 'text-success' : 'text-danger' }}">{{ $item->is_accounting ? 'Yes' : 'No' }}</td>
                             <td class="text-center {{ $item->is_accounting_head ? 'text-success' : 'text-danger' }}">{{ $item->is_accounting_head ? 'Yes' : 'No' }}</td>
                             <td class="text-center {{ $item->is_external ? 'text-success' : 'text-danger' }}">{{ $item->is_external ? 'Yes' : 'No' }}</td>
-                            <td>
+                            {{-- <td>
                                 @foreach ($travel_roles as $role)
                                     {{ in_array($role->id, explode(',',$item->travel_roles)) ? $role->name.', ' : '' }}
                                 @endforeach
-                            </td>
+                            </td> --}}
                             <td class="align-middle text-right">
                                 <a href="/user/{{ $item->id }}" class="btn btn-link btn-sm">View</a>
                                 <a href="/user/{{ $item->id }}/edit" class="btn btn-link btn-sm">Edit</a>

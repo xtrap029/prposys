@@ -68,22 +68,22 @@
                                 <input type="date" class="form-control @error('e_reg_date') is-invalid @enderror" name="e_reg_date" value="{{ $user->e_reg_date }}">
                                 @include('errors.inline', ['message' => $errors->first('e_reg_date')])
                             </div>
-                            <div class="form-group col-lg-6">
+                            <div class="form-group col-lg-4">
                                 <label for="">Position / Title</label>
                                 <input type="text" class="form-control @error('e_position') is-invalid @enderror" name="e_position" value="{{ $user->e_position }}">
                                 @include('errors.inline', ['message' => $errors->first('e_position')])
                             </div>
-                            <div class="form-group col-lg-6">
+                            <div class="form-group col-lg-4">
                                 <label for="">Rank</label>
                                 <input type="text" class="form-control @error('e_rank') is-invalid @enderror" name="e_rank" value="{{ $user->e_rank }}">
                                 @include('errors.inline', ['message' => $errors->first('e_rank')])
                             </div>
-                            <div class="form-group col-lg-6">
+                            <div class="form-group col-lg-6 d-none">
                                 <label for="">Department</label>
                                 <input type="text" class="form-control @error('e_department') is-invalid @enderror" name="e_department" value="{{ $user->e_department }}">
                                 @include('errors.inline', ['message' => $errors->first('e_department')])
                             </div>
-                            <div class="form-group col-lg-6">
+                            <div class="form-group col-lg-4">
                                 <label for="">Payroll Account Number</label>
                                 <input type="text" class="form-control @error('e_payroll') is-invalid @enderror" name="e_payroll" value="{{ $user->e_payroll }}">
                                 @include('errors.inline', ['message' => $errors->first('e_payroll')])

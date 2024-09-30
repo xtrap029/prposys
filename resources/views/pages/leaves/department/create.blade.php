@@ -1,4 +1,4 @@
-@extends('layouts.app-leaves')
+@extends('layouts.app-people')
 
 @section('title', 'Create Department')
 

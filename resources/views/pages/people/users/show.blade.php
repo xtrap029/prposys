@@ -39,21 +39,42 @@
                             <label for="">Regularization Date</label>
                             <h6>{{ $user->e_reg_date }}</h6>
                         </div>
-                        <div class="form-group border p-2 mb-0 col-lg-6">
+                        <div class="form-group border p-2 mb-0 col-lg-4">
                             <label for="" class="text-gray">Position / Title</label>
                             <h6>{{ $user->e_position }}</h6>
                         </div>
-                        <div class="form-group border p-2 mb-0 col-lg-6">
+                        <div class="form-group border p-2 mb-0 col-lg-4">
                             <label for="">Rank</label>
                             <h6>{{ $user->e_rank }}</h6>
                         </div>
-                        <div class="form-group border p-2 mb-0 col-lg-6">
+                        {{-- <div class="form-group border p-2 mb-0 col-lg-6">
                             <label for="" class="text-gray">Department</label>
                             <h6>{{ $user->e_department }}</h6>
-                        </div>
-                        <div class="form-group border p-2 mb-0 col-lg-6">
+                        </div> --}}
+                        <div class="form-group border p-2 mb-0 col-lg-4">
                             <label for="" class="text-gray">Payroll Account Number</label>
                             <h6>{{ $user->e_payroll }}</h6>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group border p-2 mb-0 col-12">
+                            <label for="" class="text-gray">Department/s</label>
+                            <h6>
+                                <table class="table">
+                                    {{-- @foreach ($user->departmentuserapprover as $item)
+                                        <tr>
+                                            <td><b>{{ $item->department->name }}</b></td>
+                                            <td>Approver</td>
+                                        </tr>
+                                    @endforeach --}}
+                                    @foreach ($user->departmentuser as $item)
+                                        <tr>
+                                            <td><b>{{ $item->department->name }}</b></td>
+                                            {{-- <td>Member</td> --}}
+                                        </tr>
+                                    @endforeach
+                                </table>
+                            </h6>
                         </div>
                     </div>
 

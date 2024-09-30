@@ -105,7 +105,12 @@
                                         <a href="/user-attribute" class="nav-link {{ Route::currentRouteName() == 'userattribute' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">apps</i><p>User Attribute</p>
                                         </a>
-                                    </li>                                                                                   
+                                    </li>
+                                    <li class="nav-item {{ $ua['lea_dept'] == $non ? 'd-none' : '' }}">
+                                        <a href="/leaves-department" class="nav-link {{ Route::currentRouteName() == 'leavesdepartment' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">account_tree</i><p>User Department</p>
+                                        </a>
+                                    </li>                                                                               
                                     <li class="nav-item {{ $ua['peo_ua_route'] == $non ? 'd-none' : '' }}">
                                         <a href="/ua-route" class="nav-link {{ Route::currentRouteName() == 'uaroute' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">route</i><p>User Route</p>

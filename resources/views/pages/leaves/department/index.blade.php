@@ -1,4 +1,4 @@
-@extends('layouts.app-leaves')
+@extends('layouts.app-people')
 
 @section('title', 'Department')
 
@@ -19,7 +19,7 @@
                     <tr>
                         <th>
                             List
-                            <a href="/leaves-department/create" class="float-right">Create Dept.</a>
+                            <a href="/leaves-department/create" class="float-right">Create Department</a>
                         </th>
                     </tr>
                 </thead>
@@ -32,14 +32,14 @@
                                         Action
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <a href="/leaves-department-user/create/{{ $item->id }}" class="dropdown-item">Add Member</a>
-                                        <a href="/leaves-department-peak/{{ $item->id }}" class="dropdown-item">Peak</a>
-                                        <a href="/leaves-department/{{ $item->id }}/edit" class="dropdown-item">Edit</a>
+                                        <a href="/leaves-department-user/create/{{ $item->id }}" class="dropdown-item">Add Department Member</a>
+                                        {{-- <a href="/leaves-department-peak/{{ $item->id }}" class="dropdown-item">Peak</a> --}}
+                                        <a href="/leaves-department/{{ $item->id }}/edit" class="dropdown-item">Rename Department</a>
                                         <div class="dropdown-divider"></div>
                                         <form action="/leaves-department/{{ $item->id }}" method="post">
                                             @csrf
                                             @method('delete')
-                                            <input type="submit" class="dropdown-item" value="Delete" onclick="return confirm('Are you sure?')">
+                                            <input type="submit" class="dropdown-item" value="Delete Department" onclick="return confirm('Are you sure?')">
                                         </form>
                                     </div>
                                 </div>
@@ -49,11 +49,18 @@
                                         @forelse ($item->departmentsusers->sortBy('user.name') as $departmentsuser)
                                             <tr class="{{ $departmentsuser->is_approver ? 'bg-white' : 'bg-light' }}">
                                                 <td>
-                                                    <a href="/leaves-department-user/edit/{{ $departmentsuser->id }}" class="d-block">
+                                                    {{-- <a href="/leaves-department-user/edit/{{ $departmentsuser->id }}" class="d-block"> --}}
                                                         {{ $departmentsuser->user->name }}
-                                                    </a>
+                                                    {{-- </a> --}}
                                                 </td>
-                                                <td class="text-right pr-3">{{ $departmentsuser->is_approver ? 'Approver' : 'Member' }}</td>
+                                                <td class="text-right pr-3">
+                                                    <form action="/leaves-department-user/{{ $departmentsuser->id }}" method="post" class="d-inline-block" id="delete-member">
+                                                        @csrf
+                                                        @method('delete')
+                                                        <input type="submit" class="btn btn-danger btn-xs float-right" value="Remove" onclick="return confirm('Are you sure?')">
+                                                    </form>
+                                                </td>
+                                                {{-- <td class="text-right pr-3">{{ $departmentsuser->is_approver ? 'Approver' : 'Member' }}</td> --}}
                                             </tr>
                                         @empty
                                             <tr>
