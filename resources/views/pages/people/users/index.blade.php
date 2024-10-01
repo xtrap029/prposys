@@ -54,43 +54,62 @@
                 <thead>
                     <tr>
                         <th colspan="2">List</th>
-                        <th>Level</th>
-                        <th>Level Options</th>
-                        <th class="text-center">Department/s</th>
-                        <th class="text-center">Accounting</th>
-                        <th class="text-center">Follow Up</th>
-                        <th class="text-center">External</th>
-                        {{-- <th>Travel Roles</th> --}}
+                        <th style="min-width: 150px">Status</th>
+                        <th>Roles</th>
                         <th class="text-right text-nowrap"></th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($users as $item)
                         <tr>
-                            <td><img src="storage/public/images/users/{{ $item->avatar }}" alt="" class="img-circle thumb--xs"></td>
+                            <td class="align-middle"><img src="storage/public/images/users/{{ $item->avatar }}" alt="" class="img-circle thumb--xs"></td>
                             <td class="align-middle text-nowrap">
-                                {{ $item->name }}
+                                <div class="font-weight-bold">{{ $item->name }}</div>
                                 <div class="text-info">{{ $item->email }}</div>
+                                <div><span class="badge badge-pill p-1 small bg-white">{{ $item->e_position }}</span></div>
                             </td>
-                            <td>{{ $item->ualevel->name }}</td>
+                            <td class="align-middle">
+                                <div>
+                                    @if ($item->e_emp_status == "Regular" && $item->ua_level_id != config('global.ua_inactive'))
+                                        <span class="status-dot status-online"></span> <small>Regular</small>
+                                    @endif
+                                    @if ($item->e_emp_status == "Probationary" && $item->ua_level_id != config('global.ua_inactive'))
+                                        <span class="status-dot status-pending"></span> <small>Probation</small>
+                                    @endif
+                                    @if ($item->ua_level_id == config('global.ua_inactive'))
+                                        <span class="status-dot status-offline"></span> <small>Inactive</small> 
+                                    @endif
+                                </div>
+                            </td>
                             <td>
-                                @foreach ($levels as $level)
-                                    {{ in_array($level->id, explode(',',$item->ua_levels)) ? $level->name.', ' : '' }}
-                                @endforeach
-                            </td>
-                            <td class="text-center">
-                                @foreach ($item->departmentuser as $deptartmentuser)
-                                    {{ $deptartmentuser->department->name }}<br>
-                                @endforeach
-                            </td>
-                            <td class="text-center {{ $item->is_accounting ? 'text-success' : 'text-danger' }}">{{ $item->is_accounting ? 'Yes' : 'No' }}</td>
-                            <td class="text-center {{ $item->is_accounting_head ? 'text-success' : 'text-danger' }}">{{ $item->is_accounting_head ? 'Yes' : 'No' }}</td>
-                            <td class="text-center {{ $item->is_external ? 'text-success' : 'text-danger' }}">{{ $item->is_external ? 'Yes' : 'No' }}</td>
-                            {{-- <td>
-                                @foreach ($travel_roles as $role)
-                                    {{ in_array($role->id, explode(',',$item->travel_roles)) ? $role->name.', ' : '' }}
-                                @endforeach
-                            </td> --}}
+                                <div>
+                                    <small>Level</small> &nbsp;
+                                    <span class="badge badge-pill p-1 small bg-gray">{{ $item->ualevel->name }}</span>
+                                    @foreach ($levels as $level)
+                                        @if ($item->ualevel->id != $level->id && in_array($level->id, explode(',',$item->ua_levels)))
+                                            <span class="badge badge-pill p-1 small bg-gray">{{ $level->name }}</span>
+                                        @endif
+                                    @endforeach
+                                </div>
+                                <div>
+                                    <small>Dept.</small> &nbsp;
+                                    @foreach ($item->departmentuser as $deptartmentuser)
+                                        <span class="badge badge-pill p-1 small bg-gray">{{ $deptartmentuser->department->name }}</span>
+                                    @endforeach
+                                </div>
+                                <div>
+                                    <small>Other</small> &nbsp;
+                                    @if ($item->is_accounting)
+                                        <span class="badge badge-pill p-1 small bg-info" style="color: white !important">Accounting</span>  
+                                    @endif
+                                    @if ($item->is_accounting_head)
+                                        <span class="badge badge-pill p-1 small bg-primary">Accounting - Head</span>  
+                                    @endif
+                                    @if ($item->is_external)
+                                        <span class="badge badge-pill p-1 small bg-gray-dark">External</span>  
+                                    @endif
+                                </div>
+                            </td>                            
                             <td class="align-middle text-right">
                                 <a href="/user/{{ $item->id }}" class="btn btn-link btn-sm">View</a>
                                 <a href="/user/{{ $item->id }}/edit" class="btn btn-link btn-sm">Edit</a>
@@ -110,4 +129,24 @@
             </div>
         </div>
     </section>
+@endsection
+
+@section('style')
+    <style>
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .status-online {
+            background-color: #28a745; /* green */
+        }
+        .status-offline {
+            background-color: #dc3545; /* red */
+        }
+        .status-pending {
+            background-color: #ffc107; /* yellow */
+        }
+    </style>
 @endsection
