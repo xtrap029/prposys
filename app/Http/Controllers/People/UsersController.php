@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\People;
 
+use Carbon\Carbon;
 use App\Company;
 use App\Role;
 use App\UaLevel;
@@ -25,7 +26,7 @@ class UsersController extends Controller {
             || !empty($_GET['level'])
             || !empty($_GET['is_accounting'])) {
 
-            $key = $_GET['s'];
+            $key = isset($_GET['s']) ? $_GET['s'] : '';
             
             $users = $users->where(static function ($query) use ($key) {
                 $query->where('name', 'like', "%{$key}%")
@@ -33,28 +34,61 @@ class UsersController extends Controller {
                     ->orWhere('e_emp_no', 'like', "%{$key}%");
             });
 
-            if ($_GET['status'] != "") {
+            if (isset($_GET['status']) && $_GET['status'] != "") {
                 if ($_GET['status'] == 2) $users = $users->where('ua_level_id', '=', config('global.ua_inactive'));
             } else {
                 $users = $users->where('ua_level_id', '!=', config('global.ua_inactive'));
             }
 
-            if ($_GET['level'] != "") $users = $users->where('ua_level_id', '=', $_GET['level']);
+            if (isset($_GET['level']) && $_GET['level'] != "") $users = $users->where('ua_level_id', '=', $_GET['level']);
 
-            if ($_GET['is_accounting'] != "") {
+            if (isset($_GET['is_accounting']) && $_GET['is_accounting'] != "") {
                 if ($_GET['is_accounting'] == 1) $users = $users->where('is_accounting', '=', 1);
                 else if ($_GET['is_accounting'] == 2) $users = $users->where('is_accounting', '=', 0);
             }
 
+            $users_report = $users->get();
             $users = $users->paginate(10);
 
-            $users->appends(['s' => $_GET['s']]);
-            $users->appends(['status' => $_GET['status']]);
-            $users->appends(['level' => $_GET['level']]);
-            $users->appends(['is_accounting' => $_GET['is_accounting']]);
+            $users->appends(['s' => isset($_GET['s']) ? $_GET['s'] : '']);
+            $users->appends(['status' => isset($_GET['status']) ? $_GET['status'] : '']);
+            $users->appends(['level' => isset($_GET['level']) ? $_GET['level'] : '']);
+            $users->appends(['is_accounting' => isset($_GET['is_accounting']) ? $_GET['is_accounting'] : '']);
         } else {
             $users = $users->where('ua_level_id', '!=', config('global.ua_inactive'));
+            $users_report = $users->get();
             $users = $users->paginate(10);
+        }
+
+        if (isset($_GET['csv'])) {
+            $fileName = 'USERS-REPORT_'.Carbon::now().'.csv';
+            $headers = array(
+                "Content-type"        => "text/csv",
+                "Content-Disposition" => "attachment;   filename=$fileName",
+                "Pragma"              => "no-cache",
+                "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+                "Expires"             => "0"
+            );
+
+            $file = fopen('php://output', 'w');
+            
+            $callback = function() use($users_report) {
+                $file = fopen('php://output', 'w');
+                
+                fputcsv($file, array('Name', 'Position', 'Email'));
+
+                foreach ($users_report as $item) {
+                    fputcsv($file, [
+                        $item->name,
+                        $item->e_position,
+                        $item->email,
+                    ]);
+                }
+
+                fclose($file);
+            };
+
+            return response()->stream($callback, 200, $headers);
         }
 
 

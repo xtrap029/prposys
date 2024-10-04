@@ -56,9 +56,12 @@
                         <th colspan="2">List</th>
                         <th style="min-width: 150px">Status</th>
                         <th>Roles</th>
-                        <th class="text-right text-nowrap"></th>
+                        <th class="text-right text-nowrap">
+                            <button type="button" class="btn btn-danger btn-sm" onclick="window.print();">Print</button>
+                            <a href="{{ request()->fullUrlWithQuery(['csv' => '']) }}" class="btn btn-success btn-sm" target="_blank">CSV</a>
+                        </th>
                     </tr>
-                </thead>
+                </thead >
                 <tbody>
                     @forelse ($users as $item)
                         <tr>
