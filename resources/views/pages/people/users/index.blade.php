@@ -57,7 +57,7 @@
                         <th style="min-width: 150px">Status</th>
                         <th>Roles</th>
                         <th class="text-right text-nowrap">
-                            <button type="button" class="btn btn-danger btn-sm" onclick="window.print();">Print</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="printUsers();">Print</button>
                             <a href="{{ request()->fullUrlWithQuery(['csv' => '']) }}" class="btn btn-success btn-sm" target="_blank">CSV</a>
                         </th>
                     </tr>
@@ -125,6 +125,30 @@
                     @endforelse
                 </tbody>
             </table>
+            <div id="printUsersSection" class="d-none">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Position</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($users as $item)
+                            <tr>
+                                <td>{{ $item->name }}</td>
+                                <td>{{ $item->e_position }}</td>
+                                <td>{{ $item->email }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="text-center">{{ __('messages.empty') }}</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
             <div class="overflow-auto position-relative text-center">
                 <div class="d-inline-block">
                     {{ $users->links() }}
@@ -152,4 +176,16 @@
             background-color: #ffc107; /* yellow */
         }
     </style>
+@endsection
+
+@section('script')
+<script>
+    function printUsers() {
+        var printContent = document.getElementById('printUsersSection').innerHTML;
+        var originalContent = document.body.innerHTML;
+        document.body.innerHTML = printContent;
+        window.print();
+        document.body.innerHTML = originalContent;
+    }
+</script>
 @endsection
