@@ -228,7 +228,13 @@
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Payee Name</td>
-                                        <td class="font-weight-bold">{{ $transaction->vendor_id ? $transaction->vendor->name : $transaction->payee }}</td>
+                                        <td class="font-weight-bold">
+                                            @if ($transaction->vendor_id)
+                                                <a href="#_" data-toggle="modal" data-target="#modal-vendor">{{ $transaction->vendor->name }}</a>
+                                            @else
+                                                {{ $transaction->payee }}
+                                            @endif
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Cost Control No.</td>
@@ -318,6 +324,42 @@
                         </div>
                     </div>
                 </div>
+                @if ($transaction->vendor_id)
+                    <div class="modal fade" id="modal-vendor" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title">
+                                        Vendor / Payee details
+                                    </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table">
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>{{ $transaction->vendor->name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Account Bank</td>
+                                            <td>{{ $transaction->vendor->account_bank }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Account Name</td>
+                                            <td>{{ $transaction->vendor->account_name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Account No.</td>
+                                            <td>{{ $transaction->vendor->account_number }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 @if ($transaction->status_id == 3)
                     <div class="col-lg-6">
                         <div class="card">
