@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\People;
 
 use Carbon\Carbon;
+use App\Department;
 use App\Company;
 use App\Role;
 use App\UaLevel;
@@ -22,6 +23,7 @@ class UsersController extends Controller {
         $users = User::orderBy('name', 'asc');
 
         if (!empty($_GET['s'])
+            || !empty($_GET['department'])
             || !empty($_GET['status'])
             || !empty($_GET['level'])
             || !empty($_GET['is_accounting'])) {
@@ -33,6 +35,13 @@ class UsersController extends Controller {
                     ->orWhere('email', 'like', "%{$key}%")
                     ->orWhere('e_emp_no', 'like', "%{$key}%");
             });
+
+            if (isset($_GET['department']) && $_GET['department'] != "") {
+                $department = $_GET['department'];
+                $users = $users->whereHas('departmentuser', function ($query) use ($department) {
+                    $query->where('department_id', $department);
+                });
+            }
 
             if (isset($_GET['status']) && $_GET['status'] != "") {
                 if ($_GET['status'] == 2) $users = $users->where('ua_level_id', '=', config('global.ua_inactive'));
@@ -51,6 +60,7 @@ class UsersController extends Controller {
             $users = $users->paginate(10);
 
             $users->appends(['s' => isset($_GET['s']) ? $_GET['s'] : '']);
+            $users->appends(['department' => isset($_GET['department']) ? $_GET['department'] : '']);
             $users->appends(['status' => isset($_GET['status']) ? $_GET['status'] : '']);
             $users->appends(['level' => isset($_GET['level']) ? $_GET['level'] : '']);
             $users->appends(['is_accounting' => isset($_GET['is_accounting']) ? $_GET['is_accounting'] : '']);
@@ -94,6 +104,7 @@ class UsersController extends Controller {
 
         $levels = UaLevel::orderBy('order', 'asc')->get();
         $travel_roles = TravelRole::orderBy('id', 'asc')->get();
+        $departments = Department::orderBy('name', 'asc')->get();
         // $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
         // $users_inactive = User::whereNull('role_id')->orderBy('name', 'asc')->get();
         
@@ -101,6 +112,7 @@ class UsersController extends Controller {
             'users' => $users,
             'levels' => $levels,
             'travel_roles' => $travel_roles,
+            'departments' => $departments,
             // 'users_inactive' => $users_inactive
         ]);
     }

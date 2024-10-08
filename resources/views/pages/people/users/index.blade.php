@@ -18,17 +18,23 @@
                 <div class="mb-2 col-6 col-md-2 col-xl-1">
                     <a href="/user/create" class="btn btn-success btn-block p-0"><i class="material-icons mt-1 text-white">add</i></a>
                 </div> 
-                <div class="mb-2 col-md-5 col-xl-3">
+                <div class="mb-2 col-md-5 col-xl-9">
                     <input type="text" class="form-control" name="s" value="{{ app('request')->input('s') }}" placeholder="Name, Email, Employee Number">
+                </div>                
+                <div class="mb-2 col-6 col-md-2 col-xl-1">
+                    <button class="btn btn-primary btn-block p-0" type="submit"><i class="material-icons mt-1">search</i></button>
                 </div>
-                <div class="mb-2 col-md-6 col-xl-2">
+                <div class="mb-2 col-6 col-md-2 col-xl-1">
+                    <a href="/user" class="btn btn-secondary btn-block p-0" type="submit"><i class="material-icons mt-1 text-white">clear</i></a>
+                </div>
+                <div class="mb-2 col-md-6 col-xl-3">
                     <select name="status" class="form-control">
                         <option value="1" {{ app('request')->input('status') == 1 ? 'selected' : '' }}>All</option>
                         <option value="" {{ app('request')->input('status') == "" || empty(app('request')->input('status')) ? 'selected' : '' }}>Active</option>
                         <option value="2" {{ app('request')->input('status') == 2 ? 'selected' : '' }}>Inactive</option>
                     </select>
                 </div>
-                <div class="mb-2 col-md-6 col-xl-2">
+                <div class="mb-2 col-md-6 col-xl-3">
                     <select name="level" class="form-control">
                         <option value="">All Levels</option>
                         @foreach ($levels as $item)
@@ -36,18 +42,20 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="mb-2 col-md-6 col-xl-2">
+                <div class="mb-2 col-md-6 col-xl-3">
+                    <select name="department" class="form-control">
+                        <option value="">All Departments</option>
+                        @foreach ($departments as $item)
+                            <option value="{{ $item->id }}" {{ app('request')->input('department') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option> 
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mb-2 col-md-6 col-xl-3">
                     <select name="is_accounting" class="form-control">
                         <option value="">All Users</option>
                         <option value="1" {{ app('request')->input('is_accounting') == 1 ? 'selected' : '' }}>Accounting</option>
                         <option value="2" {{ app('request')->input('is_accounting') == 2 ? 'selected' : '' }}>Not Accounting</option>
                     </select>
-                </div>
-                <div class="mb-2 col-6 col-md-2 col-xl-1">
-                    <button class="btn btn-primary btn-block p-0" type="submit"><i class="material-icons mt-1">search</i></button>
-                </div>
-                <div class="mb-2 col-6 col-md-2 col-xl-1">
-                    <a href="/user" class="btn btn-secondary btn-block p-0" type="submit"><i class="material-icons mt-1 text-white">clear</i></a>
                 </div>
             </form>
             <table class="table table-striped table-responsive-sm">
