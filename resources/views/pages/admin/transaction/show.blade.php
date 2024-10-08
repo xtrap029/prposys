@@ -185,7 +185,7 @@
                 <div class="col-lg-6">
                     <div class="card">
                         <div class="card-body">
-                            <div class="table-responsive">
+                            <div class="table" style="overflow: auto;">
                                 <table class="table">
                                     {{-- <div class="col-md-9">
                                         <label for="">Particulars</label>

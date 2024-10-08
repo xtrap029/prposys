@@ -341,7 +341,7 @@
                 <div class="col-lg-5">
                     <div class="card">
                         <div class="card-body">                                
-                            <div class="table-responsive">
+                            <div class="table" style="overflow: auto;">
                                 <table class="table">
                                     <tr>
                                         <td class="font-weight-bold text-gray border-0">Requested By</td>
