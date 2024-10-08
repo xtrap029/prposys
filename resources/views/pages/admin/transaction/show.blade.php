@@ -37,14 +37,57 @@
                             @endif
                         </span>
                         <span class="badge badge-pill bg-purple p-2">{{ $transaction->status->name }}</span>
+                        <a href="#_" class="badge badge-pill bg-secondary p-2 d-lg-none" data-toggle="modal" data-target="#modal-notes">
+                            <i class="align-middle material-icons text-xs">speaker_notes</i> Notes
+                            <span class="badge badge-danger {{ $transaction->notes->count() > 0 ? '' : 'd-none' }}">{{$transaction->notes->count()}}</span>
+                        </a>
                     </div>
                 </div>
 
-                <div class="col-lg-6 text-right mt-4">
+                <div class="mt-4 w-100 d-lg-none">
+                    <div class="row">
+                        <div class="col-4 px-1">
+                            <a href="/transaction/{{ $trans_page }}/{{ $transaction->project->company_id }}{{ isset($_GET['page']) ? '?page='.$_GET['page'] : '' }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
+                        </div>
+                        <div class="col-4 px-1 {{ $ua['trans_add'] == $non ? 'd-none' : '' }}">
+                            <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>
+                        </div>
+                        <div class="col-4 px-1 {{ $perms['can_manage'] ? '' : 'd-none' }}">
+                            <a href="#_" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto" data-toggle="modal" data-target="#modal-manage"><i class="align-middle font-weight-bolder material-icons text-md">security</i> Manage</a>
+                        </div>
+                        <div class="col-4 px-1 {{ $perms['can_create'] ? '' : 'd-none' }}">
+                            <a href="/transaction-form/create{{ $transaction->is_reimbursement ? '-reimbursement' : '' }}?company={{ $transaction->project->company_id }}&key={{ strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq) }}" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto">
+                                <i class="align-middle font-weight-bolder material-icons text-md">add</i> 
+                                @if ($transaction->is_deposit)
+                                    {{ config('global.trans_category_label_make_form')[1] }}
+                                @elseif ($transaction->is_bills)    
+                                    {{ config('global.trans_category_label_make_form')[2] }}
+                                @elseif ($transaction->is_hr)    
+                                    {{ config('global.trans_category_label_make_form')[3] }}
+                                @elseif ($transaction->is_bank)    
+                                    {{ config('global.trans_category_label_make_form')[5] }}
+                                @else
+                                    {{ config('global.trans_category_label_make_form')[0] }}
+                                @endif
+                            </a>
+                        </div>
+                        <div class="col-4 px-1 {{ $perms['can_edit'] ? '' : 'd-none' }}">
+                            <a href="/transaction/edit/{{ $transaction->id }}" class="btn mb-2 btn-sm btn-flat btn-primary col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
+                        </div>
+                        <div class="col-4 px-1 {{ $perms['can_cancel'] ? '' : 'd-none' }}">
+                            <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto" data-toggle="modal" data-target="#modal-cancel"><i class="align-middle font-weight-bolder material-icons text-md">delete</i> Cancel</a>
+                        </div>
+                        <div class="col-4 px-1 {{ $transaction->status_id == config('global.cancelled')[0] ? '' : 'd-none' }}">
+                            <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto" onclick="window.open('/transaction/print-cancelled/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 text-right mt-4 d-none d-lg-block">
                     <div>
                         <a href="/transaction/{{ $trans_page }}/{{ $transaction->project->company_id }}{{ isset($_GET['page']) ? '?page='.$_GET['page'] : '' }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
                         <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto {{ $ua['trans_add'] == $non ? 'd-none' : '' }}"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>
-                        <a href="/transaction/reset/{{ $transaction->id }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto d-none {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
+                        {{-- <a href="/transaction/reset/{{ $transaction->id }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto d-none {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a> --}}
                         <a href="#_" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto {{ $perms['can_manage'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-manage"><i class="align-middle font-weight-bolder material-icons text-md">security</i> Manage</a>
                     </div>
                     <div>
