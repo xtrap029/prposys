@@ -55,3 +55,21 @@
       </div>
 </div>
 @endsection
+
+@section('style')
+    <style>
+        @media only screen and (max-width: 768px) {
+            .nav-ios-icon {
+                max-height: max-content !important;
+                background-color: rgba(0, 0, 0, 0.8) !important;
+                padding: 15px !important;
+            }
+            .img-size-64 {
+                width: 110px !important;
+            }
+            .nav-ios-icon__divider {
+                display: none !important;
+            }
+        }
+    </style>
+@endsection
