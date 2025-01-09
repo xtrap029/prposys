@@ -28,6 +28,15 @@
                 <input type="hidden" name="trans_type" value="{{ $trans_type }}">
 
                 <div class="form-row mb-3">
+                    <div class="col-sm-5 col-lg-1 mb-2">
+                        <label for="">Year</label>
+                        <select name="year" class="form-control @error('year') is-invalid @enderror" required>
+                            @for ($i = date('Y'); $i > (date('Y')-5); $i--)
+                                <option value="{{ $i }}" {{ $i == date('Y') ? 'selected' : '' }}>{{ $i }}</option>
+                            @endfor
+                        </select>
+                        @include('errors.inline', ['message' => $errors->first('year')])
+                    </div>
                     <div class="col-lg-3 mb-2">
                         <label for="">Transaction Category</label>
                         <select name="trans_category" class="trans-category form-control @error('trans_category') is-invalid @enderror">
@@ -87,7 +96,7 @@
                         </select>
                         @include('errors.inline', ['message' => $errors->first('currency')])
                     </div>
-                    <div class="col-8 col-sm-5 col-lg-4 mb-2">
+                    <div class="col-8 col-sm-5 col-lg-3 mb-2">
                         <label for="">Amount</label>
                         <input type="number" class="form-control @error('amount') is-invalid @enderror" name="amount" step="0.01" value="{{ old('amount') ?: (isset($_GET['amount']) ? $_GET['amount'] : '') }}" required>
                         @include('errors.inline', ['message' => $errors->first('amount')])
@@ -249,80 +258,6 @@
                             <button type="button" class="btn btn-secondary jsReplicate_add"><i class="nav-icon material-icons icon--list">add_box</i> Add More</button>
                         </div>
                     </div>
-
-                    <!-- <div class="card col-md-12 mt-4">
-                        <div class="card-header font-weight-bold">
-                            Select Transaction Category
-                        </div>
-                        <div class="card-body pb-1 row">                            
-                            <div class="col-md-6 col-xl-4">
-                                <div class="callout py-1 mx-1 row">
-                                    <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[0] }}" class="trans-category vlign--baseline-middle m-auto outline-0" checked>
-                                    </div>
-                                    <div class="col-10 mt-2">
-                                        <h6 class="font-weight-bold">{{ config('global.trans_category_label')[0] }}</h6>
-                                        <p class="d-none">Lorem ipsum dolor sit amet, consectetur, et dolore magna aliqua.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-xl-4">
-                                <div class="callout py-1 mx-1 row">
-                                    <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[1] }}" class="trans-category vlign--baseline-middle m-auto outline-0" {{ isset($_GET['is_deposit']) && $_GET['is_deposit'] == 1 ? 'checked' : '' }}>
-                                    </div>
-                                    <div class="col-10 mt-2">
-                                        <h6 class="font-weight-bold">{{ config('global.trans_category_label')[1] }}</h6>
-                                        <p class="d-none">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-xl-4">
-                                <div class="callout py-1 mx-1 row">
-                                    <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[2] }}" class="trans-category vlign--baseline-middle m-auto outline-0" {{ isset($_GET['is_bills']) && $_GET['is_bills'] == 1 ? 'checked' : '' }}>
-                                    </div>
-                                    <div class="col-10 mt-2">
-                                        <h6 class="font-weight-bold">{{ config('global.trans_category_label')[2] }}</h6>          
-                                        <p class="d-none">Excepteur sint non proident, sunt in culpa qui mollit anim id.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-xl-4">
-                                <div class="callout py-1 mx-1 row">
-                                    <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[3] }}" class="trans-category vlign--baseline-middle m-auto outline-0" {{ isset($_GET['is_hr']) && $_GET['is_hr'] == 1 ? 'checked' : '' }}>
-                                    </div>
-                                    <div class="col-10 mt-2">
-                                        <h6 class="font-weight-bold">{{ config('global.trans_category_label')[3] }}</h6>
-                                        <p class="d-none">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-xl-4">
-                                <div class="callout py-1 mx-1 row">
-                                    <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[4] }}" class="trans-category vlign--baseline-middle m-auto outline-0" {{ isset($_GET['is_reimbursement']) && $_GET['is_reimbursement'] == 1 ? 'checked' : '' }}>
-                                    </div>
-                                    <div class="col-10 mt-2">
-                                        <h6 class="font-weight-bold">{{ config('global.trans_category_label')[4] }}</h6>
-                                        <p class="d-none">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-xl-4">
-                                <div class="callout py-1 mx-1 row">
-                                    <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[5] }}" class="trans-category vlign--baseline-middle m-auto outline-0" {{ isset($_GET['is_bank']) && $_GET['is_bank'] == 1 ? 'checked' : '' }}>
-                                    </div>
-                                    <div class="col-10 mt-2">
-                                        <h6 class="font-weight-bold">{{ config('global.trans_category_label')[5] }}</h6>
-                                        <p class="d-none">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
                     <div class="col-md-12 text-center">
                         <div class="my-4">
                             <a href="/transaction/{{ $trans_page }}/{{ $trans_company }}" class="mr-3">Cancel</a>

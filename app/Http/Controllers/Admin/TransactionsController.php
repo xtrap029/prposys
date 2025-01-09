@@ -462,6 +462,7 @@ class TransactionsController extends Controller {
 
             $validation = [
                 'trans_type' => ['required', 'in:pr,po,pc'],
+                'year' => ['required', 'integer', 'min:'.date('Y')-5, 'max:'.date('Y')],
                 'currency' => ['required'],
                 'amount' => ['required', 'min:0'],
                 'purpose_option_id' => ['required', 'exists:purpose_options,id'],
@@ -548,13 +549,15 @@ class TransactionsController extends Controller {
         }
 
         // generate transaction code
-        $latest_trans = Transaction::where('trans_year', now()->year)
+        $latest_trans = Transaction::where('trans_year', $request->year)
             ->where('trans_type', $data['trans_type'])
             ->whereHas('project', function($query) use($trans_company) {
                 $query->where('company_id', $trans_company);
             })
             ->orderBy('trans_seq', 'desc')->first();
-        $data['trans_year'] = now()->year;
+        $data['trans_year'] = $request->year;
+        unset($data['year']);
+
         if ($latest_trans) {
             $data['trans_seq'] = $latest_trans->trans_seq+1;
         } else {
