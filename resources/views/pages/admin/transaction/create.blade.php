@@ -105,7 +105,8 @@
                 <div class="form-row mb-3">
                     <div class="col-sm-6 col-lg-4 mb-2">
                         <label for="">Purpose</label>
-                        <select name="purpose_option_id" id="purposeOption" class="form-control chosen-select @error('purpose_option_id') is-invalid @enderror">
+                        <select name="purpose_option_id" id="purposeOption" class="form-control @error('purpose_option_id') is-invalid @enderror" required>
+                            <option value="">Select Purpose</option>
                             @foreach ($purpose_options as $item)
                                 @if (in_array($company->id, explode(',', $item->companies))) 
                                     <option value="{{ $item->id }}" {{ isset($_GET['purpose_option_id']) && $_GET['purpose_option_id'] == $item->id ? 'selected' : '' }} data-description="{{ $item->description }}">{{ $item->code.' - '.$item->name }}</option>                                        
@@ -303,7 +304,6 @@
                 }
             })
 
-            assignPurposeDescription()
             $('#purposeOption').change(function() {
                 assignPurposeDescription()
             })
