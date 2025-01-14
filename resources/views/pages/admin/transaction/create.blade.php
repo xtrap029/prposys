@@ -122,7 +122,8 @@
                     </div>
                     <div class="col-sm-6 col-lg-4 mb-2">
                         <label for="">Payee Name</label>
-                        <select name="vendor_id" class="form-control chosen-select @error('vendor_id') is-invalid @enderror">
+                        <select name="vendor_id" class="form-control @error('vendor_id') is-invalid @enderror" required>
+                            <option value="">Select Payee Name</option>
                             @foreach ($vendors as $item)
                                 <option value="{{ $item->id }}" {{ isset($_GET['vendor_id']) && $_GET['vendor_id'] == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>                                        
                             @endforeach
