@@ -138,6 +138,11 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
         Route::resource('cost-type', 'Admin\CostTypesController', ['names' => ['index' => 'costtype', 'create' => 'costtype', 'edit' => 'costtype']]);        
     });
 
+    // Seq Class Type
+    Route::middleware('CheckUserAccess:seq_class_type')->group(function () {
+        Route::resource('class-type', 'Admin\ClassTypesController', ['names' => ['index' => 'classtype', 'create' => 'classtype', 'edit' => 'classtype']]);        
+    });
+
     // Seq Purpose Options
     Route::middleware('CheckUserAccess:seq_purpose')->group(function () {
         Route::resource('purpose', 'Admin\PurposesController', ['names' => ['index' => 'purpose', 'create' => 'purpose', 'edit' => 'purpose']]); 

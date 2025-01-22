@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Bank;
 use App\Company;
+use App\ClassType;
 use App\CostType;
 use App\CompanyProject;
 use App\ExpenseType;
@@ -131,6 +132,9 @@ class TransactionsController extends Controller {
                                             ->orWhere('payee', 'like', "%{$key}%")
                                             ->orWhereHas('coatagging', function($query) use($key) {
                                                 $query->where('name', 'like', "%{$key}%");
+                                            })
+                                            ->orWhereHas('classtype', function($query) use($key) {
+                                                $query->where('code', 'like', "%{$key}%");
                                             })
                                             ->orWhere('expense_type_description', 'like', "%{$key}%")
                                             ->orWhereHas('expensetype', function($query) use($key) {
@@ -310,6 +314,9 @@ class TransactionsController extends Controller {
                                         ->orWhereHas('coatagging', function($query) use($key) {
                                             $query->where('name', 'like', "%{$key}%");
                                         })
+                                        ->orWhereHas('classtype', function($query) use($key) {
+                                            $query->where('code', 'like', "%{$key}%");
+                                        })
                                         ->orWhere('expense_type_description', 'like', "%{$key}%")
                                         ->orWhereHas('expensetype', function($query) use($key) {
                                             $query->where('name', 'like', "%{$key}%");
@@ -438,6 +445,7 @@ class TransactionsController extends Controller {
         $company = Company::where('id', $trans_company)->first();
         $cost_types = CostType::orderBy('control_no', 'asc')->get();
         $purpose_options = PurposeOption::orderBy('code', 'asc')->get();
+        $class_types = ClassType::orderBy('code', 'asc')->get();
         $vendors = Vendor::orderBy('name', 'asc')->get();
 
         return view('pages.admin.transaction.create')->with([
@@ -450,6 +458,7 @@ class TransactionsController extends Controller {
             'cost_types' => $cost_types,
             'company' => $company,
             'purpose_options' => $purpose_options,
+            'class_types' => $class_types,
             'vendors' => $vendors
         ]);
     }
@@ -469,6 +478,8 @@ class TransactionsController extends Controller {
                 'vendor_id' => ['required', 'exists:vendors,id'],
                 'purpose' => ['required'],
                 'project_id' => ['required', 'exists:company_projects,id'],
+                'class_type_id' => ['required', 'exists:class_types,id'],
+                'budgeted' => ['required', 'between:0,1'],
                 // 'payee' => ['required'],
                 // 'cost_type_id' => ['nullable', 'exists:cost_types,id'],
                 'cost_control_no' => [],
@@ -617,7 +628,9 @@ class TransactionsController extends Controller {
         $new_trans->project_id = $transaction->project_id;
         $new_trans->payee = $transaction->payee;
         $new_trans->due_at = $transaction->due_at;
+        $new_trans->class_type_id = $transaction->class_type_id;
         $new_trans->requested_id = $transaction->requested_id;
+        $new_trans->budgeted = $transaction->budgeted;
 
         $new_trans->is_deposit = $transaction->is_deposit;
         $new_trans->is_bills = $transaction->is_bills;
@@ -680,6 +693,7 @@ class TransactionsController extends Controller {
         $projects = CompanyProject::where('company_id', $transaction->project->company_id)->orderBy('project', 'asc')->get();
         $cost_types = CostType::orderBy('control_no', 'asc')->get();
         $purpose_options = PurposeOption::orderBy('code', 'asc')->get();
+        $class_types = ClassType::orderBy('code', 'asc')->get();
         $vendors = Vendor::orderBy('name', 'asc')->get();
         
         return view('pages.admin.transaction.edit')->with([
@@ -688,6 +702,7 @@ class TransactionsController extends Controller {
             'projects' => $projects,
             'cost_types' => $cost_types,
             'purpose_options' => $purpose_options,
+            'class_types' => $class_types,
             'vendors' => $vendors,
             'trans_page' => $trans_page
         ]);
@@ -706,6 +721,8 @@ class TransactionsController extends Controller {
             'currency' => ['required'],
             'bill_statement_no' => [],
             'purpose_option_id' => ['required', 'exists:purpose_options,id'],
+            'class_type_id' => ['required', 'exists:class_types,id'],
+            'budgeted' => ['required', 'between:0,1'],
             'vendor_id' => ['required', 'exists:vendors,id'],
             'purpose' => ['required'],
             'project_id' => ['required', 'exists:company_projects,id'],

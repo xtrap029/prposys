@@ -130,6 +130,11 @@
                                             <i class="nav-icon material-icons icon--list">payments</i><p>Expense Type</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item {{ $ua['seq_class_type'] == $non ? 'd-none' : '' }}">
+                                        <a href="/class-type" class="nav-link {{ Route::currentRouteName() == 'classtype' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">account_tree</i><p>Class Type</p>
+                                        </a>
+                                    </li>
                                     <li class="nav-item {{ $ua['seq_particulars'] == $non ? 'd-none' : '' }}">
                                         <a href="/particular" class="nav-link {{ Route::currentRouteName() == 'particular' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">description</i><p>Particulars</p>

@@ -78,6 +78,18 @@
                                     <td class="font-weight-bold">Payor</td>
                                     <td>{{ $transaction->is_deposit ? $transaction->payor : $transaction->project->company->name }}</td>
                                 </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Class</td>
+                                    <td>{{ $transaction->class_type_id ? $transaction->classtype->code : '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Budgeted</td>
+                                    <td>{{ $transaction->budgeted ? 'Yes' : 'No' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Payor</td>
+                                    <td>{{ $transaction->is_deposit ? $transaction->payor : $transaction->project->company->name }}</td>
+                                </tr>
                                 @if ($transaction->is_bills == 1 || $transaction->is_deposit == 1)
                                     <tr>
                                         <td class="font-weight-bold">Bill/Statement No.</td>

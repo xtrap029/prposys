@@ -147,6 +147,14 @@
                                             <td class="font-weight-bold">{{ $transaction->cost_control_no }}</td>
                                         </tr>
                                         <tr>
+                                            <td class="font-weight-bold">Class</td>
+                                            <td>{{ $transaction->class_type_id ? $transaction->classtype->code : '-' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-weight-bold">Budgeted</td>
+                                            <td>{{ $transaction->budgeted ? 'Yes' : 'No' }}</td>
+                                        </tr>
+                                        <tr>
                                             <td class="font-weight-bold">Issue Type</td>
                                             <td>{{ $transaction->control_type }}</td>
                                         </tr>

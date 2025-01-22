@@ -167,6 +167,24 @@
                         <label for="">Prepared by</label>
                         <h5>{{ $transaction->owner->name }}</h5>
                     </div>
+                    <div class="col-sm-4 col-lg-4 mb-2">
+                        <label for="">Class</label>
+                        <select name="class_type_id" class="form-control @error('class_type_id') is-invalid @enderror" required>
+                            <option value="">Select Class</option>
+                            @foreach ($class_types as $item)
+                                <option value="{{ $item->id }}" {{ $transaction->class_type_id == $item->id ? 'selected' : '' }}>{{ $item->code }}</option>                                        
+                            @endforeach
+                        </select>
+                        @include('errors.inline', ['message' => $errors->first('class_type_id')])
+                    </div>
+                    <div class="col-sm-4 col-lg-4 mb-2">             
+                        <label for="">Budgeted?</label>
+                        <select name="budgeted" class="form-control" required>
+                            <option value="0" {{ $transaction->budgeted == "0" ? 'selected' : '' }}>No</option>
+                            <option value="1" {{ $transaction->budgeted == "1" ? 'selected' : '' }}>Yes</option>
+                        </select> 
+                        @include('errors.inline', ['message' => $errors->first('budgeted')])    
+                    </div>
                 </div>
                 <div class="form-row mb-3 d-none">
                     <div class="col-sm-4 col-lg-4 mb-2">

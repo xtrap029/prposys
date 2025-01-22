@@ -35,6 +35,8 @@ class Transaction extends Model {
                                         // 'coa_notes',
                                         'expense_type_description',
                                         // 'expensetype.name',
+                                        'class_type_id',
+                                        'budgeted',
                                         'vattype.name',
                                         'control_type',
                                         'control_no',
@@ -104,6 +106,10 @@ class Transaction extends Model {
 
     public function expensetype() {
         return $this->belongsTo(ExpenseType::class, 'expense_type_id')->withTrashed();
+    }
+
+    public function classtype() {
+        return $this->belongsTo(ClassType::class, 'class_type_id')->withTrashed();
     }
 
     public function vattype() {

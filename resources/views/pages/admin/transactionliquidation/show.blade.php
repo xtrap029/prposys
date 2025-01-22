@@ -460,6 +460,18 @@
                                         </td> --}}
                                         <td class="font-weight-bold">{{ $transaction->cost_control_no }}</td>
                                     </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-gray">Class</td>
+                                        <td class="font-weight-bold">
+                                            {{ $transaction->class_type_id ? $transaction->classtype->code : '-' }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold text-gray">Budgeted</td>
+                                        <td class="font-weight-bold">
+                                            {{ $transaction->budgeted ? "Yes" : "No" }}
+                                        </td>
+                                    </tr>
                                     @if ($transaction->is_bills == 1 || $transaction->is_deposit == 1)
                                         <tr>
                                             <td class="font-weight-bold text-gray">Bill/Statement No.</td>
