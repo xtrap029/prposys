@@ -29,7 +29,13 @@
                                 {{ $item->name }}
                                 <div class="text-info">{{ $item->code }} / {{ $item->qb_code }} / {{ $item->qb_no }}</div>
                             </td>
-                            <td class="align-middle text-nowrap"></td>
+                            <td class="align-middle text-nowrap">
+                                @foreach (config('global.trans_category') as $key => $category)
+                                    @if (in_array($category, explode(',', $item->categories)))
+                                        <span class="badge badge-pill py-1 px-2 mt-2 small bg-gray">{{ config('global.trans_category_label')[$key] }}</span>
+                                    @endif
+                                @endforeach
+                            </td>
                             <td class="align-middle text-right text-nowrap">
                                 <a href="/company-project/{{ $item->id }}" class="btn btn-link btn-sm">Projects</a>
                                 <a href="/company/{{ $item->id }}/edit" class="btn btn-link btn-sm">Edit</a>

@@ -37,6 +37,18 @@
                     @include('errors.inline', ['message' => $errors->first('name')])
                 </div>
                 <div class="form-group">
+                        <label for="">Allowed Categories</label>
+                        <select name="categories[]" class="multipleSelect" multiple>
+                            @foreach(config('global.trans_category') as $key => $category)
+                                <option 
+                                    value="{{ $category }}"
+                                    {{ old('categories') == $category ? 'selected' : '' }}
+                                >{{ config('global.trans_category_label')[$key] }}</option>
+                            @endforeach
+                        </select>
+                        @include('errors.inline', ['message' => $errors->first('categories')])
+                    </div>
+                <div class="form-group">
                     <label for="">Logo</label>
                     <input type="file" name="logo" class="form-control-file @error('logo') is-invalid @enderror" required>
                     @include('errors.inline', ['message' => $errors->first('logo')])
@@ -46,4 +58,14 @@
             </form>
         </div>
     </section>
+@endsection
+
+@section('script')
+    <script type="text/javascript">
+        $(function() {
+            $('.multipleSelect').fastselect({
+                placeholder: 'Choose your categories here'
+            })
+        })
+    </script>
 @endsection

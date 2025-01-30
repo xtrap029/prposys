@@ -42,42 +42,54 @@
                     </div> --}}
                     <div class="col-lg-3 mb-2">
                         <label for="">Transaction Category</label>
-                        <select name="trans_category" class="trans-category form-control @error('trans_category') is-invalid @enderror">
-                            <option 
-                                value="{{ config('global.trans_category')[0] }}"
-                            >
-                                {{ config('global.trans_category_label')[0] }}
-                            </option>
-                            <option 
-                                value="{{ config('global.trans_category')[1] }}"
-                                {{ $transaction->is_deposit == 1 ? 'selected' : '' }}
-                            >
-                                {{ config('global.trans_category_label')[1] }}
-                            </option>
-                            <option 
-                                value="{{ config('global.trans_category')[2] }}"
-                                {{ $transaction->is_bills == 1 ? 'selected' : '' }}
-                            >
-                                {{ config('global.trans_category_label')[2] }}
-                            </option>
-                            <option 
-                                value="{{ config('global.trans_category')[3] }}"
-                                {{ $transaction->is_hr == 1 ? 'selected' : '' }}
-                            >
-                                {{ config('global.trans_category_label')[3] }}
-                            </option>
-                            <option 
-                                value="{{ config('global.trans_category')[4] }}"
-                                {{ $transaction->is_reimbursement == 1 ? 'selected' : '' }}
-                            >
-                                {{ config('global.trans_category_label')[4] }}
-                            </option>
-                            <option 
-                                value="{{ config('global.trans_category')[5] }}"
-                                {{ $transaction->is_bank == 1 ? 'selected' : '' }}
-                            >
-                                {{ config('global.trans_category_label')[5] }}
-                            </option>
+                        <select name="trans_category" class="trans-category form-control @error('trans_category') is-invalid @enderror" required>
+                            @if (in_array(config('global.trans_category')[0], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[0] }}"
+                                >
+                                    {{ config('global.trans_category_label')[0] }}
+                                </option>
+                            @endif
+                            @if (in_array(config('global.trans_category')[1], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[1] }}"
+                                    {{ $transaction->is_deposit == 1 ? 'selected' : '' }}
+                                >
+                                    {{ config('global.trans_category_label')[1] }}
+                                </option>
+                            @endif
+                            @if (in_array(config('global.trans_category')[2], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[2] }}"
+                                    {{ $transaction->is_bills == 1 ? 'selected' : '' }}
+                                >
+                                    {{ config('global.trans_category_label')[2] }}
+                                </option>
+                            @endif
+                            @if (in_array(config('global.trans_category')[3], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[3] }}"
+                                    {{ $transaction->is_hr == 1 ? 'selected' : '' }}
+                                >
+                                    {{ config('global.trans_category_label')[3] }}
+                                </option>
+                            @endif
+                            @if (in_array(config('global.trans_category')[4], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[4] }}"
+                                    {{ $transaction->is_reimbursement == 1 ? 'selected' : '' }}
+                                >
+                                    {{ config('global.trans_category_label')[4] }}
+                                </option>
+                            @endif
+                            @if (in_array(config('global.trans_category')[5], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[5] }}"
+                                    {{ $transaction->is_bank == 1 ? 'selected' : '' }}
+                                >
+                                    {{ config('global.trans_category_label')[5] }}
+                                </option>
+                            @endif
                         </select>
                         @include('errors.inline', ['message' => $errors->first('trans_category')])
                     </div>
