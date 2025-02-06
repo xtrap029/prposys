@@ -117,7 +117,7 @@
                 <div class="form-row mb-3">
                     <div class="col-sm-6 col-lg-4 mb-2">
                         <label for="">Purpose</label>
-                        <select name="purpose_option_id" id="purposeOption" class="form-control @error('purpose_option_id') is-invalid @enderror" required>
+                        <select name="purpose_option_id" id="purposeOption" class="form-control chosen-select chosen-required @error('purpose_option_id') is-invalid @enderror" required>
                             <option value="">Select Purpose</option>
                             @foreach ($purpose_options as $item)
                                 @if (in_array($company->id, explode(',', $item->companies))) 
@@ -315,6 +315,14 @@
 
 @section('style')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.css" integrity="sha512-0nkKORjFgcyxv3HbE4rzFUlENUMNqic/EzDIeYCgsKa/nwqr2B91Vu/tNAu4Q0cBuG4Xe/D1f/freEci/7GDRA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .chosen-required:invalid {
+            height: 0px !important;
+            opacity: 0 !important;
+            position: absolute !important;
+            display: flex !important;
+        }
+    </style>
 @endsection
 
 @section('script')
