@@ -26,9 +26,27 @@
                     <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required>
                     @include('errors.inline', ['message' => $errors->first('name')])
                 </div>
+                <div class="form-group">
+                    <label for="">Companies</label>
+                    <select class="multipleSelect" name="companies[]" multiple>
+                        @foreach ($companies as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <a href="/class-type">Cancel</a>
                 <input type="submit" class="btn btn-primary float-right" value="Save">
             </form>
         </div>
     </section>
+@endsection
+
+@section('script')
+    <script type="text/javascript">
+        $(function() {
+            $('.multipleSelect').fastselect({
+                placeholder: 'Choose your companies here'
+            })
+        })
+    </script>
 @endsection

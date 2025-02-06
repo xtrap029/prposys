@@ -211,7 +211,9 @@
                         <select name="class_type_id" class="form-control @error('class_type_id') is-invalid @enderror" required>
                             <option value="">Select Class</option>
                             @foreach ($class_types as $item)
-                                <option value="{{ $item->id }}" {{ isset($_GET['class_type_id']) && $_GET['class_type_id'] == $item->id ? 'selected' : '' }}>{{ $item->code }}</option>                                        
+                                @if (in_array($company->id, explode(',', $item->companies))) 
+                                    <option value="{{ $item->id }}" {{ isset($_GET['class_type_id']) && $_GET['class_type_id'] == $item->id ? 'selected' : '' }}>{{ $item->code }}</option>                                        
+                                @endif
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('class_type_id')])
