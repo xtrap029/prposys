@@ -492,13 +492,25 @@ class TransactionsController extends Controller {
                 'is_confidential_own' => ['required', 'between:0,1'],
             ];
 
-            if ($trans_category == config('global.trans_category')[2]) {
+            if ($trans_category == config('global.trans_category')[2]
+                || $trans_category == config('global.trans_category')[6]
+                || $trans_category == config('global.trans_category')[7]
+                || $trans_category == config('global.trans_category')[8]
+                || $trans_category == config('global.trans_category')[9]
+                ) {
                 $validation['bill_statement_no'] = ['required'];
             }
             
             $data = $request->validate($validation);
 
-            if (!in_array($trans_category, [config('global.trans_category')[1], config('global.trans_category')[2]])) {
+            if (!in_array($trans_category, [
+                config('global.trans_category')[1],
+                config('global.trans_category')[2],
+                config('global.trans_category')[6],
+                config('global.trans_category')[7],
+                config('global.trans_category')[8],
+                config('global.trans_category')[9]
+            ])) {
                 $data['bill_statement_no'] = '';
             }
 
@@ -512,6 +524,11 @@ class TransactionsController extends Controller {
             $data['is_hr'] = 0;
             $data['is_reimbursement'] = 0;
             $data['is_bank'] = 0;
+
+            $data['is_tdsa_bill'] = 0;
+            $data['is_tdsa_payment'] = 0;
+            $data['is_aec_bill'] = 0;
+            $data['is_aec_payment'] = 0;
 
             switch ($data['trans_category']) {
                 case config('global.trans_category')[1]:
@@ -528,6 +545,18 @@ class TransactionsController extends Controller {
                     break;
                 case config('global.trans_category')[5]:
                     $data['is_bank'] = 1;
+                    break;
+                case config('global.trans_category')[6]:
+                    $data['is_tdsa_bill'] = 1;
+                    break;
+                case config('global.trans_category')[7]:
+                    $data['is_tdsa_payment'] = 1;
+                    break;
+                case config('global.trans_category')[8]:
+                    $data['is_aec_bill'] = 1;
+                    break;
+                case config('global.trans_category')[9]:
+                    $data['is_aec_payment'] = 1;
                     break;
                 default:
                     break;
@@ -637,6 +666,11 @@ class TransactionsController extends Controller {
         $new_trans->is_hr = $transaction->is_hr;
         $new_trans->is_reimbursement = $transaction->is_reimbursement;
         $new_trans->is_bank = $transaction->is_bank;
+
+        $new_trans->is_tdsa_bill = $transaction->is_tdsa_bill;
+        $new_trans->is_tdsa_payment = $transaction->is_tdsa_payment;
+        $new_trans->is_aec_bill = $transaction->is_aec_bill;
+        $new_trans->is_aec_payment = $transaction->is_aec_payment;
 
         if ($transaction->soa) {
             $new_trans->soa = substr(md5(mt_rand()), 0, 7).'_'.$transaction->soa;

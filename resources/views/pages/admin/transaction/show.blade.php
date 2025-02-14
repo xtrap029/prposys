@@ -32,6 +32,14 @@
                                 {{ config('global.trans_category_label')[4] }}
                             @elseif ($transaction->is_bank)    
                                 {{ config('global.trans_category_label')[5] }}
+                            @elseif ($transaction->is_tdsa_bill)    
+                                {{ config('global.trans_category_label')[6] }}
+                            @elseif ($transaction->is_tdsa_payment)    
+                                {{ config('global.trans_category_label')[7] }}
+                            @elseif ($transaction->is_aec_bill)    
+                                {{ config('global.trans_category_label')[8] }}
+                            @elseif ($transaction->is_aec_payment)    
+                                {{ config('global.trans_category_label')[9] }}
                             @else
                                 {{ config('global.trans_category_label')[0] }}    
                             @endif
@@ -66,6 +74,14 @@
                                     {{ config('global.trans_category_label_make_form')[3] }}
                                 @elseif ($transaction->is_bank)    
                                     {{ config('global.trans_category_label_make_form')[5] }}
+                                @elseif ($transaction->is_tdsa_bill)    
+                                    {{ config('global.trans_category_label_make_form')[6] }}
+                                @elseif ($transaction->is_tdsa_payment)    
+                                    {{ config('global.trans_category_label_make_form')[7] }}
+                                @elseif ($transaction->is_aec_bill)    
+                                    {{ config('global.trans_category_label_make_form')[8] }}
+                                @elseif ($transaction->is_aec_payment)    
+                                    {{ config('global.trans_category_label_make_form')[9] }}                                    
                                 @else
                                     {{ config('global.trans_category_label_make_form')[0] }}
                                 @endif
@@ -106,6 +122,14 @@
                                 {{ config('global.trans_category_label_make_form')[3] }}
                             @elseif ($transaction->is_bank)    
                                 {{ config('global.trans_category_label_make_form')[5] }}
+                            @elseif ($transaction->is_tdsa_bill)    
+                                {{ config('global.trans_category_label_make_form')[6] }}
+                            @elseif ($transaction->is_tdsa_payment)    
+                                {{ config('global.trans_category_label_make_form')[7] }}
+                            @elseif ($transaction->is_aec_bill)    
+                                {{ config('global.trans_category_label_make_form')[8] }}
+                            @elseif ($transaction->is_aec_payment)    
+                                {{ config('global.trans_category_label_make_form')[9] }}
                             @else
                                 {{ config('global.trans_category_label_make_form')[0] }}
                             @endif
@@ -304,7 +328,13 @@
                                             {{ $transaction->budgeted ? "Yes" : "No" }}
                                         </td>
                                     </tr>
-                                    @if ($transaction->is_bills == 1 || $transaction->is_deposit == 1)
+                                    @if ($transaction->is_bills == 1 
+                                        || $transaction->is_deposit == 1
+                                        || $transaction->is_tdsa_bill == 1
+                                        || $transaction->is_tdsa_payment == 1
+                                        || $transaction->is_aec_bill == 1
+                                        || $transaction->is_aec_payment == 1
+                                    )
                                         <tr>
                                             <td class="font-weight-bold text-gray">Bill/Statement No.</td>
                                             <td class="font-weight-bold">{{ $transaction->bill_statement_no ?: '-' }}</td>

@@ -87,6 +87,38 @@
                                     {{ config('global.trans_category_label')[5] }}
                                 </option>
                             @endif
+                            @if (in_array(config('global.trans_category')[6], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[6] }}"
+                                    {{ isset($_GET['is_tdsa_bill']) && $_GET['is_tdsa_bill'] == 1 ? 'selected' : '' }}
+                                >
+                                    {{ config('global.trans_category_label')[6] }}
+                                </option>
+                            @endif
+                            @if (in_array(config('global.trans_category')[7], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[7] }}"
+                                    {{ isset($_GET['is_tdsa_payment']) && $_GET['is_tdsa_payment'] == 1 ? 'selected' : '' }}
+                                >
+                                    {{ config('global.trans_category_label')[7] }}
+                                </option>
+                            @endif
+                            @if (in_array(config('global.trans_category')[8], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[8] }}"
+                                    {{ isset($_GET['is_aec_bill']) && $_GET['is_aec_bill'] == 1 ? 'selected' : '' }}
+                                >
+                                    {{ config('global.trans_category_label')[8] }}
+                                </option>
+                            @endif
+                            @if (in_array(config('global.trans_category')[9], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[9] }}"
+                                    {{ isset($_GET['is_aec_payment']) && $_GET['is_aec_payment'] == 1 ? 'selected' : '' }}
+                                >
+                                    {{ config('global.trans_category_label')[9] }}
+                                </option>
+                            @endif
                         </select>
                         @include('errors.inline', ['message' => $errors->first('trans_category')])
                     </div>
@@ -332,7 +364,12 @@
 
         $(function() {
             $('.trans-category').change(function() {
-                if ($(this).val() == "{{ config('global.trans_category')[2] }}") {
+                if ($(this).val() == "{{ config('global.trans_category')[2] }}"
+                    || $(this).val() == "{{ config('global.trans_category')[6] }}"
+                    || $(this).val() == "{{ config('global.trans_category')[7] }}"
+                    || $(this).val() == "{{ config('global.trans_category')[8] }}"
+                    || $(this).val() == "{{ config('global.trans_category')[9] }}"
+                ) {
                     $('#bill_statement_no').parent().parent().removeClass('d-none')
                     $('#bill_statement_no').attr('required', 'true')
                 } else if ($(this).val() == "{{ config('global.trans_category')[1] }}") {
