@@ -90,6 +90,38 @@
                                     {{ config('global.trans_category_label')[5] }}
                                 </option>
                             @endif
+                            @if (in_array(config('global.trans_category')[6], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[6] }}"
+                                    {{ $transaction->is_tdsa_bill == 1 ? 'selected' : '' }}
+                                >
+                                    {{ config('global.trans_category_label')[6] }}
+                                </option>
+                            @endif
+                            @if (in_array(config('global.trans_category')[7], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[7] }}"
+                                    {{ $transaction->is_tdsa_payment == 1 ? 'selected' : '' }}
+                                >
+                                    {{ config('global.trans_category_label')[7] }}
+                                </option>
+                            @endif
+                            @if (in_array(config('global.trans_category')[8], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[8] }}"
+                                    {{ $transaction->is_aec_bill == 1 ? 'selected' : '' }}
+                                >
+                                    {{ config('global.trans_category_label')[8] }}
+                                </option>
+                            @endif
+                            @if (in_array(config('global.trans_category')[9], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[9] }}"
+                                    {{ $transaction->is_aec_payment == 1 ? 'selected' : '' }}
+                                >
+                                    {{ config('global.trans_category_label')[9] }}
+                                </option>
+                            @endif
                         </select>
                         @include('errors.inline', ['message' => $errors->first('trans_category')])
                     </div>
@@ -244,7 +276,7 @@
                                         <tr class="jsReplicate_template_item">
                                             <td>
                                                 <a href="/storage/public/attachments/soa/{{ $transaction->transaction_soa[0]->file }}" target="_blank">
-                                                    <i class="material-icons mr-2 align-bottom align-text-bottom">attachment</i>
+                                                    <i class="material-icons mr-2 align-bottom">attachment</i>
                                                 </a>
                                                 <input type="file" name="file_old[]" class="form-control w-75 d-inline-block overflow-hidden">
                                                 <input type="hidden" name="attachment_id_old[]" value="{{ $transaction->transaction_soa[0]->id }}">
@@ -258,7 +290,7 @@
                                             <tr class="jsReplicate_template_item">
                                                 <td>
                                                     <a href="/storage/public/attachments/soa/{{ $item->file }}" target="_blank">
-                                                        <i class="material-icons mr-2 align-bottom align-text-bottom">attachment</i>
+                                                        <i class="material-icons mr-2 align-bottom">attachment</i>
                                                     </a>
                                                     <input type="file" name="file_old[]" class="form-control w-75 d-inline-block overflow-hidden">
                                                     <input type="hidden" name="attachment_id_old[]" value="{{ $item->id }}">

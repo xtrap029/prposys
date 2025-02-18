@@ -32,6 +32,14 @@
                                 {{ config('global.trans_category_label')[4] }}
                             @elseif ($transaction->is_bank)    
                                 {{ config('global.trans_category_label')[5] }}
+                            @elseif ($transaction->is_tdsa_bill)    
+                                {{ config('global.trans_category_label')[6] }}
+                            @elseif ($transaction->is_tdsa_payment)    
+                                {{ config('global.trans_category_label')[7] }}
+                            @elseif ($transaction->is_aec_bill)    
+                                {{ config('global.trans_category_label')[8] }}
+                            @elseif ($transaction->is_aec_payment)    
+                                {{ config('global.trans_category_label')[9] }}
                             @else
                                 {{ config('global.trans_category_label')[0] }}    
                             @endif
@@ -52,7 +60,7 @@
                             <a data-toggle="modal" data-target="#modal-liquidate" href="#_" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>
                         </div>
                         <div class="col-6 px-1 {{ $perms['can_duplicate'] ? '' : 'd-none' }}">
-                            <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}?project_id={{ $transaction->project_id }}&currency={{ $transaction->currency }}&amount={{ $transaction->amount }}&purpose={{ str_replace('%', '', $transaction->purpose) }}&vendor_id={{ $transaction->vendor_id ?: $transaction->payee }}&due_at={{ $transaction->due_at }}&requested_id={{ $transaction->requested_id }}&is_deposit={{ $transaction->is_deposit }}&is_bills={{ $transaction->is_bills }}&is_hr={{ $transaction->is_hr }}&is_reimbursement={{ $transaction->is_reimbursement }}&is_bank={{ $transaction->is_bank }}" target="_blank" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i> Duplicate</a>
+                            <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}?project_id={{ $transaction->project_id }}&currency={{ $transaction->currency }}&amount={{ $transaction->amount }}&purpose={{ str_replace('%', '', $transaction->purpose) }}&vendor_id={{ $transaction->vendor_id ?: $transaction->payee }}&due_at={{ $transaction->due_at }}&requested_id={{ $transaction->requested_id }}&is_deposit={{ $transaction->is_deposit }}&is_bills={{ $transaction->is_bills }}&is_hr={{ $transaction->is_hr }}&is_reimbursement={{ $transaction->is_reimbursement }}&is_bank={{ $transaction->is_bank }}&is_tdsa_bill={{ $transaction->is_tdsa_bill }}&is_tdsa_payment={{ $transaction->is_tdsa_payment }}&is_aec_bill={{ $transaction->is_aec_bill }}&is_aec_payment={{ $transaction->is_aec_payment }}" target="_blank" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i> Duplicate</a>
                         </div>
                         <div class="col-6 px-1 {{ $perms['can_edit'] ? '' : 'd-none' }}">
                             <a href="/transaction-liquidation/edit/{{ $transaction->id }}" class="btn mb-2 btn-sm btn-flat btn-primary col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
@@ -76,6 +84,14 @@
                                     {{ config('global.trans_category_label_liq_print')[4] }}
                                 @elseif ($transaction->is_bank)    
                                     {{ config('global.trans_category_label_liq_print')[5] }}
+                                @elseif ($transaction->is_tdsa_bill)    
+                                    {{ config('global.trans_category_label_liq_print')[6] }}
+                                @elseif ($transaction->is_tdsa_payment)    
+                                    {{ config('global.trans_category_label_liq_print')[7] }}
+                                @elseif ($transaction->is_aec_bill)    
+                                    {{ config('global.trans_category_label_liq_print')[8] }}
+                                @elseif ($transaction->is_aec_payment)    
+                                    {{ config('global.trans_category_label_liq_print')[9] }}
                                 @else
                                     {{ config('global.trans_category_label_liq_print')[0] }}
                                 @endif
@@ -113,7 +129,7 @@
                     <div>
                         <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}{{ isset($_GET['page']) ? '?page='.$_GET['page'] : '' }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
                         <a data-toggle="modal" data-target="#modal-liquidate" href="#_" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto {{ $perms['can_create'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>
-                        <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}?project_id={{ $transaction->project_id }}&currency={{ $transaction->currency }}&amount={{ $transaction->amount }}&purpose={{ str_replace('%', '', $transaction->purpose) }}&vendor_id={{ $transaction->vendor_id ?: $transaction->payee }}&due_at={{ $transaction->due_at }}&requested_id={{ $transaction->requested_id }}&is_deposit={{ $transaction->is_deposit }}&is_bills={{ $transaction->is_bills }}&is_hr={{ $transaction->is_hr }}&is_reimbursement={{ $transaction->is_reimbursement }}&is_bank={{ $transaction->is_bank }}" target="_blank" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto {{ $perms['can_duplicate'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i> Duplicate</a>
+                        <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}?project_id={{ $transaction->project_id }}&currency={{ $transaction->currency }}&amount={{ $transaction->amount }}&purpose={{ str_replace('%', '', $transaction->purpose) }}&vendor_id={{ $transaction->vendor_id ?: $transaction->payee }}&due_at={{ $transaction->due_at }}&requested_id={{ $transaction->requested_id }}&is_deposit={{ $transaction->is_deposit }}&is_bills={{ $transaction->is_bills }}&is_hr={{ $transaction->is_hr }}&is_reimbursement={{ $transaction->is_reimbursement }}&is_bank={{ $transaction->is_bank }}&is_tdsa_bill={{ $transaction->is_tdsa_bill }}&is_tdsa_payment={{ $transaction->is_tdsa_payment }}&is_aec_bill={{ $transaction->is_aec_bill }}&is_aec_payment={{ $transaction->is_aec_payment }}" target="_blank" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto {{ $perms['can_duplicate'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i> Duplicate</a>
                         <a href="/transaction-liquidation/reset/{{ $transaction->id }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto d-none {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                     </div>
                     <div>
@@ -157,6 +173,14 @@
                                 {{ config('global.trans_category_label_liq_print')[4] }}
                             @elseif ($transaction->is_bank)    
                                 {{ config('global.trans_category_label_liq_print')[5] }}
+                            @elseif ($transaction->is_tdsa_bill)    
+                                {{ config('global.trans_category_label_liq_print')[6] }}
+                            @elseif ($transaction->is_tdsa_payment)    
+                                {{ config('global.trans_category_label_liq_print')[7] }}
+                            @elseif ($transaction->is_aec_bill)    
+                                {{ config('global.trans_category_label_liq_print')[8] }}
+                            @elseif ($transaction->is_aec_payment)    
+                                {{ config('global.trans_category_label_liq_print')[9] }}
                             @else
                                 {{ config('global.trans_category_label_liq_print')[0] }}
                             @endif

@@ -19,6 +19,14 @@
                     {{ config('global.trans_category_label_liq_print')[4] }}
                 @elseif ($transaction->is_bank)    
                     {{ config('global.trans_category_label_liq_print')[5] }}
+                @elseif ($transaction->is_tdsa_bill)    
+                    {{ config('global.trans_category_label_liq_print')[6] }}
+                @elseif ($transaction->is_tdsa_payment)    
+                    {{ config('global.trans_category_label_liq_print')[7] }}
+                @elseif ($transaction->is_aec_bill)    
+                    {{ config('global.trans_category_label_liq_print')[8] }}
+                @elseif ($transaction->is_aec_payment)    
+                    {{ config('global.trans_category_label_liq_print')[9] }}
                 @else
                     {{ config('global.trans_category_label_liq_print')[0] }}
                 @endif
@@ -125,6 +133,14 @@
                                             {{ config('global.trans_category_label')[3] }}
                                         @elseif ($transaction->is_bank)    
                                             {{ config('global.trans_category_label')[5] }}
+                                        @elseif ($transaction->is_tdsa_bill)    
+                                            {{ config('global.trans_category_label')[6] }}
+                                        @elseif ($transaction->is_tdsa_payment)    
+                                            {{ config('global.trans_category_label')[7] }}
+                                        @elseif ($transaction->is_aec_bill)    
+                                            {{ config('global.trans_category_label')[8] }}
+                                        @elseif ($transaction->is_aec_payment)    
+                                            {{ config('global.trans_category_label')[9] }}
                                         @else
                                             {{ config('global.trans_category_label')[0] }}   
                                         @endif
@@ -230,7 +246,10 @@
                 </div>
             </div>
             <div class="row row--print">
-                @if (!$transaction->is_deposit && !$transaction->is_hr && !$transaction->is_bank)
+                @if (!$transaction->is_deposit
+                        && !$transaction->is_hr
+                        && !$transaction->is_bank
+                    )
                     <div class="col-12 {{ $config_confidential ? 'd-none' : '' }}">
                         <table class="table table-sm mb-0">
                             <tr class="font-weight-bold">

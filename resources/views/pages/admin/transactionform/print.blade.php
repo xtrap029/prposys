@@ -18,6 +18,14 @@
                     {{ config('global.trans_category_label')[4] }}
                 @elseif($transaction->is_bank)
                     {{ config('global.trans_category_label')[5] }}
+                @elseif($transaction->is_tdsa_bill)
+                    {{ config('global.trans_category_label')[6] }}
+                @elseif($transaction->is_tdsa_payment)
+                    {{ config('global.trans_category_label')[7] }}
+                @elseif($transaction->is_aec_bill)
+                    {{ config('global.trans_category_label')[8] }}
+                @elseif($transaction->is_aec_payment)
+                    {{ config('global.trans_category_label')[9] }}
                 @else
                     {{ $trans_page }}
                 @endif

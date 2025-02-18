@@ -210,6 +210,14 @@ class TransactionsFormsController extends Controller {
             $page_title = config('global.trans_category_label_make_form')[3];
         else if ($transaction->is_bank)    
             $page_title = config('global.trans_category_label_make_form')[5];
+        else if ($transaction->is_tdsa_bill)    
+            $page_title = config('global.trans_category_label_make_form')[6];
+        else if ($transaction->is_tdsa_payment)    
+            $page_title = config('global.trans_category_label_make_form')[7];
+        else if ($transaction->is_aec_bill)    
+            $page_title = config('global.trans_category_label_make_form')[8];
+        else if ($transaction->is_aec_payment)    
+            $page_title = config('global.trans_category_label_make_form')[9];
         else
             $page_title = config('global.trans_category_label_make_form')[0];
 
@@ -585,6 +593,14 @@ class TransactionsFormsController extends Controller {
             $page_title = config('global.trans_category_label_edit_form')[3];
         else if ($transaction->is_bank)    
             $page_title = config('global.trans_category_label_edit_form')[5];
+        else if ($transaction->is_tdsa_bill)    
+            $page_title = config('global.trans_category_label_edit_form')[6];
+        else if ($transaction->is_tdsa_payment)    
+            $page_title = config('global.trans_category_label_edit_form')[7];
+        else if ($transaction->is_aec_bill)    
+            $page_title = config('global.trans_category_label_edit_form')[8];
+        else if ($transaction->is_aec_payment)    
+            $page_title = config('global.trans_category_label_edit_form')[9];
         else
             $page_title = config('global.trans_category_label_edit_form')[0];
         
@@ -712,6 +728,11 @@ class TransactionsFormsController extends Controller {
         $data['is_hr'] = 0;
         $data['is_bank'] = 0;
         
+        $data['is_tdsa_bill'] = 0;
+        $data['is_tdsa_payment'] = 0;
+        $data['is_aec_bill'] = 0;
+        $data['is_aec_payment'] = 0;
+        
         if ($data['trans_category'] == config('global.trans_category')[1]) {
             $data['is_deposit'] = 1;
         } else if ($data['trans_category'] == config('global.trans_category')[2]) {
@@ -720,6 +741,14 @@ class TransactionsFormsController extends Controller {
             $data['is_hr'] = 1;
         } else if ($data['trans_category'] == config('global.trans_category')[5]) {
             $data['is_bank'] = 1;
+        } else if ($data['trans_category'] == config('global.trans_category')[6]) {
+            $data['is_tdsa_bill'] = 1;
+        } else if ($data['trans_category'] == config('global.trans_category')[7]) {
+            $data['is_tdsa_payment'] = 1;
+        } else if ($data['trans_category'] == config('global.trans_category')[8]) {
+            $data['is_aec_bill'] = 1;
+        } else if ($data['trans_category'] == config('global.trans_category')[9]) {
+            $data['is_aec_payment'] = 1;
         }
 
         unset($data['trans_category']);
@@ -977,6 +1006,11 @@ class TransactionsFormsController extends Controller {
         $data['is_bills'] = 0;
         $data['is_hr'] = 0;
         $data['is_bank'] = 0;
+
+        $data['is_tdsa_bill'] = 0;
+        $data['is_tdsa_payment'] = 0;
+        $data['is_aec_bill'] = 0;
+        $data['is_aec_payment'] = 0;
         
         if ($data['trans_category'] == config('global.trans_category')[1]) {
             $data['is_deposit'] = 1;
@@ -986,6 +1020,14 @@ class TransactionsFormsController extends Controller {
             $data['is_hr'] = 1;
         } else if ($data['trans_category'] == config('global.trans_category')[5]) {
             $data['is_bank'] = 1;
+        } else if ($data['trans_category'] == config('global.trans_category')[6]) {
+            $data['is_tdsa_bill'] = 1;
+        } else if ($data['trans_category'] == config('global.trans_category')[7]) {
+            $data['is_tdsa_payment'] = 1;
+        } else if ($data['trans_category'] == config('global.trans_category')[8]) {
+            $data['is_aec_bill'] = 1;
+        } else if ($data['trans_category'] == config('global.trans_category')[9]) {
+            $data['is_aec_payment'] = 1;
         }
 
         unset($data['trans_category']);

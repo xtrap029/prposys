@@ -23,6 +23,14 @@
                             {{ config('global.trans_category_label_edit_form')[3] }}
                         @elseif ($transaction->is_bank)    
                             {{ config('global.trans_category_label_edit_form')[5] }}
+                        @elseif ($transaction->is_tdsa_bill)    
+                            {{ config('global.trans_category_label_edit_form')[6] }}
+                        @elseif ($transaction->is_tdsa_payment)    
+                            {{ config('global.trans_category_label_edit_form')[7] }}
+                        @elseif ($transaction->is_aec_bill)    
+                            {{ config('global.trans_category_label_edit_form')[8] }}
+                        @elseif ($transaction->is_aec_payment)    
+                            {{ config('global.trans_category_label_edit_form')[9] }}
                         @else
                             {{ config('global.trans_category_label_edit_form')[0] }}
                         @endif
@@ -116,6 +124,38 @@
                                     {{ $transaction->is_bank == 1 ? 'selected' : '' }}
                                 >
                                     {{ config('global.trans_category_label')[5] }}
+                                </option>
+                            @endif
+                            @if (in_array(config('global.trans_category')[6], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[6] }}"
+                                    {{ $transaction->is_tdsa_bill == 1 ? 'selected' : '' }}
+                                >
+                                    {{ config('global.trans_category_label')[6] }}
+                                </option>
+                            @endif
+                            @if (in_array(config('global.trans_category')[7], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[7] }}"
+                                    {{ $transaction->is_tdsa_payment == 1 ? 'selected' : '' }}
+                                >
+                                    {{ config('global.trans_category_label')[7] }}
+                                </option>
+                            @endif
+                            @if (in_array(config('global.trans_category')[8], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[8] }}"
+                                    {{ $transaction->is_aec_bill == 1 ? 'selected' : '' }}
+                                >
+                                    {{ config('global.trans_category_label')[8] }}
+                                </option>
+                            @endif
+                            @if (in_array(config('global.trans_category')[9], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[9] }}"
+                                    {{ $transaction->is_aec_payment == 1 ? 'selected' : '' }}
+                                >
+                                    {{ config('global.trans_category_label')[9] }}
                                 </option>
                             @endif
                         </select>
@@ -213,70 +253,6 @@
                         @include('errors.inline', ['message' => $errors->first('bill_statement_no')])
                     </div>
                 </div>
-                <!-- <div class="form-row">
-                    <div class="card col-md-12 mt-4">
-                        <div class="card-header font-weight-bold">
-                            Select Transaction Category
-                        </div>
-                        <div class="card-body pb-1 row">                            
-                            <div class="col-md-6 col-xl-4">
-                                <div class="callout py-1 mx-1 row">
-                                    <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[0] }}" class="trans-category vlign--baseline-middle m-auto outline-0" {{ $transaction->is_deposit == 0 && $transaction->is_bills == 0 && $transaction->is_hr == 0 && $transaction->is_reimbursement == 0 ? 'checked' : '' }}>
-                                    </div>
-                                    <div class="col-10 mt-2">
-                                        <h6 class="font-weight-bold">{{ config('global.trans_category_label')[0] }}</h6>
-                                        <p class="d-none">Lorem ipsum dolor sit amet, consectetur, et dolore magna aliqua.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-xl-4">
-                                <div class="callout py-1 mx-1 row">
-                                    <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[1] }}" class="trans-category vlign--baseline-middle m-auto outline-0"  {{ $transaction->is_deposit == 1 ? 'checked' : '' }}>
-                                    </div>
-                                    <div class="col-10 mt-2">
-                                        <h6 class="font-weight-bold">{{ config('global.trans_category_label')[1] }}</h6>
-                                        <p class="d-none">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-xl-4">
-                                <div class="callout py-1 mx-1 row">
-                                    <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[2] }}" class="trans-category vlign--baseline-middle m-auto outline-0"  {{ $transaction->is_bills == 1 ? 'checked' : '' }}>
-                                    </div>
-                                    <div class="col-10 mt-2">
-                                        <h6 class="font-weight-bold">{{ config('global.trans_category_label')[2] }}</h6>          
-                                        <p class="d-none">Excepteur sint non proident, sunt in culpa qui mollit anim id.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-xl-4">
-                                <div class="callout py-1 mx-1 row">
-                                    <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[3] }}" class="trans-category vlign--baseline-middle m-auto outline-0"  {{ $transaction->is_hr == 1 ? 'checked' : '' }}>
-                                    </div>
-                                    <div class="col-10 mt-2">
-                                        <h6 class="font-weight-bold">{{ config('global.trans_category_label')[3] }}</h6>          
-                                        <p class="d-none">Excepteur sint non proident, sunt in culpa qui mollit anim id.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-xl-4">
-                                <div class="callout py-1 mx-1 row">
-                                    <div class="col-2">
-                                        <input type="radio" name="trans_category" value="{{ config('global.trans_category')[5] }}" class="trans-category vlign--baseline-middle m-auto outline-0"  {{ $transaction->is_bank == 1 ? 'checked' : '' }}>
-                                    </div>
-                                    <div class="col-10 mt-2">
-                                        <h6 class="font-weight-bold">{{ config('global.trans_category_label')[5] }}</h6>          
-                                        <p class="d-none">Excepteur sint non proident, sunt in culpa qui mollit anim id.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
                 <div class="form-row mt-5">
                     <div class="col-12 {{ $transaction->is_deposit ? '' : 'd-none' }} mb-2">
                         <label for="">Payor</label>

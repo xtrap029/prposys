@@ -23,6 +23,14 @@
                             {{ config('global.trans_category_label_make_form')[3] }}
                         @elseif ($transaction->is_bank)    
                             {{ config('global.trans_category_label_make_form')[5] }}
+                        @elseif ($transaction->is_tdsa_bill)    
+                            {{ config('global.trans_category_label_make_form')[6] }}
+                        @elseif ($transaction->is_tdsa_payment)    
+                            {{ config('global.trans_category_label_make_form')[7] }}
+                        @elseif ($transaction->is_aec_bill)    
+                            {{ config('global.trans_category_label_make_form')[8] }}
+                        @elseif ($transaction->is_aec_payment)    
+                            {{ config('global.trans_category_label_make_form')[9] }}
                         @else
                             {{ config('global.trans_category_label_make_form')[0] }}
                         @endif

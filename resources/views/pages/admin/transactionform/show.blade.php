@@ -32,6 +32,14 @@
                                 {{ config('global.trans_category_label')[4] }}
                             @elseif ($transaction->is_bank)    
                                 {{ config('global.trans_category_label')[5] }}
+                            @elseif ($transaction->is_tdsa_bill)    
+                                {{ config('global.trans_category_label')[6] }}
+                            @elseif ($transaction->is_tdsa_payment)    
+                                {{ config('global.trans_category_label')[7] }}
+                            @elseif ($transaction->is_aec_bill)    
+                                {{ config('global.trans_category_label')[8] }}
+                            @elseif ($transaction->is_aec_payment)    
+                                {{ config('global.trans_category_label')[9] }}
                             @else
                                 {{ config('global.trans_category_label')[0] }}    
                             @endif
@@ -406,6 +414,18 @@
                                                         @endif
                                                         @if (in_array(config('global.trans_category')[5], explode(',', $company->categories)))   
                                                             <option value="{{ config('global.trans_category')[5] }}" {{ $transaction->is_bank == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[5] }}</option>
+                                                        @endif
+                                                        @if (in_array(config('global.trans_category')[6], explode(',', $company->categories)))   
+                                                            <option value="{{ config('global.trans_category')[6] }}" {{ $transaction->is_tdsa_bill == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[6] }}</option>
+                                                        @endif
+                                                        @if (in_array(config('global.trans_category')[7], explode(',', $company->categories)))   
+                                                            <option value="{{ config('global.trans_category')[7] }}" {{ $transaction->is_tdsa_payment == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[7] }}</option>
+                                                        @endif
+                                                        @if (in_array(config('global.trans_category')[8], explode(',', $company->categories)))   
+                                                            <option value="{{ config('global.trans_category')[8] }}" {{ $transaction->is_aec_bill == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[8] }}</option>
+                                                        @endif
+                                                        @if (in_array(config('global.trans_category')[9], explode(',', $company->categories)))   
+                                                            <option value="{{ config('global.trans_category')[9] }}" {{ $transaction->is_aec_payment == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[9] }}</option>
                                                         @endif
                                                     </select>
                                                 </form>

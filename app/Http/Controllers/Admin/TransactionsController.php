@@ -860,6 +860,11 @@ class TransactionsController extends Controller {
         $data['is_hr'] = 0;
         $data['is_reimbursement'] = 0;
         $data['is_bank'] = 0;
+        
+        $data['is_tdsa_bill'] = 0;
+        $data['is_tdsa_payment'] = 0;
+        $data['is_aec_bill'] = 0;
+        $data['is_aec_payment'] = 0;
 
         switch ($data['trans_category']) {
             case config('global.trans_category')[1]:
@@ -876,6 +881,18 @@ class TransactionsController extends Controller {
                 break;
             case config('global.trans_category')[5]:
                 $data['is_bank'] = 1;
+                break;
+            case config('global.trans_category')[6]:
+                $data['is_tdsa_bill'] = 1;
+                break;
+            case config('global.trans_category')[7]:
+                $data['is_tdsa_payment'] = 1;
+                break;
+            case config('global.trans_category')[8]:
+                $data['is_aec_bill'] = 1;
+                break;
+            case config('global.trans_category')[9]:
+                $data['is_aec_payment'] = 1;
                 break;
             default:
                 break;

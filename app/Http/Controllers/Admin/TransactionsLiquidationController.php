@@ -199,6 +199,14 @@ class TransactionsLiquidationController extends Controller {
             $page_title = config('global.trans_category_label_create_liq')[3].' '.strtoupper($transaction->trans_type);
         else if ($transaction->is_bank)    
             $page_title = config('global.trans_category_label_create_liq')[5];
+        else if ($transaction->is_tdsa_bill)    
+            $page_title = config('global.trans_category_label_create_liq')[6].' '.strtoupper($transaction->trans_type);
+        else if ($transaction->is_tdsa_payment)    
+            $page_title = config('global.trans_category_label_create_liq')[7].' '.strtoupper($transaction->trans_type);
+        else if ($transaction->is_aec_bill)    
+            $page_title = config('global.trans_category_label_create_liq')[8].' '.strtoupper($transaction->trans_type);
+        else if ($transaction->is_aec_payment)    
+            $page_title = config('global.trans_category_label_create_liq')[9].' '.strtoupper($transaction->trans_type);
         else
             $page_title = config('global.trans_category_label_create_liq')[0].' '.strtoupper($transaction->trans_type);
 
