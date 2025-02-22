@@ -234,7 +234,7 @@
                 </div>
                 <div class="form-row mb-3 d-none">
                     <div class="col-sm-4 col-lg-4 mb-2">
-                        <label for="">Bill/Statement No.</label>
+                        <label for="" id="bill_statement_label">Bill/Statement No.</label>
                         <input type="text" id="bill_statement_no" class="form-control @error('bill_statement_no') is-invalid @enderror" name="bill_statement_no" value="{{ $transaction->bill_statement_no }}">
                         @include('errors.inline', ['message' => $errors->first('bill_statement_no')])
                     </div>
@@ -431,8 +431,23 @@
             function assignPurposeDescription() {
                 $('#purposeDescription').val($('#purposeOption').find(':selected').data('description'))
             }
+
+            if ("{{ $transaction->is_tdsa_bill }}" === "1"
+                || "{{ $transaction->is_tdsa_payment }}" === "1"
+                || "{{ $transaction->is_aec_bill }}" === "1"
+                || "{{ $transaction->is_aec_payment }}" === "1"
+            ) {
+                $('#bill_statement_label').text("Service Invoice Number")
+            } else {
+                $('#bill_statement_label').text("Bill/Statement No.")
+            }
             
-            if ("{{ $transaction->is_bills }}" === "1") {
+            if ("{{ $transaction->is_bills }}" === "1" 
+                || "{{ $transaction->is_tdsa_bill }}" === "1"
+                || "{{ $transaction->is_tdsa_payment }}" === "1"
+                || "{{ $transaction->is_aec_bill }}" === "1"
+                || "{{ $transaction->is_aec_payment }}" === "1"
+            ) {
                 $('#bill_statement_no').parent().parent().removeClass('d-none')
                 $('#bill_statement_no').attr('required', 'true')
             } else if ("{{ $transaction->is_deposit }}" === "1") {
@@ -441,7 +456,22 @@
             }
 
             $('.trans-category').change(function() {
-                if ($(this).val() == "{{ config('global.trans_category')[2] }}") {
+                if ($(this).val() == "{{ config('global.trans_category')[6] }}"
+                    || $(this).val() == "{{ config('global.trans_category')[7] }}"
+                    || $(this).val() == "{{ config('global.trans_category')[8] }}"
+                    || $(this).val() == "{{ config('global.trans_category')[9] }}"
+                ) {
+                    $('#bill_statement_label').text("Service Invoice Number")
+                } else {
+                    $('#bill_statement_label').text("Bill/Statement No.")
+                }
+
+                if ($(this).val() == "{{ config('global.trans_category')[2] }}"
+                    || $(this).val() == "{{ config('global.trans_category')[6] }}"
+                    || $(this).val() == "{{ config('global.trans_category')[7] }}"
+                    || $(this).val() == "{{ config('global.trans_category')[8] }}"
+                    || $(this).val() == "{{ config('global.trans_category')[9] }}"
+                ) {
                     $('#bill_statement_no').parent().parent().removeClass('d-none')
                     $('#bill_statement_no').attr('required', 'true')
                 } else if ($(this).val() == "{{ config('global.trans_category')[1] }}") {

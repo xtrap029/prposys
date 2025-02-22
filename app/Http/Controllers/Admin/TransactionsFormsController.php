@@ -703,14 +703,26 @@ class TransactionsFormsController extends Controller {
 
         $trans_category = $request->trans_category;
 
-        if ($trans_category == config('global.trans_category')[2]) {
+        if ($trans_category == config('global.trans_category')[2]
+            || $trans_category == config('global.trans_category')[6]
+            || $trans_category == config('global.trans_category')[7]
+            || $trans_category == config('global.trans_category')[8]
+            || $trans_category == config('global.trans_category')[9]
+        ) {
             $validation['bill_statement_no'] = ['required'];
         }
 
         // validate input
         $data = $request->validate($validation);
 
-        if (!in_array($trans_category, [config('global.trans_category')[1], config('global.trans_category')[2]])) {
+        if (!in_array($trans_category, [
+            config('global.trans_category')[1],
+            config('global.trans_category')[2],
+            config('global.trans_category')[6],
+            config('global.trans_category')[7],
+            config('global.trans_category')[8],
+            config('global.trans_category')[9]
+        ])) {
             $data['bill_statement_no'] = '';
         }
 

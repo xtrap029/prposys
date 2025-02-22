@@ -273,7 +273,7 @@
                 </div>
                 <div class="form-row mb-3 d-none">
                     <div class="col-sm-4 col-lg-4 mb-2">
-                        <label for="">Bill/Statement No.</label>
+                        <label for="" id="bill_statement_label">Bill/Statement No.</label>
                         <input type="text" id="bill_statement_no" class="form-control @error('bill_statement_no') is-invalid @enderror" name="bill_statement_no" value="{{ old('bill_statement_no') ?: (isset($_GET['bill_statement_no']) ? $_GET['bill_statement_no'] : '') }}">
                         @include('errors.inline', ['message' => $errors->first('bill_statement_no')])
                     </div>
@@ -364,6 +364,16 @@
 
         $(function() {
             $('.trans-category').change(function() {
+                if ($(this).val() == "{{ config('global.trans_category')[6] }}"
+                    || $(this).val() == "{{ config('global.trans_category')[7] }}"
+                    || $(this).val() == "{{ config('global.trans_category')[8] }}"
+                    || $(this).val() == "{{ config('global.trans_category')[9] }}"
+                ) {
+                    $('#bill_statement_label').text("Service Invoice Number")
+                } else {
+                    $('#bill_statement_label').text("Bill/Statement No.")
+                }
+
                 if ($(this).val() == "{{ config('global.trans_category')[2] }}"
                     || $(this).val() == "{{ config('global.trans_category')[6] }}"
                     || $(this).val() == "{{ config('global.trans_category')[7] }}"

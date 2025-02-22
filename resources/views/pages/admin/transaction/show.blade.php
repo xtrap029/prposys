@@ -336,7 +336,17 @@
                                         || $transaction->is_aec_payment == 1
                                     )
                                         <tr>
-                                            <td class="font-weight-bold text-gray">Bill/Statement No.</td>
+                                            <td class="font-weight-bold text-gray">
+                                                @if ($transaction->is_tdsa_bill == 1
+                                                    || $transaction->is_tdsa_payment == 1
+                                                    || $transaction->is_aec_bill == 1
+                                                    || $transaction->is_aec_payment == 1
+                                                )
+                                                    Service Invoice Number
+                                                @else
+                                                    Bill/Statement No.
+                                                @endif
+                                            </td>
                                             <td class="font-weight-bold">{{ $transaction->bill_statement_no ?: '-' }}</td>
                                         </tr>
                                     @endif
