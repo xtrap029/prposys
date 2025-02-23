@@ -68,6 +68,7 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
     // Seq Company
     Route::middleware('CheckUserAccess:seq_comp')->group(function () {
         Route::resource('company', 'Admin\CompanyController', ['names' => ['index' => 'company', 'create' => 'company', 'edit' => 'company']]);
+        Route::get('company/{company}/bill-option', 'Admin\CompanyController@bill_option')->where('company', '[0-9]+')->name('company');
     });
 
     // Seq Company Project

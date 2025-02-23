@@ -17,7 +17,9 @@
             <table class="table table-striped table-responsive-sm">
                 <thead>
                     <tr>
-                        <th colspan="3">List</th>
+                        <th colspan="2">Name</th>
+                        <th class="text-nowrap">Bill Option</th>
+                        <th>Categories</th>
                         <th class="text-right"><a href="/company/create">Create</a></th>
                     </tr>
                 </thead>
@@ -28,6 +30,14 @@
                             <td class="align-middle text-nowrap">
                                 {{ $item->name }}
                                 <div class="text-info">{{ $item->code }} / {{ $item->qb_code }} / {{ $item->qb_no }}</div>
+                            </td>
+                            <td class="align-middle">
+                                <a href="/company/{{ $item->id }}/bill-option" class="text-center">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input" {{ $item->bill_option == 1 ? 'checked' : '' }}>
+                                        <label class="custom-control-label"></label>
+                                    </div>
+                                </a>
                             </td>
                             <td class="align-middle text-nowrap">
                                 @foreach (config('global.trans_category') as $key => $category)
@@ -48,7 +58,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="text-center">{{ __('messages.empty') }}</td>
+                            <td colspan="5" class="text-center">{{ __('messages.empty') }}</td>
                         </tr>
                     @endforelse
                 </tbody>

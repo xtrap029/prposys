@@ -74,6 +74,14 @@ class CompanyController extends Controller {
         return redirect('/company')->with('success', 'Company '.__('messages.edit_success'));
     }
 
+    public function bill_option(Company $company) {
+        $company->bill_option = !$company->bill_option;
+        $company->updated_id = auth()->id();
+        $company->save(); 
+
+        return redirect('/company')->with('success', 'Company'.__('messages.edit_success'));
+    }
+
     public function destroy(Company $company) {
         $company->updated_id = auth()->id();
         $company->save(); 

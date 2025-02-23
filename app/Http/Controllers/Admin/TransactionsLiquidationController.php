@@ -11,6 +11,8 @@ use App\Transaction;
 use App\TransactionsAttachment;
 use App\TransactionsLiquidation;
 use App\TransactionStatus;
+use App\TransactionsSoa;
+use App\TransactionsNote;
 use App\Settings;
 use App\User;
 use Spatie\Activitylog\Models\Activity;
@@ -439,6 +441,18 @@ class TransactionsLiquidationController extends Controller {
 
         $approvers = User::whereIn('role_id', config('global.approver_liquidation'))->orderBy('name', 'asc')->get();
         $banks = Bank::orderBy('name', 'asc')->get();
+        $company_options = Company::where('bill_option', 1)->orderBy('name', 'asc')->get();
+
+        $project_options = CompanyProject::where('companies.bill_option', 1)
+                            ->select(
+                                'companies.name as company_name',
+                                'company_projects.id as id',
+                                'company_projects.project as name',
+                            )
+                            ->join('companies', 'companies.id', '=', 'company_projects.company_id')
+                            ->orderBy('company_name', 'asc')
+                            ->orderBy('name', 'asc')
+                            ->get();
 
         return view('pages.admin.transactionliquidation.show')->with([
             'transaction' => $transaction,
@@ -450,7 +464,8 @@ class TransactionsLiquidationController extends Controller {
             'trans_page_url' => $trans_page_url,
             'trans_page' => $trans_page,
             'approvers' => $approvers,
-            'banks' => $banks
+            'banks' => $banks,
+            'project_options' => $project_options,
         ]);
     }
 
@@ -621,13 +636,8 @@ class TransactionsLiquidationController extends Controller {
         }
     }
 
-    // public function approval(Request $request, Transaction $transaction) {
     public function approval(Transaction $transaction) {
         if ($this->check_can_approval($transaction->id)) {
-            // $data = $request->validate([
-            //     'liquidation_approver_id' => ['required', 'exists:users,id']
-            // ]);
-            
             $data['status_updated_at'] = now();
             $data['status_prev_id'] = $transaction->status_id;
             $data['status_id'] = 8;
@@ -715,12 +725,77 @@ class TransactionsLiquidationController extends Controller {
                 $data['depo_slip'] = basename($request->file('depo_slip')->store('public/attachments/deposit_slip'));
             }
 
+            if ($transaction->trans_type == "po" && ($transaction->is_tdsa_bill || $transaction->is_aec_bill)) {
+                $new_transaction = $request->validate([
+                    'project_id' => ['required', 'exists:company_projects,id'],
+                ]);
+            }
+
             $data['status_updated_at'] = now();
             $data['status_prev_id'] = $transaction->status_id;
             $data['status_id'] = 9;
             $data['liquidation_approver_id'] = auth()->id();
             $data['updated_id'] = auth()->id();
+
             $transaction->update($data);
+
+            if ($transaction->trans_type == "po" && ($transaction->is_tdsa_bill || $transaction->is_aec_bill)) {
+                $new_transaction['is_tdsa_payment'] = $transaction->is_tdsa_bill;
+                $new_transaction['is_aec_payment'] = $transaction->is_aec_bill;
+                $new_transaction['trans_type'] = "pr";
+                $new_transaction['trans_year'] = $transaction->trans_year;
+                $new_transaction['currency'] = $transaction->currency;
+                $new_transaction['amount'] = $transaction->amount;
+                $new_transaction['purpose_option_id'] = $transaction->purpose_option_id;
+                $new_transaction['vendor_id'] = $transaction->vendor_id;
+                $new_transaction['purpose'] = $transaction->purpose;
+                $new_transaction['class_type_id'] = $transaction->class_type_id;
+                $new_transaction['budgeted'] = $transaction->budgeted;
+                $new_transaction['cost_control_no'] = $transaction->cost_control_no;
+                $new_transaction['bill_statement_no'] = $transaction->bill_statement_no;
+                $new_transaction['due_at'] = $transaction->due_at;
+                $new_transaction['requested_id'] = $transaction->requested_id;
+                $new_transaction['soa'] = $transaction->soa;
+                $new_transaction['is_confidential'] = $transaction->is_confidential;
+                $new_transaction['is_confidential_own'] = $transaction->is_confidential_own;
+                $new_transaction['bill_statement_no'] = $transaction->bill_statement_no;
+
+                // generate transaction code
+                $trans_company = CompanyProject::where('id', $new_transaction['project_id'])->first()->company_id;
+                $latest_trans = Transaction::where('trans_year', $transaction->trans_year)
+                    ->where('trans_type', $new_transaction['trans_type'])
+                    ->whereHas('project', function($query) use($trans_company) {
+                        $query->where('company_id', $trans_company);
+                    })
+                    ->orderBy('trans_seq', 'desc')->first();
+                if ($latest_trans) {
+                    $new_transaction['trans_seq'] = $latest_trans->trans_seq+1;
+                } else {
+                    $new_transaction['trans_seq'] = 1;
+                }
+
+                $new_transaction['owner_id'] = auth()->id();
+                $new_transaction['updated_id'] = auth()->id();
+                $new_transaction['status_updated_at'] = now();
+                $new_transaction['status_prev_id'] = 1;
+
+                $saved_transaction = Transaction::create($new_transaction);
+
+                $soas = TransactionsSoa::where('transaction_id', $transaction->id)->get();
+                foreach ($soas as $key => $value) {
+                    $soa = $value->replicate();
+                    $soa->transaction_id = $saved_transaction->id;
+                    $soa->save();
+                }
+
+                $transaction_notes = TransactionsNote::where('transaction_id', $transaction->id)->get();
+                foreach ($transaction_notes as $key => $value) {
+                    $note = $value->replicate();
+                    $note->transaction_id = $saved_transaction->id;
+                    $note->save();
+                }
+            }
+
             return back()->with('success', 'Transaction Liquidation'.__('messages.clear_success'));
         } else {
             return back()->with('error', __('messages.cant_edit'));
