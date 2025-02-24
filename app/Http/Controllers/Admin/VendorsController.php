@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 class VendorsController extends Controller {
 
     public function index() {
-        $vendors = Vendor::orderBy('name', 'asc')->get();
+        $vendors = Vendor::orderBy('name', 'asc')->paginate(10);
         return view('pages.admin.vendor.index')->with([
             'vendors' => $vendors
         ]);
