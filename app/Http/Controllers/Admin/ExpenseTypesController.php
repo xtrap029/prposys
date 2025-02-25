@@ -9,9 +9,17 @@ use Illuminate\Validation\Rule;
 
 class ExpenseTypesController extends Controller {
 
-    public function index() {
+    public function index(Request $request) {
+        $expense_types = ExpenseType::orderBy('name', 'asc');
+
+        if ($request->has('s')) {
+            $expense_types = $expense_types->where('name', 'like', '%'.$request->s.'%');
+        }
+        
+        $expense_types = $expense_types->paginate(10);
+
         return view('pages.admin.expensetype.index')->with([
-            'expense_types' => ExpenseType::orderBy('name', 'asc')->get()
+            'expense_types' => $expense_types
         ]);
     }
     

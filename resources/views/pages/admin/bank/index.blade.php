@@ -24,35 +24,46 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody>
-                    @forelse ($banks as $item)
-                        <tr>
-                            <td class="text-nowrap">
-                                <p class="font-weight-bold">{{ $item->name }}</p>
-                                <div class="pl-5 py-1">
-                                    @forelse ($item->bankbranches as $branch)
-                                        <a href="/bank-branch/edit/{{ $branch->id }}" class="d-block">{{ $branch->name }}</a>
-                                    @empty
-                                        <i class="text-gray">{{ __('messages.empty') }}</i>
-                                    @endforelse
-                                </div>
-                            </td>
-                            <td class="text-right">
-                                <a href="/bank/{{ $item->id }}/edit" class="btn btn-link btn-sm">Edit</a>
-                                <form action="/bank/{{ $item->id }}" method="post" class="d-inline-block">
-                                    @csrf
-                                    @method('delete')
-                                    <input type="submit" class="btn btn-link btn-sm" value="Delete" onclick="return confirm('Are you sure?')">
-                                </form>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="2" class="text-center">{{ __('messages.empty') }}</td>
-                        </tr>
-                    @endforelse
-                </tbody>
             </table>
+            <div class="accordion">
+                @forelse ($banks as $item)
+                    <div class="accordion-item mb-1">
+                        <h2 class="accordion-header mb-1">
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <button class="accordion-button btn btn-block text-left btn-default" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $item->id }}" aria-expanded="false" aria-controls="collapse{{ $item->id }}">
+                                        {{ $item->name }}
+                                    </button>
+                                </div>
+                                <div class="col-md-1">
+                                    <a href="/bank/{{ $item->id }}/edit" class="btn btn-primary btn-sm btn-block">Edit</a>
+                                </div>
+                                <div class="col-md-1">
+                                    <form action="/bank/{{ $item->id }}" method="post">
+                                        @csrf
+                                        @method('delete')
+                                        <input type="submit" class="btn btn-danger btn-sm btn-block" value="Delete" onclick="return confirm('Are you sure?')">
+                                    </form>
+                                </div>
+                            </div>
+                        </h2>
+                        <div id="collapse{{ $item->id }}" class="accordion-collapse collapse p-3 border bg-gray rounded">
+                            <div class="accordion-body">
+                                @forelse ($item->bankbranches as $branch)
+                                    <a href="/bank-branch/edit/{{ $branch->id }}" class="d-block text-info">{{ $branch->name }}</a>
+                                @empty
+                                    <i class="text-white">{{ __('messages.empty') }}</i>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                @endforelse
+            </div>
         </div>
     </section>
+@endsection
+
+@section('script')
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
 @endsection
