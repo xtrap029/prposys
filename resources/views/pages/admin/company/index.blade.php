@@ -14,7 +14,7 @@
     </section>
     <section class="content">
         <div class="container-fluid">
-            <table class="table table-striped table-responsive-sm">
+            <table class="table table-responsive-sm">
                 <thead>
                     <tr>
                         <th colspan="2" style="min-width: 350px;">
@@ -25,7 +25,7 @@
                             </form>
                         </th>
                         <th class="text-nowrap">Bill Option</th>
-                        <th>Categories</th>
+                        <!-- <th>Categories</th> -->
                         <th class="text-right"><a href="/company/create">Create</a></th>
                     </tr>
                 </thead>
@@ -45,13 +45,6 @@
                                     </div>
                                 </a>
                             </td>
-                            <td class="align-middle text-nowrap">
-                                @foreach (config('global.trans_category') as $key => $category)
-                                    @if (in_array($category, explode(',', $item->categories)))
-                                        <span class="badge badge-pill py-1 px-2 mt-2 small bg-gray">{{ config('global.trans_category_label')[$key] }}</span>
-                                    @endif
-                                @endforeach
-                            </td>
                             <td class="align-middle text-right text-nowrap">
                                 <a href="/company-project/{{ $item->id }}" class="btn btn-link btn-sm">Projects</a>
                                 <a href="/company/{{ $item->id }}/edit" class="btn btn-link btn-sm">Edit</a>
@@ -62,9 +55,19 @@
                                 </form>
                             </td>
                         </tr>
+                        <tr>
+                            <td class="border-0"></td>
+                            <td class="align-middle text-nowrap pt-0 border-0" colspan="3">
+                                @foreach (config('global.trans_category') as $key => $category)
+                                    @if (in_array($category, explode(',', $item->categories)))
+                                        <span class="badge badge-pill py-1 px-2 mb-3 small bg-gray">{{ config('global.trans_category_label')[$key] }}</span>
+                                    @endif
+                                @endforeach
+                            </td>
+                        </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center">{{ __('messages.empty') }}</td>
+                            <td colspan="4" class="text-center">{{ __('messages.empty') }}</td>
                         </tr>
                     @endforelse
                 </tbody>
