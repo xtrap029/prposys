@@ -17,7 +17,13 @@
             <table class="table table-striped table-responsive-sm">
                 <thead>
                     <tr>
-                        <th colspan="2">Name</th>
+                        <th colspan="2" style="min-width: 350px;">
+                            <form class="form-inline">
+                                <input type="text" class="form-control form-control-sm" name="s" value="{{ isset($_GET['s']) ? $_GET['s'] : '' }}" placeholder="Search">
+                                <button type="submit" class="btn btn-primary ml-2 btn-sm">Search</button>
+                                <a href="/company" class="btn btn-default ml-2 btn-sm">Clear</a>
+                            </form>
+                        </th>
                         <th class="text-nowrap">Bill Option</th>
                         <th>Categories</th>
                         <th class="text-right"><a href="/company/create">Create</a></th>
@@ -63,6 +69,11 @@
                     @endforelse
                 </tbody>
             </table>
+            <div class="overflow-auto position-relative text-center mt-3">
+                <div class="d-inline-block">
+                    {{ $companies->links() }}
+                </div>
+            </div>
         </div>
     </section>
 @endsection

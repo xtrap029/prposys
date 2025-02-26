@@ -9,8 +9,19 @@ use Illuminate\Validation\Rule;
 
 class VatTypesController extends Controller {
     
-    public function index() {
-        $vat_types = VatType::orderBy('id', 'asc')->get();
+    public function index(Request $request) {
+        $vat_types = VatType::orderBy('id', 'asc');
+
+        if ($request->has('s')) {
+            $key = $_GET['s'];
+
+            $vat_types = $vat_types->where(static function ($query) use ($key) {
+                                        $query->where('name', 'like', "%{$key}%")
+                                            ->orWhere('code', 'like', "%{$key}%");
+                                    });
+        }
+        
+        $vat_types = $vat_types->paginate(10);
 
         return view('pages.admin.vattype.index')->with([
             'vat_types' => $vat_types

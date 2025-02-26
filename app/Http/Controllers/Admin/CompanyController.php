@@ -10,8 +10,14 @@ use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller {
     
-    public function index() {
-        $companies = Company::orderBy('code', 'asc')->get();
+    public function index(Request $request) {
+        $companies = Company::orderBy('code', 'asc');
+
+        if ($request->has('s')) {
+            $companies = $companies->where('name', 'like', '%'.$request->s.'%');
+        }
+        
+        $companies = $companies->paginate(10);
 
         return view('pages.admin.company.index')->with([
             'companies' => $companies

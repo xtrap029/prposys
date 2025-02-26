@@ -17,8 +17,13 @@
             <table class="table table-striped table-responsive-md">
                 <thead>
                     <tr>
-                        <th>Code</th>
-                        <th>Name</th>
+                        <th colspan="2">
+                            <form class="form-inline">
+                                <input type="text" class="form-control form-control-sm" name="s" value="{{ isset($_GET['s']) ? $_GET['s'] : '' }}" placeholder="Search">
+                                <button type="submit" class="btn btn-primary ml-2 btn-sm">Search</button>
+                                <a href="/vat-type" class="btn btn-default ml-2 btn-sm">Clear</a>
+                            </form>
+                        </th>
                         <th class="text-right">VAT</th>
                         <th class="text-right">WHT</th>
                         <th class="text-right">PR</th>
@@ -48,11 +53,16 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="text-right">{{ __('messages.empty') }}</td>
+                            <td colspan="8" class="text-right">{{ __('messages.empty') }}</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
+            <div class="overflow-auto position-relative text-center mt-3">
+                <div class="d-inline-block">
+                    {{ $vat_types->links() }}
+                </div>
+            </div>
         </div>
     </section>
 @endsection
