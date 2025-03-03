@@ -278,6 +278,20 @@
                         @include('errors.inline', ['message' => $errors->first('bill_statement_no')])
                     </div>
                 </div>
+                @if ($trans_type == "po")
+                    <div class="form-row mb-3 d-none">
+                        <div class="col-sm-4 col-lg-4 mb-2">
+                            <label for="">Auto-generate Payment</label>
+                            <select name="payment_project_id" id="payment_project_id" class="form-control chosen-select chosen-required @error('payment_project_id') is-invalid @enderror">
+                                <option value="">Select Company/Project</option>
+                                @foreach ($project_options as $item)
+                                    <option value="{{ $item->id }}">{{ $item->company_name.' - '.$item->name }}</option>
+                                @endforeach
+                            </select>
+                            @include('errors.inline', ['message' => $errors->first('payment_project_id')])
+                        </div>
+                    </div>
+                @endif
                 <div class="form-row mb-3">
                     {{-- <div class="col-md-2">
                         <label for="">For Deposit?</label>
@@ -380,14 +394,30 @@
                     || $(this).val() == "{{ config('global.trans_category')[8] }}"
                     || $(this).val() == "{{ config('global.trans_category')[9] }}"
                 ) {
+                    if ($(this).val() == "{{ config('global.trans_category')[6] }}"
+                    || $(this).val() == "{{ config('global.trans_category')[8] }}"
+                    ) {
+                        $('#payment_project_id').parent().parent().removeClass('d-none')
+                        $('#payment_project_id').attr('required', 'true')
+                    } else {
+                        $('#payment_project_id').removeAttr('required')
+                        $('#payment_project_id').parent().parent().addClass('d-none')
+                    }
+                    
                     $('#bill_statement_no').parent().parent().removeClass('d-none')
                     $('#bill_statement_no').attr('required', 'true')
                 } else if ($(this).val() == "{{ config('global.trans_category')[1] }}") {
                     $('#bill_statement_no').parent().parent().removeClass('d-none')
                     $('#bill_statement_no').removeAttr('required')
+
+                    $('#payment_project_id').removeAttr('required')
+                    $('#payment_project_id').parent().parent().addClass('d-none')
                 } else {
                     $('#bill_statement_no').removeAttr('required')
                     $('#bill_statement_no').parent().parent().addClass('d-none')
+
+                    $('#payment_project_id').removeAttr('required')
+                    $('#payment_project_id').parent().parent().addClass('d-none')   
                 }
             })
 

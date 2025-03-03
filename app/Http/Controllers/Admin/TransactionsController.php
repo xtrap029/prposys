@@ -448,6 +448,17 @@ class TransactionsController extends Controller {
         $class_types = ClassType::orderBy('code', 'asc')->get();
         $vendors = Vendor::orderBy('name', 'asc')->get();
 
+        $project_options = CompanyProject::where('companies.bill_option', 1)
+                            ->select(
+                                'companies.name as company_name',
+                                'company_projects.id as id',
+                                'company_projects.project as name',
+                            )
+                            ->join('companies', 'companies.id', '=', 'company_projects.company_id')
+                            ->orderBy('company_name', 'asc')
+                            ->orderBy('name', 'asc')
+                            ->get();
+
         return view('pages.admin.transaction.create')->with([
             'trans_type' => $trans_type,
             'trans_company' => $trans_company,
@@ -459,7 +470,8 @@ class TransactionsController extends Controller {
             'company' => $company,
             'purpose_options' => $purpose_options,
             'class_types' => $class_types,
-            'vendors' => $vendors
+            'vendors' => $vendors,
+            'project_options' => $project_options
         ]);
     }
 
@@ -499,6 +511,18 @@ class TransactionsController extends Controller {
                 || $trans_category == config('global.trans_category')[9]
                 ) {
                 $validation['bill_statement_no'] = ['required'];
+
+                if (($trans_category == config('global.trans_category')[6]
+                    || $trans_category == config('global.trans_category')[8])
+                    && $trans_type == 'po'
+                ) {
+                    $new_transaction = $request->validate([
+                        'payment_project_id' => ['required', 'exists:company_projects,id'],
+                    ]);
+
+                    $new_transaction['project_id'] = $new_transaction['payment_project_id'];
+                    unset($new_transaction['payment_project_id']);
+                }
             }
             
             $data = $request->validate($validation);
@@ -636,6 +660,64 @@ class TransactionsController extends Controller {
                 'user_id' => auth()->id(),
                 'created_at' => now()
             ]);
+        }
+
+        if ($transaction->trans_type == "po" && ($transaction->is_tdsa_bill || $transaction->is_aec_bill)) {
+            $new_transaction['is_tdsa_payment'] = $transaction->is_tdsa_bill;
+            $new_transaction['is_aec_payment'] = $transaction->is_aec_bill;
+            $new_transaction['trans_type'] = "pr";
+            $new_transaction['trans_year'] = $transaction->trans_year;
+            $new_transaction['currency'] = $transaction->currency;
+            $new_transaction['amount'] = $transaction->amount;
+            $new_transaction['purpose_option_id'] = $transaction->purpose_option_id;
+            $new_transaction['vendor_id'] = $transaction->vendor_id;
+            $new_transaction['purpose'] = $transaction->purpose;
+            $new_transaction['class_type_id'] = $transaction->class_type_id;
+            $new_transaction['budgeted'] = $transaction->budgeted;
+            $new_transaction['cost_control_no'] = $transaction->cost_control_no;
+            $new_transaction['bill_statement_no'] = $transaction->bill_statement_no;
+            $new_transaction['due_at'] = $transaction->due_at;
+            $new_transaction['requested_id'] = $transaction->requested_id;
+            $new_transaction['soa'] = $transaction->soa;
+            $new_transaction['is_confidential'] = $transaction->is_confidential;
+            $new_transaction['is_confidential_own'] = $transaction->is_confidential_own;
+            $new_transaction['bill_statement_no'] = $transaction->bill_statement_no;
+
+            // generate transaction code
+            $trans_company = CompanyProject::where('id', $new_transaction['project_id'])->first()->company_id;
+            $latest_trans = Transaction::where('trans_year', $transaction->trans_year)
+                ->where('trans_type', $new_transaction['trans_type'])
+                ->whereHas('project', function($query) use($trans_company) {
+                    $query->where('company_id', $trans_company);
+                })
+                ->orderBy('trans_seq', 'desc')->first();
+            if ($latest_trans) {
+                $new_transaction['trans_seq'] = $latest_trans->trans_seq+1;
+            } else {
+                $new_transaction['trans_seq'] = 1;
+            }
+
+            $new_transaction['owner_id'] = auth()->id();
+            $new_transaction['updated_id'] = auth()->id();
+            $new_transaction['status_updated_at'] = now();
+            $new_transaction['status_prev_id'] = 1;
+            $new_transaction['src_transaction_id'] = $transaction->id;
+
+            $saved_transaction = Transaction::create($new_transaction);
+
+            $soas = TransactionsSoa::where('transaction_id', $transaction->id)->get();
+            foreach ($soas as $key => $value) {
+                $soa = $value->replicate();
+                $soa->transaction_id = $saved_transaction->id;
+                $soa->save();
+            }
+
+            $transaction_notes = TransactionsNote::where('transaction_id', $transaction->id)->get();
+            foreach ($transaction_notes as $key => $value) {
+                $note = $value->replicate();
+                $note->transaction_id = $saved_transaction->id;
+                $note->save();
+            }
         }
 
         return redirect('/transaction/view/'.$transaction->id);
@@ -986,6 +1068,11 @@ class TransactionsController extends Controller {
                 break;
         }
 
+        $autogenerated_transaction = null;
+        if ($transaction->is_tdsa_bill || $transaction->is_aec_bill) {
+            $autogenerated_transaction = Transaction::where('src_transaction_id', $transaction->id)->first();
+        }
+
         return view('pages.admin.transaction.show')->with([
             'transaction' => $transaction,
             'company' => $transaction->project->company,
@@ -994,7 +1081,8 @@ class TransactionsController extends Controller {
             'users' => $users,
             'users_inactive' => $users_inactive,
             'releasing_users' => $releasing_users,
-            'trans_page' => $trans_page
+            'trans_page' => $trans_page,
+            'autogenerated_transaction' => $autogenerated_transaction,
         ]);
     }
 

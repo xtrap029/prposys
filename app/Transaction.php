@@ -80,6 +80,7 @@ class Transaction extends Model {
                                         'cost_control_no',
                                         'bill_statement_no',
                                         'soa',
+                                        'src_transaction_id',
                                         ];
     protected static $logName = 'Transaction';
     protected static $logOnlyDirty = true;
@@ -106,6 +107,10 @@ class Transaction extends Model {
 
     public function expensetype() {
         return $this->belongsTo(ExpenseType::class, 'expense_type_id')->withTrashed();
+    }
+
+    public function srctransaction() {
+        return $this->belongsTo(Transaction::class, 'src_transaction_id')->withTrashed();
     }
 
     public function classtype() {
