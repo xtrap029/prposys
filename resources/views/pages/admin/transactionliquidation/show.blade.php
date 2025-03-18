@@ -562,7 +562,7 @@
                                             @if ($transaction->vendor_id)
                                                 <a href="#_" data-toggle="modal" data-target="#modal-vendor">{{ $transaction->vendor->name }}</a>
                                             @else
-                                                {{ $transaction->payee }}
+                                                {{ $transaction->payee ?: '-' }}
                                             @endif
                                         </td>
                                     </tr>

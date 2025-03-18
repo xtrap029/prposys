@@ -1223,12 +1223,6 @@ class TransactionsLiquidationController extends Controller {
         }
         $user = User::where('id', $user)->first();
 
-        // check if not for approval and not designated approver
-        // if (!in_array($transaction->status_id, config('global.liquidation_approval')) || !in_array($user->role_id, config('global.approver_form'))) {
-        if (!in_array($transaction->status_id, config('global.liquidation_approval'))) {
-            $can_clear = false;
-        }
-
         if (
             (UAHelper::get()['liq_clear'] == config('global.ua_own') && $user->id != $transaction->owner_id && auth()->id() != $transaction->requested_id)
             || UAHelper::get()['liq_clear'] == config('global.ua_none')
@@ -1240,6 +1234,12 @@ class TransactionsLiquidationController extends Controller {
         
             // bypass hierarchy check and check if is_accounting
             if ($user->is_accounting) $can_clear = true;
+        }
+
+        // check if not for approval and not designated approver
+        // if (!in_array($transaction->status_id, config('global.liquidation_approval')) || !in_array($user->role_id, config('global.approver_form'))) {
+        if (!in_array($transaction->status_id, config('global.liquidation_approval'))) {
+            $can_clear = false;
         }
         
         return $can_clear;

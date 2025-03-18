@@ -80,7 +80,7 @@
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold">Vendor</td>
-                                    <td>{{ $transaction->vendor_id ? $transaction->vendor->name : $transaction->payee }}</td>
+                                    <td>{{ $transaction->vendor_id ? $transaction->vendor->name : ($transaction->payee ?: '-') }}</td>
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold">Payor</td>

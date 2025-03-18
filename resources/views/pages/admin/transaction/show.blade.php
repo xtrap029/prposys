@@ -299,7 +299,7 @@
                                             @if ($transaction->vendor_id)
                                                 <a href="#_" data-toggle="modal" data-target="#modal-vendor">{{ $transaction->vendor->name }}</a>
                                             @else
-                                                {{ $transaction->payee }}
+                                                {{ $transaction->payee ?: "-" }}
                                             @endif
                                         </td>
                                     </tr>
@@ -314,7 +314,7 @@
                                                 .'.'
                                                 .config('global.cost_control_v')
                                             : '-' }}</td> --}}
-                                        <td class="font-weight-bold">{{ $transaction->cost_control_no }}</td>
+                                        <td class="font-weight-bold">{{ $transaction->cost_control_no ?: "-" }}</td>
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Class</td>

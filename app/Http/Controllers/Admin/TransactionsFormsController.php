@@ -709,6 +709,11 @@ class TransactionsFormsController extends Controller {
 
         $trans_category = $request->trans_category;
 
+        if ($trans_category == config('global.trans_category')[7]
+            || $trans_category == config('global.trans_category')[9]) {
+            $validation['vendor_id'] = [];
+        }
+
         if ($trans_category == config('global.trans_category')[2]
             || $trans_category == config('global.trans_category')[6]
             || $trans_category == config('global.trans_category')[7]

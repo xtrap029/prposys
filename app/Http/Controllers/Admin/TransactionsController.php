@@ -670,7 +670,6 @@ class TransactionsController extends Controller {
             $new_transaction['currency'] = $transaction->currency;
             $new_transaction['amount'] = $transaction->amount;
             $new_transaction['purpose_option_id'] = $transaction->purpose_option_id;
-            $new_transaction['vendor_id'] = $transaction->vendor_id;
             $new_transaction['purpose'] = $transaction->purpose;
             $new_transaction['class_type_id'] = $transaction->class_type_id;
             $new_transaction['budgeted'] = $transaction->budgeted;
@@ -851,6 +850,11 @@ class TransactionsController extends Controller {
 
         $trans_category = $request->trans_category;
 
+        if ($trans_category == config('global.trans_category')[7]
+            || $trans_category == config('global.trans_category')[9]) {
+            $validation['vendor_id'] = [];
+        }
+        
         if ($trans_category == config('global.trans_category')[2]
             || $trans_category == config('global.trans_category')[6]
             || $trans_category == config('global.trans_category')[7]

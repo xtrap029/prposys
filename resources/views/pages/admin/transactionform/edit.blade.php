@@ -203,7 +203,10 @@
                     </div>
                     <div class="col-md-4 mb-2">
                         <label for="">Payee Name</label>
-                        <select name="vendor_id" class="form-control chosen-select @error('vendor_id') is-invalid @enderror" required>
+                        <select name="vendor_id" class="form-control chosen-select @error('vendor_id') is-invalid @enderror">
+                            @if ($transaction->is_tdsa_payment == 1 || $transaction->is_aec_payment == 1)
+                                <option value="">N/A</option>
+                            @endif
                             @foreach ($vendors as $item)
                                 <option value="{{ $item->id }}" {{ $item->id == $transaction->vendor_id ? 'selected' : '' }}>{{ $item->name }}</option>                                        
                             @endforeach
