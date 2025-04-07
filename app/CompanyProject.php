@@ -12,7 +12,7 @@ class CompanyProject extends Model {
     protected $guarded = [];
     
     use LogsActivity;
-    protected static $logAttributes = ['project', 'company.name'];
+    protected static $logAttributes = ['project', 'company.name', 'is_bill_option'];
     protected static $logName = 'Company Project';
 
     public function company() {

@@ -82,6 +82,7 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
             Route::post('/{company}', $url.'@store')->where('company', '[0-9]+');
             Route::put('/{companyProject}', $url.'@update')->where('companyProject', '[0-9]+');
             Route::delete('/{companyProject}', $url.'@destroy')->where('companyProject', '[0-9]+');
+            Route::get('/{companyProject}/bill-option', $url.'@bill_option')->where('companyProject', '[0-9]+');
         });   
     });
 

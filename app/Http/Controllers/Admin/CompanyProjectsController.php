@@ -63,4 +63,10 @@ class CompanyProjectsController extends Controller {
 
         return redirect('/company-project/'.$companyProject->company_id)->with('success', 'Company Project'.__('messages.delete_success'));
     }
+
+    public function bill_option(CompanyProject $companyProject) {
+        $companyProject->is_bill_option = !$companyProject->is_bill_option;
+        $companyProject->save();
+        return redirect('/company-project/'.$companyProject->company_id)->with('success', 'Company Project'.__('messages.edit_success'));
+    }
 }

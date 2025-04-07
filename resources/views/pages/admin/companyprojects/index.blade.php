@@ -24,6 +24,7 @@
                 <thead>
                     <tr>
                         <th>List</th>
+                        <th class="text-nowrap text-center">Bill Option</th>
                         <th class="text-right"><a href="/company-project/{{ $company->id }}/create">Create</a></th>
                     </tr>
                 </thead>
@@ -31,6 +32,14 @@
                     @forelse ($company_projects as $item)
                         <tr>
                             <td class="align-middle">{{ $item->project }}</td>
+                            <td class="align-middle">
+                                <a href="/company-project/{{ $item->id }}/bill-option" class="text-center">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input" {{ $item->is_bill_option == 1 ? 'checked' : '' }}>
+                                        <label class="custom-control-label"></label>
+                                    </div>
+                                </a>
+                            </td>
                             <td class="align-middle text-right">
                                 <a href="/company-project/edit/{{ $item->id }}" class="btn btn-link btn-sm">Edit</a>
                                 <form action="/company-project/{{ $item->id }}" method="post" class="d-inline-block">

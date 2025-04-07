@@ -8,7 +8,6 @@ use App\Company;
 use App\ClassType;
 use App\CostType;
 use App\CompanyProject;
-use App\ExpenseType;
 use App\Particulars;
 use App\PurposeOption;
 use App\Vendor;
@@ -28,11 +27,7 @@ use App\Helpers\UserHelper;
 use App\Helpers\UAHelper;
 use Spatie\Activitylog\Models\Activity;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use \DB;
-use \File;
 use \Storage;
 use Carbon\Carbon;
 
@@ -449,6 +444,7 @@ class TransactionsController extends Controller {
         $vendors = Vendor::orderBy('name', 'asc')->get();
 
         $project_options = CompanyProject::where('companies.bill_option', 1)
+                            ->where('company_projects.is_bill_option', 1)
                             ->select(
                                 'companies.name as company_name',
                                 'company_projects.id as id',

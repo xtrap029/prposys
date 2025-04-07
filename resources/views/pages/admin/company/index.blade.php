@@ -24,7 +24,7 @@
                                 <a href="/company" class="btn btn-default ml-2 btn-sm">Clear</a>
                             </form>
                         </th>
-                        <th class="text-nowrap">Bill Option</th>
+                        <th class="text-nowrap text-center">Bill Option</th>
                         <!-- <th>Categories</th> -->
                         <th class="text-right"><a href="/company/create">Create</a></th>
                     </tr>
