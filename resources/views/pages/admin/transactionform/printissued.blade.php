@@ -141,6 +141,12 @@
                                             <td class="font-weight-bold">Tax Type</td>
                                             <td>{{ $transaction->form_vat_name ? $transaction->form_vat_name : $transaction->vattype->name }}</td>
                                         </tr>
+                                        @if ($transaction->bill_series_no)
+                                            <tr>
+                                                <td class="font-weight-bold">Bill Series No.</td>
+                                                <td>{{ $transaction->bill_series_no }}</td>
+                                            </tr>
+                                        @endif
                                     </table>
                                 </div>
                             </div>

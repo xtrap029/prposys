@@ -530,6 +530,12 @@
                                             </td>
                                         </tr>
                                     @endif
+                                    @if ($transaction->bill_series_no)
+                                        <tr>
+                                            <td class="font-weight-bold text-gray">Bill Series No.</td>
+                                            <td class="font-weight-bold">{{ $transaction->bill_series_no }}</td>
+                                        </tr>
+                                    @endif
                                     @if ($transaction->src_transaction_id)
                                         <tr>
                                             <td class="font-weight-bold text-gray">Bill Transaction</td>

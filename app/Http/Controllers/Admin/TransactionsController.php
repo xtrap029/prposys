@@ -455,6 +455,13 @@ class TransactionsController extends Controller {
                             ->orderBy('name', 'asc')
                             ->get();
 
+        $current_series_no = Transaction::whereRaw('bill_series_no REGEXP "^[0-9]+$"')->orderBy('bill_series_no', 'desc')->first();
+        if ($current_series_no) {
+            $current_series_no = $current_series_no->bill_series_no + 1;
+        } else {
+            $current_series_no = 1;
+        }
+
         return view('pages.admin.transaction.create')->with([
             'trans_type' => $trans_type,
             'trans_company' => $trans_company,
@@ -467,7 +474,8 @@ class TransactionsController extends Controller {
             'purpose_options' => $purpose_options,
             'class_types' => $class_types,
             'vendors' => $vendors,
-            'project_options' => $project_options
+            'project_options' => $project_options,
+            'current_series_no' => $current_series_no
         ]);
     }
 
@@ -512,6 +520,7 @@ class TransactionsController extends Controller {
                     || $trans_category == config('global.trans_category')[8])
                     && $trans_type == 'po'
                 ) {
+                    $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
                     $new_transaction = $request->validate([
                         'payment_project_id' => ['required', 'exists:company_projects,id'],
                     ]);
@@ -531,13 +540,16 @@ class TransactionsController extends Controller {
                 config('global.trans_category')[8],
                 config('global.trans_category')[9]
             ])) {
-                $data['bill_statement_no'] = '';
+                $data['bill_statement_no'] = '';                
             }
 
-            // ALLOW ALL CATEGORIES
-            // if ($request->file('soa')) {
-            //     $data['soa'] = basename($request->file('soa')->store('public/attachments/soa'));
-            // }
+            if ($trans_type != 'po' || 
+                !in_array($trans_category, [
+                    config('global.trans_category')[6],
+                    config('global.trans_category')[8]
+                ])) {
+                $data['bill_series_no'] = '';
+            }
 
             $data['is_deposit'] = 0;
             $data['is_bills'] = 0;
@@ -858,6 +870,13 @@ class TransactionsController extends Controller {
             || $trans_category == config('global.trans_category')[9]
             ) {
             $validation['bill_statement_no'] = ['required'];
+
+            if (($trans_category == config('global.trans_category')[6]
+                    || $trans_category == config('global.trans_category')[8])
+                    && $transaction->trans_type == 'po'
+            ) {
+                $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
+            }
         }
 
         $data = $request->validate($validation);
@@ -871,6 +890,14 @@ class TransactionsController extends Controller {
             config('global.trans_category')[9]
         ])) {
             $data['bill_statement_no'] = '';
+        }
+
+        if ($transaction->trans_type != 'po' || 
+            !in_array($trans_category, [
+                config('global.trans_category')[6],
+                config('global.trans_category')[8]
+            ])) {
+            $data['bill_series_no'] = '';
         }
 
         $attach_liq = $request->validate([
@@ -907,29 +934,6 @@ class TransactionsController extends Controller {
         }        
 
         $trans_company = CompanyProject::where('id', $data['project_id'])->first()->company_id;
-        // if ($data['cost_type_id'] && $transaction->cost_type_id == NULL) {
-        //     $latest_cost = Transaction::whereHas('project', function($query) use($trans_company) {
-        //             $query->where('company_id', $trans_company);
-        //         })
-        //         ->orderBy('cost_seq', 'desc')->first();
-    
-        //     if ($latest_cost->cost_seq) {
-        //         $latest_cost_seq = $latest_cost->cost_seq + 1;
-        //     } else {
-        //         $latest_cost_seq = 1;
-        //     }
-
-        //     $data['cost_seq'] = $latest_cost_seq;
-        // } else if ($data['cost_type_id'] == NULL) {
-        //     $data['cost_seq'] = NULL;
-        //     $data['cost_control_no'] = NULL;
-        // } 
-        
-        // if ($data['cost_type_id']) {
-        //     $project = CompanyProject::where('id', $data['project_id'])->first();
-        //     $cost_type = CostType::find($data['cost_type_id']);
-        //     $data['cost_control_no'] = $project->company->qb_code.'.'.$project->company->qb_no.$cost_type->control_no.'.'.sprintf("%03d", isset($data['cost_seq']) ? $data['cost_seq'] : $transaction->cost_seq).'.'.config('global.cost_control_v');
-        // }
 
         $attr_file['transaction_id'] = $transaction->id;
         $attr_file['owner_id'] = auth()->id();

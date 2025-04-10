@@ -256,6 +256,12 @@
                                         <td>{{ $transaction->bill_statement_no ?: '-' }}</td>
                                     </tr>
                                 @endif
+                                @if ($transaction->bill_series_no)
+                                    <tr>
+                                        <td class="font-weight-bold">Bill Series No.</td>
+                                        <td>{{ $transaction->bill_series_no }}</td>
+                                    </tr>
+                                @endif
                             </table>
                         </div>
                     </div>

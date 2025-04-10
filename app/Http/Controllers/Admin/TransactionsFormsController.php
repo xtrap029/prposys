@@ -721,6 +721,13 @@ class TransactionsFormsController extends Controller {
             || $trans_category == config('global.trans_category')[9]
         ) {
             $validation['bill_statement_no'] = ['required'];
+
+            if (($trans_category == config('global.trans_category')[6]
+                    || $trans_category == config('global.trans_category')[8])
+                    && $transaction->trans_type == 'po'
+            ) {
+                $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
+            }
         }
 
         // validate input
@@ -735,6 +742,14 @@ class TransactionsFormsController extends Controller {
             config('global.trans_category')[9]
         ])) {
             $data['bill_statement_no'] = '';
+        }
+
+        if ($transaction->trans_type != 'po' || 
+            !in_array($trans_category, [
+                config('global.trans_category')[6],
+                config('global.trans_category')[8]
+            ])) {
+            $data['bill_series_no'] = '';
         }
 
         if ($request->file('soa')) {

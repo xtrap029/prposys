@@ -281,6 +281,13 @@
                 @if ($trans_type == "po")
                     <div class="form-row mb-3 d-none">
                         <div class="col-sm-4 col-lg-4 mb-2">
+                            <label for="">Bill No.</label>
+                            <input type="text" id="bill_series_no" class="form-control @error('bill_series_no') is-invalid @enderror" name="bill_series_no" value="{{ old('bill_series_no') ?: (isset($_GET['bill_series_no']) ? $_GET['bill_series_no'] : $current_series_no) }}">
+                            @include('errors.inline', ['message' => $errors->first('bill_series_no')])
+                        </div>
+                    </div>
+                    <div class="form-row mb-3 d-none">
+                        <div class="col-sm-4 col-lg-4 mb-2">
                             <label for="">Auto-generate Payment</label>
                             <select name="payment_project_id" id="payment_project_id" class="form-control chosen-select chosen-required @error('payment_project_id') is-invalid @enderror">
                                 <option value="">Select Company/Project</option>
@@ -399,9 +406,15 @@
                     ) {
                         $('#payment_project_id').parent().parent().removeClass('d-none')
                         $('#payment_project_id').attr('required', 'true')
+
+                        $('#bill_series_no').parent().parent().removeClass('d-none')
+                        $('#bill_series_no').attr('required', 'true')
                     } else {
                         $('#payment_project_id').removeAttr('required')
                         $('#payment_project_id').parent().parent().addClass('d-none')
+
+                        $('#bill_series_no').removeAttr('required')
+                        $('#bill_series_no').parent().parent().addClass('d-none')
                     }
                     
                     $('#bill_statement_no').parent().parent().removeClass('d-none')
@@ -412,12 +425,18 @@
 
                     $('#payment_project_id').removeAttr('required')
                     $('#payment_project_id').parent().parent().addClass('d-none')
+
+                    $('#bill_series_no').removeAttr('required')
+                    $('#bill_series_no').parent().parent().addClass('d-none')
                 } else {
                     $('#bill_statement_no').removeAttr('required')
                     $('#bill_statement_no').parent().parent().addClass('d-none')
 
                     $('#payment_project_id').removeAttr('required')
                     $('#payment_project_id').parent().parent().addClass('d-none')   
+
+                    $('#bill_series_no').removeAttr('required')
+                    $('#bill_series_no').parent().parent().addClass('d-none')
                 }
             })
 

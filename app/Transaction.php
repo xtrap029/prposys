@@ -79,6 +79,7 @@ class Transaction extends Model {
                                         'is_confidential_own',
                                         'cost_control_no',
                                         'bill_statement_no',
+                                        'bill_series_no',
                                         'soa',
                                         'src_transaction_id',
                                         ];

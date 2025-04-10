@@ -26,20 +26,6 @@
                 @method('put')
 
                 <div class="form-row mb-3">
-                    {{-- <div class="col-md-6">
-                        <label for="">Particulars</label>
-                        @if ($trans_page == 'prpo')
-                            <select name="particulars_id" class="form-control @error('particulars_id') is-invalid @enderror">
-                                @foreach ($particulars as $item)
-                                    <option value="{{ $item->id }}" {{ $item->id == $transaction->particulars_id ? 'selected' : '' }}>{{ $item->name }}</option>                                        
-                                @endforeach
-                            </select>
-                            @include('errors.inline', ['message' => $errors->first('particulars_id')])
-                        @else
-                            <input type="text" class="form-control @error('particulars_custom') is-invalid @enderror" name="particulars_custom" value="{{ $transaction->particulars_custom }}" required>
-                            @include('errors.inline', ['message' => $errors->first('particulars_custom')])
-                        @endif
-                    </div> --}}
                     <div class="col-lg-3 mb-2">
                         <label for="">Transaction Category</label>
                         <select name="trans_category" class="trans-category form-control @error('trans_category') is-invalid @enderror" required>
@@ -178,23 +164,8 @@
                         </select>
                         @include('errors.inline', ['message' => $errors->first('payee')])
                     </div>
-                    {{-- <div class="col-sm-6 col-lg-4 mb-2">
-                        <label for="">Payee Name</label>
-                        <input type="text" class="form-control @error('payee') is-invalid @enderror" name="payee" value="{{ $transaction->payee }}" required>
-                        @include('errors.inline', ['message' => $errors->first('payee')])
-                    </div> --}}
                 </div>
                 <div class="form-row mb-3">
-                    {{-- <div class="col-sm-4 col-lg-4 mb-2">
-                        <label for="">Cost Type</label>
-                        <select name="cost_type_id" class="form-control @error('cost_type_id') is-invalid @enderror">
-                            <option value="">No Cost Control No.</option>
-                            @foreach ($cost_types as $item)
-                                <option value="{{ $item->id }}" {{ $transaction->cost_type_id == $item->id ? 'selected' : '' }}>{{ $company->qb_code.'.'.$company->qb_no.$item->control_no.'.00*.'.config('global.cost_control_v').' - '.$item->name }}</option>                                        
-                            @endforeach
-                        </select>
-                        @include('errors.inline', ['message' => $errors->first('cost_type_id')])
-                    </div> --}}
                     <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Cost Control No.</label>
                         <input type="text" class="form-control" name="cost_control_no" value="{{ $transaction->cost_control_no }}">
@@ -242,26 +213,16 @@
                         @include('errors.inline', ['message' => $errors->first('bill_statement_no')])
                     </div>
                 </div>
-                {{-- <div class="form-row mb-3">
-                    <div class="col-sm-4 col-lg-4 mb-2">
-                        <label for="">Statement of Account / Billing / Quotation</label>
-                        @if ($transaction->soa)
-                            <a href="/storage/public/attachments/soa/{{ $transaction->soa }}" target="_blank" class="vlign--top ml-1">
-                                <i class="material-icons mr-2 align-bottom">attachment</i>
-                            </a>
-                        @endif
-                        <input type="file" name="soa" class="soa form_control" {{ $transaction->trans_type == 'po' && !$transaction->soa ? 'required' : '' }}>
-                    </div>
-                </div> --}}
-                <div class="form-row mb-3">
-                    {{-- <div class="col-md-2">
-                        <label for="">For Deposit?</label>
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input @error('is_deposit') is-invalid @enderror" name="is_deposit" id="is_deposit" value="1" {{ $transaction->is_deposit == '1' ? 'checked' : '' }}>
-                            <label class="form-check-label" for="is_deposit">Yes</label>
+                @if ($transaction->trans_type == "po")
+                    <div class="form-row mb-3 d-none">
+                        <div class="col-sm-4 col-lg-4 mb-2">
+                            <label for="">Bill No.</label>
+                            <input type="text" id="bill_series_no" class="form-control @error('bill_series_no') is-invalid @enderror" name="bill_series_no" value="{{ $transaction->bill_series_no }}">
+                            @include('errors.inline', ['message' => $errors->first('bill_series_no')])
                         </div>
-                        @include('errors.inline', ['message' => $errors->first('is_deposit')])
-                    </div> --}}
+                    </div>
+                @endif
+                <div class="form-row mb-3">
                     <div class="col-md-12 jsReplicate mt-5 pt-5">
                         <h4 class="text-center">Statement of Account / Billing / Quotation</h4>
                         <div class="text-center mb-3">Attach receipts and documents here. Accepts .jpg, .png and .pdf file types, not more than {{ config('global.max_t_file') }} each.</div>
@@ -368,6 +329,13 @@
             ) {
                 $('#bill_statement_no').parent().parent().removeClass('d-none')
                 $('#bill_statement_no').attr('required', 'true')
+
+                if (("{{ $transaction->is_tdsa_bill }}" === "1"
+                    || "{{ $transaction->is_aec_bill }}" === "1")
+                    && "{{ $transaction->trans_type }}" === "po") {
+                    $('#bill_series_no').parent().parent().removeClass('d-none')
+                    $('#bill_series_no').attr('required', 'true')
+                }
             } else if ("{{ $transaction->is_deposit }}" === "1") {
                 $('#bill_statement_no').parent().parent().removeClass('d-none')
                 $('#bill_statement_no').removeAttr('required')
@@ -392,12 +360,28 @@
                 ) {
                     $('#bill_statement_no').parent().parent().removeClass('d-none')
                     $('#bill_statement_no').attr('required', 'true')
+
+                    if (($(this).val() == "{{ config('global.trans_category')[6] }}"
+                        || $(this).val() == "{{ config('global.trans_category')[8] }}")
+                        && "{{ $transaction->trans_type }}" === "po") {
+                        $('#bill_series_no').parent().parent().removeClass('d-none')
+                        $('#bill_series_no').attr('required', 'true')
+                    } else {
+                        $('#bill_series_no').removeAttr('required')
+                        $('#bill_series_no').parent().parent().addClass('d-none')
+                    }
                 } else if ($(this).val() == "{{ config('global.trans_category')[1] }}") {
                     $('#bill_statement_no').parent().parent().removeClass('d-none')
                     $('#bill_statement_no').removeAttr('required')
+
+                    $('#bill_series_no').removeAttr('required')
+                    $('#bill_series_no').parent().parent().addClass('d-none')
                 } else {
                     $('#bill_statement_no').removeAttr('required')
                     $('#bill_statement_no').parent().parent().addClass('d-none')
+
+                    $('#bill_series_no').removeAttr('required')
+                    $('#bill_series_no').parent().parent().addClass('d-none')
                 }
             })
 

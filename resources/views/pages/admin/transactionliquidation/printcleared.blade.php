@@ -220,7 +220,35 @@
                                                     {{ $transaction->currency_2 ?: $transaction->currency }} {{ number_format($transaction->amount_issued, 2, '.', ',') }}
                                                 @endif
                                             </td>
-                                        </tr>                                    
+                                        </tr>       
+                                        @if ($transaction->is_bills == 1 
+                                            || $transaction->is_deposit == 1
+                                            || $transaction->is_tdsa_bill == 1
+                                            || $transaction->is_tdsa_payment == 1
+                                            || $transaction->is_aec_bill == 1
+                                            || $transaction->is_aec_payment == 1
+                                        )
+                                            <tr>
+                                                <td class="font-weight-bold">
+                                                    @if ($transaction->is_tdsa_bill == 1
+                                                        || $transaction->is_tdsa_payment == 1
+                                                        || $transaction->is_aec_bill == 1
+                                                        || $transaction->is_aec_payment == 1
+                                                    )
+                                                        Service Invoice Number
+                                                    @else
+                                                        Bill/Statement No.
+                                                    @endif
+                                                </td>
+                                                <td>{{ $transaction->bill_statement_no ?: '-' }}</td>
+                                            </tr>
+                                        @endif
+                                        @if ($transaction->bill_series_no)
+                                            <tr>
+                                                <td class="font-weight-bold">Bill Series No.</td>
+                                                <td>{{ $transaction->bill_series_no }}</td>
+                                            </tr>
+                                        @endif                            
                                     </table>
                                 </div>
                             </div>
