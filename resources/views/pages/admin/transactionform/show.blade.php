@@ -345,6 +345,20 @@
                                                 <div class="alert alert-default-warning rounded text-center" role="alert">
                                                     {!! config('global.issue_attachment_note_2') !!} 
                                                  </div>
+                                                 @if ($transaction->trans_type == "po" && ($transaction->is_tdsa_bill || $transaction->is_aec_bill))
+                                                     <div class="alert alert-default-warning">
+                                                         <b>A PR will be automatically generated based on this transaction's information.</b>
+                                                         </br></br>
+                                                         Please select preferred company/project for payment:
+                                                         <select name="project_id" class="form-control chosen-select chosen-required @error('project_id') is-invalid @enderror" required>
+                                                             <option value="">Select Company/Project</option>
+                                                             @foreach ($project_options as $item)
+                                                                 <option value="{{ $item->id }}">{{ $item->company_name.' - '.$item->name }}</option>
+                                                             @endforeach
+                                                         </select>
+                                                         @include('errors.inline', ['message' => $errors->first('project_id')])
+                                                     </div>
+                                                 @endif
                                             </div>
                                             <div class="col-12 text-center mt-2">
                                                 <input type="submit" class="btn btn-success" value="{{ $transaction->is_deposit ? 'Save' : 'Issue Now' }}">
@@ -979,8 +993,23 @@
     </section>
 @endsection
 
+@section('style')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.css" integrity="sha512-0nkKORjFgcyxv3HbE4rzFUlENUMNqic/EzDIeYCgsKa/nwqr2B91Vu/tNAu4Q0cBuG4Xe/D1f/freEci/7GDRA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .chosen-required:invalid {
+            height: 0px !important;
+            opacity: 0 !important;
+            position: absolute !important;
+            display: flex !important;
+        }
+    </style>
+@endsection
+
 @section('script')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js" integrity="sha512-rMGGF4wg1R73ehtnxXBt5mbUfN9JUJwbk21KMlnLZDJh7BkPmeovBuddZCENJddHYYMkCh9hPFnPmS9sspki8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript">
+        $('.chosen-select').chosen();
+        
         $(function() {
             $('[data-toggle="tooltip"]').tooltip()
 

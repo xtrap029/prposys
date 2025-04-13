@@ -174,11 +174,6 @@
                         </select>
                         @include('errors.inline', ['message' => $errors->first('vendor_id')])
                     </div>
-                    {{-- <div class="col-sm-6 col-lg-4 mb-2">
-                        <label for="">Payee Name</label>
-                        <input type="text" class="form-control @error('payee') is-invalid @enderror" name="payee" value="{{ old('payee') ?: (isset($_GET['payee']) ? $_GET['payee'] : '') }}" required>
-                        @include('errors.inline', ['message' => $errors->first('payee')])
-                    </div> --}}
                 </div>
                 <div class="form-row mb-3">
                     <div class="col-sm-6 col-lg-8 mb-2">
@@ -193,16 +188,6 @@
                     </div>
                 </div>
                 <div class="form-row mb-3">
-                    {{-- <div class="col-sm-4 col-lg-4 mb-2">
-                        <label for="">Cost Type</label>
-                        <select name="cost_type_id" class="form-control @error('cost_type_id') is-invalid @enderror">
-                            <option value="">No Cost Control No.</option>
-                            @foreach ($cost_types as $item)
-                                <option value="{{ $item->id }}" {{ isset($_GET['cost_type_id']) && $_GET['cost_type_id'] == $item->id ? 'selected' : '' }}>{{ $company->qb_code.'.'.$company->qb_no.$item->control_no.'.00*.'.config('global.cost_control_v').' - '.$item->name }}</option>                                        
-                            @endforeach
-                        </select>
-                        @include('errors.inline', ['message' => $errors->first('cost_type_id')])
-                    </div> --}}
                     <div class="col-sm-4 col-lg-4 mb-2">
                         <label for="">Cost Control No.</label>
                         <input type="text" class="form-control @error('cost_control_no') is-invalid @enderror" name="cost_control_no" value="{{ old('cost_control_no') ?: (isset($_GET['cost_control_no']) ? $_GET['cost_control_no'] : '') }}">
@@ -221,12 +206,6 @@
                         <label for="">Prepared by</label>
                         <h5>{{ Auth::user()->name }}</h5>
                     </div>
-                    {{-- ALLOw ALL CATEGORIES --}}
-                    {{-- <div class="col-sm-4 col-lg-4 mb-2 {{ $trans_type == 'po' ? '' : 'd-none' }}"> --}}
-                    {{-- <div class="col-sm-4 col-lg-4 mb-2">
-                        <label for="">Statement of Account / Billing / Quotation</label>
-                        <input type="file" name="soa" class="soa form_control" {{ $trans_type == 'po' ? 'required' : '' }}>
-                    </div> --}}
                 </div>
                 <div class="form-row mb-3 {{ $ua['trans_toggle_conf'] == $non ? 'd-none' : '' }}">
                     
@@ -286,28 +265,8 @@
                             @include('errors.inline', ['message' => $errors->first('bill_series_no')])
                         </div>
                     </div>
-                    <div class="form-row mb-3 d-none">
-                        <div class="col-sm-4 col-lg-4 mb-2">
-                            <label for="">Auto-generate Payment</label>
-                            <select name="payment_project_id" id="payment_project_id" class="form-control chosen-select chosen-required @error('payment_project_id') is-invalid @enderror">
-                                <option value="">Select Company/Project</option>
-                                @foreach ($project_options as $item)
-                                    <option value="{{ $item->id }}">{{ $item->company_name.' - '.$item->name }}</option>
-                                @endforeach
-                            </select>
-                            @include('errors.inline', ['message' => $errors->first('payment_project_id')])
-                        </div>
-                    </div>
                 @endif
                 <div class="form-row mb-3">
-                    {{-- <div class="col-md-2">
-                        <label for="">For Deposit?</label>
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input @error('is_deposit') is-invalid @enderror" name="is_deposit" id="is_deposit" value="1" {{ old('is_deposit') == 'on' ? 'checked' : '' }}>
-                            <label class="form-check-label" for="is_deposit">Yes</label>
-                        </div>
-                        @include('errors.inline', ['message' => $errors->first('is_deposit')])
-                    </div> --}}
                     <div class="col-12 jsReplicate mt-5 pt-5">
                         <h4 class="text-center">Statement of Account / Billing / Quotation</h4>
                         <div class="text-center mb-3">Attach receipts and documents here. Accepts .jpg, .png and .pdf file types, not more than {{ config('global.max_t_file') }} each.</div>
@@ -404,15 +363,9 @@
                     if ($(this).val() == "{{ config('global.trans_category')[6] }}"
                     || $(this).val() == "{{ config('global.trans_category')[8] }}"
                     ) {
-                        $('#payment_project_id').parent().parent().removeClass('d-none')
-                        $('#payment_project_id').attr('required', 'true')
-
                         $('#bill_series_no').parent().parent().removeClass('d-none')
                         $('#bill_series_no').attr('required', 'true')
                     } else {
-                        $('#payment_project_id').removeAttr('required')
-                        $('#payment_project_id').parent().parent().addClass('d-none')
-
                         $('#bill_series_no').removeAttr('required')
                         $('#bill_series_no').parent().parent().addClass('d-none')
                     }
@@ -423,17 +376,11 @@
                     $('#bill_statement_no').parent().parent().removeClass('d-none')
                     $('#bill_statement_no').removeAttr('required')
 
-                    $('#payment_project_id').removeAttr('required')
-                    $('#payment_project_id').parent().parent().addClass('d-none')
-
                     $('#bill_series_no').removeAttr('required')
                     $('#bill_series_no').parent().parent().addClass('d-none')
                 } else {
                     $('#bill_statement_no').removeAttr('required')
-                    $('#bill_statement_no').parent().parent().addClass('d-none')
-
-                    $('#payment_project_id').removeAttr('required')
-                    $('#payment_project_id').parent().parent().addClass('d-none')   
+                    $('#bill_statement_no').parent().parent().addClass('d-none')  
 
                     $('#bill_series_no').removeAttr('required')
                     $('#bill_series_no').parent().parent().addClass('d-none')
