@@ -100,23 +100,9 @@
                                 </tr>
                                 @if ($transaction->is_bills == 1 
                                     || $transaction->is_deposit == 1
-                                    || $transaction->is_tdsa_bill == 1
-                                    || $transaction->is_tdsa_payment == 1
-                                    || $transaction->is_aec_bill == 1
-                                    || $transaction->is_aec_payment == 1
                                 )
                                     <tr>
-                                        <td class="font-weight-bold">
-                                            @if ($transaction->is_tdsa_bill == 1
-                                                || $transaction->is_tdsa_payment == 1
-                                                || $transaction->is_aec_bill == 1
-                                                || $transaction->is_aec_payment == 1
-                                            )
-                                                Service Invoice Number
-                                            @else
-                                                Bill/Statement No.
-                                            @endif
-                                        </td>
+                                        <td class="font-weight-bold">Bill/Statement No.</td>
                                         <td>{{ $transaction->bill_statement_no ?: '-' }}</td>
                                     </tr>
                                 @endif
@@ -136,15 +122,6 @@
                                 </tr>
                                 <tr>
                                     <td class="font-weight-bold">Cost Control No.</td>
-                                    {{-- <td>{{ $transaction->cost_type_id
-                                        ? $transaction->project->company->qb_code
-                                            .'.'
-                                            .$transaction->project->company->qb_no.$transaction->cost_type->control_no
-                                            .'.'
-                                            .sprintf("%03d", $transaction->cost_seq)
-                                            .'.'
-                                            .config('global.cost_control_v')
-                                        : '-' }}</td> --}}
                                     <td class="font-weight-bold">{{ $transaction->cost_control_no }}</td>
                                 </tr>
                                 <tr>

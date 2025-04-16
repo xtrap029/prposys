@@ -697,15 +697,11 @@ class TransactionsFormsController extends Controller {
         $validation = [
             'payor' => [''],
             'coa_tagging_id' => ['required', 'exists:coa_taggings,id'],
-            // 'expense_type_id' => ['required', 'exists:expense_types,id'],
-            // 'expense_type_description' => ['required'],
             'vat_type_id' => ['required', 'exists:vat_types,id'],
-
             'amount' => ['required', 'min:0'],
             'purpose_option_id' => ['required', 'exists:purpose_options,id'],
             'purpose' => ['required'],
             'project_id' => ['required', 'exists:company_projects,id'],
-            // 'payee' => ['required'],
             'vendor_id' => ['required', 'exists:vendors,id'],
             'currency' => ['required'],
             'due_at' => ['required', 'date'],
@@ -714,7 +710,6 @@ class TransactionsFormsController extends Controller {
             'requested_id' => ['required', 'exists:users,id'],
             'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
             'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_T_FILE')->select('value')->first()->value],
-            // 'coa_notes' => ['nullable', 'string'],
         ];
 
         $trans_category = $request->trans_category;
@@ -724,32 +719,22 @@ class TransactionsFormsController extends Controller {
             $validation['vendor_id'] = [];
         }
 
-        if ($trans_category == config('global.trans_category')[2]
-            || $trans_category == config('global.trans_category')[6]
-            || $trans_category == config('global.trans_category')[7]
-            || $trans_category == config('global.trans_category')[8]
-            || $trans_category == config('global.trans_category')[9]
-        ) {
+        if ($trans_category == config('global.trans_category')[2]) {
             $validation['bill_statement_no'] = ['required'];
-
-            if (($trans_category == config('global.trans_category')[6]
-                    || $trans_category == config('global.trans_category')[8])
-                    && $transaction->trans_type == 'po'
-            ) {
-                $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
-            }
         }
 
-        // validate input
+        if (($trans_category == config('global.trans_category')[6]
+                || $trans_category == config('global.trans_category')[8])
+                && $transaction->trans_type == 'po'
+        ) {
+            $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
+        }
+
         $data = $request->validate($validation);
 
         if (!in_array($trans_category, [
             config('global.trans_category')[1],
             config('global.trans_category')[2],
-            config('global.trans_category')[6],
-            config('global.trans_category')[7],
-            config('global.trans_category')[8],
-            config('global.trans_category')[9]
         ])) {
             $data['bill_statement_no'] = '';
         }
@@ -767,9 +752,6 @@ class TransactionsFormsController extends Controller {
         } else {
             $data['soa'] = $transaction->soa;
         }
-
-        // $data['particulars_id'] = $data['particulars_id_single'];
-        // unset($data['particulars_id_single']);
 
         $data['is_deposit'] = 0;
         $data['is_bills'] = 0;
@@ -870,7 +852,6 @@ class TransactionsFormsController extends Controller {
     }
 
     public function update_reimbursement(Request $request, Transaction $transaction) {
-        // if can edit
         if (!$this->check_can_edit($transaction->id) && !$this->check_can_issue($transaction->id)) {
             return back()->with('error', __('messages.cant_edit'));
         }
@@ -881,27 +862,19 @@ class TransactionsFormsController extends Controller {
             'purpose_option_id' => ['required', 'exists:purpose_options,id'],
             'purpose' => ['required'],
             'project_id' => ['required', 'exists:company_projects,id'],
-            // 'payee' => ['required'],
             'vendor_id' => ['required', 'exists:vendors,id'],
             'currency' => ['required'],
             'due_at' => ['required', 'date'],
             'cost_control_no' => [],
             'requested_id' => ['required', 'exists:users,id'],
-            // 'coa_notes' => ['nullable', 'string'],
-            // 'particulars_id_single' => ['required', 'exists:particulars,id'],
         ];
 
         $attr_liq['transaction_id'] = $transaction->id;
         $attr_liq['owner_id'] = auth()->id();
         $attr_liq['updated_id'] = auth()->id();
 
-        // validate input
         $data = $request->validate($validation);
 
-        // $data['particulars_id'] = $data['particulars_id_single'];
-        // unset($data['particulars_id_single']);
-
-        // validate input
         $attach_liq = $request->validate([
             'file.*' => ['mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_TF_REIMBURSEMENT')->select('value')->first()->value],
             'attachment_description_old.*' => ['required'],

@@ -310,67 +310,35 @@
             function assignPurposeDescription() {
                 $('#purposeDescription').val($('#purposeOption').find(':selected').data('description'))
             }
-
-            if ("{{ $transaction->is_tdsa_bill }}" === "1"
-                || "{{ $transaction->is_tdsa_payment }}" === "1"
-                || "{{ $transaction->is_aec_bill }}" === "1"
-                || "{{ $transaction->is_aec_payment }}" === "1"
-            ) {
-                $('#bill_statement_label').text("Service Invoice Number")
-            } else {
-                $('#bill_statement_label').text("Bill/Statement No.")
-            }
             
-            if ("{{ $transaction->is_bills }}" === "1" 
-                || "{{ $transaction->is_tdsa_bill }}" === "1"
-                || "{{ $transaction->is_tdsa_payment }}" === "1"
-                || "{{ $transaction->is_aec_bill }}" === "1"
-                || "{{ $transaction->is_aec_payment }}" === "1"
+            if (("{{ $transaction->is_tdsa_bill }}" === "1"
+                || "{{ $transaction->is_aec_bill }}" === "1")
+                && "{{ $transaction->trans_type }}" === "po"
             ) {
-                $('#bill_statement_no').parent().parent().removeClass('d-none')
-                $('#bill_statement_no').attr('required', 'true')
-
-                if (("{{ $transaction->is_tdsa_bill }}" === "1"
-                    || "{{ $transaction->is_aec_bill }}" === "1")
-                    && "{{ $transaction->trans_type }}" === "po") {
-                    $('#bill_series_no').parent().parent().removeClass('d-none')
-                    $('#bill_series_no').attr('required', 'true')
-                }
-            } else if ("{{ $transaction->is_deposit }}" === "1") {
+                $('#bill_series_no').parent().parent().removeClass('d-none')
+                $('#bill_series_no').attr('required', 'true')
+            } else if ("{{ $transaction->is_deposit }}" === "1"
+                || "{{ $transaction->is_bills }}" === "1"
+            ) {
                 $('#bill_statement_no').parent().parent().removeClass('d-none')
                 $('#bill_statement_no').removeAttr('required')
             }
 
             $('.trans-category').change(function() {
-                if ($(this).val() == "{{ config('global.trans_category')[6] }}"
-                    || $(this).val() == "{{ config('global.trans_category')[7] }}"
-                    || $(this).val() == "{{ config('global.trans_category')[8] }}"
-                    || $(this).val() == "{{ config('global.trans_category')[9] }}"
+                if ((
+                        $(this).val() == "{{ config('global.trans_category')[6] }}"
+                        || $(this).val() == "{{ config('global.trans_category')[8] }}"
+                    )
+                    && "{{ $transaction->trans_type }}" === "po"
                 ) {
-                    $('#bill_statement_label').text("Service Invoice Number")
-                } else {
-                    $('#bill_statement_label').text("Bill/Statement No.")
-                }
+                    $('#bill_series_no').parent().parent().removeClass('d-none')
+                    $('#bill_series_no').attr('required', 'true')
 
-                if ($(this).val() == "{{ config('global.trans_category')[2] }}"
-                    || $(this).val() == "{{ config('global.trans_category')[6] }}"
-                    || $(this).val() == "{{ config('global.trans_category')[7] }}"
-                    || $(this).val() == "{{ config('global.trans_category')[8] }}"
-                    || $(this).val() == "{{ config('global.trans_category')[9] }}"
+                    $('#bill_statement_no').removeAttr('required')
+                    $('#bill_statement_no').parent().parent().addClass('d-none')
+                } else if ($(this).val() == "{{ config('global.trans_category')[1] }}"
+                    || $(this).val() == "{{ config('global.trans_category')[2] }}"
                 ) {
-                    $('#bill_statement_no').parent().parent().removeClass('d-none')
-                    $('#bill_statement_no').attr('required', 'true')
-
-                    if (($(this).val() == "{{ config('global.trans_category')[6] }}"
-                        || $(this).val() == "{{ config('global.trans_category')[8] }}")
-                        && "{{ $transaction->trans_type }}" === "po") {
-                        $('#bill_series_no').parent().parent().removeClass('d-none')
-                        $('#bill_series_no').attr('required', 'true')
-                    } else {
-                        $('#bill_series_no').removeAttr('required')
-                        $('#bill_series_no').parent().parent().addClass('d-none')
-                    }
-                } else if ($(this).val() == "{{ config('global.trans_category')[1] }}") {
                     $('#bill_statement_no').parent().parent().removeClass('d-none')
                     $('#bill_statement_no').removeAttr('required')
 

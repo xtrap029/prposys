@@ -344,35 +344,18 @@
 
         $(function() {
             $('.trans-category').change(function() {
-                if ($(this).val() == "{{ config('global.trans_category')[6] }}"
-                    || $(this).val() == "{{ config('global.trans_category')[7] }}"
+                if (
+                    $(this).val() == "{{ config('global.trans_category')[6] }}"
                     || $(this).val() == "{{ config('global.trans_category')[8] }}"
-                    || $(this).val() == "{{ config('global.trans_category')[9] }}"
-                ) {
-                    $('#bill_statement_label').text("Service Invoice Number")
-                } else {
-                    $('#bill_statement_label').text("Bill/Statement No.")
-                }
-
-                if ($(this).val() == "{{ config('global.trans_category')[2] }}"
-                    || $(this).val() == "{{ config('global.trans_category')[6] }}"
-                    || $(this).val() == "{{ config('global.trans_category')[7] }}"
-                    || $(this).val() == "{{ config('global.trans_category')[8] }}"
-                    || $(this).val() == "{{ config('global.trans_category')[9] }}"
-                ) {
-                    if ($(this).val() == "{{ config('global.trans_category')[6] }}"
-                    || $(this).val() == "{{ config('global.trans_category')[8] }}"
-                    ) {
-                        $('#bill_series_no').parent().parent().removeClass('d-none')
-                        $('#bill_series_no').attr('required', 'true')
-                    } else {
-                        $('#bill_series_no').removeAttr('required')
-                        $('#bill_series_no').parent().parent().addClass('d-none')
-                    }
+                ) {                        
+                    $('#bill_series_no').parent().parent().removeClass('d-none')
+                    $('#bill_series_no').attr('required', 'true')           
                     
-                    $('#bill_statement_no').parent().parent().removeClass('d-none')
-                    $('#bill_statement_no').attr('required', 'true')
-                } else if ($(this).val() == "{{ config('global.trans_category')[1] }}") {
+                    $('#bill_statement_no').removeAttr('required')
+                    $('#bill_statement_no').parent().parent().addClass('d-none')
+                } else if ($(this).val() == "{{ config('global.trans_category')[1] }}"
+                    || $(this).val() == "{{ config('global.trans_category')[2] }}"
+                ) {
                     $('#bill_statement_no').parent().parent().removeClass('d-none')
                     $('#bill_statement_no').removeAttr('required')
 

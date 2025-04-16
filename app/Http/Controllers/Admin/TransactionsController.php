@@ -467,7 +467,6 @@ class TransactionsController extends Controller {
     }
 
     public function store(Request $request) {
-        // validation
         if (in_array($request->trans_type, ['pr', 'po', 'pc'])) {
             $trans_type = $request->trans_type;
             $trans_category = $request->trans_category;
@@ -483,8 +482,6 @@ class TransactionsController extends Controller {
                 'project_id' => ['required', 'exists:company_projects,id'],
                 'class_type_id' => ['required', 'exists:class_types,id'],
                 'budgeted' => ['required', 'between:0,1'],
-                // 'payee' => ['required'],
-                // 'cost_type_id' => ['nullable', 'exists:cost_types,id'],
                 'cost_control_no' => [],
                 'bill_statement_no' => [],
                 'due_at' => ['required', 'date'],
@@ -495,20 +492,15 @@ class TransactionsController extends Controller {
                 'is_confidential_own' => ['required', 'between:0,1'],
             ];
 
-            if ($trans_category == config('global.trans_category')[2]
-                || $trans_category == config('global.trans_category')[6]
-                || $trans_category == config('global.trans_category')[7]
-                || $trans_category == config('global.trans_category')[8]
-                || $trans_category == config('global.trans_category')[9]
-                ) {
+            if ($trans_category == config('global.trans_category')[2]) {
                 $validation['bill_statement_no'] = ['required'];
+            }
 
-                if (($trans_category == config('global.trans_category')[6]
-                    || $trans_category == config('global.trans_category')[8])
-                    && $trans_type == 'po'
-                ) {
-                    $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
-                }
+            if (($trans_category == config('global.trans_category')[6]
+                || $trans_category == config('global.trans_category')[8])
+                && $trans_type == 'po'
+            ) {
+                $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
             }
             
             $data = $request->validate($validation);
@@ -516,10 +508,6 @@ class TransactionsController extends Controller {
             if (!in_array($trans_category, [
                 config('global.trans_category')[1],
                 config('global.trans_category')[2],
-                config('global.trans_category')[6],
-                config('global.trans_category')[7],
-                config('global.trans_category')[8],
-                config('global.trans_category')[9]
             ])) {
                 $data['bill_statement_no'] = '';                
             }
@@ -785,20 +773,15 @@ class TransactionsController extends Controller {
             $validation['vendor_id'] = [];
         }
         
-        if ($trans_category == config('global.trans_category')[2]
-            || $trans_category == config('global.trans_category')[6]
-            || $trans_category == config('global.trans_category')[7]
-            || $trans_category == config('global.trans_category')[8]
-            || $trans_category == config('global.trans_category')[9]
-            ) {
+        if ($trans_category == config('global.trans_category')[2]) {
             $validation['bill_statement_no'] = ['required'];
+        }
 
-            if (($trans_category == config('global.trans_category')[6]
-                    || $trans_category == config('global.trans_category')[8])
-                    && $transaction->trans_type == 'po'
-            ) {
-                $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
-            }
+        if (($trans_category == config('global.trans_category')[6]
+                || $trans_category == config('global.trans_category')[8])
+                && $transaction->trans_type == 'po'
+        ) {
+            $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
         }
 
         $data = $request->validate($validation);
@@ -806,10 +789,6 @@ class TransactionsController extends Controller {
         if (!in_array($trans_category, [
             config('global.trans_category')[1],
             config('global.trans_category')[2],
-            config('global.trans_category')[6],
-            config('global.trans_category')[7],
-            config('global.trans_category')[8],
-            config('global.trans_category')[9]
         ])) {
             $data['bill_statement_no'] = '';
         }
