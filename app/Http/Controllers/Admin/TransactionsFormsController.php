@@ -179,10 +179,6 @@ class TransactionsFormsController extends Controller {
                 $query->where('company_id', $company);
             })
             ->first();
-        
-        // if (!User::find(auth()->id())->is_smt && $transaction->is_confidential) {
-        //     return abort(401);
-        // }
 
         switch ($transaction->trans_type) {
             case 'pr':
@@ -296,26 +292,13 @@ class TransactionsFormsController extends Controller {
                     $query->where('company_id', $company);
                 })
                 ->first();
-
-            // if (!User::find(auth()->id())->is_smt && $transaction->is_confidential) {
-            //     return abort(401);
-            // }
         }
 
         $validation = [
             'payor' => [],
             'coa_tagging_id' => ['required', 'exists:coa_taggings,id'],
-            // 'expense_type_id' => ['required', 'exists:expense_types,id'],
-            // 'expense_type_description' => ['required'],
             'vat_type_id' => ['required', 'exists:vat_types,id'],
-            // 'coa_notes' => ['nullable', 'string'],
         ];
-
-        // if ($transaction->trans_type == 'pc') {
-        //     $validation['particulars_custom'] = ['required'];
-        // } else {
-        //     $validation['particulars_id_single'] = ['required', 'exists:particulars,id'];
-        // }
 
         // validate input
         $data = $request->validate($validation);
@@ -339,9 +322,6 @@ class TransactionsFormsController extends Controller {
 
             TransactionsDescription::create($attr_desc);
         }
-        
-        // $data['particulars_id'] = $data['particulars_id_single'];
-        // unset($data['particulars_id_single']);
 
         $data['edit_count'] = 0;
         $data['status_updated_at'] = now();
@@ -1211,8 +1191,6 @@ class TransactionsFormsController extends Controller {
 
     public function print_issued() {
         $trans_company = '';
-        $trans_from = '';
-        $trans_to = '';
 
         $transactions = Transaction::whereIn('status_id', config('global.form_issued'))->orderBy('id', 'desc');
         $user_id = auth()->id();
@@ -1234,10 +1212,6 @@ class TransactionsFormsController extends Controller {
                 $q2->where('code', '<=', $ua_code);
              });
          });
-
-        // if (!User::find(auth()->id())->is_smt) {
-        //     $transactions = $transactions->where('is_confidential', 0);
-        // }
 
         if (!empty($_GET['type'])) {
             if (!in_array($_GET['type'], config('global.trans_types'))) {
@@ -1362,6 +1336,27 @@ class TransactionsFormsController extends Controller {
                 $new_transaction['is_confidential_own'] = $transaction->is_confidential_own;
                 $new_transaction['bill_statement_no'] = $transaction->bill_statement_no;
 
+                // Make Form inputs
+                $new_transaction['payor'] = $transaction->payor;
+                $new_transaction['coa_tagging_id'] = $transaction->coa_tagging_id;
+                $new_transaction['vat_type_id'] = $transaction->vat_type_id;
+
+                // Issue Transaction
+                $new_transaction['control_type'] = $transaction->control_type;
+                $new_transaction['control_no'] = $transaction->control_no;
+                $new_transaction['released_at'] = $transaction->released_at;
+                $new_transaction['amount_issued'] = $transaction->amount_issued;
+                $new_transaction['amount'] = $transaction->amount;
+                $new_transaction['payor'] = $transaction->payor;
+                $new_transaction['released_by_id'] = $transaction->released_by_id;
+                $new_transaction['form_company_id'] = $transaction->form_company_id;
+                $new_transaction['currency_2'] = $transaction->currency_2;
+                $new_transaction['currency_2_rate'] = $transaction->currency_2_rate;
+                $new_transaction['form_service_charge'] = $transaction->form_service_charge;
+                $new_transaction['form_service_charge_currency_id'] = $transaction->form_service_charge_currency_id;
+                $new_transaction['issue_slip'] = $transaction->issue_slip;
+                $new_transaction['form_approver_id'] = $transaction->form_approver_id;
+
                 // generate transaction code
                 $trans_company = CompanyProject::where('id', $new_transaction['project_id'])->first()->company_id;
                 $latest_trans = Transaction::where('trans_year', $transaction->trans_year)
@@ -1378,6 +1373,7 @@ class TransactionsFormsController extends Controller {
 
                 $new_transaction['owner_id'] = auth()->id();
                 $new_transaction['updated_id'] = auth()->id();
+                $new_transaction['status_id'] = config('global.form_issued')[0];
                 $new_transaction['status_updated_at'] = now();
                 $new_transaction['status_prev_id'] = 1;
                 $new_transaction['src_transaction_id'] = $transaction->id;
@@ -1385,21 +1381,29 @@ class TransactionsFormsController extends Controller {
                 $saved_transaction = Transaction::create($new_transaction);
 
                 $soas = TransactionsSoa::where('transaction_id', $transaction->id)->get();
-                foreach ($soas as $key => $value) {
+                foreach ($soas as $value) {
                     $soa = $value->replicate();
                     $soa->transaction_id = $saved_transaction->id;
                     $soa->save();
                 }
 
                 $transaction_notes = TransactionsNote::where('transaction_id', $transaction->id)->get();
-                foreach ($transaction_notes as $key => $value) {
+                foreach ($transaction_notes as $value) {
                     $note = $value->replicate();
                     $note->transaction_id = $saved_transaction->id;
                     $note->save();
                 }
+
+                $transaction_description = TransactionsDescription::where('transaction_id', $transaction->id)->get();
+                foreach ($transaction_description as $value) {
+                    $description = $value->replicate();
+                    $description->transaction_id = $saved_transaction->id;
+                    $description->save();
+                }
             }
 
             (new NotificationsController)->issued($transaction);
+            (new NotificationsController)->issued($saved_transaction);
 
             if ($transaction->is_reimbursement) {
                 return redirect('/transaction-liquidation/view/'.$transaction->id);
