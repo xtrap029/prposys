@@ -443,18 +443,24 @@ class TransactionsController extends Controller {
         $class_types = ClassType::orderBy('code', 'asc')->get();
         $vendors = Vendor::orderBy('name', 'asc')->get();
 
-        $current_series_no = Transaction::whereRaw('bill_series_no REGEXP "^[0-9]+$"')->orderBy('bill_series_no', 'desc')->first();
-        if ($current_series_no) {
-            $current_series_no = $current_series_no->bill_series_no + 1;
+        $aec_current_series_no = Transaction::whereRaw('bill_series_no REGEXP "^[0-9]+$"')->where('is_aec_bill', 1)->orderBy('bill_series_no', 'desc')->first();
+        if ($aec_current_series_no) {
+            $aec_current_series_no = $aec_current_series_no->bill_series_no + 1;
         } else {
-            $current_series_no = 1;
+            $aec_current_series_no = 1;
+        }
+
+        $tdsa_current_series_no = Transaction::whereRaw('bill_series_no REGEXP "^[0-9]+$"')->where('is_tdsa_bill', 1)->orderBy('bill_series_no', 'desc')->first();
+        if ($tdsa_current_series_no) {
+            $tdsa_current_series_no = $tdsa_current_series_no->bill_series_no + 1;
+        } else {
+            $tdsa_current_series_no = 1;
         }
 
         return view('pages.admin.transaction.create')->with([
             'trans_type' => $trans_type,
             'trans_company' => $trans_company,
             'trans_page' => $trans_page,
-            // 'particulars' => $particulars,
             'projects' => $projects,
             'users' => $users,
             'cost_types' => $cost_types,
@@ -462,7 +468,8 @@ class TransactionsController extends Controller {
             'purpose_options' => $purpose_options,
             'class_types' => $class_types,
             'vendors' => $vendors,
-            'current_series_no' => $current_series_no
+            'aec_current_series_no' => $aec_current_series_no,
+            'tdsa_current_series_no' => $tdsa_current_series_no
         ]);
     }
 

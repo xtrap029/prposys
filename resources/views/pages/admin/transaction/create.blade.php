@@ -261,7 +261,7 @@
                     <div class="form-row mb-3 d-none">
                         <div class="col-sm-4 col-lg-4 mb-2">
                             <label for="">Bill No.</label>
-                            <input type="text" id="bill_series_no" class="form-control @error('bill_series_no') is-invalid @enderror" name="bill_series_no" value="{{ old('bill_series_no') ?: (isset($_GET['bill_series_no']) ? $_GET['bill_series_no'] : $current_series_no) }}">
+                            <input type="text" id="bill_series_no" class="form-control @error('bill_series_no') is-invalid @enderror" name="bill_series_no">
                             @include('errors.inline', ['message' => $errors->first('bill_series_no')])
                         </div>
                     </div>
@@ -353,6 +353,12 @@
                     
                     $('#bill_statement_no').removeAttr('required')
                     $('#bill_statement_no').parent().parent().addClass('d-none')
+
+                    if ($(this).val() == "{{ config('global.trans_category')[6] }}") {
+                        $('#bill_series_no').val('{{ $tdsa_current_series_no }}')
+                    } else if ($(this).val() == "{{ config('global.trans_category')[8] }}") {
+                        $('#bill_series_no').val('{{ $aec_current_series_no }}')
+                    }
                 } else if ($(this).val() == "{{ config('global.trans_category')[1] }}"
                     || $(this).val() == "{{ config('global.trans_category')[2] }}"
                 ) {
