@@ -99,12 +99,6 @@
                             <i class="align-middle font-weight-bolder material-icons text-md">speaker_notes</i> Notes
                             <span class="badge badge-danger {{ $transaction->notes->count() > 0 ? '' : 'd-none' }}">{{$transaction->notes->count()}}</span>
                         </a>
-
-                        {{-- <a href="/transaction-form/intercompany/{{ $transaction->id}}" class="btn mb-2 btn-sm btn-flat btn-primary col-12 col-lg-auto {{ $perms['can_intercompany'] ? '' : 'd-none' }}">
-                            <i class="align-middle font-weight-bolder material-icons text-md">file_copy</i>
-                            Intercompany
-                        </a> --}}
-                        
                         <a href="/transaction-liquidation/create?company={{ $transaction->project->company_id }}&key={{ strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq) }}" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto {{ $perms['can_create'] ? '' : 'd-none' }}">
                             <i class="align-middle font-weight-bolder material-icons text-md">add</i>
                             {{ $transaction->is_bank ? 'Deposit' : 'Liquidate' }}
@@ -117,7 +111,6 @@
                         </a>
                     
                         <a href="/transaction-form/edit{{ $transaction->is_reimbursement ? '-reimbursement' : '' }}/{{ $transaction->id }}" class="btn mb-2 btn-sm btn-flat btn-primary col-12 col-lg-auto {{ $perms['can_edit'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
-                        {{-- <a href="#_" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto {{ $perms['can_approval'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-approval"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a> --}}
                         <a href="/transaction-form/approval/{{ $transaction->id }}" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto {{ $perms['can_approval'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">grading</i> For Approval</a>
                         <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto {{ $perms['can_cancel'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-cancel"><i class="align-middle font-weight-bolder material-icons text-md">delete</i> Cancel</a>
                         
@@ -345,7 +338,7 @@
                                                 <div class="alert alert-default-warning rounded text-center" role="alert">
                                                     {!! config('global.issue_attachment_note_2') !!} 
                                                  </div>
-                                                 @if ($transaction->trans_type == "po" && ($transaction->is_tdsa_bill || $transaction->is_aec_bill))
+                                                 @if ($transaction->trans_type == "po" && ($transaction->is_tdsa_bill || $transaction->is_aec_bill) && $transaction->project->company->auto_gen_pr)
                                                      <div class="alert alert-default-warning">
                                                          <b>A PR will be automatically generated based on this transaction's information.</b>
                                                          </br></br>

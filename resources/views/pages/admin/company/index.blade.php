@@ -25,7 +25,8 @@
                             </form>
                         </th>
                         <th class="text-nowrap text-center">Bill Option</th>
-                        <!-- <th>Categories</th> -->
+                        <th class="text-nowrap text-center">Auto-gen. PR SPV</th>
+                        <th class="text-nowrap text-center">Auto-gen. PO SPV</th>
                         <th class="text-right"><a href="/company/create">Create</a></th>
                     </tr>
                 </thead>
@@ -45,6 +46,22 @@
                                     </div>
                                 </a>
                             </td>
+                            <td class="align-middle">
+                                <a href="/company/{{ $item->id }}/auto-gen/pr" class="text-center">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input" {{ $item->auto_gen_pr == 1 ? 'checked' : '' }}>
+                                        <label class="custom-control-label"></label>
+                                    </div>
+                                </a>
+                            </td>                            
+                            <td class="align-middle">
+                                <a href="/company/{{ $item->id }}/auto-gen/po" class="text-center">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input" {{ $item->auto_gen_po == 1 ? 'checked' : '' }}>
+                                        <label class="custom-control-label"></label>
+                                    </div>
+                                </a>
+                            </td>
                             <td class="align-middle text-right text-nowrap">
                                 <a href="/company-project/{{ $item->id }}" class="btn btn-link btn-sm">Projects</a>
                                 <a href="/company/{{ $item->id }}/edit" class="btn btn-link btn-sm">Edit</a>
@@ -57,7 +74,7 @@
                         </tr>
                         <tr>
                             <td class="border-0"></td>
-                            <td class="align-middle text-nowrap pt-0 border-0" colspan="3">
+                            <td class="align-middle text-nowrap pt-0 border-0">
                                 @foreach (config('global.trans_category') as $key => $category)
                                     @if (in_array($category, explode(',', $item->categories)))
                                         <span class="badge badge-pill py-1 px-2 mb-3 small bg-gray">{{ config('global.trans_category_label')[$key] }}</span>

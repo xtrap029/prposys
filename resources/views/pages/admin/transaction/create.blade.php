@@ -257,12 +257,25 @@
                         @include('errors.inline', ['message' => $errors->first('bill_statement_no')])
                     </div>
                 </div>
-                @if ($trans_type == "po")
+                <div class="form-row mb-3 d-none">
+                    <div class="col-sm-4 col-lg-4 mb-2">
+                        <label for="">Bill No.</label>
+                        <input type="text" id="bill_series_no" class="form-control @error('bill_series_no') is-invalid @enderror" name="bill_series_no">
+                        @include('errors.inline', ['message' => $errors->first('bill_series_no')])
+                    </div>
+                </div>
+                @if ($trans_type == "pr" && $company->auto_gen_po)
                     <div class="form-row mb-3 d-none">
                         <div class="col-sm-4 col-lg-4 mb-2">
-                            <label for="">Bill No.</label>
-                            <input type="text" id="bill_series_no" class="form-control @error('bill_series_no') is-invalid @enderror" name="bill_series_no">
-                            @include('errors.inline', ['message' => $errors->first('bill_series_no')])
+                            <label for="">Please select preferred company/project for payment:</label>
+                            <select name="spv_project_id" id="spv_project_id" class="form-control chosen-select chosen-required @error('spv_project_id') is-invalid @enderror">
+                                <option value="">Select Company/Project</option>
+                                @foreach ($project_options as $item)
+                                    <option value="{{ $item->id }}">{{ $item->company_name.' - '.$item->name }}</option>
+                                @endforeach
+                            </select>
+                            <code>A PO will be automatically generated based on this transaction's information.</code>
+                            @include('errors.inline', ['message' => $errors->first('spv_project_id')])
                         </div>
                     </div>
                 @endif
@@ -359,6 +372,11 @@
                     } else if ($(this).val() == "{{ config('global.trans_category')[8] }}") {
                         $('#bill_series_no').val('{{ $aec_current_series_no }}')
                     }
+
+                    if ("{{ $trans_type }}" == "pr") {
+                        $('#spv_project_id').parent().parent().removeClass('d-none')
+                        $('#spv_project_id').attr('required', 'true')
+                    }
                 } else if ($(this).val() == "{{ config('global.trans_category')[1] }}"
                     || $(this).val() == "{{ config('global.trans_category')[2] }}"
                 ) {
@@ -367,12 +385,18 @@
 
                     $('#bill_series_no').removeAttr('required')
                     $('#bill_series_no').parent().parent().addClass('d-none')
+
+                    $('#spv_project_id').parent().parent().addClass('d-none')
+                    $('#spv_project_id').removeAttr('required')
                 } else {
                     $('#bill_statement_no').removeAttr('required')
                     $('#bill_statement_no').parent().parent().addClass('d-none')  
 
                     $('#bill_series_no').removeAttr('required')
                     $('#bill_series_no').parent().parent().addClass('d-none')
+
+                    $('#spv_project_id').parent().parent().addClass('d-none')
+                    $('#spv_project_id').removeAttr('required')
                 }
             })
 

@@ -1290,7 +1290,7 @@ class TransactionsFormsController extends Controller {
 
             $data = $request->validate($validation);
 
-            if ($transaction->trans_type == "po" && ($transaction->is_tdsa_bill || $transaction->is_aec_bill)) {
+            if ($transaction->trans_type == "po" && ($transaction->is_tdsa_bill || $transaction->is_aec_bill) && $transaction->project->company->auto_gen_pr) {
                 $new_transaction = $request->validate([
                     'project_id' => ['required', 'exists:company_projects,id'],
                 ]);
@@ -1315,7 +1315,7 @@ class TransactionsFormsController extends Controller {
             $data['form_approver_id'] = auth()->id();
             $transaction->update($data);
 
-            if ($transaction->trans_type == "po" && ($transaction->is_tdsa_bill || $transaction->is_aec_bill)) {
+            if ($transaction->trans_type == "po" && ($transaction->is_tdsa_bill || $transaction->is_aec_bill) && $transaction->project->company->auto_gen_pr) {
                 $new_transaction['is_tdsa_payment'] = $transaction->is_tdsa_bill;
                 $new_transaction['is_aec_payment'] = $transaction->is_aec_bill;
                 $new_transaction['trans_type'] = "pr";
@@ -1347,7 +1347,6 @@ class TransactionsFormsController extends Controller {
                 $new_transaction['released_at'] = $transaction->released_at;
                 $new_transaction['amount_issued'] = $transaction->amount_issued;
                 $new_transaction['amount'] = $transaction->amount;
-                $new_transaction['payor'] = $transaction->payor;
                 $new_transaction['released_by_id'] = $transaction->released_by_id;
                 $new_transaction['form_company_id'] = $transaction->form_company_id;
                 $new_transaction['currency_2'] = $transaction->currency_2;
@@ -1400,10 +1399,43 @@ class TransactionsFormsController extends Controller {
                     $description->transaction_id = $saved_transaction->id;
                     $description->save();
                 }
+                (new NotificationsController)->issued($saved_transaction);
+            }
+
+            if ($transaction->trans_type == "po" && ($transaction->is_tdsa_payment || $transaction->is_aec_payment) && $transaction->src_transaction_id) {
+                $src_transaction = Transaction::where('id', $transaction->src_transaction_id)->first();
+                $src_transaction->update([
+                    'payor' => $transaction->payor,
+                    'coa_tagging_id' => $transaction->coa_tagging_id,
+                    'vat_type_id' => $transaction->vat_type_id,
+                    'control_type' => $transaction->control_type,
+                    'control_no' => $transaction->control_no,
+                    'released_at' => $transaction->released_at,
+                    'amount_issued' => $transaction->amount_issued,
+                    'amount' => $transaction->amount,
+                    'released_by_id' => $transaction->released_by_id,
+                    'form_company_id' => $transaction->form_company_id,
+                    'currency_2' => $transaction->currency_2,
+                    'currency_2_rate' => $transaction->currency_2_rate,
+                    'form_service_charge' => $transaction->form_service_charge,
+                    'form_service_charge_currency_id' => $transaction->form_service_charge_currency_id,
+                    'issue_slip' => $transaction->issue_slip,
+                    'form_approver_id' => $transaction->form_approver_id,
+                    'status_id' => config('global.form_issued')[0],
+                    'status_updated_at' => now(),
+                    'status_prev_id' => $src_transaction->status_id,                    
+                ]);
+
+                $transaction_description = TransactionsDescription::where('transaction_id', $transaction->id)->get();
+                foreach ($transaction_description as $value) {
+                    $description = $value->replicate();
+                    $description->transaction_id = $src_transaction->id;
+                    $description->save();
+                }
+                (new NotificationsController)->issued($src_transaction);
             }
 
             (new NotificationsController)->issued($transaction);
-            (new NotificationsController)->issued($saved_transaction);
 
             if ($transaction->is_reimbursement) {
                 return redirect('/transaction-liquidation/view/'.$transaction->id);

@@ -12,7 +12,7 @@ class Company extends Model {
     protected $guarded = [];
 
     use LogsActivity;
-    protected static $logAttributes = ['code', 'qb_code', 'qb_no', 'name', 'logo'];
+    protected static $logAttributes = ['code', 'qb_code', 'qb_no', 'name', 'logo', 'auto_gen_po', 'auto_gen_pr'];
     protected static $logName = 'Company';
     protected static $logOnlyDirty = true;
 

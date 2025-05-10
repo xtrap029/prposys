@@ -88,6 +88,19 @@ class CompanyController extends Controller {
         return redirect('/company')->with('success', 'Company'.__('messages.edit_success'));
     }
 
+    public function auto_gen(Company $company, $type) {
+        if($type == 'po') {
+            $company->auto_gen_po = !$company->auto_gen_po;
+        } else if ($type == 'pr') {
+            $company->auto_gen_pr = !$company->auto_gen_pr;
+        }
+
+        $company->updated_id = auth()->id();
+        $company->save(); 
+
+        return redirect('/company')->with('success', 'Company'.__('messages.edit_success'));
+    }
+
     public function destroy(Company $company) {
         $company->updated_id = auth()->id();
         $company->save(); 

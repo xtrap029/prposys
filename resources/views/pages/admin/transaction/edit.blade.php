@@ -213,15 +213,13 @@
                         @include('errors.inline', ['message' => $errors->first('bill_statement_no')])
                     </div>
                 </div>
-                @if ($transaction->trans_type == "po")
-                    <div class="form-row mb-3 d-none">
-                        <div class="col-sm-4 col-lg-4 mb-2">
-                            <label for="">Bill No.</label>
-                            <input type="text" id="bill_series_no" class="form-control @error('bill_series_no') is-invalid @enderror" name="bill_series_no" value="{{ $transaction->bill_series_no }}">
-                            @include('errors.inline', ['message' => $errors->first('bill_series_no')])
-                        </div>
+                <div class="form-row mb-3 d-none">
+                    <div class="col-sm-4 col-lg-4 mb-2">
+                        <label for="">Bill No.</label>
+                        <input type="text" id="bill_series_no" class="form-control @error('bill_series_no') is-invalid @enderror" name="bill_series_no" value="{{ $transaction->bill_series_no }}">
+                        @include('errors.inline', ['message' => $errors->first('bill_series_no')])
                     </div>
-                @endif
+                </div>
                 <div class="form-row mb-3">
                     <div class="col-md-12 jsReplicate mt-5 pt-5">
                         <h4 class="text-center">Statement of Account / Billing / Quotation</h4>
@@ -313,7 +311,6 @@
             
             if (("{{ $transaction->is_tdsa_bill }}" === "1"
                 || "{{ $transaction->is_aec_bill }}" === "1")
-                && "{{ $transaction->trans_type }}" === "po"
             ) {
                 $('#bill_series_no').parent().parent().removeClass('d-none')
                 $('#bill_series_no').attr('required', 'true')
@@ -329,7 +326,6 @@
                         $(this).val() == "{{ config('global.trans_category')[6] }}"
                         || $(this).val() == "{{ config('global.trans_category')[8] }}"
                     )
-                    && "{{ $transaction->trans_type }}" === "po"
                 ) {
                     $('#bill_series_no').parent().parent().removeClass('d-none')
                     $('#bill_series_no').attr('required', 'true')
