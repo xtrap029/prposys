@@ -211,8 +211,8 @@
                                             @elseif ($item->is_bank) <span class="badge badge-pill p-1 small bg-purple float-left">FT</span>
                                             @elseif ($item->is_tdsa_bill) <span class="badge badge-pill p-1 small bg-indigo float-left">TDSA-B</span>
                                             @elseif ($item->is_tdsa_payment) <span class="badge badge-pill p-1 small bg-indigo float-left">TDSA-P</span>
-                                            @elseif ($item->is_aec_bill) <span class="badge badge-pill p-1 small bg-indigo float-left">AEC-B</span>
-                                            @elseif ($item->is_aec_payment) <span class="badge badge-pill p-1 small bg-indigo float-left">AEC-P</span>
+                                            @elseif ($item->is_aec_bill) <span class="badge badge-pill p-1 small bg-indigo float-left">AFF-B</span>
+                                            @elseif ($item->is_aec_payment) <span class="badge badge-pill p-1 small bg-indigo float-left">AFF-P</span>
                                             @else <span class="badge badge-pill p-1 small bg-yellow">REG</span>
                                             @endif
 
@@ -345,8 +345,8 @@
                                             @elseif ($item->is_bank) <span class="badge badge-pill py-1 px-2 mt-2 small bg-purple">Fund Transfer</span>
                                             @elseif ($item->is_tdsa_bill) <span class="badge badge-pill py-1 px-2 mt-2 small bg-indigo">TDSA Bill</span>
                                             @elseif ($item->is_tdsa_payment) <span class="badge badge-pill py-1 px-2 mt-2 small bg-indigo">TDSA Payment</span>
-                                            @elseif ($item->is_aec_bill) <span class="badge badge-pill py-1 px-2 mt-2 small bg-indigo">AEC Bill</span>
-                                            @elseif ($item->is_aec_payment) <span class="badge badge-pill py-1 px-2 mt-2 small bg-indigo">AEC Payment</span>
+                                            @elseif ($item->is_aec_bill) <span class="badge badge-pill py-1 px-2 mt-2 small bg-indigo">AFF Bill</span>
+                                            @elseif ($item->is_aec_payment) <span class="badge badge-pill py-1 px-2 mt-2 small bg-indigo">AFF Payment</span>
                                             @else <span class="badge badge-pill py-1 px-2 mt-2 small bg-yellow">Regular Transaction</span>
                                             @endif
 
