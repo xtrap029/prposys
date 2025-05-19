@@ -39,7 +39,7 @@
                                 <div class="text-info">{{ $item->code }} / {{ $item->qb_code }} / {{ $item->qb_no }}</div>
                             </td>
                             <td class="align-middle">
-                                <a href="/company/{{ $item->id }}/bill-option" class="text-center">
+                                <a href="/company/{{ $item->id }}/bill-option?page={{ $companies->currentPage() }}" class="text-center">
                                     <div class="custom-control custom-switch">
                                         <input type="checkbox" class="custom-control-input" {{ $item->bill_option == 1 ? 'checked' : '' }}>
                                         <label class="custom-control-label"></label>
@@ -47,7 +47,7 @@
                                 </a>
                             </td>
                             <td class="align-middle">
-                                <a href="/company/{{ $item->id }}/auto-gen/pr" class="text-center">
+                                <a href="/company/{{ $item->id }}/auto-gen/pr?page={{ $companies->currentPage() }}" class="text-center">
                                     <div class="custom-control custom-switch">
                                         <input type="checkbox" class="custom-control-input" {{ $item->auto_gen_pr == 1 ? 'checked' : '' }}>
                                         <label class="custom-control-label"></label>
@@ -55,7 +55,7 @@
                                 </a>
                             </td>                            
                             <td class="align-middle">
-                                <a href="/company/{{ $item->id }}/auto-gen/po" class="text-center">
+                                <a href="/company/{{ $item->id }}/auto-gen/po?page={{ $companies->currentPage() }}" class="text-center">
                                     <div class="custom-control custom-switch">
                                         <input type="checkbox" class="custom-control-input" {{ $item->auto_gen_po == 1 ? 'checked' : '' }}>
                                         <label class="custom-control-label"></label>

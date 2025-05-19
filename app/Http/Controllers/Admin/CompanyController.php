@@ -17,7 +17,7 @@ class CompanyController extends Controller {
             $companies = $companies->where('name', 'like', '%'.$request->s.'%');
         }
         
-        $companies = $companies->paginate(10);
+        $companies = $companies->paginate(5);
 
         return view('pages.admin.company.index')->with([
             'companies' => $companies
@@ -80,15 +80,15 @@ class CompanyController extends Controller {
         return redirect('/company')->with('success', 'Company '.__('messages.edit_success'));
     }
 
-    public function bill_option(Company $company) {
+    public function bill_option(Request $request, Company $company) {
         $company->bill_option = !$company->bill_option;
         $company->updated_id = auth()->id();
         $company->save(); 
 
-        return redirect('/company')->with('success', 'Company'.__('messages.edit_success'));
+        return redirect('/company?page='.$request->page)->with('success', 'Company'.__('messages.edit_success'));
     }
 
-    public function auto_gen(Company $company, $type) {
+    public function auto_gen(Request $request, Company $company, $type) {
         if($type == 'po') {
             $company->auto_gen_po = !$company->auto_gen_po;
         } else if ($type == 'pr') {
@@ -98,7 +98,7 @@ class CompanyController extends Controller {
         $company->updated_id = auth()->id();
         $company->save(); 
 
-        return redirect('/company')->with('success', 'Company'.__('messages.edit_success'));
+        return redirect('/company?page='.$request->page)->with('success', 'Company'.__('messages.edit_success'));
     }
 
     public function destroy(Company $company) {
