@@ -17,7 +17,7 @@ class CompanyController extends Controller {
             $companies = $companies->where('name', 'like', '%'.$request->s.'%');
         }
         
-        $companies = $companies->paginate(5);
+        $companies = $companies->paginate(10);
 
         return view('pages.admin.company.index')->with([
             'companies' => $companies
@@ -89,12 +89,13 @@ class CompanyController extends Controller {
     }
 
     public function auto_gen(Request $request, Company $company, $type) {
-        if($type == 'po') {
-            $company->auto_gen_po = !$company->auto_gen_po;
-        } else if ($type == 'pr') {
-            $company->auto_gen_pr = !$company->auto_gen_pr;
-        }
+        // if($type == 'po') {
+        //     $company->auto_gen_po = !$company->auto_gen_po;
+        // } else if ($type == 'pr') {
+        //     $company->auto_gen_pr = !$company->auto_gen_pr;
+        // }
 
+        $company->auto_gen_po = !$company->auto_gen_po;
         $company->updated_id = auth()->id();
         $company->save(); 
 

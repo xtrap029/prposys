@@ -338,7 +338,7 @@
                                                 <div class="alert alert-default-warning rounded text-center" role="alert">
                                                     {!! config('global.issue_attachment_note_2') !!} 
                                                  </div>
-                                                 @if ($transaction->trans_type == "po" && ($transaction->is_tdsa_bill || $transaction->is_aec_bill) && $transaction->project->company->auto_gen_pr)
+                                                 {{-- @if ($transaction->trans_type == "po" && ($transaction->is_tdsa_bill || $transaction->is_aec_bill) && $transaction->project->company->auto_gen_pr)
                                                      <div class="alert alert-default-warning">
                                                          <b>A PR will be automatically generated based on this transaction's information.</b>
                                                          </br></br>
@@ -351,7 +351,7 @@
                                                          </select>
                                                          @include('errors.inline', ['message' => $errors->first('project_id')])
                                                      </div>
-                                                 @endif
+                                                 @endif --}}
                                             </div>
                                             <div class="col-12 text-center mt-2">
                                                 <input type="submit" class="btn btn-success" value="{{ $transaction->is_deposit ? 'Save' : 'Issue Now' }}">

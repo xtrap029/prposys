@@ -25,7 +25,6 @@
                             </form>
                         </th>
                         <th class="text-nowrap text-center">Bill Option</th>
-                        <th class="text-nowrap text-center">Auto-gen. PR SPV</th>
                         <th class="text-nowrap text-center">Auto-gen. PO SPV</th>
                         <th class="text-right"><a href="/company/create">Create</a></th>
                     </tr>
@@ -45,15 +44,7 @@
                                         <label class="custom-control-label"></label>
                                     </div>
                                 </a>
-                            </td>
-                            <td class="align-middle">
-                                <a href="/company/{{ $item->id }}/auto-gen/pr?page={{ $companies->currentPage() }}" class="text-center">
-                                    <div class="custom-control custom-switch">
-                                        <input type="checkbox" class="custom-control-input" {{ $item->auto_gen_pr == 1 ? 'checked' : '' }}>
-                                        <label class="custom-control-label"></label>
-                                    </div>
-                                </a>
-                            </td>                            
+                            </td>                       
                             <td class="align-middle">
                                 <a href="/company/{{ $item->id }}/auto-gen/po?page={{ $companies->currentPage() }}" class="text-center">
                                     <div class="custom-control custom-switch">
