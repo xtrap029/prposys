@@ -124,27 +124,27 @@
                             </thead>
                             <tbody class="jsReplicate_container">
                                 <tr>
-                                    <td><input type="date" class="form-control" name="date[]" value="{{ $transaction->liquidation[0]->date }}" required></td>
+                                    <td><input type="date" class="form-control" name="date[]" value="{{ isset($transaction->liquidation[0]) ? $transaction->liquidation[0]->date : '' }}" required></td>
                                     <td>
                                         <select name="project_id[]" class="form-control" required>
                                             @foreach ($projects as $item)
-                                                <option value="{{ $item->id }}" {{ $transaction->liquidation[0]->project_id == $item->id ? 'selected' : (strtolower($item->project) == "none" ? 'selected' : '') }}>{{ $item->project }}</option>
+                                                <option value="{{ $item->id }}" {{ isset($transaction->liquidation[0]) && $transaction->liquidation[0]->project_id == $item->id ? 'selected' : (strtolower($item->project) == "none" ? 'selected' : '') }}>{{ $item->project }}</option>
                                             @endforeach
                                         </select>
                                     </td>
                                     <td>
                                         <select name="expense_type_id[]" class="form-control" required>
                                             @foreach ($expense_types as $item)
-                                                <option value="{{ $item->id }}" {{  $transaction->liquidation[0]->expense_type_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                <option value="{{ $item->id }}" {{ isset($transaction->liquidation[0]) && $transaction->liquidation[0]->expense_type_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                             @endforeach
                                         </select>
                                     </td>
-                                    <td><input type="text" class="form-control" name="description[]" value="{{  $transaction->liquidation[0]->description }}" required></td>
-                                    <td><input type="text" class="form-control" name="location[]" value="{{  $transaction->liquidation[0]->location }}" required></td>
+                                    <td><input type="text" class="form-control" name="description[]" value="{{ isset($transaction->liquidation[0]) ? $transaction->liquidation[0]->description : '' }}" required></td>
+                                    <td><input type="text" class="form-control" name="location[]" value="{{ isset($transaction->liquidation[0]) ? $transaction->liquidation[0]->location : '' }}" required></td>
                                     <td class="text-center">
                                         <select name="receipt[]" class="form-control">
-                                            <option value="1" {{ $transaction->liquidation[0]->receipt == 1 ? 'selected' : '' }}>Y</option>
-                                            <option value="0" {{ $transaction->liquidation[0]->receipt == 0 ? 'selected' : '' }}>N</option>
+                                            <option value="1" {{ isset($transaction->liquidation[0]) && $transaction->liquidation[0]->receipt == 1 ? 'selected' : '' }}>Y</option>
+                                            <option value="0" {{ isset($transaction->liquidation[0]) && $transaction->liquidation[0]->receipt == 0 ? 'selected' : '' }}>N</option>
                                         </select>
                                     </td>
                                     <td colspan="2">
@@ -152,7 +152,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text">{{ $transaction->currency }}</span>
                                             </div>
-                                            <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ $transaction->liquidation[0]->amount }}" required>
+                                            <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount[]" step="0.01" value="{{ isset($transaction->liquidation[0]) ? $transaction->liquidation[0]->amount : '' }}" required>
                                         </div>  
                                     </td>
                                 </tr>
@@ -223,17 +223,19 @@
                                 </tr>
                             </thead>
                             <tbody class="jsReplicate_container">
-                                <tr class="jsReplicate_template_item">
-                                    <td class="text-nowrap">
-                                        <a href="/storage/public/attachments/liquidation/{{ $transaction->attachments[0]->file }}" target="_blank">
+                                @if (isset($transaction->attachments[0]))
+                                    <tr class="jsReplicate_template_item">
+                                        <td class="text-nowrap">
+                                            <a href="/storage/public/attachments/liquidation/{{ $transaction->attachments[0]->file }}" target="_blank">
                                             <i class="material-icons mr-2 align-bottom align-text-bottom">attachment</i>
                                         </a>
                                         <input type="file" name="file_old[]" class="form-control w-75 d-inline-block overflow-hidden">
                                         <input type="hidden" name="attachment_id_old[]" value="{{ $transaction->attachments[0]->id }}">
                                     </td>
                                     <td><input type="text" name="attachment_description_old[]" class="form-control" value="{{ $transaction->attachments[0]->description }}" required></td>
-                                    <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
-                                </tr>
+                                        <td><button type="button" class="btn btn-danger jsReplicate_remove jsMath_trigger"><i class="nav-icon material-icons icon--list">delete</i></button></td>
+                                    </tr>
+                                @endif
                                 @foreach ($transaction->attachments as $key => $item)
                                     @if ($key > 0)
                                         <tr class="jsReplicate_template_item">
