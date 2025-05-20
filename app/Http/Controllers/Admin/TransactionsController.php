@@ -430,7 +430,6 @@ class TransactionsController extends Controller {
                 break;
         }
 
-        // $particulars = Particulars::where('type', $trans_type)->get();
         $projects = CompanyProject::where('company_id', $trans_company)->orderBy('project', 'asc')->get();
         $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
         $users = $users->reject(function ($user) use ($trans_company) {
@@ -442,13 +441,6 @@ class TransactionsController extends Controller {
         $purpose_options = PurposeOption::orderBy('code', 'asc')->get();
         $class_types = ClassType::orderBy('code', 'asc')->get();
         $vendors = Vendor::orderBy('name', 'asc')->get();
-
-        $aec_current_series_no = Transaction::whereRaw('bill_series_no REGEXP "^[0-9]+$"')->where('is_aec_bill', 1)->orderBy('bill_series_no', 'desc')->first();
-        if ($aec_current_series_no) {
-            $aec_current_series_no = $aec_current_series_no->bill_series_no + 1;
-        } else {
-            $aec_current_series_no = 1;
-        }
 
         $tdsa_current_series_no = Transaction::whereRaw('bill_series_no REGEXP "^[0-9]+$"')->where('is_tdsa_bill', 1)->orderBy('bill_series_no', 'desc')->first();
         if ($tdsa_current_series_no) {
@@ -480,7 +472,6 @@ class TransactionsController extends Controller {
             'purpose_options' => $purpose_options,
             'class_types' => $class_types,
             'vendors' => $vendors,
-            'aec_current_series_no' => $aec_current_series_no,
             'tdsa_current_series_no' => $tdsa_current_series_no,
             'project_options' => $project_options
         ]);
@@ -518,7 +509,10 @@ class TransactionsController extends Controller {
 
             $company = CompanyProject::where('id', $request->project_id)->first()->company;
             if ($trans_category == config('global.trans_category')[6] || $trans_category == config('global.trans_category')[8]) {
-                $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
+
+                if ($trans_category == config('global.trans_category')[6]) {
+                    $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
+                }
 
                 if ($trans_type == 'pr' && $company->auto_gen_po) {
                     $new_transaction = $request->validate([
@@ -540,8 +534,7 @@ class TransactionsController extends Controller {
             }
 
             if (!in_array($trans_category, [
-                config('global.trans_category')[6],
-                config('global.trans_category')[8]
+                config('global.trans_category')[6]
             ])) {
                 $data['bill_series_no'] = '';
             }
@@ -861,9 +854,7 @@ class TransactionsController extends Controller {
             $validation['bill_statement_no'] = ['required'];
         }
 
-        if (($trans_category == config('global.trans_category')[6]
-                || $trans_category == config('global.trans_category')[8])
-        ) {
+        if ($trans_category == config('global.trans_category')[6]) {
             $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
         }
 
@@ -877,9 +868,7 @@ class TransactionsController extends Controller {
         }
 
         if (!in_array($trans_category, [
-                config('global.trans_category')[6],
-                config('global.trans_category')[8]
-            ])) {
+                config('global.trans_category')[6]])) {
             $data['bill_series_no'] = '';
         }
 

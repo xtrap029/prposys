@@ -168,20 +168,20 @@
                                     </thead>
                                     <tbody class="jsReplicate_container">
                                         <tr>
-                                            <td><input type="date" class="form-control" name="date[]" value="{{ $transaction->liquidation[0]->date }}" required></td>
+                                            <td><input type="date" class="form-control" name="date[]" value="{{ isset($transaction->liquidation[0]) ? $transaction->liquidation[0]->date : '' }}" required></td>
                                             <td>
                                                 <select name="expense_type_id[]" class="form-control" required>
                                                     @foreach ($expense_types as $item)
-                                                        <option value="{{ $item->id }}" {{  $transaction->liquidation[0]->expense_type_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                        <option value="{{ $item->id }}" {{ isset($transaction->liquidation[0]) && $transaction->liquidation[0]->expense_type_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                                     @endforeach
                                                 </select>
                                             </td>
-                                            <td><input type="text" class="form-control" name="description[]" value="{{  $transaction->liquidation[0]->description }}" required></td>
-                                            <td><input type="text" class="form-control" name="location[]" value="{{  $transaction->liquidation[0]->location }}" required></td>
+                                            <td><input type="text" class="form-control" name="description[]" value="{{ isset($transaction->liquidation[0]) ? $transaction->liquidation[0]->description : '' }}" required></td>
+                                            <td><input type="text" class="form-control" name="location[]" value="{{ isset($transaction->liquidation[0]) ? $transaction->liquidation[0]->location : '' }}" required></td>
                                             <td class="text-center">
                                                 <select name="receipt[]" class="form-control">
-                                                    <option value="1" {{ $transaction->liquidation[0]->receipt == 1 ? 'selected' : '' }}>Y</option>
-                                                    <option value="0" {{ $transaction->liquidation[0]->receipt == 0 ? 'selected' : '' }}>N</option>
+                                                    <option value="1" {{ isset($transaction->liquidation[0]) && $transaction->liquidation[0]->receipt == 1 ? 'selected' : '' }}>Y</option>
+                                                    <option value="0" {{ isset($transaction->liquidation[0]) && $transaction->liquidation[0]->receipt == 0 ? 'selected' : '' }}>N</option>
                                                 </select>
                                             </td>
                                             <td colspan="2">
@@ -189,7 +189,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">{{ $transaction->currency }}</span>
                                                     </div>
-                                                    <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount_desc[]" step="0.01" value="{{ $transaction->liquidation[0]->amount }}" required>
+                                                    <input type="number" class="form-control jsMath_amount jsMath_trigger" name="amount_desc[]" step="0.01" value="{{ isset($transaction->liquidation[0]) ? $transaction->liquidation[0]->amount : '' }}" required>
                                                 </div>  
                                             </td>
                                         </tr>

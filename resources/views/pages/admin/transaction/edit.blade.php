@@ -309,9 +309,7 @@
                 $('#purposeDescription').val($('#purposeOption').find(':selected').data('description'))
             }
             
-            if (("{{ $transaction->is_tdsa_bill }}" === "1"
-                || "{{ $transaction->is_aec_bill }}" === "1")
-            ) {
+            if ("{{ $transaction->is_tdsa_bill }}" === "1") {
                 $('#bill_series_no').parent().parent().removeClass('d-none')
                 $('#bill_series_no').attr('required', 'true')
             } else if ("{{ $transaction->is_deposit }}" === "1"
@@ -324,7 +322,7 @@
             $('.trans-category').change(function() {
                 if ((
                         $(this).val() == "{{ config('global.trans_category')[6] }}"
-                        || $(this).val() == "{{ config('global.trans_category')[8] }}"
+                        // || $(this).val() == "{{ config('global.trans_category')[8] }}"
                     )
                 ) {
                     $('#bill_series_no').parent().parent().removeClass('d-none')
