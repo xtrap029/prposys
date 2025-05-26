@@ -50,7 +50,7 @@
                             @if (in_array(config('global.trans_category')[1], explode(',', $company->categories)))
                                 <option 
                                     value="{{ config('global.trans_category')[1] }}"
-                                    {{ isset($_GET['is_deposit']) && $_GET['is_deposit'] == 1 ? 'selected' : '' }}
+                                    {{ isset($_GET['is_deposit']) && $_GET['is_deposit'] == 1 ? 'selected' : (old('trans_category') == config('global.trans_category')[1] ? 'selected' : '') }}
                                 >
                                     {{ config('global.trans_category_label')[1] }}
                                 </option>
@@ -58,7 +58,7 @@
                             @if (in_array(config('global.trans_category')[2], explode(',', $company->categories)))
                                 <option 
                                     value="{{ config('global.trans_category')[2] }}"
-                                    {{ isset($_GET['is_bills']) && $_GET['is_bills'] == 1 ? 'selected' : '' }}
+                                    {{ isset($_GET['is_bills']) && $_GET['is_bills'] == 1 ? 'selected' : (old('trans_category') == config('global.trans_category')[2] ? 'selected' : '') }}
                                 >
                                     {{ config('global.trans_category_label')[2] }}
                                 </option>
@@ -66,7 +66,7 @@
                             @if (in_array(config('global.trans_category')[3], explode(',', $company->categories)))
                                 <option 
                                     value="{{ config('global.trans_category')[3] }}"
-                                    {{ isset($_GET['is_hr']) && $_GET['is_hr'] == 1 ? 'selected' : '' }}
+                                    {{ isset($_GET['is_hr']) && $_GET['is_hr'] == 1 ? 'selected' : (old('trans_category') == config('global.trans_category')[3] ? 'selected' : '') }}
                                 >
                                     {{ config('global.trans_category_label')[3] }}
                                 </option>
@@ -74,7 +74,7 @@
                             @if (in_array(config('global.trans_category')[4], explode(',', $company->categories)))
                                 <option 
                                     value="{{ config('global.trans_category')[4] }}"
-                                    {{ isset($_GET['is_reimbursement']) && $_GET['is_reimbursement'] == 1 ? 'selected' : '' }}
+                                    {{ isset($_GET['is_reimbursement']) && $_GET['is_reimbursement'] == 1 ? 'selected' : (old('trans_category') == config('global.trans_category')[4] ? 'selected' : '') }}
                                 >
                                     {{ config('global.trans_category_label')[4] }}
                                 </option>
@@ -82,7 +82,7 @@
                             @if (in_array(config('global.trans_category')[5], explode(',', $company->categories)))
                                 <option 
                                     value="{{ config('global.trans_category')[5] }}"
-                                    {{ isset($_GET['is_bank']) && $_GET['is_bank'] == 1 ? 'selected' : '' }}
+                                    {{ isset($_GET['is_bank']) && $_GET['is_bank'] == 1 ? 'selected' : (old('trans_category') == config('global.trans_category')[5] ? 'selected' : '') }}
                                 >
                                     {{ config('global.trans_category_label')[5] }}
                                 </option>
@@ -90,7 +90,7 @@
                             @if (in_array(config('global.trans_category')[6], explode(',', $company->categories)))
                                 <option 
                                     value="{{ config('global.trans_category')[6] }}"
-                                    {{ isset($_GET['is_tdsa_bill']) && $_GET['is_tdsa_bill'] == 1 ? 'selected' : '' }}
+                                    {{ isset($_GET['is_tdsa_bill']) && $_GET['is_tdsa_bill'] == 1 ? 'selected' : (old('trans_category') == config('global.trans_category')[6] ? 'selected' : '') }}
                                 >
                                     {{ config('global.trans_category_label')[6] }}
                                 </option>
@@ -98,7 +98,7 @@
                             @if (in_array(config('global.trans_category')[7], explode(',', $company->categories)))
                                 <option 
                                     value="{{ config('global.trans_category')[7] }}"
-                                    {{ isset($_GET['is_tdsa_payment']) && $_GET['is_tdsa_payment'] == 1 ? 'selected' : '' }}
+                                    {{ isset($_GET['is_tdsa_payment']) && $_GET['is_tdsa_payment'] == 1 ? 'selected' : (old('trans_category') == config('global.trans_category')[7] ? 'selected' : '') }}
                                 >
                                     {{ config('global.trans_category_label')[7] }}
                                 </option>
@@ -106,7 +106,7 @@
                             @if (in_array(config('global.trans_category')[8], explode(',', $company->categories)))
                                 <option 
                                     value="{{ config('global.trans_category')[8] }}"
-                                    {{ isset($_GET['is_aec_bill']) && $_GET['is_aec_bill'] == 1 ? 'selected' : '' }}
+                                    {{ isset($_GET['is_aec_bill']) && $_GET['is_aec_bill'] == 1 ? 'selected' : (old('trans_category') == config('global.trans_category')[8] ? 'selected' : '') }}
                                 >
                                     {{ config('global.trans_category_label')[8] }}
                                 </option>
@@ -114,7 +114,7 @@
                             @if (in_array(config('global.trans_category')[9], explode(',', $company->categories)))
                                 <option 
                                     value="{{ config('global.trans_category')[9] }}"
-                                    {{ isset($_GET['is_aec_payment']) && $_GET['is_aec_payment'] == 1 ? 'selected' : '' }}
+                                    {{ isset($_GET['is_aec_payment']) && $_GET['is_aec_payment'] == 1 ? 'selected' : (old('trans_category') == config('global.trans_category')[9] ? 'selected' : '') }}
                                 >
                                     {{ config('global.trans_category_label')[9] }}
                                 </option>
@@ -153,7 +153,7 @@
                             <option value="">Select Purpose</option>
                             @foreach ($purpose_options as $item)
                                 @if (in_array($company->id, explode(',', $item->companies))) 
-                                    <option value="{{ $item->id }}" {{ isset($_GET['purpose_option_id']) && $_GET['purpose_option_id'] == $item->id ? 'selected' : '' }} data-description="{{ $item->description }}">{{ $item->code.' - '.$item->name }}</option>                                        
+                                    <option value="{{ $item->id }}" {{ isset($_GET['purpose_option_id']) && $_GET['purpose_option_id'] == $item->id ? 'selected' : (old('purpose_option_id') == $item->id ? 'selected' : '') }} data-description="{{ $item->description }}">{{ $item->code.' - '.$item->name }}</option>                                        
                                 @endif
                             @endforeach
                         </select>
@@ -169,7 +169,7 @@
                         <select name="vendor_id" class="form-control @error('vendor_id') is-invalid @enderror" required>
                             <option value="">Select Payee Name</option>
                             @foreach ($vendors as $item)
-                                <option value="{{ $item->id }}" {{ isset($_GET['vendor_id']) && $_GET['vendor_id'] == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>                                        
+                                <option value="{{ $item->id }}" {{ isset($_GET['vendor_id']) && $_GET['vendor_id'] == $item->id ? 'selected' : (old('vendor_id') == $item->id ? 'selected' : '') }}>{{ $item->name }}</option>                                        
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('vendor_id')])
@@ -223,7 +223,7 @@
                             <option value="">Select Class</option>
                             @foreach ($class_types as $item)
                                 @if (in_array($company->id, explode(',', $item->companies))) 
-                                    <option value="{{ $item->id }}" {{ isset($_GET['class_type_id']) && $_GET['class_type_id'] == $item->id ? 'selected' : '' }}>{{ $item->code }}</option>                                        
+                                    <option value="{{ $item->id }}" {{ isset($_GET['class_type_id']) && $_GET['class_type_id'] == $item->id ? 'selected' : (old('class_type_id') == $item->id ? 'selected' : '') }}>{{ $item->code }}</option>                                        
                                 @endif
                             @endforeach
                         </select>

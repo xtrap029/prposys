@@ -114,6 +114,10 @@ class Transaction extends Model {
         return $this->belongsTo(Transaction::class, 'src_transaction_id')->withTrashed();
     }
 
+    public function autogentransaction() {
+        return $this->hasOne(Transaction::class, 'src_transaction_id')->withTrashed();
+    }
+
     public function classtype() {
         return $this->belongsTo(ClassType::class, 'class_type_id')->withTrashed();
     }
