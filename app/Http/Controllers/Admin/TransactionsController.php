@@ -539,6 +539,13 @@ class TransactionsController extends Controller {
                 $data['bill_series_no'] = '';
             }
 
+            // unset payee name
+            $autogen_payee = null;
+            if ($trans_category == config('global.trans_category')[6] || $trans_category == config('global.trans_category')[8]) {
+                $autogen_payee = $data['vendor_id'];
+                unset($data['vendor_id']);
+            }
+
             $data['is_deposit'] = 0;
             $data['is_bills'] = 0;
             $data['is_hr'] = 0;
@@ -666,7 +673,7 @@ class TransactionsController extends Controller {
             $new_transaction['currency'] = $transaction->currency;
             $new_transaction['amount'] = $transaction->amount;
             $new_transaction['purpose_option_id'] = $transaction->purpose_option_id;
-            $new_transaction['vendor_id'] = $transaction->vendor_id;
+            $new_transaction['vendor_id'] = $autogen_payee;
             $new_transaction['purpose'] = $transaction->purpose;
             $new_transaction['class_type_id'] = $transaction->class_type_id;
             $new_transaction['budgeted'] = $transaction->budgeted;
@@ -845,8 +852,8 @@ class TransactionsController extends Controller {
 
         $trans_category = $request->trans_category;
 
-        if ($trans_category == config('global.trans_category')[7]
-            || $trans_category == config('global.trans_category')[9]) {
+        if ($trans_category == config('global.trans_category')[6]
+            || $trans_category == config('global.trans_category')[8]) {
             $validation['vendor_id'] = [];
         }
         
@@ -870,6 +877,10 @@ class TransactionsController extends Controller {
         if (!in_array($trans_category, [
                 config('global.trans_category')[6]])) {
             $data['bill_series_no'] = '';
+        }
+
+        if ($trans_category == config('global.trans_category')[6] || $trans_category == config('global.trans_category')[8]) {
+            unset($data['vendor_id']);
         }
 
         $attach_liq = $request->validate([

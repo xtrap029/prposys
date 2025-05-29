@@ -165,7 +165,7 @@
                         @include('errors.inline', ['message' => $errors->first('purpose')])
                     </div>
                     <div class="col-sm-6 col-lg-4 mb-2">
-                        <label for="">Payee Name</label>
+                        <label for="" id="vendor_id_label">Payee Name</label>
                         <select name="vendor_id" class="form-control @error('vendor_id') is-invalid @enderror" required>
                             <option value="">Select Payee Name</option>
                             @foreach ($vendors as $item)
@@ -207,8 +207,7 @@
                         <h5>{{ Auth::user()->name }}</h5>
                     </div>
                 </div>
-                <div class="form-row mb-3 {{ $ua['trans_toggle_conf'] == $non ? 'd-none' : '' }}">
-                    
+                <div class="form-row mb-3 {{ $ua['trans_toggle_conf'] == $non ? 'd-none' : '' }}">                
                     <div class="col-sm-12 col-lg-4 mb-2">             
                         <label for="">Is Confidential?</label>
                         <select name="is_confidential" class="form-control">
@@ -357,6 +356,16 @@
 
         $(function() {
             $('.trans-category').change(function() {
+                // change payee name label
+                if (
+                    $(this).val() == "{{ config('global.trans_category')[6] }}" ||
+                    $(this).val() == "{{ config('global.trans_category')[8] }}"
+                ) {     
+                    $('#vendor_id_label').text('Payee Name (assign to Payment Transaction)')
+                } else {
+                    $('#vendor_id_label').text('Payee Name')
+                }
+
                 if (
                     $(this).val() == "{{ config('global.trans_category')[6] }}" ||
                     $(this).val() == "{{ config('global.trans_category')[8] }}"
@@ -377,7 +386,7 @@
                     if ("{{ $trans_type }}" == "pr") {
                         $('#spv_project_id').parent().parent().removeClass('d-none')
                         $('#spv_project_id').attr('required', 'true')
-                    }
+                    }                    
                 } else if ($(this).val() == "{{ config('global.trans_category')[1] }}"
                     || $(this).val() == "{{ config('global.trans_category')[2] }}"
                 ) {

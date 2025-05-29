@@ -154,7 +154,7 @@
                     </div>
                     <div class="col-sm-6 col-lg-4 mb-2">
                         <label for="">Payee Name</label>
-                        <select name="vendor_id" class="form-control chosen-select @error('vendor_id') is-invalid @enderror">
+                        <select name="vendor_id" id="vendor_id" class="form-control chosen-select @error('vendor_id') is-invalid @enderror" required>
                             @if ($transaction->is_tdsa_payment == 1 || $transaction->is_aec_payment == 1)
                                 <option value="">N/A</option>
                             @endif
@@ -308,6 +308,14 @@
             function assignPurposeDescription() {
                 $('#purposeDescription').val($('#purposeOption').find(':selected').data('description'))
             }
+
+            if ("{{ $transaction->is_tdsa_bill }}" === "1" || "{{ $transaction->is_aec_bill }}" === "1") {
+                $('#vendor_id').parent().addClass('d-none')
+                $('#vendor_id').removeAttr('required')
+            } else {
+                $('#vendor_id').parent().removeClass('d-none')
+                $('#vendor_id').attr('required', 'true')
+            }
             
             if ("{{ $transaction->is_tdsa_bill }}" === "1") {
                 $('#bill_series_no').parent().parent().removeClass('d-none')
@@ -320,6 +328,14 @@
             }
 
             $('.trans-category').change(function() {
+                if ($(this).val() == "{{ config('global.trans_category')[6] }}" || $(this).val() == "{{ config('global.trans_category')[8] }}") {
+                    $('#vendor_id').parent().addClass('d-none')
+                    $('#vendor_id').removeAttr('required')
+                } else {
+                    $('#vendor_id').parent().removeClass('d-none')
+                    $('#vendor_id').attr('required', 'true')
+                }
+
                 if ((
                         $(this).val() == "{{ config('global.trans_category')[6] }}"
                         // || $(this).val() == "{{ config('global.trans_category')[8] }}"
