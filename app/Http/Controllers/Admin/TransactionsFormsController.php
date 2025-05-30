@@ -703,10 +703,7 @@ class TransactionsFormsController extends Controller {
             $validation['bill_statement_no'] = ['required'];
         }
 
-        if (($trans_category == config('global.trans_category')[6]
-                || $trans_category == config('global.trans_category')[8])
-                && $transaction->trans_type == 'po'
-        ) {
+        if (in_array($trans_category, config('global.trans_category_bill')) && $transaction->trans_type == 'po') {
             $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
         }
 
@@ -720,10 +717,7 @@ class TransactionsFormsController extends Controller {
         }
 
         if ($transaction->trans_type != 'po' || 
-            !in_array($trans_category, [
-                config('global.trans_category')[6],
-                config('global.trans_category')[8]
-            ])) {
+            !in_array($trans_category, config('global.trans_category_bill'))) {
             $data['bill_series_no'] = '';
         }
 
