@@ -312,54 +312,48 @@
             if ("{{ $transaction->is_tdsa_bill }}" === "1" || "{{ $transaction->is_aec_bill }}" === "1") {
                 $('#vendor_id').parent().addClass('d-none')
                 $('#vendor_id').removeAttr('required')
+
+                $('#bill_series_no').parent().parent().removeClass('d-none')
+                $('#bill_series_no').attr('required', 'true')
             } else {
                 $('#vendor_id').parent().removeClass('d-none')
                 $('#vendor_id').attr('required', 'true')
+
+                $('#bill_series_no').removeAttr('required')
+                $('#bill_series_no').parent().parent().addClass('d-none')
             }
             
-            if ("{{ $transaction->is_tdsa_bill }}" === "1") {
-                $('#bill_series_no').parent().parent().removeClass('d-none')
-                $('#bill_series_no').attr('required', 'true')
-            } else if ("{{ $transaction->is_deposit }}" === "1"
-                || "{{ $transaction->is_bills }}" === "1"
-            ) {
+            if ("{{ $transaction->is_deposit }}" === "1" || "{{ $transaction->is_bills }}" === "1") {
                 $('#bill_statement_no').parent().parent().removeClass('d-none')
                 $('#bill_statement_no').removeAttr('required')
+            } else {
+                $('#bill_statement_no').removeAttr('required')
+                $('#bill_statement_no').parent().parent().addClass('d-none')
             }
 
             $('.trans-category').change(function() {
-                if ($(this).val() == "{{ config('global.trans_category')[6] }}" || $(this).val() == "{{ config('global.trans_category')[8] }}") {
+                if ($.inArray($(this).val(), "{{ implode(',', config('global.trans_category_bill')) }}".split(",")) !== -1) {
                     $('#vendor_id').parent().addClass('d-none')
                     $('#vendor_id').removeAttr('required')
+
+                    $('#bill_series_no').parent().parent().removeClass('d-none')
+                    $('#bill_series_no').attr('required', 'true')
                 } else {
                     $('#vendor_id').parent().removeClass('d-none')
                     $('#vendor_id').attr('required', 'true')
+
+                    $('#bill_series_no').removeAttr('required')
+                    $('#bill_series_no').parent().parent().addClass('d-none')
                 }
 
-                if ((
-                        $(this).val() == "{{ config('global.trans_category')[6] }}"
-                        // || $(this).val() == "{{ config('global.trans_category')[8] }}"
-                    )
-                ) {
-                    $('#bill_series_no').parent().parent().removeClass('d-none')
-                    $('#bill_series_no').attr('required', 'true')
-
-                    $('#bill_statement_no').removeAttr('required')
-                    $('#bill_statement_no').parent().parent().addClass('d-none')
-                } else if ($(this).val() == "{{ config('global.trans_category')[1] }}"
+                if ($(this).val() == "{{ config('global.trans_category')[1] }}"
                     || $(this).val() == "{{ config('global.trans_category')[2] }}"
                 ) {
                     $('#bill_statement_no').parent().parent().removeClass('d-none')
                     $('#bill_statement_no').removeAttr('required')
-
-                    $('#bill_series_no').removeAttr('required')
-                    $('#bill_series_no').parent().parent().addClass('d-none')
                 } else {
                     $('#bill_statement_no').removeAttr('required')
                     $('#bill_statement_no').parent().parent().addClass('d-none')
-
-                    $('#bill_series_no').removeAttr('required')
-                    $('#bill_series_no').parent().parent().addClass('d-none')
                 }
             })
 

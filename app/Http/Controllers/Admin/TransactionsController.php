@@ -449,6 +449,13 @@ class TransactionsController extends Controller {
             $tdsa_current_series_no = 1;
         }
 
+        $aec_current_series_no = Transaction::whereRaw('bill_series_no REGEXP "^[0-9]+$"')->where('is_aec_bill', 1)->orderBy('bill_series_no', 'desc')->first();
+        if ($aec_current_series_no) {
+            $aec_current_series_no = $aec_current_series_no->bill_series_no + 1;
+        } else {
+            $aec_current_series_no = 1;
+        }
+
         $project_options = CompanyProject::where('companies.bill_option', 1)
             ->where('company_projects.is_bill_option', 1)
             ->select(
@@ -473,6 +480,7 @@ class TransactionsController extends Controller {
             'class_types' => $class_types,
             'vendors' => $vendors,
             'tdsa_current_series_no' => $tdsa_current_series_no,
+            'aec_current_series_no' => $aec_current_series_no,
             'project_options' => $project_options
         ]);
     }
@@ -508,11 +516,9 @@ class TransactionsController extends Controller {
             }
 
             $company = CompanyProject::where('id', $request->project_id)->first()->company;
-            if ($trans_category == config('global.trans_category')[6] || $trans_category == config('global.trans_category')[8]) {
+            if (in_array($trans_category, config('global.trans_category_bill'))) {
 
-                if ($trans_category == config('global.trans_category')[6]) {
-                    $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
-                }
+                $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
 
                 if ($trans_type == 'pr' && $company->auto_gen_po) {
                     $new_transaction = $request->validate([
@@ -533,15 +539,13 @@ class TransactionsController extends Controller {
                 $data['bill_statement_no'] = '';                
             }
 
-            if (!in_array($trans_category, [
-                config('global.trans_category')[6]
-            ])) {
+            if (!in_array($trans_category, config('global.trans_category_bill'))) {
                 $data['bill_series_no'] = '';
             }
 
             // unset payee name
             $autogen_payee = null;
-            if ($trans_category == config('global.trans_category')[6] || $trans_category == config('global.trans_category')[8]) {
+            if (in_array($trans_category, config('global.trans_category_bill'))) {
                 $autogen_payee = $data['vendor_id'];
                 unset($data['vendor_id']);
             }
@@ -852,17 +856,13 @@ class TransactionsController extends Controller {
 
         $trans_category = $request->trans_category;
 
-        if ($trans_category == config('global.trans_category')[6]
-            || $trans_category == config('global.trans_category')[8]) {
+        if (in_array($trans_category, config('global.trans_category_bill'))) {
             $validation['vendor_id'] = [];
+            $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
         }
         
         if ($trans_category == config('global.trans_category')[2]) {
             $validation['bill_statement_no'] = ['required'];
-        }
-
-        if ($trans_category == config('global.trans_category')[6]) {
-            $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
         }
 
         $data = $request->validate($validation);
@@ -874,12 +874,11 @@ class TransactionsController extends Controller {
             $data['bill_statement_no'] = '';
         }
 
-        if (!in_array($trans_category, [
-                config('global.trans_category')[6]])) {
+        if (!in_array($trans_category, config('global.trans_category_bill'))) {
             $data['bill_series_no'] = '';
         }
 
-        if ($trans_category == config('global.trans_category')[6] || $trans_category == config('global.trans_category')[8]) {
+        if (in_array($trans_category, config('global.trans_category_bill'))) {
             unset($data['vendor_id']);
         }
 
@@ -1295,6 +1294,7 @@ class TransactionsController extends Controller {
         $trans_control_no = '';
         $trans_is_confidential = '';
         $trans_amt_bal = '';
+        $trans_class_type = '';
 
         $status_name = [];
 
@@ -1311,22 +1311,7 @@ class TransactionsController extends Controller {
         } else if (UAHelper::get()['trans_view'] == config('global.ua_none')
             || UAHelper::get()['trans_report'] == config('global.ua_none')) {
             $transactions = $transactions->where('id', 0);
-        } else {
-            // $ua_code = User::find(auth()->id())->ualevel->code;
-            // $transactions = $transactions->where(static function ($query) use ($user_id, $ua_code) {
-            //     $query->where('requested_id', $user_id)
-            //     ->orWhereHas('owner', function($q) use($ua_code) {
-            //         $q->whereHas('ualevel', function($q2) use($ua_code){
-            //             $q2->where('code', '<=', $ua_code);
-            //         });        
-            //     });
-            // });
         }
-
-
-         // if (!User::find(auth()->id())->is_smt) {
-        //     $transactions = $transactions->where('is_confidential', 0);
-        // }
 
         if (!empty($_GET['s'])) {
             $trans_s = $_GET['s'];
@@ -1515,6 +1500,10 @@ class TransactionsController extends Controller {
             $transactions = $transactions->where('control_no', $_GET['control_no']);
             $trans_control_no = $_GET['control_no'];
         }
+        if (!empty($_GET['class_type'])) {
+            $transactions = $transactions->where('class_type_id', $_GET['class_type']);
+            $trans_class_type = $_GET['class_type'];
+        }
         if (!empty($_GET['is_confidential']) || (isset($_GET['is_confidential']) && $_GET['is_confidential'] != "")) {
             $transactions = $transactions->whereDate('created_at', '>=', $_GET['is_confidential']);
             $trans_is_confidential = $_GET['is_confidential'];
@@ -1598,6 +1587,7 @@ class TransactionsController extends Controller {
         $vat_types = VatType::orderBy('code', 'asc')->get();
         $status = TransactionStatus::whereIn('id', config('global.status'))->orderBy('id', 'asc')->get();
         $report_templates = ReportTemplate::orderBy('name', 'asc')->get();
+        $class_types = ClassType::orderBy('name', 'asc')->get();
 
         if (isset($_GET['csv'])) {
             $fileName = 'PRPOSYS-REPORT_'.Carbon::now().'.csv';
@@ -1675,6 +1665,7 @@ class TransactionsController extends Controller {
                 'report_templates' => $report_templates,
                 'companies' => $companies,
                 'users' => $users,
+                'class_types' => $class_types,
                 'users_inactive' => $users_inactive,
                 'releasers' => $releasers,
                 'banks' => $banks,
@@ -1708,6 +1699,7 @@ class TransactionsController extends Controller {
                 'trans_particulars' => $trans_particulars,
                 'trans_currency' => $trans_currency,
                 'trans_control_no' => $trans_control_no,
+                'trans_class_type' => $trans_class_type,
                 'trans_is_confidential' => $trans_is_confidential,
                 'trans_amt_bal' => $trans_amt_bal,
                 'trans_bal' => $trans_bal,

@@ -358,8 +358,7 @@
             $('.trans-category').change(function() {
                 // change payee name label
                 if (
-                    $(this).val() == "{{ config('global.trans_category')[6] }}" ||
-                    $(this).val() == "{{ config('global.trans_category')[8] }}"
+                    $.inArray($(this).val(), "{{ implode(',', config('global.trans_category_bill')) }}".split(",")) !== -1
                 ) {     
                     $('#vendor_id_label').text('Payee Name (assign to Payment Transaction)')
                 } else {
@@ -367,17 +366,14 @@
                 }
 
                 if (
-                    $(this).val() == "{{ config('global.trans_category')[6] }}" ||
-                    $(this).val() == "{{ config('global.trans_category')[8] }}"
+                    $.inArray($(this).val(), "{{ implode(',', config('global.trans_category_bill')) }}".split(",")) !== -1
                 ) {                
-                    if ($(this).val() == "{{ config('global.trans_category')[6] }}") {
-                        $('#bill_series_no').parent().parent().removeClass('d-none')
-                        $('#bill_series_no').attr('required', 'true')           
-                        
+                    $('#bill_series_no').parent().parent().removeClass('d-none')
+                    $('#bill_series_no').attr('required', 'true')           
+                    if ($(this).val() == "{{ config('global.trans_category')[6] }}") {                        
                         $('#bill_series_no').val('{{ $tdsa_current_series_no }}')
                     } else {
-                        $('#bill_series_no').removeAttr('required')
-                        $('#bill_series_no').parent().parent().addClass('d-none')
+                        $('#bill_series_no').val('{{ $aec_current_series_no }}')
                     }
 
                     $('#bill_statement_no').removeAttr('required')

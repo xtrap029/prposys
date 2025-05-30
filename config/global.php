@@ -40,6 +40,7 @@
         'trans_category_label_edit_form' => ['Edit Form', 'Edit Form', 'Edit Form', 'Edit Form', 'Edit Reimbursement', 'Edit Fund Transfer', 'Edit Form', 'Edit Form', 'Edit Form', 'Edit Form'],
         'trans_category_label_create_liq' => ['Liquidate', 'Liquidate', 'Liquidate', 'Liquidate', 'Reimburse', 'Deposit Form', 'Liquidate', 'Liquidate', 'Liquidate', 'Liquidate'],
         'trans_category_label_liq_print' => ['Liquidation', 'Liquidation', 'Liquidation', 'Liquidation', 'Reimbursement', 'Deposit Form', 'Liquidation', 'Liquidation', 'Liquidation', 'Liquidation'],
+        'trans_category_bill' => ['tb', 'ab'], 
         'status_filter' => [
             ['Generated', '1,5'],
             ['For Approval', '6'],
