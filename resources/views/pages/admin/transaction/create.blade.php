@@ -119,6 +119,14 @@
                                     {{ config('global.trans_category_label')[9] }}
                                 </option>
                             @endif
+                            @if (in_array(config('global.trans_category')[10], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[10] }}"
+                                    {{ isset($_GET['is_aff_advances']) && $_GET['is_aff_advances'] == 1 ? 'selected' : (old('trans_category') == config('global.trans_category')[10] ? 'selected' : '') }}
+                                >
+                                    {{ config('global.trans_category_label')[10] }}
+                                </option>
+                            @endif
                         </select>
                         @include('errors.inline', ['message' => $errors->first('trans_category')])
                     </div>
@@ -358,11 +366,17 @@
             $('.trans-category').change(function() {
                 // change payee name label
                 if (
-                    $.inArray($(this).val(), "{{ implode(',', config('global.trans_category_bill')) }}".split(",")) !== -1
+                    $.inArray($(this).val(), "{{ implode(',', config('global.trans_category_payee')) }}".split(",")) !== -1 && "{{ $trans_type }}" == "pr"
                 ) {     
                     $('#vendor_id_label').text('Payee Name (assign to Payment Transaction)')
+
+                    $('#spv_project_id').parent().parent().removeClass('d-none')
+                    $('#spv_project_id').attr('required', 'true')
                 } else {
                     $('#vendor_id_label').text('Payee Name')
+
+                    $('#spv_project_id').parent().parent().addClass('d-none')
+                    $('#spv_project_id').removeAttr('required')
                 }
 
                 if (
@@ -374,35 +388,20 @@
                         $('#bill_series_no').val('{{ $tdsa_current_series_no }}')
                     } else {
                         $('#bill_series_no').val('{{ $aec_current_series_no }}')
-                    }
-
-                    $('#bill_statement_no').removeAttr('required')
-                    $('#bill_statement_no').parent().parent().addClass('d-none')
-
-                    if ("{{ $trans_type }}" == "pr") {
-                        $('#spv_project_id').parent().parent().removeClass('d-none')
-                        $('#spv_project_id').attr('required', 'true')
-                    }                    
-                } else if ($(this).val() == "{{ config('global.trans_category')[1] }}"
+                    } 
+                } else {
+                    $('#bill_series_no').removeAttr('required')
+                    $('#bill_series_no').parent().parent().addClass('d-none')                    
+                }
+                
+                if ($(this).val() == "{{ config('global.trans_category')[1] }}"
                     || $(this).val() == "{{ config('global.trans_category')[2] }}"
                 ) {
                     $('#bill_statement_no').parent().parent().removeClass('d-none')
                     $('#bill_statement_no').removeAttr('required')
-
-                    $('#bill_series_no').removeAttr('required')
-                    $('#bill_series_no').parent().parent().addClass('d-none')
-
-                    $('#spv_project_id').parent().parent().addClass('d-none')
-                    $('#spv_project_id').removeAttr('required')
                 } else {
                     $('#bill_statement_no').removeAttr('required')
-                    $('#bill_statement_no').parent().parent().addClass('d-none')  
-
-                    $('#bill_series_no').removeAttr('required')
-                    $('#bill_series_no').parent().parent().addClass('d-none')
-
-                    $('#spv_project_id').parent().parent().addClass('d-none')
-                    $('#spv_project_id').removeAttr('required')
+                    $('#bill_statement_no').parent().parent().addClass('d-none')                      
                 }
             })
 

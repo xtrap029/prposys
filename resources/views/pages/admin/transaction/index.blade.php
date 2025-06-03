@@ -213,6 +213,7 @@
                                             @elseif ($item->is_tdsa_payment) <span class="badge badge-pill p-1 small bg-indigo float-left">TDSA-P</span>
                                             @elseif ($item->is_aec_bill) <span class="badge badge-pill p-1 small bg-indigo float-left">AFF-B</span>
                                             @elseif ($item->is_aec_payment) <span class="badge badge-pill p-1 small bg-indigo float-left">AFF-P</span>
+                                            @elseif ($item->is_aff_advances) <span class="badge badge-pill p-1 small bg-indigo float-left">AFF-A</span>
                                             @else <span class="badge badge-pill p-1 small bg-yellow">REG</span>
                                             @endif
 
@@ -230,7 +231,7 @@
                                             @if ($config_confidential)
                                                 -
                                             @else
-                                                {{ $item->vendor_id ? $item->vendor->name : $item->payee }}
+                                                {{ $item->vendor_id ? $item->vendor->name : ($item->payee ?: '-') }}
                                             @endif
                                         </td>
                                         <td class="td-compact">

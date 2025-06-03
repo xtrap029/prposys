@@ -40,6 +40,8 @@
                                 {{ config('global.trans_category_label')[8] }}
                             @elseif ($transaction->is_aec_payment)    
                                 {{ config('global.trans_category_label')[9] }}
+                            @elseif ($transaction->is_aff_advances)    
+                                {{ config('global.trans_category_label')[10] }}
                             @else
                                 {{ config('global.trans_category_label')[0] }}    
                             @endif
@@ -60,7 +62,7 @@
                             <a data-toggle="modal" data-target="#modal-liquidate" href="#_" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>
                         </div>
                         <div class="col-6 px-1 {{ $perms['can_duplicate'] ? '' : 'd-none' }}">
-                            <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}?project_id={{ $transaction->project_id }}&currency={{ $transaction->currency }}&amount={{ $transaction->amount }}&purpose={{ str_replace('%', '', $transaction->purpose) }}&vendor_id={{ $transaction->vendor_id ?: $transaction->payee }}&due_at={{ $transaction->due_at }}&requested_id={{ $transaction->requested_id }}&is_deposit={{ $transaction->is_deposit }}&is_bills={{ $transaction->is_bills }}&is_hr={{ $transaction->is_hr }}&is_reimbursement={{ $transaction->is_reimbursement }}&is_bank={{ $transaction->is_bank }}&is_tdsa_bill={{ $transaction->is_tdsa_bill }}&is_tdsa_payment={{ $transaction->is_tdsa_payment }}&is_aec_bill={{ $transaction->is_aec_bill }}&is_aec_payment={{ $transaction->is_aec_payment }}" target="_blank" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i> Duplicate</a>
+                            <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}?project_id={{ $transaction->project_id }}&currency={{ $transaction->currency }}&amount={{ $transaction->amount }}&purpose={{ str_replace('%', '', $transaction->purpose) }}&vendor_id={{ $transaction->vendor_id ?: $transaction->payee }}&due_at={{ $transaction->due_at }}&requested_id={{ $transaction->requested_id }}&is_deposit={{ $transaction->is_deposit }}&is_bills={{ $transaction->is_bills }}&is_hr={{ $transaction->is_hr }}&is_reimbursement={{ $transaction->is_reimbursement }}&is_bank={{ $transaction->is_bank }}&is_tdsa_bill={{ $transaction->is_tdsa_bill }}&is_tdsa_payment={{ $transaction->is_tdsa_payment }}&is_aec_bill={{ $transaction->is_aec_bill }}&is_aec_payment={{ $transaction->is_aec_payment }}&is_aff_advances={{ $transaction->is_aff_advances }}" target="_blank" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i> Duplicate</a>
                         </div>
                         <div class="col-6 px-1 {{ $perms['can_edit'] ? '' : 'd-none' }}">
                             <a href="/transaction-liquidation/edit/{{ $transaction->id }}" class="btn mb-2 btn-sm btn-flat btn-primary col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">edit</i> Edit</a>
@@ -92,6 +94,8 @@
                                     {{ config('global.trans_category_label_liq_print')[8] }}
                                 @elseif ($transaction->is_aec_payment)    
                                     {{ config('global.trans_category_label_liq_print')[9] }}
+                                @elseif ($transaction->is_aff_advances)    
+                                    {{ config('global.trans_category_label_liq_print')[10] }}
                                 @else
                                     {{ config('global.trans_category_label_liq_print')[0] }}
                                 @endif
@@ -129,7 +133,7 @@
                     <div>
                         <a href="/transaction/{{ $trans_page_url }}/{{ $transaction->project->company_id }}{{ isset($_GET['page']) ? '?page='.$_GET['page'] : '' }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto"><i class="align-middle font-weight-bolder material-icons text-md">arrow_back_ios</i> Back</a>
                         <a data-toggle="modal" data-target="#modal-liquidate" href="#_" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto {{ $perms['can_create'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">add</i> Add New</a>
-                        <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}?project_id={{ $transaction->project_id }}&currency={{ $transaction->currency }}&amount={{ $transaction->amount }}&purpose={{ str_replace('%', '', $transaction->purpose) }}&vendor_id={{ $transaction->vendor_id ?: $transaction->payee }}&due_at={{ $transaction->due_at }}&requested_id={{ $transaction->requested_id }}&is_deposit={{ $transaction->is_deposit }}&is_bills={{ $transaction->is_bills }}&is_hr={{ $transaction->is_hr }}&is_reimbursement={{ $transaction->is_reimbursement }}&is_bank={{ $transaction->is_bank }}&is_tdsa_bill={{ $transaction->is_tdsa_bill }}&is_tdsa_payment={{ $transaction->is_tdsa_payment }}&is_aec_bill={{ $transaction->is_aec_bill }}&is_aec_payment={{ $transaction->is_aec_payment }}" target="_blank" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto {{ $perms['can_duplicate'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i> Duplicate</a>
+                        <a href="/transaction/create/{{ $transaction->trans_type }}/{{ $transaction->project->company_id }}?project_id={{ $transaction->project_id }}&currency={{ $transaction->currency }}&amount={{ $transaction->amount }}&purpose={{ str_replace('%', '', $transaction->purpose) }}&vendor_id={{ $transaction->vendor_id ?: $transaction->payee }}&due_at={{ $transaction->due_at }}&requested_id={{ $transaction->requested_id }}&is_deposit={{ $transaction->is_deposit }}&is_bills={{ $transaction->is_bills }}&is_hr={{ $transaction->is_hr }}&is_reimbursement={{ $transaction->is_reimbursement }}&is_bank={{ $transaction->is_bank }}&is_tdsa_bill={{ $transaction->is_tdsa_bill }}&is_tdsa_payment={{ $transaction->is_tdsa_payment }}&is_aec_bill={{ $transaction->is_aec_bill }}&is_aec_payment={{ $transaction->is_aec_payment }}&is_aff_advances={{ $transaction->is_aff_advances }}" target="_blank" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto {{ $perms['can_duplicate'] ? '' : 'd-none' }}"><i class="align-middle font-weight-bolder material-icons text-md">content_copy</i> Duplicate</a>
                         <a href="/transaction-liquidation/reset/{{ $transaction->id }}" class="btn btn-sm btn-flat mb-2 btn-light col-12 col-lg-auto d-none {{ $perms['can_reset'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">autorenew</i> Renew Edit Limit</a>
                     </div>
                     <div>
@@ -181,6 +185,8 @@
                                 {{ config('global.trans_category_label_liq_print')[8] }}
                             @elseif ($transaction->is_aec_payment)    
                                 {{ config('global.trans_category_label_liq_print')[9] }}
+                            @elseif ($transaction->is_aff_advances)    
+                                {{ config('global.trans_category_label_liq_print')[10] }}
                             @else
                                 {{ config('global.trans_category_label_liq_print')[0] }}
                             @endif
@@ -472,16 +478,6 @@
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Cost Control No.</td>
-                                        {{-- <td class="font-weight-bold">{{ $transaction->cost_type_id
-                                            ? $transaction->project->company->qb_code
-                                                .'.'
-                                                .$transaction->project->company->qb_no.$transaction->cost_type->control_no
-                                                .'.'
-                                                .sprintf("%03d", $transaction->cost_seq)
-                                                .'.'
-                                                .config('global.cost_control_v')
-                                            : '-' }}
-                                        </td> --}}
                                         <td class="font-weight-bold">{{ $transaction->cost_control_no }}</td>
                                     </tr>
                                     <tr>
@@ -920,7 +916,11 @@
                                             </tr>
                                             <tr>
                                                 <td class="font-weight-bold text-gray">Bank</td>
-                                                <td class="font-weight-bold">{{ $transaction->bankbranch->bank->name }} ({{ $transaction->bankbranch->name }})</td>
+                                                @if ($transaction->depo_bank_branch_id)
+                                                    <td class="font-weight-bold">{{ $transaction->bankbranch->bank->name }} ({{ $transaction->bankbranch->name }})</td>
+                                                @else
+                                                    <td class="font-weight-bold">N/A</td>
+                                                @endif
                                             </tr>
                                             <tr>
                                                 <td class="font-weight-bold text-gray">Reference Code</td>

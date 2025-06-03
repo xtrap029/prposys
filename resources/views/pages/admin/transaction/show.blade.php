@@ -40,6 +40,8 @@
                                 {{ config('global.trans_category_label')[8] }}
                             @elseif ($transaction->is_aec_payment)    
                                 {{ config('global.trans_category_label')[9] }}
+                            @elseif ($transaction->is_aff_advances)    
+                                {{ config('global.trans_category_label')[10] }}
                             @else
                                 {{ config('global.trans_category_label')[0] }}    
                             @endif
@@ -81,7 +83,9 @@
                                 @elseif ($transaction->is_aec_bill)    
                                     {{ config('global.trans_category_label_make_form')[8] }}
                                 @elseif ($transaction->is_aec_payment)    
-                                    {{ config('global.trans_category_label_make_form')[9] }}                                    
+                                    {{ config('global.trans_category_label_make_form')[9] }}       
+                                @elseif ($transaction->is_aff_advances)    
+                                    {{ config('global.trans_category_label_make_form')[10] }}
                                 @else
                                     {{ config('global.trans_category_label_make_form')[0] }}
                                 @endif
@@ -130,6 +134,8 @@
                                 {{ config('global.trans_category_label_make_form')[8] }}
                             @elseif ($transaction->is_aec_payment)    
                                 {{ config('global.trans_category_label_make_form')[9] }}
+                            @elseif ($transaction->is_aff_advances)    
+                                {{ config('global.trans_category_label_make_form')[10] }}
                             @else
                                 {{ config('global.trans_category_label_make_form')[0] }}
                             @endif
@@ -254,10 +260,6 @@
                         <div class="card-body">
                             <div class="table" style="overflow: auto;">
                                 <table class="table">
-                                    {{-- <div class="col-md-9">
-                                        <label for="">Particulars</label>
-                                        <h5>{{ $trans_page == 'prpo' ? $transaction->particulars->name : $transaction->particulars_custom }}</h5>
-                                    </div> --}}
                                     <tr>
                                         <td class="font-weight-bold text-gray border-0">Requested By</td>
                                         <td class="font-weight-bold border-0">

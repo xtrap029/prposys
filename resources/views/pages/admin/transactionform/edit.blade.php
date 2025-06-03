@@ -31,6 +31,8 @@
                             {{ config('global.trans_category_label_edit_form')[8] }}
                         @elseif ($transaction->is_aec_payment)    
                             {{ config('global.trans_category_label_edit_form')[9] }}
+                        @elseif ($transaction->is_aff_advances)    
+                            {{ config('global.trans_category_label_edit_form')[10] }}
                         @else
                             {{ config('global.trans_category_label_edit_form')[0] }}
                         @endif
@@ -158,6 +160,14 @@
                                     {{ config('global.trans_category_label')[9] }}
                                 </option>
                             @endif
+                            @if (in_array(config('global.trans_category')[10], explode(',', $company->categories)))
+                                <option 
+                                    value="{{ config('global.trans_category')[10] }}"
+                                    {{ $transaction->is_aff_advances == 1 ? 'selected' : '' }}
+                                >
+                                    {{ config('global.trans_category_label')[10] }}
+                                </option>
+                            @endif
                         </select>
                         @include('errors.inline', ['message' => $errors->first('trans_category')])
                     </div>
@@ -201,9 +211,10 @@
                         <textarea name="purpose" id="purposeDescription" rows="1" class="form-control @error('purpose') is-invalid @enderror" required>{{ $transaction->purpose }}</textarea>
                         @include('errors.inline', ['message' => $errors->first('purpose')])
                     </div>
+
                     <div class="col-md-4 mb-2">
                         <label for="">Payee Name</label>
-                        <select name="vendor_id" class="form-control chosen-select @error('vendor_id') is-invalid @enderror">
+                        <select name="vendor_id" id="vendor_id" class="form-control chosen-select @error('vendor_id') is-invalid @enderror">
                             @if ($transaction->is_tdsa_payment == 1 || $transaction->is_aec_payment == 1)
                                 <option value="">N/A</option>
                             @endif
@@ -212,10 +223,6 @@
                             @endforeach
                         </select>
                         @include('errors.inline', ['message' => $errors->first('payee')])
-
-                        {{-- <label for="">Payee Name</label>
-                        <input type="text" class="form-control @error('payee') is-invalid @enderror" name="payee" value="{{ $transaction->payee }}" required>
-                        @include('errors.inline', ['message' => $errors->first('payee')]) --}}
                     </div>
                 </div>
                 <div class="form-row">
@@ -247,7 +254,6 @@
                                 <i class="material-icons mr-2 align-bottom">attachment</i>
                             </a>
                         @endif
-                        {{-- <input type="file" name="soa" class="soa form_control" {{ ($transaction->trans_type == 'po' || $transaction->is_bills) && !$transaction->soa ? 'required' : '' }}> --}}
                         <input type="file" name="soa" class="soa form_control d-block" {{ $transaction->trans_type == 'po' && !$transaction->soa ? 'required' : '' }}>
                     </div>
                     <div class="col-md-4 mb-2 d-none">
@@ -255,13 +261,11 @@
                         <input type="text" id="bill_statement_no" class="form-control @error('bill_statement_no') is-invalid @enderror" name="bill_statement_no" value="{{ $transaction->bill_statement_no }}">
                         @include('errors.inline', ['message' => $errors->first('bill_statement_no')])
                     </div>
-                    @if ($transaction->trans_type == "po")
-                        <div class="col-md-4 mb-2 d-none">
-                            <label for="">Bill No.</label>
-                            <input type="text" id="bill_series_no" class="form-control @error('bill_series_no') is-invalid @enderror" name="bill_series_no" value="{{ $transaction->bill_series_no }}">
-                            @include('errors.inline', ['message' => $errors->first('bill_series_no')])
-                        </div>
-                    @endif
+                    <div class="col-md-4 mb-2 d-none">
+                        <label for="">Bill No.</label>
+                        <input type="text" id="bill_series_no" class="form-control @error('bill_series_no') is-invalid @enderror" name="bill_series_no" value="{{ $transaction->bill_series_no }}">
+                        @include('errors.inline', ['message' => $errors->first('bill_series_no')])
+                    </div>
                 </div>
                 <div class="form-row mt-5">
                     <div class="col-12 {{ $transaction->is_deposit ? '' : 'd-none' }} mb-2">
@@ -511,44 +515,54 @@
             function assignPurposeDescription() {
                 $('#purposeDescription').val($('#purposeOption').find(':selected').data('description'))
             }
+
+            if (("{{ $transaction->is_tdsa_bill }}" === "1" || "{{ $transaction->is_aec_bill }}" === "1" || "{{ $transaction->is_aff_advances }}" === "1") && "{{ $transaction->trans_type }}" === "pr") {
+                $('#vendor_id').parent().addClass('d-none')
+            } else {
+                $('#vendor_id').parent().removeClass('d-none')
+            }
             
-            if (("{{ $transaction->is_tdsa_bill }}" === "1"
-                || "{{ $transaction->is_aec_bill }}" === "1")
-                && "{{ $transaction->trans_type }}" === "po"
-            ) {
+            if ("{{ $transaction->is_tdsa_bill }}" === "1" || "{{ $transaction->is_aec_bill }}" === "1") {
                 $('#bill_series_no').parent().removeClass('d-none')
                 $('#bill_series_no').attr('required', 'true')
-            } else if ("{{ $transaction->is_deposit }}" === "1"
-                || "{{ $transaction->is_bills }}" === "1" 
-            ) {
+            } else {
+                $('#bill_series_no').removeAttr('required')
+                $('#bill_series_no').parent().addClass('d-none')
+            }
+
+            if ("{{ $transaction->is_deposit }}" === "1" || "{{ $transaction->is_bills }}" === "1") {
                 $('#bill_statement_no').parent().removeClass('d-none')
                 $('#bill_statement_no').removeAttr('required')
+            } else {
+                $('#bill_statement_no').removeAttr('required')
+                $('#bill_statement_no').parent().addClass('d-none')
             }
 
             $('.trans-category').change(function() {
-                if (($(this).val() == "{{ config('global.trans_category')[6] }}"
-                    || $(this).val() == "{{ config('global.trans_category')[8] }}")
-                    && "{{ $transaction->trans_type }}" === "po"
-                ) {
+                if ($.inArray($(this).val(), "{{ implode(',', config('global.trans_category_payee')) }}".split(",")) !== -1 && "{{ $transaction->trans_type }}" === "pr") {
+                    $('#vendor_id').parent().addClass('d-none')
+                    $('#vendor_id').removeAttr('required')
+                } else {
+                    $('#vendor_id').parent().removeClass('d-none')
+                    $('#vendor_id').attr('required', 'true')
+                }
+
+                if ($.inArray($(this).val(), "{{ implode(',', config('global.trans_category_bill')) }}".split(",")) !== -1) {
                     $('#bill_series_no').parent().removeClass('d-none')
                     $('#bill_series_no').attr('required', 'true')
+                } else {
+                    $('#bill_series_no').removeAttr('required')
+                    $('#bill_series_no').parent().addClass('d-none')
+                }
 
-                    $('#bill_statement_no').removeAttr('required')
-                    $('#bill_statement_no').parent().addClass('d-none')
-                } else if ($(this).val() == "{{ config('global.trans_category')[1] }}"
+                if ($(this).val() == "{{ config('global.trans_category')[1] }}"
                     || $(this).val() == "{{ config('global.trans_category')[2] }}"
                 ) {
                     $('#bill_statement_no').parent().removeClass('d-none')
                     $('#bill_statement_no').removeAttr('required')
-
-                    $('#bill_series_no').removeAttr('required')
-                    $('#bill_series_no').parent().addClass('d-none')
                 } else {
                     $('#bill_statement_no').removeAttr('required')
                     $('#bill_statement_no').parent().addClass('d-none')
-
-                    $('#bill_series_no').removeAttr('required')
-                    $('#bill_series_no').parent().addClass('d-none')
                 }
             })
 

@@ -40,6 +40,8 @@
                                 {{ config('global.trans_category_label')[8] }}
                             @elseif ($transaction->is_aec_payment)    
                                 {{ config('global.trans_category_label')[9] }}
+                            @elseif ($transaction->is_aff_advances)    
+                                {{ config('global.trans_category_label')[10] }}
                             @else
                                 {{ config('global.trans_category_label')[0] }}    
                             @endif
@@ -434,6 +436,9 @@
                                                         @if (in_array(config('global.trans_category')[9], explode(',', $company->categories)))   
                                                             <option value="{{ config('global.trans_category')[9] }}" {{ $transaction->is_aec_payment == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[9] }}</option>
                                                         @endif
+                                                        @if (in_array(config('global.trans_category')[10], explode(',', $company->categories)))   
+                                                            <option value="{{ config('global.trans_category')[10] }}" {{ $transaction->is_aff_advances == 1 ? 'selected' : '' }}>{{ config('global.trans_category_label')[10] }}</option>
+                                                        @endif
                                                     </select>
                                                 </form>
                                             </td>
@@ -526,16 +531,6 @@
                                     </tr>
                                     <tr>
                                         <td class="font-weight-bold text-gray">Cost Control No.</td>
-                                        {{-- <td class="font-weight-bold">{{ $transaction->cost_type_id
-                                            ? $transaction->project->company->qb_code
-                                                .'.'
-                                                .$transaction->project->company->qb_no.$transaction->cost_type->control_no
-                                                .'.'
-                                                .sprintf("%03d", $transaction->cost_seq)
-                                                .'.'
-                                                .config('global.cost_control_v')
-                                            : '-' }}
-                                        </td> --}}
                                         <td class="font-weight-bold">{{ $transaction->cost_control_no }}</td>
                                     </tr>
                                     <tr>

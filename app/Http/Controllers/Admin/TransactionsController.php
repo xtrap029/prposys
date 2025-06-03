@@ -517,17 +517,16 @@ class TransactionsController extends Controller {
 
             $company = CompanyProject::where('id', $request->project_id)->first()->company;
             if (in_array($trans_category, config('global.trans_category_bill'))) {
-
                 $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
+            }
 
-                if ($trans_type == 'pr' && $company->auto_gen_po) {
-                    $new_transaction = $request->validate([
-                        'spv_project_id' => ['required', 'exists:company_projects,id'],
-                    ]);
+            if (in_array($trans_category, config('global.trans_category_payee')) && $trans_type == 'pr' && $company->auto_gen_po) {
+                $new_transaction = $request->validate([
+                    'spv_project_id' => ['required', 'exists:company_projects,id'],
+                ]);
 
-                    $new_transaction['project_id'] = $new_transaction['spv_project_id'];
-                    unset($new_transaction['spv_project_id']);
-                }
+                $new_transaction['project_id'] = $new_transaction['spv_project_id'];
+                unset($new_transaction['spv_project_id']);
             }
             
             $data = $request->validate($validation);
@@ -545,7 +544,7 @@ class TransactionsController extends Controller {
 
             // unset payee name
             $autogen_payee = null;
-            if (in_array($trans_category, config('global.trans_category_bill'))) {
+            if (in_array($trans_category, config('global.trans_category_payee')) && $trans_type == 'pr' && $company->auto_gen_po) {
                 $autogen_payee = $data['vendor_id'];
                 unset($data['vendor_id']);
             }
@@ -560,6 +559,7 @@ class TransactionsController extends Controller {
             $data['is_tdsa_payment'] = 0;
             $data['is_aec_bill'] = 0;
             $data['is_aec_payment'] = 0;
+            $data['is_aff_advances'] = 0;
 
             switch ($data['trans_category']) {
                 case config('global.trans_category')[1]:
@@ -588,6 +588,9 @@ class TransactionsController extends Controller {
                     break;
                 case config('global.trans_category')[9]:
                     $data['is_aec_payment'] = 1;
+                    break;
+                case config('global.trans_category')[10]:
+                    $data['is_aff_advances'] = 1;
                     break;
                 default:
                     break;
@@ -618,6 +621,7 @@ class TransactionsController extends Controller {
                 }
             }
         }
+
 
         // generate transaction code
         $latest_trans = Transaction::where('trans_year', $request->year)
@@ -669,9 +673,10 @@ class TransactionsController extends Controller {
             ]);
         }
 
-        if ($trans_type == 'pr' && $company->auto_gen_po && ($transaction->is_tdsa_bill || $transaction->is_aec_bill)) {
+        if ($trans_type == 'pr' && $company->auto_gen_po && ($transaction->is_tdsa_bill || $transaction->is_aec_bill || $transaction->is_aff_advances)) {
             $new_transaction['is_tdsa_payment'] = $transaction->is_tdsa_bill;
             $new_transaction['is_aec_payment'] = $transaction->is_aec_bill;
+            $new_transaction['is_aff_advances'] = $transaction->is_aff_advances;
             $new_transaction['trans_type'] = "po";
             $new_transaction['trans_year'] = $transaction->trans_year;
             $new_transaction['currency'] = $transaction->currency;
@@ -760,6 +765,7 @@ class TransactionsController extends Controller {
         $new_trans->is_tdsa_payment = $transaction->is_tdsa_payment;
         $new_trans->is_aec_bill = $transaction->is_aec_bill;
         $new_trans->is_aec_payment = $transaction->is_aec_payment;
+        $new_trans->is_aff_advances = $transaction->is_aff_advances;
 
         if ($transaction->soa) {
             $new_trans->soa = substr(md5(mt_rand()), 0, 7).'_'.$transaction->soa;
@@ -856,8 +862,11 @@ class TransactionsController extends Controller {
 
         $trans_category = $request->trans_category;
 
-        if (in_array($trans_category, config('global.trans_category_bill'))) {
+        if (in_array($trans_category, config('global.trans_category_payee')) && $transaction->trans_type == 'pr') {
             $validation['vendor_id'] = [];
+        }
+
+        if (in_array($trans_category, config('global.trans_category_bill'))) {
             $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
         }
         
@@ -878,7 +887,7 @@ class TransactionsController extends Controller {
             $data['bill_series_no'] = '';
         }
 
-        if (in_array($trans_category, config('global.trans_category_bill'))) {
+        if (in_array($trans_category, config('global.trans_category_payee')) && $transaction->trans_type == 'pr') {
             unset($data['vendor_id']);
         }
 
@@ -939,7 +948,7 @@ class TransactionsController extends Controller {
         $data['is_tdsa_payment'] = 0;
         $data['is_aec_bill'] = 0;
         $data['is_aec_payment'] = 0;
-
+        $data['is_aff_advances'] = 0;
         switch ($data['trans_category']) {
             case config('global.trans_category')[1]:
                 $data['is_deposit'] = 1;
@@ -968,13 +977,14 @@ class TransactionsController extends Controller {
             case config('global.trans_category')[9]:
                 $data['is_aec_payment'] = 1;
                 break;
+            case config('global.trans_category')[10]:
+                $data['is_aff_advances'] = 1;
+                break;
             default:
                 break;
         }
 
         unset($data['trans_category']);
-
-        // $data['is_deposit'] = $request->has('is_deposit') ?: '0';
 
         // if not pr, not admin, amount does exceed limit
         $trans_company = CompanyProject::where('id', $data['project_id'])->first()->company_id;
@@ -993,7 +1003,6 @@ class TransactionsController extends Controller {
             $data['edit_count'] = $transaction->edit_count + 1;
         }
 
-        // $data['status_id'] = 2;
         $data['updated_id'] = auth()->id();
 
         $transaction->update($data);
@@ -1049,7 +1058,7 @@ class TransactionsController extends Controller {
         }
 
         $autogenerated_transaction = null;
-        if ($transaction->is_tdsa_bill || $transaction->is_aec_bill) {
+        if ($transaction->is_tdsa_bill || $transaction->is_aec_bill || ($transaction->trans_type == 'pr' && $transaction->is_aff_advances)) {
             $autogenerated_transaction = Transaction::where('src_transaction_id', $transaction->id)->first();
         }
 
