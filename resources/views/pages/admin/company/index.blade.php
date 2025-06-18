@@ -66,9 +66,14 @@
                         <tr>
                             <td class="border-0"></td>
                             <td class="align-middle text-nowrap pt-0 border-0">
+                                <?php $company_count = 0; ?>
                                 @foreach (config('global.trans_category') as $key => $category)
                                     @if (in_array($category, explode(',', $item->categories)))
-                                        <span class="badge badge-pill py-1 px-2 mb-3 small bg-gray">{{ config('global.trans_category_label')[$key] }}</span>
+                                        <?php $company_count++; ?>
+                                        <span class="badge badge-pill py-1 px-2 mb-1 small bg-gray">{{ config('global.trans_category_label')[$key] }}</span>
+                                        @if ($company_count % 6 == 0)
+                                            <br>
+                                        @endif
                                     @endif
                                 @endforeach
                             </td>
