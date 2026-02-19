@@ -31,18 +31,20 @@ use \DB;
 use \Storage;
 use Carbon\Carbon;
 
-class TransactionsController extends Controller {
+class TransactionsController extends Controller
+{
 
-    public function index($trans_page, $trans_company = '') {
+    public function index($trans_page, $trans_company = '')
+    {
         switch ($trans_page) {
             case 'prpo':
                 $page_label_index = "Payment Release / Purchase Order";
                 $trans_types = ['pr', 'po'];
-            break;  
+                break;
             case 'pc':
                 $page_label_index = "Petty Cash";
                 $trans_types = ['pc'];
-                break;            
+                break;
             default:
                 abort(404);
                 break;
@@ -56,7 +58,7 @@ class TransactionsController extends Controller {
         $companies = Company::orderBy('name', 'asc')->get();
         $company = Company::where('id', $trans_company)->first();
         $projects = CompanyProject::where('company_id', $trans_company)->get();
-        
+
         $users = User::where('ua_level_id', '!=', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
         $users = $users->reject(function ($user) use ($trans_company) {
             return !in_array($trans_company, explode(',', $user->companies));
@@ -75,21 +77,22 @@ class TransactionsController extends Controller {
         if (UAHelper::get()['trans_view'] == config('global.ua_own')) {
             $transactions = $transactions->where(static function ($query) use ($user_id) {
                 $query->where('requested_id', $user_id)
-                ->orWhere('owner_id',  $user_id);
+                    ->orWhere('owner_id',  $user_id);
             });
         }
 
         if ($user_logged->is_external) {
             $transactions = $transactions->where(static function ($query) use ($user_id) {
                 $query->where('is_confidential', 0)
-                ->orWhere(static function ($query2) use ($user_id) {
-                    $query2->where('is_confidential', 1)
-                    ->where('owner_id',  $user_id);
-                });
+                    ->orWhere(static function ($query2) use ($user_id) {
+                        $query2->where('is_confidential', 1)
+                            ->where('owner_id',  $user_id);
+                    });
             });
         }
 
-        if (!empty($_GET['s'])
+        if (
+            !empty($_GET['s'])
             || !empty($_GET['is_confidential'])
             || (isset($_GET['is_confidential']) && $_GET['is_confidential'] != "")
             || !empty($_GET['type'])
@@ -101,55 +104,56 @@ class TransactionsController extends Controller {
             || !empty($_GET['due_from'])
             || !empty($_GET['due_to'])
             || !empty($_GET['amount'])
-            || !empty($_GET['bal'])) {
-            
+            || !empty($_GET['bal'])
+        ) {
+
             if ($_GET['type'] != "") {
                 $type = $_GET['type'];
                 $trans_types = [$type];
             }
-            
+
             $key = $_GET['s'];
-            
+
             $transactions = $transactions->whereIn('trans_type', $trans_types)
-                                    ->whereIn('status_id', config('global.status'))                                    
-                                    ->whereDoesntHave('project', function($query) use($trans_company) {
-                                        $query->where('company_id', '!=', $trans_company);
-                                    })                            
-                                    ->where(static function ($query) use ($key) {
-                                        $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$key."%")
-                                            ->orWhereHas('particulars', function($query) use($key) {
-                                                $query->where('name', 'like', "%{$key}%");
-                                            })
-                                            ->orWhere('particulars_custom', 'like', "%{$key}%")
-                                            ->orWhere('cost_control_no', 'like', "%{$key}%")
-                                            ->orWhere('bill_statement_no', 'like', "%{$key}%")
-                                            ->orWhere('purpose', 'like', "%{$key}%")
-                                            ->orWhere('payee', 'like', "%{$key}%")
-                                            ->orWhereHas('coatagging', function($query) use($key) {
-                                                $query->where('name', 'like', "%{$key}%");
-                                            })
-                                            ->orWhereHas('classtype', function($query) use($key) {
-                                                $query->where('code', 'like', "%{$key}%");
-                                            })
-                                            ->orWhere('expense_type_description', 'like', "%{$key}%")
-                                            ->orWhereHas('expensetype', function($query) use($key) {
-                                                $query->where('name', 'like', "%{$key}%");
-                                            })
-                                            ->orWhereHas('vattype', function($query) use($key) {
-                                                $query->where('name', 'like', "%{$key}%");
-                                            })
-                                            ->orWhereHas('vattype', function($query) use($key) {
-                                                $query->where('code', 'like', "%{$key}%");
-                                            })
-                                            ->orWhereHas('vendor', function($query) use($key) {
-                                                $query->where('name', 'like', "%{$key}%");
-                                            })
-                                            ->orWhere('control_no', 'like', "%{$key}%")
-                                            ->orWhere('control_type', 'like', "%{$key}%")
-                                            ->orWhere('cancellation_reason', 'like', "%{$key}%")
-                                            ->orWhere('cancellation_number', 'like', "%{$key}%");
-                                    });
-                                    
+                ->whereIn('status_id', config('global.status'))
+                ->whereDoesntHave('project', function ($query) use ($trans_company) {
+                    $query->where('company_id', '!=', $trans_company);
+                })
+                ->where(static function ($query) use ($key) {
+                    $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%" . $key . "%")
+                        ->orWhereHas('particulars', function ($query) use ($key) {
+                            $query->where('name', 'like', "%{$key}%");
+                        })
+                        ->orWhere('particulars_custom', 'like', "%{$key}%")
+                        ->orWhere('cost_control_no', 'like', "%{$key}%")
+                        ->orWhere('bill_statement_no', 'like', "%{$key}%")
+                        ->orWhere('purpose', 'like', "%{$key}%")
+                        ->orWhere('payee', 'like', "%{$key}%")
+                        ->orWhereHas('coatagging', function ($query) use ($key) {
+                            $query->where('name', 'like', "%{$key}%");
+                        })
+                        ->orWhereHas('classtype', function ($query) use ($key) {
+                            $query->where('code', 'like', "%{$key}%");
+                        })
+                        ->orWhere('expense_type_description', 'like', "%{$key}%")
+                        ->orWhereHas('expensetype', function ($query) use ($key) {
+                            $query->where('name', 'like', "%{$key}%");
+                        })
+                        ->orWhereHas('vattype', function ($query) use ($key) {
+                            $query->where('name', 'like', "%{$key}%");
+                        })
+                        ->orWhereHas('vattype', function ($query) use ($key) {
+                            $query->where('code', 'like', "%{$key}%");
+                        })
+                        ->orWhereHas('vendor', function ($query) use ($key) {
+                            $query->where('name', 'like', "%{$key}%");
+                        })
+                        ->orWhere('control_no', 'like', "%{$key}%")
+                        ->orWhere('control_type', 'like', "%{$key}%")
+                        ->orWhere('cancellation_reason', 'like', "%{$key}%")
+                        ->orWhere('cancellation_number', 'like', "%{$key}%");
+                });
+
             if ($_GET['status'] != "") $transactions = $transactions->whereIn('status_id', explode(',', $_GET['status']));
             if ($_GET['user_req'] != "") $transactions = $transactions->where('requested_id', $_GET['user_req']);
             if ($_GET['user_prep'] != "") $transactions = $transactions->where('owner_id', $_GET['user_prep']);
@@ -176,22 +180,23 @@ class TransactionsController extends Controller {
                     $transactions = $transactions->where($_GET['category'], 1);
                 }
             }
-            
+
             if ($_GET['bal'] == "0" && $_GET['bal'] != "") {
-                $transactions = $transactions->whereHas('liquidation', function($query){
+                $transactions = $transactions->whereHas('liquidation', function ($query) {
                     $query->havingRaw('sum(amount) = transactions.amount_issued');
                 });
             } else if ($_GET['bal'] == "1") {
-                $transactions = $transactions->whereHas('liquidation', function($query){
+                $transactions = $transactions->whereHas('liquidation', function ($query) {
                     $query->havingRaw('sum(amount) != transactions.amount_issued AND (sum(amount) - transactions.amount_issued) > 0');
                 });
             } else if ($_GET['bal'] == "-1") {
-                $transactions = $transactions->whereHas('liquidation', function($query){
+                $transactions = $transactions->whereHas('liquidation', function ($query) {
                     $query->havingRaw('sum(amount) != transactions.amount_issued AND (sum(amount) - transactions.amount_issued) < 0');
                 });
             }
 
-            $transactions = $transactions->orderBy('id', 'desc')->paginate(10);
+            // $transactions = $transactions->orderBy('id', 'desc')->paginate(10);
+            $transactions = $transactions->orderBy('trans_year', 'desc')->orderBy('trans_seq', 'desc')->orderBy('id', 'desc')->paginate(10);
 
             $transactions->appends(['s' => $_GET['s']]);
             $transactions->appends(['type' => $_GET['type']]);
@@ -207,10 +212,10 @@ class TransactionsController extends Controller {
             $transactions->appends(['is_confidential' => $_GET['is_confidential']]);
         } else {
             $transactions = $transactions->whereIn('trans_type', $trans_types)
-                                    ->whereIn('status_id', config('global.status'))
-                                    ->whereHas('project', function($query) use($trans_company) {
-                                        $query->where('company_id', $trans_company);
-                                    })->orderBy('id', 'desc')->paginate(10);
+                ->whereIn('status_id', config('global.status'))
+                ->whereHas('project', function ($query) use ($trans_company) {
+                    $query->where('company_id', $trans_company);
+                })->orderBy('id', 'desc')->paginate(10);
         }
 
         foreach ($transactions as $key => $value) {
@@ -221,15 +226,19 @@ class TransactionsController extends Controller {
             }
 
             $transactions[$key]->url_view = "transaction";
-            if (in_array($value->status_id, config('global.page_form'))
-                || (in_array($value->status_id, config('global.cancelled')) && in_array($value->status_prev_id, config('global.page_form')))) {
+            if (
+                in_array($value->status_id, config('global.page_form'))
+                || (in_array($value->status_id, config('global.cancelled')) && in_array($value->status_prev_id, config('global.page_form')))
+            ) {
                 $transactions[$key]->url_view .= "-form";
-            } else if (in_array($value->status_id, config('global.page_liquidation'))
-                || (in_array($value->status_id, config('global.cancelled')) && in_array($value->status_prev_id, config('global.page_liquidation')))) {
+            } else if (
+                in_array($value->status_id, config('global.page_liquidation'))
+                || (in_array($value->status_id, config('global.cancelled')) && in_array($value->status_prev_id, config('global.page_liquidation')))
+            ) {
                 $transactions[$key]->url_view .= "-liquidation";
             }
         }
-        
+
         return view('pages.admin.transaction.index')->with([
             'trans_page' => $trans_page,
             'trans_types' => $trans_types,
@@ -245,25 +254,26 @@ class TransactionsController extends Controller {
         ]);
     }
 
-    public function api_search(Request $request) {
+    public function api_search(Request $request)
+    {
 
         switch ($request->trans_page) {
             case 'prpo':
                 $trans_types = ['pr', 'po'];
-            break;  
+                break;
             case 'pc':
                 $trans_types = ['pc'];
-                break;            
+                break;
             default:
                 abort(404);
                 break;
         }
-            
+
         if ($request->type != "") {
             $type = $request->type;
             $trans_types = [$type];
         }
-        
+
         $key = $request->s;
         $trans_company = $request->trans_company;
 
@@ -271,11 +281,11 @@ class TransactionsController extends Controller {
 
         $user_logged = User::where('id', auth()->id())->first();
         $user_id = $user_logged->id;
-        
+
         if (UAHelper::get()['trans_view'] == config('global.ua_own')) {
             $transactions = $transactions->where(static function ($query) use ($user_id) {
                 $query->where('requested_id', $user_id)
-                ->orWhere('owner_id',  $user_id);
+                    ->orWhere('owner_id',  $user_id);
             });
         } else if (UAHelper::get()['trans_view'] == config('global.ua_none')) {
             $transactions = $transactions->where('id', 0);
@@ -284,53 +294,53 @@ class TransactionsController extends Controller {
         if ($user_logged->is_external) {
             $transactions = $transactions->where(static function ($query) use ($user_id) {
                 $query->where('is_confidential', 0)
-                ->orWhere(static function ($query2) use ($user_id) {
-                    $query2->where('is_confidential', 1)
-                    ->where('owner_id',  $user_id);
-                });
+                    ->orWhere(static function ($query2) use ($user_id) {
+                        $query2->where('is_confidential', 1)
+                            ->where('owner_id',  $user_id);
+                    });
             });
         }
 
         $transactions = $transactions->whereIn('trans_type', $trans_types)
-                                ->whereIn('status_id', config('global.status'))
-                                ->whereDoesntHave('project', function($query) use($trans_company) {
-                                    $query->where('company_id', '!=', $trans_company);
-                                }) 
-                                ->where(static function ($query) use ($key) {
-                                    $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$key."%")
-                                        ->orWhereHas('particulars', function($query) use($key) {
-                                            $query->where('name', 'like', "%{$key}%");
-                                        })
-                                        ->orWhere('particulars_custom', 'like', "%{$key}%")
-                                        ->orWhere('cost_control_no', 'like', "%{$key}%")
-                                        ->orWhere('bill_statement_no', 'like', "%{$key}%")
-                                        ->orWhere('purpose', 'like', "%{$key}%")
-                                        ->orWhere('payee', 'like', "%{$key}%")
-                                        ->orWhereHas('coatagging', function($query) use($key) {
-                                            $query->where('name', 'like', "%{$key}%");
-                                        })
-                                        ->orWhereHas('classtype', function($query) use($key) {
-                                            $query->where('code', 'like', "%{$key}%");
-                                        })
-                                        ->orWhere('expense_type_description', 'like', "%{$key}%")
-                                        ->orWhereHas('expensetype', function($query) use($key) {
-                                            $query->where('name', 'like', "%{$key}%");
-                                        })
-                                        ->orWhereHas('vattype', function($query) use($key) {
-                                            $query->where('name', 'like', "%{$key}%");
-                                        })
-                                        ->orWhereHas('vattype', function($query) use($key) {
-                                            $query->where('code', 'like', "%{$key}%");
-                                        })
-                                        ->orWhereHas('vendor', function($query) use($key) {
-                                            $query->where('name', 'like', "%{$key}%");
-                                        })
-                                        ->orWhere('control_no', 'like', "%{$key}%")
-                                        ->orWhere('control_type', 'like', "%{$key}%")
-                                        ->orWhere('cancellation_reason', 'like', "%{$key}%")
-                                        ->orWhere('cancellation_number', 'like', "%{$key}%");
-                                });
-                                
+            ->whereIn('status_id', config('global.status'))
+            ->whereDoesntHave('project', function ($query) use ($trans_company) {
+                $query->where('company_id', '!=', $trans_company);
+            })
+            ->where(static function ($query) use ($key) {
+                $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%" . $key . "%")
+                    ->orWhereHas('particulars', function ($query) use ($key) {
+                        $query->where('name', 'like', "%{$key}%");
+                    })
+                    ->orWhere('particulars_custom', 'like', "%{$key}%")
+                    ->orWhere('cost_control_no', 'like', "%{$key}%")
+                    ->orWhere('bill_statement_no', 'like', "%{$key}%")
+                    ->orWhere('purpose', 'like', "%{$key}%")
+                    ->orWhere('payee', 'like', "%{$key}%")
+                    ->orWhereHas('coatagging', function ($query) use ($key) {
+                        $query->where('name', 'like', "%{$key}%");
+                    })
+                    ->orWhereHas('classtype', function ($query) use ($key) {
+                        $query->where('code', 'like', "%{$key}%");
+                    })
+                    ->orWhere('expense_type_description', 'like', "%{$key}%")
+                    ->orWhereHas('expensetype', function ($query) use ($key) {
+                        $query->where('name', 'like', "%{$key}%");
+                    })
+                    ->orWhereHas('vattype', function ($query) use ($key) {
+                        $query->where('name', 'like', "%{$key}%");
+                    })
+                    ->orWhereHas('vattype', function ($query) use ($key) {
+                        $query->where('code', 'like', "%{$key}%");
+                    })
+                    ->orWhereHas('vendor', function ($query) use ($key) {
+                        $query->where('name', 'like', "%{$key}%");
+                    })
+                    ->orWhere('control_no', 'like', "%{$key}%")
+                    ->orWhere('control_type', 'like', "%{$key}%")
+                    ->orWhere('cancellation_reason', 'like', "%{$key}%")
+                    ->orWhere('cancellation_number', 'like', "%{$key}%");
+            });
+
         if ($request->status != "") $transactions = $transactions->whereIn('status_id', explode(',', $request->status));
         if ($request->user_req != "") $transactions = $transactions->where('requested_id', $request->user_req);
         if ($request->user_prep != "") $transactions = $transactions->where('owner_id', $request->user_prep);
@@ -359,15 +369,15 @@ class TransactionsController extends Controller {
         }
 
         if ($request->bal == "0" && $request->bal != "") {
-            $transactions = $transactions->whereHas('liquidation', function($query){
+            $transactions = $transactions->whereHas('liquidation', function ($query) {
                 $query->havingRaw('sum(amount) = transactions.amount_issued');
             });
         } else if ($request->bal == "1") {
-            $transactions = $transactions->whereHas('liquidation', function($query){
+            $transactions = $transactions->whereHas('liquidation', function ($query) {
                 $query->havingRaw('sum(amount) != transactions.amount_issued AND (sum(amount) - transactions.amount_issued) > 0');
             });
         } else if ($request->bal == "-1") {
-            $transactions = $transactions->whereHas('liquidation', function($query){
+            $transactions = $transactions->whereHas('liquidation', function ($query) {
                 $query->havingRaw('sum(amount) != transactions.amount_issued AND (sum(amount) - transactions.amount_issued) < 0');
             });
         }
@@ -402,11 +412,15 @@ class TransactionsController extends Controller {
             $transactions[$key]->is_confidential = $confidential;
 
             $transactions[$key]->url_view = "transaction";
-            if (in_array($value->status_id, config('global.page_form'))
-                || (in_array($value->status_id, config('global.cancelled')) && in_array($value->status_prev_id, config('global.page_form')))) {
+            if (
+                in_array($value->status_id, config('global.page_form'))
+                || (in_array($value->status_id, config('global.cancelled')) && in_array($value->status_prev_id, config('global.page_form')))
+            ) {
                 $transactions[$key]->url_view .= "-form";
-            } else if (in_array($value->status_id, config('global.page_liquidation'))
-                || (in_array($value->status_id, config('global.cancelled')) && in_array($value->status_prev_id, config('global.page_liquidation')))) {
+            } else if (
+                in_array($value->status_id, config('global.page_liquidation'))
+                || (in_array($value->status_id, config('global.cancelled')) && in_array($value->status_prev_id, config('global.page_liquidation')))
+            ) {
                 $transactions[$key]->url_view .= "-liquidation";
             }
         }
@@ -414,17 +428,18 @@ class TransactionsController extends Controller {
         return $transactions->toJson();
     }
 
-    public function create($trans_type, $trans_company) {
+    public function create($trans_type, $trans_company)
+    {
         if (!in_array($trans_company, explode(',', User::where('id', auth()->id())->first()->companies))) return abort(401);
 
         switch ($trans_type) {
             case 'pr':
             case 'po':
                 $trans_page = "prpo";
-                break;  
+                break;
             case 'pc':
                 $trans_page = "pc";
-                break;            
+                break;
             default:
                 abort(404);
                 break;
@@ -485,14 +500,15 @@ class TransactionsController extends Controller {
         ]);
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         if (in_array($request->trans_type, ['pr', 'po', 'pc'])) {
             $trans_type = $request->trans_type;
             $trans_category = $request->trans_category;
 
             $validation = [
                 'trans_type' => ['required', 'in:pr,po,pc'],
-                'year' => ['required', 'integer', 'min:'.date('Y')-5, 'max:'.date('Y')],
+                'year' => ['required', 'integer', 'min:' . date('Y') - 5, 'max:' . date('Y')],
                 'currency' => ['required'],
                 'amount' => ['required', 'min:0'],
                 'purpose_option_id' => ['required', 'exists:purpose_options,id'],
@@ -505,8 +521,8 @@ class TransactionsController extends Controller {
                 'bill_statement_no' => [],
                 'due_at' => ['required', 'date'],
                 'requested_id' => ['required', 'exists:users,id'],
-                'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
-                'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_T_FILE')->select('value')->first()->value],
+                'trans_category' => ['required', 'in:' . implode(',', config('global.trans_category'))],
+                'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:' . Settings::where('type', 'MAX_T_FILE')->select('value')->first()->value],
                 'is_confidential' => ['required', 'between:0,1'],
                 'is_confidential_own' => ['required', 'between:0,1'],
             ];
@@ -528,14 +544,14 @@ class TransactionsController extends Controller {
                 $new_transaction['project_id'] = $new_transaction['spv_project_id'];
                 unset($new_transaction['spv_project_id']);
             }
-            
+
             $data = $request->validate($validation);
 
             if (!in_array($trans_category, [
                 config('global.trans_category')[1],
                 config('global.trans_category')[2],
             ])) {
-                $data['bill_statement_no'] = '';                
+                $data['bill_statement_no'] = '';
             }
 
             if (!in_array($trans_category, config('global.trans_category_bill'))) {
@@ -609,15 +625,15 @@ class TransactionsController extends Controller {
                 if ($trans_bal['amount'] < $data['amount']) {
                     $validator->errors()->add('amount', __('messages.exceed_amount_unliq'));
                 }
-                
+
                 if ($trans_bal['count'] < 1) {
                     $validator->errors()->add('particulars_id', __('messages.exceed_count_unliq'));
                 }
 
                 if ($validator->errors()->count() > 0) {
-                    return redirect('/transaction/create/'.$request->trans_type.'/'.$trans_company)
-                    ->withErrors($validator)
-                    ->withInput();
+                    return redirect('/transaction/create/' . $request->trans_type . '/' . $trans_company)
+                        ->withErrors($validator)
+                        ->withInput();
                 }
             }
         }
@@ -626,7 +642,7 @@ class TransactionsController extends Controller {
         // generate transaction code
         $latest_trans = Transaction::where('trans_year', $request->year)
             ->where('trans_type', $data['trans_type'])
-            ->whereHas('project', function($query) use($trans_company) {
+            ->whereHas('project', function ($query) use ($trans_company) {
                 $query->where('company_id', $trans_company);
             })
             ->orderBy('trans_seq', 'desc')->first();
@@ -634,7 +650,7 @@ class TransactionsController extends Controller {
         unset($data['year']);
 
         if ($latest_trans) {
-            $data['trans_seq'] = $latest_trans->trans_seq+1;
+            $data['trans_seq'] = $latest_trans->trans_seq + 1;
         } else {
             $data['trans_seq'] = 1;
         }
@@ -647,7 +663,7 @@ class TransactionsController extends Controller {
         $transaction = Transaction::create($data);
 
         $data_attach = $request->validate([
-            'file.*' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_T_FILE')->select('value')->first()->value],
+            'file.*' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:' . Settings::where('type', 'MAX_T_FILE')->select('value')->first()->value],
             'attachment_description.*' => ['required']
         ]);
 
@@ -659,7 +675,7 @@ class TransactionsController extends Controller {
             foreach ($data_attach['attachment_description'] as $key => $value) {
                 $attr_file['description'] = $value;
                 $attr_file['file'] = basename($request->file('file')[$key]->store('public/attachments/soa'));
-                
+
                 TransactionsSoa::create($attr_file);
             }
         }
@@ -699,12 +715,12 @@ class TransactionsController extends Controller {
             $trans_company = CompanyProject::where('id', $new_transaction['project_id'])->first()->company_id;
             $latest_trans = Transaction::where('trans_year', $transaction->trans_year)
                 ->where('trans_type', $new_transaction['trans_type'])
-                ->whereHas('project', function($query) use($trans_company) {
+                ->whereHas('project', function ($query) use ($trans_company) {
                     $query->where('company_id', $trans_company);
                 })
                 ->orderBy('trans_seq', 'desc')->first();
             if ($latest_trans) {
-                $new_transaction['trans_seq'] = $latest_trans->trans_seq+1;
+                $new_transaction['trans_seq'] = $latest_trans->trans_seq + 1;
             } else {
                 $new_transaction['trans_seq'] = 1;
             }
@@ -732,16 +748,17 @@ class TransactionsController extends Controller {
             }
         }
 
-        return redirect('/transaction/view/'.$transaction->id);
+        return redirect('/transaction/view/' . $transaction->id);
     }
 
-    public function duplicate(Transaction $transaction) {
+    public function duplicate(Transaction $transaction)
+    {
 
         if (
             (UAHelper::get()['trans_dup'] == config('global.ua_own') && auth()->id() != $transaction->owner_id && auth()->id() != $transaction->requested_id)
         ) {
             abort(404);
-        }            
+        }
 
         $new_trans = new Transaction;
         $new_trans->trans_type = $transaction->trans_type;
@@ -768,8 +785,8 @@ class TransactionsController extends Controller {
         $new_trans->is_aff_advances = $transaction->is_aff_advances;
 
         if ($transaction->soa) {
-            $new_trans->soa = substr(md5(mt_rand()), 0, 7).'_'.$transaction->soa;
-            Storage::disk('public')->copy('public/attachments/soa/'.$transaction->soa, 'public/attachments/soa/'.$new_trans->soa);
+            $new_trans->soa = substr(md5(mt_rand()), 0, 7) . '_' . $transaction->soa;
+            Storage::disk('public')->copy('public/attachments/soa/' . $transaction->soa, 'public/attachments/soa/' . $new_trans->soa);
         }
 
         $trans_company = CompanyProject::where('id', $transaction->project_id)->first()->company_id;
@@ -777,13 +794,13 @@ class TransactionsController extends Controller {
         // generate transaction code
         $latest_trans = Transaction::where('trans_year', now()->year)
             ->where('trans_type', $transaction->trans_type)
-            ->whereHas('project', function($query) use($trans_company) {
+            ->whereHas('project', function ($query) use ($trans_company) {
                 $query->where('company_id', $trans_company);
             })
             ->orderBy('trans_seq', 'desc')->first();
         $new_trans->trans_year = now()->year;
-        if($latest_trans) {
-            $new_trans->trans_seq = $latest_trans->trans_seq+1;
+        if ($latest_trans) {
+            $new_trans->trans_seq = $latest_trans->trans_seq + 1;
         } else {
             $new_trans->trans_seq = 1;
         }
@@ -793,12 +810,13 @@ class TransactionsController extends Controller {
         $new_trans->status_updated_at = now();
         $new_trans->status_prev_id = 1;
 
-        $new_trans->save(); 
+        $new_trans->save();
 
-        return redirect('/transaction/view/'.$new_trans->id)->with('success', 'Transaction'.__('messages.duplicate_success'));
+        return redirect('/transaction/view/' . $new_trans->id)->with('success', 'Transaction' . __('messages.duplicate_success'));
     }
 
-    public function edit(Transaction $transaction) {
+    public function edit(Transaction $transaction)
+    {
         if (!in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies))) return abort(401);
 
         if (!$this->check_can_edit($transaction->id)) {
@@ -809,10 +827,10 @@ class TransactionsController extends Controller {
             case 'pr':
             case 'po':
                 $trans_page = "prpo";
-                break;  
+                break;
             case 'pc':
                 $trans_page = "pc";
-                break;            
+                break;
             default:
                 abort(404);
                 break;
@@ -824,7 +842,7 @@ class TransactionsController extends Controller {
         $purpose_options = PurposeOption::orderBy('code', 'asc')->get();
         $class_types = ClassType::orderBy('code', 'asc')->get();
         $vendors = Vendor::orderBy('name', 'asc')->get();
-        
+
         return view('pages.admin.transaction.edit')->with([
             'transaction' => $transaction,
             'company' => $transaction->project->company,
@@ -837,7 +855,8 @@ class TransactionsController extends Controller {
         ]);
     }
 
-    public function update(Request $request, Transaction $transaction) {
+    public function update(Request $request, Transaction $transaction)
+    {
 
         // if can edit
         if (!$this->check_can_edit($transaction->id)) {
@@ -855,8 +874,8 @@ class TransactionsController extends Controller {
             'vendor_id' => ['required', 'exists:vendors,id'],
             'purpose' => ['required'],
             'project_id' => ['required', 'exists:company_projects,id'],
-            'trans_category' => ['required', 'in:'.implode(',', config('global.trans_category'))],
-            'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_T_FILE')->select('value')->first()->value],
+            'trans_category' => ['required', 'in:' . implode(',', config('global.trans_category'))],
+            'soa' => ['sometimes', 'mimes:jpeg,png,jpg,pdf', 'max:' . Settings::where('type', 'MAX_T_FILE')->select('value')->first()->value],
             'cost_control_no' => [],
         ];
 
@@ -869,7 +888,7 @@ class TransactionsController extends Controller {
         if (in_array($trans_category, config('global.trans_category_bill'))) {
             $validation['bill_series_no'] = ['required', 'integer', 'min:1'];
         }
-        
+
         if ($trans_category == config('global.trans_category')[2]) {
             $validation['bill_statement_no'] = ['required'];
         }
@@ -892,7 +911,7 @@ class TransactionsController extends Controller {
         }
 
         $attach_liq = $request->validate([
-            'file_old.*' => ['mimes:jpeg,png,jpg,pdf', 'max:'.Settings::where('type', 'MAX_T_FILE')->select('value')->first()->value],
+            'file_old.*' => ['mimes:jpeg,png,jpg,pdf', 'max:' . Settings::where('type', 'MAX_T_FILE')->select('value')->first()->value],
             'attachment_description_old.*' => ['required'],
             'attachment_description.*' => ['sometimes', 'required'],
             'attachment_id_old.*' => ['required']
@@ -908,13 +927,13 @@ class TransactionsController extends Controller {
                 // check if item is replaced
                 if (!empty($request->file('file_old')) && array_key_exists($key, $request->file('file_old'))) {
                     // item is replaced
-                    $transaction_attachment->file = basename($request->file('file_old')[$key]->store('public/attachments/soa'));        
+                    $transaction_attachment->file = basename($request->file('file_old')[$key]->store('public/attachments/soa'));
                     $transaction_attachment->updated_id = auth()->id();
                 }
 
                 // replace description
                 $transaction_attachment->description = $attach_liq['attachment_description_old'][$desc_key];
-                
+
                 // store changes
                 $transaction_attachment->save();
                 $desc_key++;
@@ -922,7 +941,7 @@ class TransactionsController extends Controller {
                 // the item is deleted
                 $transaction_attachment->delete();
             }
-        }        
+        }
 
         $trans_company = CompanyProject::where('id', $data['project_id'])->first()->company_id;
 
@@ -943,7 +962,7 @@ class TransactionsController extends Controller {
         $data['is_hr'] = 0;
         $data['is_reimbursement'] = 0;
         $data['is_bank'] = 0;
-        
+
         $data['is_tdsa_bill'] = 0;
         $data['is_tdsa_payment'] = 0;
         $data['is_aec_bill'] = 0;
@@ -988,17 +1007,19 @@ class TransactionsController extends Controller {
 
         // if not pr, not admin, amount does exceed limit
         $trans_company = CompanyProject::where('id', $data['project_id'])->first()->company_id;
-        
-        if ($transaction->trans_type == 'pr' 
-            && $transaction->requested->role_id != 1
-            && $data['amount'] > TransactionHelper::check_unliquidated_balance($transaction->requested_id, $trans_company)['amount'] + $transaction->amount) {
 
-            $validator = \Validator::make(request()->all(), []);    
+        if (
+            $transaction->trans_type == 'pr'
+            && $transaction->requested->role_id != 1
+            && $data['amount'] > TransactionHelper::check_unliquidated_balance($transaction->requested_id, $trans_company)['amount'] + $transaction->amount
+        ) {
+
+            $validator = \Validator::make(request()->all(), []);
             $validator->errors()->add('amount', __('messages.exceed_amount_unliq'));
 
-            return redirect('/transaction/edit/'.$transaction->id)->withErrors($validator);
+            return redirect('/transaction/edit/' . $transaction->id)->withErrors($validator);
         }
-        
+
         if (User::where('id', auth()->id())->first()->role_id != 1) {
             $data['edit_count'] = $transaction->edit_count + 1;
         }
@@ -1007,28 +1028,29 @@ class TransactionsController extends Controller {
 
         $transaction->update($data);
 
-        return redirect('/transaction/view/'.$transaction->id);
+        return redirect('/transaction/view/' . $transaction->id);
     }
 
-    public function show(Transaction $transaction) {
+    public function show(Transaction $transaction)
+    {
         if (
             (!in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies)))
             ||
             (UAHelper::get()['trans_view'] == config('global.ua_own') && $transaction->requested_id != auth()->id() && $transaction->owner_id != auth()->id())
-         ) return abort(401);
+        ) return abort(401);
 
-        if (in_array($transaction->status_id, config('global.page_form'))) return redirect('/transaction-form/view/'.$transaction->id);
-        if (in_array($transaction->status_id, config('global.page_liquidation'))) return redirect('/transaction-liquidation/view/'.$transaction->id);
-         
+        if (in_array($transaction->status_id, config('global.page_form'))) return redirect('/transaction-form/view/' . $transaction->id);
+        if (in_array($transaction->status_id, config('global.page_liquidation'))) return redirect('/transaction-liquidation/view/' . $transaction->id);
+
         $logs = Activity::where('subject_id', $transaction->id)
-                ->where('subject_type', 'App\Transaction')
-                ->orderBy('id', 'desc')->paginate(15)->onEachSide(1);
+            ->where('subject_type', 'App\Transaction')
+            ->orderBy('id', 'desc')->paginate(15)->onEachSide(1);
         $perms['can_edit'] = $this->check_can_edit($transaction->id);
         $perms['can_cancel'] = $this->check_can_cancel($transaction->id);
         $perms['can_reset'] = $this->check_can_reset($transaction->id);
-        $perms['can_manage'] = $this->check_can_manage($transaction->id);    
+        $perms['can_manage'] = $this->check_can_manage($transaction->id);
         $perms['can_create'] = app('App\Http\Controllers\Admin\TransactionsFormsController')->check_can_create(
-            $transaction->trans_type."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
+            $transaction->trans_type . "-" . $transaction->trans_year . "-" . sprintf('%05d', $transaction->trans_seq),
             $transaction->project->company_id
         );
 
@@ -1048,10 +1070,10 @@ class TransactionsController extends Controller {
             case 'pr':
             case 'po':
                 $trans_page = "prpo";
-                break;  
+                break;
             case 'pc':
                 $trans_page = "pc";
-                break;            
+                break;
             default:
                 abort(404);
                 break;
@@ -1075,7 +1097,8 @@ class TransactionsController extends Controller {
         ]);
     }
 
-    public function manage(Request $request, Transaction $transaction) {
+    public function manage(Request $request, Transaction $transaction)
+    {
         if ($this->check_can_manage($transaction->id)) {
 
             $data = $request->validate([
@@ -1083,17 +1106,18 @@ class TransactionsController extends Controller {
                 'owner_id' => ['required', 'exists:users,id'],
                 'currency' => ['required'],
                 'due_at' => ['required', 'date']
-            ]); 
+            ]);
 
             $data['updated_id'] = auth()->id();
             $transaction->update($data);
-            return back()->with('success', 'Transaction'.__('messages.reassign_success'));
+            return back()->with('success', 'Transaction' . __('messages.reassign_success'));
         } else {
             return back()->with('error', __('messages.cant_edit'));
         }
     }
-    
-    public function note(Request $request, Transaction $transaction) {
+
+    public function note(Request $request, Transaction $transaction)
+    {
         $validation = [
             'content' => ['required'],
         ];
@@ -1105,32 +1129,35 @@ class TransactionsController extends Controller {
 
         $note = TransactionsNote::create($data);
 
-        return back()->with('success', 'Note'.__('messages.create_success'));
+        return back()->with('success', 'Note' . __('messages.create_success'));
     }
 
-    public function edit_note(Request $request, Transaction $transaction, TransactionsNote $transactionNote) {
+    public function edit_note(Request $request, Transaction $transaction, TransactionsNote $transactionNote)
+    {
         if ($transactionNote->user_id == auth()->id()) {
             $transactionNote->content = $request->note;
             $transactionNote->save();
 
-            return back()->with('success', 'Note'.__('messages.edit_success'));
+            return back()->with('success', 'Note' . __('messages.edit_success'));
         } else {
             return back()->with('error', __('messages.cant_edit'));
         }
     }
 
-    public function destroy_note(Transaction $transaction, TransactionsNote $transactionNote) {
+    public function destroy_note(Transaction $transaction, TransactionsNote $transactionNote)
+    {
         if ($transactionNote->user_id == auth()->id()) {
             $transactionNote->save();
             $transactionNote->delete();
 
-            return back()->with('success', 'Note'.__('messages.delete_success'));
+            return back()->with('success', 'Note' . __('messages.delete_success'));
         } else {
             return back()->with('error', __('messages.cant_delete'));
         }
     }
 
-    public function reset(Transaction $transaction) {
+    public function reset(Transaction $transaction)
+    {
         $user = User::where('id', auth()->id())->first();
 
         if (
@@ -1140,89 +1167,94 @@ class TransactionsController extends Controller {
             return back()->with('error', __('messages.cant_edit'));
         } else {
             $transaction->update(['edit_count' => 0]);
-            return back()->with('success', 'Transaction'.__('messages.reset_success'));
+            return back()->with('success', 'Transaction' . __('messages.reset_success'));
         }
     }
-    
-    public function cancel(Request $request, Transaction $transaction) {
+
+    public function cancel(Request $request, Transaction $transaction)
+    {
         if ($this->check_can_cancel($transaction->id)) {
             $data = $request->validate([
                 'cancellation_reason' => ['required']
             ]);
-            
+
             $data['cancellation_number'] = rand(100000000, 999999999);
             $data['status_updated_at'] = now();
             $data['status_prev_id'] = $transaction->status_id;
             $data['status_id'] = 3;
             $data['updated_id'] = auth()->id();
             $transaction->update($data);
-            return back()->with('success', 'Transaction'.__('messages.cancel_success'));
+            return back()->with('success', 'Transaction' . __('messages.cancel_success'));
         } else {
             return back()->with('error', __('messages.cant_edit'));
         }
     }
 
-    public function update_company(Request $request) {
+    public function update_company(Request $request)
+    {
         if (UserHelper::switch_company($request->company_id, null, $request->density)) {
-            return redirect('/transaction/prpo/'.$request->company_id);
+            return redirect('/transaction/prpo/' . $request->company_id);
         } else {
             return back()->with('error', __('messages.invalid_command'));
         }
     }
 
-    public function toggle_confidential($id) {
+    public function toggle_confidential($id)
+    {
         $transaction = Transaction::where('id', $id)->first();
-        
+
         if (
             (UAHelper::get()['trans_toggle_conf'] == config('global.ua_own') && auth()->id() != $transaction->owner_id && $transaction->requested_id != auth()->id())
             || UAHelper::get()['trans_toggle_conf'] == config('global.ua_none')
         ) {
             return back()->with('error', __('messages.invalid_command'));
-        } else {   
+        } else {
             $is_confidential = $transaction->is_confidential;
             $transaction = Transaction::where('id', $id)->first();
             $transaction->is_confidential = $is_confidential == 1 ? 0 : 1;
             $transaction->save();
-            return back()->with('success', 'Transaction'.__('messages.edit_success'));
+            return back()->with('success', 'Transaction' . __('messages.edit_success'));
         }
     }
 
-    public function toggle_confidential_own($id) {
+    public function toggle_confidential_own($id)
+    {
         $transaction = Transaction::where('id', $id)->first();
-        
+
         if (
             (UAHelper::get()['trans_toggle_conf_own'] == config('global.ua_own') && auth()->id() != $transaction->owner_id && $transaction->requested_id != auth()->id())
             || UAHelper::get()['trans_toggle_conf_own'] == config('global.ua_none')
         ) {
             return back()->with('error', __('messages.invalid_command'));
-        } else {   
+        } else {
             $is_confidential_own = $transaction->is_confidential_own;
             $transaction = Transaction::where('id', $id)->first();
             $transaction->is_confidential_own = $is_confidential_own == 1 ? 0 : 1;
             $transaction->save();
-            return back()->with('success', 'Transaction'.__('messages.edit_success'));
+            return back()->with('success', 'Transaction' . __('messages.edit_success'));
         }
     }
 
-    public function report() {
+    public function report()
+    {
         switch ($_GET['type']) {
             case 'pr':
             case 'po':
                 $trans_page = "prpo";
-            break;  
+                break;
             case 'pc':
                 $trans_page = "pc";
-                break;            
+                break;
             default:
                 abort(404);
                 break;
         }
 
         $transactions = Transaction::where('trans_type', $_GET['type'])->whereIn('status_id', config('global.page_generated'));
-        
+
         if (!empty($_GET['company'])) {
             $req_company = $_GET['company'];
-            $transactions = $transactions->whereHas('project', function($query) use($req_company) {
+            $transactions = $transactions->whereHas('project', function ($query) use ($req_company) {
                 $query->where('company_id', $req_company);
             });
         }
@@ -1255,7 +1287,8 @@ class TransactionsController extends Controller {
         ]);
     }
 
-    public function print_cancelled(Transaction $transaction) {
+    public function print_cancelled(Transaction $transaction)
+    {
         if (!in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies))) return abort(401);
 
         return view('pages.admin.transaction.printcancelled')->with([
@@ -1264,7 +1297,8 @@ class TransactionsController extends Controller {
         ]);
     }
 
-    public function report_all() {
+    public function report_all()
+    {
         $trans_page = '';
         $status_sel = '';
         $trans_type = '';
@@ -1278,11 +1312,11 @@ class TransactionsController extends Controller {
         $trans_tax = '';
         $trans_category = '';
         $trans_req = '';
-        $trans_bal= '';
-        $trans_amount= '';
-        $trans_template= '';
+        $trans_bal = '';
+        $trans_amount = '';
+        $trans_template = '';
 
-        $trans_s= '';
+        $trans_s = '';
 
         $trans_prep = '';
         $trans_rel = '';
@@ -1311,53 +1345,57 @@ class TransactionsController extends Controller {
 
         $user_logged = User::where('id', auth()->id())->first();
         $user_id = $user_logged->id;
-        if (UAHelper::get()['trans_view'] == config('global.ua_own')
-            || UAHelper::get()['trans_report'] == config('global.ua_own')) {
+        if (
+            UAHelper::get()['trans_view'] == config('global.ua_own')
+            || UAHelper::get()['trans_report'] == config('global.ua_own')
+        ) {
             $transactions = $transactions->where(static function ($query) use ($user_id) {
                 $query->where('requested_id', $user_id)
-                ->orWhere('owner_id',  $user_id);
+                    ->orWhere('owner_id',  $user_id);
             });
-        } else if (UAHelper::get()['trans_view'] == config('global.ua_none')
-            || UAHelper::get()['trans_report'] == config('global.ua_none')) {
+        } else if (
+            UAHelper::get()['trans_view'] == config('global.ua_none')
+            || UAHelper::get()['trans_report'] == config('global.ua_none')
+        ) {
             $transactions = $transactions->where('id', 0);
         }
 
         if (!empty($_GET['s'])) {
             $trans_s = $_GET['s'];
             $transactions = $transactions->where(static function ($query) use ($trans_s) {
-                                        $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%".$trans_s."%")
-                                            ->orWhereHas('particulars', function($query) use($trans_s) {
-                                                $query->where('name', 'like', "%{$trans_s}%");
-                                            })
-                                            ->orWhere('particulars_custom', 'like', "%{$trans_s}%")
-                                            ->orWhere('purpose', 'like', "%{$trans_s}%")
-                                            ->orWhere('payee', 'like', "%{$trans_s}%")
-                                            ->orWhereHas('coatagging', function($query) use($trans_s) {
-                                                $query->where('name', 'like', "%{$trans_s}%");
-                                            })
-                                            ->orWhere('expense_type_description', 'like', "%{$trans_s}%")
-                                            ->orWhereHas('expensetype', function($query) use($trans_s) {
-                                                $query->where('name', 'like', "%{$trans_s}%");
-                                            })
-                                            ->orWhereHas('vattype', function($query) use($trans_s) {
-                                                $query->where('name', 'like', "%{$trans_s}%");
-                                            })
-                                            ->orWhereHas('vattype', function($query) use($trans_s) {
-                                                $query->where('code', 'like', "%{$trans_s}%");
-                                            })
-                                            ->orWhere('control_no', 'like', "%{$trans_s}%")
-                                            ->orWhere('control_type', 'like', "%{$trans_s}%")
-                                            ->orWhere('cancellation_reason', 'like', "%{$trans_s}%")
-                                            ->orWhere('cancellation_number', 'like', "%{$trans_s}%")
-                                            ->orWhere('amount_issued', 'like', str_replace(',', '', "%{$trans_s}%"))
-                                            ->orWhere('amount_issued', '=', str_replace(',', '', $trans_s))
-                                            ->orWhere('form_amount_payable', 'like', str_replace(',', '', "%{$trans_s}%"))
-                                            ->orWhere('form_amount_payable', '=', str_replace(',', '', $trans_s))
-                                            ->orWhere('amount', 'like', str_replace(',', '', "%{$trans_s}%"))
-                                            ->orWhere('amount', '=', str_replace(',', '', $trans_s));
-                                    });
+                $query->where(DB::raw("CONCAT(`trans_type`, '-', `trans_year`, '-', LPAD(`trans_seq`, 5, '0'))"), 'LIKE', "%" . $trans_s . "%")
+                    ->orWhereHas('particulars', function ($query) use ($trans_s) {
+                        $query->where('name', 'like', "%{$trans_s}%");
+                    })
+                    ->orWhere('particulars_custom', 'like', "%{$trans_s}%")
+                    ->orWhere('purpose', 'like', "%{$trans_s}%")
+                    ->orWhere('payee', 'like', "%{$trans_s}%")
+                    ->orWhereHas('coatagging', function ($query) use ($trans_s) {
+                        $query->where('name', 'like', "%{$trans_s}%");
+                    })
+                    ->orWhere('expense_type_description', 'like', "%{$trans_s}%")
+                    ->orWhereHas('expensetype', function ($query) use ($trans_s) {
+                        $query->where('name', 'like', "%{$trans_s}%");
+                    })
+                    ->orWhereHas('vattype', function ($query) use ($trans_s) {
+                        $query->where('name', 'like', "%{$trans_s}%");
+                    })
+                    ->orWhereHas('vattype', function ($query) use ($trans_s) {
+                        $query->where('code', 'like', "%{$trans_s}%");
+                    })
+                    ->orWhere('control_no', 'like', "%{$trans_s}%")
+                    ->orWhere('control_type', 'like', "%{$trans_s}%")
+                    ->orWhere('cancellation_reason', 'like', "%{$trans_s}%")
+                    ->orWhere('cancellation_number', 'like', "%{$trans_s}%")
+                    ->orWhere('amount_issued', 'like', str_replace(',', '', "%{$trans_s}%"))
+                    ->orWhere('amount_issued', '=', str_replace(',', '', $trans_s))
+                    ->orWhere('form_amount_payable', 'like', str_replace(',', '', "%{$trans_s}%"))
+                    ->orWhere('form_amount_payable', '=', str_replace(',', '', $trans_s))
+                    ->orWhere('amount', 'like', str_replace(',', '', "%{$trans_s}%"))
+                    ->orWhere('amount', '=', str_replace(',', '', $trans_s));
+            });
         }
-        
+
         $trans_type_csv = "All";
         if (!empty($_GET['type'])) {
             $trans_type = $_GET['type'];
@@ -1369,11 +1407,11 @@ class TransactionsController extends Controller {
                 case 'po':
                     $trans_page = "prpo";
                     $trans_type_csv = "Purchase Order";
-                break;  
+                    break;
                 case 'pc':
                     $trans_page = "pc";
                     $trans_type_csv = "Petty Cash";
-                    break;            
+                    break;
                 default:
                     abort(404);
                     break;
@@ -1383,18 +1421,18 @@ class TransactionsController extends Controller {
         }
         if (!empty($_GET['company'])) {
             $trans_company = $_GET['company'];
-            $transactions = $transactions->whereDoesntHave('project', function($query) use($trans_company) {
+            $transactions = $transactions->whereDoesntHave('project', function ($query) use ($trans_company) {
                 $query->where('company_id', '!=', $trans_company);
             });
         } else {
             $projects = CompanyProject::whereIn('company_id', explode(',', User::where('id', auth()->id())->first()->companies))->pluck('id')->toArray();
             $transactions = $transactions->whereIn('project_id', $projects);
-        }        
+        }
         if (!empty($_GET['status'])) {
             $transactions = $transactions->whereIn('status_id', $_GET['status']);
             // $status_sel = TransactionStatus::where('id', $_GET['status'])->first()->name;
             $trans_status = $_GET['status'];
-            
+
             if ($_GET['status'] != "") {
                 foreach ($_GET['status'] as $key => $value) {
                     $status_name[] = config('global.status_filter_reports')[array_search($value, array_column(config('global.status_filter_reports'), 1))][0];
@@ -1436,7 +1474,7 @@ class TransactionsController extends Controller {
         if (!empty($_GET['due_to'])) {
             $transactions = $transactions->whereDate('due_at', '<=', $_GET['due_to']);
             $trans_due_to = $_GET['due_to'];
-        }   
+        }
         if (!empty($_GET['depo_from'])) {
             $transactions = $transactions->whereDate('depo_date', '>=', $_GET['depo_from']);
             $trans_depo_from = $_GET['depo_from'];
@@ -1444,7 +1482,7 @@ class TransactionsController extends Controller {
         if (!empty($_GET['depo_to'])) {
             $transactions = $transactions->whereDate('depo_date', '<=', $_GET['depo_to']);
             $trans_depo_to = $_GET['depo_to'];
-        }  
+        }
         if (!empty($_GET['rel_from'])) {
             $transactions = $transactions->whereDate('released_at', '>=', $_GET['rel_from']);
             $trans_rel_from = $_GET['rel_from'];
@@ -1452,7 +1490,7 @@ class TransactionsController extends Controller {
         if (!empty($_GET['rel_to'])) {
             $transactions = $transactions->whereDate('released_at', '<=', $_GET['rel_to']);
             $trans_depo_type = $_GET['rel_to'];
-        }        
+        }
         if (!empty($_GET['series_year'])) {
             $transactions = $transactions->where('trans_year', $_GET['series_year']);
             $trans_year = $_GET['series_year'];
@@ -1523,15 +1561,15 @@ class TransactionsController extends Controller {
         }
         if (isset($_GET['bal'])) {
             if ($_GET['bal'] == "0" && $_GET['bal'] != "") {
-                $transactions = $transactions->whereHas('liquidation', function($query){
+                $transactions = $transactions->whereHas('liquidation', function ($query) {
                     $query->havingRaw('sum(amount) = transactions.amount_issued');
                 });
             } else if ($_GET['bal'] == "1") {
-                $transactions = $transactions->whereHas('liquidation', function($query){
+                $transactions = $transactions->whereHas('liquidation', function ($query) {
                     $query->havingRaw('sum(amount) != transactions.amount_issued AND (sum(amount) - transactions.amount_issued) > 0');
                 });
             } else if ($_GET['bal'] == "-1") {
-                $transactions = $transactions->whereHas('liquidation', function($query){
+                $transactions = $transactions->whereHas('liquidation', function ($query) {
                     $query->havingRaw('sum(amount) != transactions.amount_issued AND (sum(amount) - transactions.amount_issued) < 0');
                 });
             }
@@ -1553,8 +1591,8 @@ class TransactionsController extends Controller {
             // return ($config_confidential ? '-' : (number_format(($item->liquidation->sum('amount') ?: 0) - ($item->amount_issued ?: 0), 2, '.', ',')));
             // return ($config_confidential ? '-' : (($item->currency_2 ?: $item->currency).' '.number_format(($item->liquidation->sum('amount') ?: 0) - ($item->amount_issued ?: 0), 2, '.', ',')));
 
-            $transactions = $transactions->whereHas('liquidation', function($query){
-                $query->havingRaw('sum(amount) != transactions.amount_issued AND (sum(amount) - transactions.amount_issued) = '.$_GET['amt_bal']);
+            $transactions = $transactions->whereHas('liquidation', function ($query) {
+                $query->havingRaw('sum(amount) != transactions.amount_issued AND (sum(amount) - transactions.amount_issued) = ' . $_GET['amt_bal']);
             });
             $trans_amt_bal = $_GET['amt_bal'];
         }
@@ -1569,23 +1607,23 @@ class TransactionsController extends Controller {
 
         $column_codes = [];
         foreach ($report_template->templatecolumn as $key => $value) {
-             $column_codes[] = $value->column->name;
+            $column_codes[] = $value->column->name;
         }
 
         if ($user_logged->is_external) {
             $user_id = $user_logged->id;
             $transactions = $transactions->where(static function ($query) use ($user_id) {
                 $query->where('is_confidential', 0)
-                ->orWhere(static function ($query2) use ($user_id) {
-                    $query2->where('is_confidential', 1)
-                    ->where('owner_id',  $user_id);
-                });
+                    ->orWhere(static function ($query2) use ($user_id) {
+                        $query2->where('is_confidential', 1)
+                            ->where('owner_id',  $user_id);
+                    });
             });
         }
 
         $transactions = $transactions->get();
 
-        
+
         $users = User::where('ua_level_id', '!=', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
         $users_inactive = User::where('ua_level_id', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
         $particulars = Particulars::orderBy('type', 'asc')->orderBy('name', 'asc')->get();
@@ -1599,7 +1637,7 @@ class TransactionsController extends Controller {
         $class_types = ClassType::orderBy('name', 'asc')->get();
 
         if (isset($_GET['csv'])) {
-            $fileName = 'PRPOSYS-REPORT_'.Carbon::now().'.csv';
+            $fileName = 'PRPOSYS-REPORT_' . Carbon::now() . '.csv';
             $headers = array(
                 "Content-type"        => "text/csv",
                 "Content-Disposition" => "attachment;   filename=$fileName",
@@ -1617,27 +1655,28 @@ class TransactionsController extends Controller {
                 $trans_from != '' ? $trans_from : '-',
                 $trans_to != '' ? $trans_to : '-',
                 User::where('id', auth()->id())->first()->name,
-                Carbon::now());
+                Carbon::now()
+            );
             // fputcsv($file, $columns);
             $columns4 = array('');
             // fputcsv($file, $columns);
-            
+
             $columns = [];
             foreach ($report_template->templatecolumn as $key => $value) {
                 $columns[] = $value->label;
             }
-            
+
             $temp_column = $report_template->templatecolumn;
-            $callback = function() use($transactions, $columns, $columns2, $columns3, $columns4, $temp_column) {
+            $callback = function () use ($transactions, $columns, $columns2, $columns3, $columns4, $temp_column) {
                 $file = fopen('php://output', 'w');
-                
+
                 fputcsv($file, $columns2);
                 fputcsv($file, $columns3);
                 fputcsv($file, $columns4);
                 fputcsv($file, $columns);
 
                 foreach ($transactions as $item) {
-                    
+
                     $config_confidential = 0;
 
                     $confidential = 0;
@@ -1657,16 +1696,15 @@ class TransactionsController extends Controller {
                         foreach ($temp_column as $key => $value) {
                             $row[] = eval($value->column->code);
                         }
-    
+
                         fputcsv($file, $row);
-                    } 
+                    }
                 }
 
                 fclose($file);
             };
 
             return response()->stream($callback, 200, $headers);
-            
         } else {
             return view('pages.admin.transaction.reportall')->with([
                 'report_template' => $report_template,
@@ -1722,9 +1760,10 @@ class TransactionsController extends Controller {
         }
     }
 
-    public function report_projects() {
+    public function report_projects()
+    {
         $trans_company = '';
-        $trans_type = '';     
+        $trans_type = '';
         $trans_from = '';
         $trans_to = '';
         $trans_status = '';
@@ -1734,11 +1773,15 @@ class TransactionsController extends Controller {
 
         $query = Company::orderBy('name', 'asc');
 
-        if (UAHelper::get()['trans_view'] == config('global.ua_own')
-            || UAHelper::get()['trans_report'] == config('global.ua_own')) {
+        if (
+            UAHelper::get()['trans_view'] == config('global.ua_own')
+            || UAHelper::get()['trans_report'] == config('global.ua_own')
+        ) {
             $trans_own = true;
-        } else if (UAHelper::get()['trans_view'] == config('global.ua_none')
-            || UAHelper::get()['trans_report'] == config('global.ua_none')) {
+        } else if (
+            UAHelper::get()['trans_view'] == config('global.ua_none')
+            || UAHelper::get()['trans_report'] == config('global.ua_none')
+        ) {
             $query = $query->where('id', 0);
         }
 
@@ -1768,12 +1811,12 @@ class TransactionsController extends Controller {
         if (!empty($_GET['type'])) $trans_type = $_GET['type'];
         if (!empty($_GET['from'])) $trans_from = $_GET['from'];
         if (!empty($_GET['to'])) $trans_to = $_GET['to'];
-        
+
         $query = $query->get();
-        
+
 
         if (isset($_GET['csv'])) {
-            $fileName = 'PRPOSYS-REPORT-PROJECTS_'.Carbon::now().'.csv';
+            $fileName = 'PRPOSYS-REPORT-PROJECTS_' . Carbon::now() . '.csv';
             $headers = array(
                 "Content-type"        => "text/csv",
                 "Content-Disposition" => "attachment;   filename=$fileName",
@@ -1790,7 +1833,8 @@ class TransactionsController extends Controller {
                 $trans_from != '' ? $trans_from : '-',
                 $trans_to != '' ? $trans_to : '-',
                 User::where('id', auth()->id())->first()->name,
-                Carbon::now());
+                Carbon::now()
+            );
             $columns4 = array('');
             $columns5 = array(
                 'Company',
@@ -1804,10 +1848,10 @@ class TransactionsController extends Controller {
                 'Description',
                 'Amount',
             );
-            
-            $callback = function() use($query, $columns2, $columns3, $columns4, $columns5, $trans_type, $trans_status, $trans_from, $trans_to, $trans_own) {
+
+            $callback = function () use ($query, $columns2, $columns3, $columns4, $columns5, $trans_type, $trans_status, $trans_from, $trans_to, $trans_own) {
                 $file = fopen('php://output', 'w');
-                
+
                 fputcsv($file, $columns2);
                 fputcsv($file, $columns3);
                 fputcsv($file, $columns4);
@@ -1815,9 +1859,9 @@ class TransactionsController extends Controller {
 
                 foreach ($query as $item) {
 
-                    
+
                     foreach ((!empty($trans_company) && !str_starts_with($trans_company, 'C') ? $item->companyProject->where('id', $trans_company) : $item->companyProject) as $project) {
-                        
+
                         $project_liquidations = TransactionsLiquidation::where('transactions_liquidation.project_id', $project->id)
                             ->select(
                                 'transactions.trans_type as trans_type',
@@ -1857,7 +1901,7 @@ class TransactionsController extends Controller {
                             $row = [];
                             $row[] = $item->name;
                             $row[] = $project->project;
-                            $row[] = strtoupper($liquidation->trans_type).'-'.$liquidation->trans_year.'-'.sprintf('%05d',$liquidation->trans_seq);
+                            $row[] = strtoupper($liquidation->trans_type) . '-' . $liquidation->trans_year . '-' . sprintf('%05d', $liquidation->trans_seq);
                             $row[] = $liquidation->date;
                             $row[] = $liquidation->expense_type;
                             $row[] = $liquidation->location;
@@ -1867,16 +1911,13 @@ class TransactionsController extends Controller {
                             $row[] = $liquidation->amount;
                             fputcsv($file, $row);
                         }
-                        
                     }
-
                 }
 
                 fclose($file);
             };
 
             return response()->stream($callback, 200, $headers);
-            
         } else {
             return view('pages.admin.transaction.reportprojects')->with([
                 'companies' => $companies,
@@ -1891,7 +1932,8 @@ class TransactionsController extends Controller {
         }
     }
 
-    private function check_can_edit($transaction, $user = '') {
+    private function check_can_edit($transaction, $user = '')
+    {
         $can_edit = true;
 
         if (!$user) {
@@ -1922,7 +1964,8 @@ class TransactionsController extends Controller {
         return $can_edit;
     }
 
-    private function check_can_cancel($transaction, $user = '') {
+    private function check_can_cancel($transaction, $user = '')
+    {
         $can_cancel = true;
 
         if (!$user) {
@@ -1953,7 +1996,8 @@ class TransactionsController extends Controller {
         return $can_cancel;
     }
 
-    private function check_can_reset($transaction, $user = '') {
+    private function check_can_reset($transaction, $user = '')
+    {
         $can_reset = true;
 
         if (!$user) {
@@ -1978,7 +2022,8 @@ class TransactionsController extends Controller {
         return $can_reset;
     }
 
-    private function check_can_manage($transaction, $user = '') {
+    private function check_can_manage($transaction, $user = '')
+    {
         $can_reassign = true;
 
         if (!$user) {
@@ -1999,7 +2044,8 @@ class TransactionsController extends Controller {
         return $can_reassign;
     }
 
-    private function check_can_view_confidential($user = '') {
+    private function check_can_view_confidential($user = '')
+    {
         $can_view = true;
 
         if (!$user) {
