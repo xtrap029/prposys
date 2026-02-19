@@ -215,7 +215,7 @@ class TransactionsController extends Controller
                 ->whereIn('status_id', config('global.status'))
                 ->whereHas('project', function ($query) use ($trans_company) {
                     $query->where('company_id', $trans_company);
-                })->orderBy('id', 'desc')->paginate(10);
+                })->orderBy('trans_year', 'desc')->orderBy('trans_seq', 'desc')->orderBy('id', 'desc')->paginate(10);
         }
 
         foreach ($transactions as $key => $value) {
