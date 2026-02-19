@@ -195,8 +195,7 @@ class TransactionsController extends Controller
                 });
             }
 
-            // $transactions = $transactions->orderBy('id', 'desc')->paginate(10);
-            $transactions = $transactions->orderBy('trans_year', 'desc')->orderBy('trans_seq', 'desc')->orderBy('id', 'desc')->paginate(10);
+            $transactions = $transactions->orderBy('id', 'desc')->paginate(10);
 
             $transactions->appends(['s' => $_GET['s']]);
             $transactions->appends(['type' => $_GET['type']]);
@@ -215,7 +214,7 @@ class TransactionsController extends Controller
                 ->whereIn('status_id', config('global.status'))
                 ->whereHas('project', function ($query) use ($trans_company) {
                     $query->where('company_id', $trans_company);
-                })->orderBy('trans_year', 'desc')->orderBy('trans_seq', 'desc')->orderBy('id', 'desc')->paginate(10);
+                })->orderBy('id', 'desc')->paginate(10);
         }
 
         foreach ($transactions as $key => $value) {
