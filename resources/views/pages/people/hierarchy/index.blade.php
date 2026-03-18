@@ -34,11 +34,19 @@
     <script>
         OrgChart.templates.myIsla = Object.assign({}, OrgChart.templates.isla);
         // Wider + taller nodes to fit more text
-        OrgChart.templates.myIsla.field_0 = '<text style="font-size:15px; font-weight:bold; fill:#2F4F4F; font-family:Arial;" x="120" y="72" text-anchor="middle">{val}</text>';
-        OrgChart.templates.myIsla.field_1 = '<text style="font-size:13px;" fill="rgb(245, 124, 0)" x="120" y="92" text-anchor="middle">{val}</text>';
+        // Keep "isla" style (avatar on top) but restore box height
+        OrgChart.templates.myIsla.field_0 = '<text style="font-size:15px; font-weight:bold; fill:#2F4F4F; font-family:Arial;" x="120" y="92" text-anchor="middle">{val}</text>';
+        OrgChart.templates.myIsla.field_1 = '<text style="font-size:13px;" fill="rgb(245, 124, 0)" x="120" y="110" text-anchor="middle">{val}</text>';
         OrgChart.templates.myIsla.size = [240, 140];
         OrgChart.templates.myIsla.node = `
             <rect x="0" y="20" width="240" height="120" rx="5" ry="5" fill="#f9f9f9" stroke="#aaa" stroke-width="1"></rect>
+        `;
+        // 1.5x thumbnail (60x60) on top, circle crop (isla-like)
+        OrgChart.templates.myIsla.img_0 = `
+            <clipPath id="avatar-clip-{id}">
+                <circle cx="120" cy="20" r="30"></circle>
+            </clipPath>
+            <image xlink:href="{val}" x="90" y="-10" width="60" height="60" clip-path="url(#avatar-clip-{id})" preserveAspectRatio="xMidYMid slice"></image>
         `;
         // Make selection/search highlight match the bigger node box
         OrgChart.templates.myIsla.ripple = {
