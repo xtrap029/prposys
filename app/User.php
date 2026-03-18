@@ -7,7 +7,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class User extends Authenticatable {
+class User extends Authenticatable
+{
     use Notifiable;
 
     /**
@@ -63,7 +64,8 @@ class User extends Authenticatable {
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     /**
@@ -116,63 +118,83 @@ class User extends Authenticatable {
     protected static $logName = 'User';
     protected static $logOnlyDirty = true;
 
-    public function role() {
+    public function role()
+    {
         return $this->belongsTo(Role::class);
     }
 
-    public function company() {
+    public function company()
+    {
         return $this->belongsTo(Company::class);
     }
 
-    public function departmentuser() {
+    public function departmentuser()
+    {
         return $this->hasMany(DepartmentsUser::class);
     }
 
-    public function departmentusermember() {
+    public function departmentusermember()
+    {
         return $this->hasMany(DepartmentsUser::class)->where('is_approver', '=', 0);
     }
 
-    public function departmentuserapprover() {
+    public function departmentuserapprover()
+    {
         return $this->hasMany(DepartmentsUser::class)->where('is_approver', '=', 1);
     }
 
-    public function ualevel() {
+    public function ualevel()
+    {
         return $this->belongsTo(UaLevel::class, 'ua_level_id');
     }
 
-    public function leavesadjustment() {
+    public function leavesadjustment()
+    {
         return $this->hasMany(LeaveAdjustment::class);
     }
 
-    public function monthdiff() {
+    public function monthdiff()
+    {
         return $this->belongsTo(ViewMonthDiffData::class, 'id');
     }
 
-    public function monthdiffpast() {
+    public function monthdiffpast()
+    {
         return $this->belongsTo(ViewMonthDiffPastData::class, 'id');
     }
 
-    public function leavesytd() {
+    public function leavesytd()
+    {
         return $this->belongsTo(ViewLeavesYtdData::class, 'id');
     }
 
-    public function leavesytdpast() {
+    public function leavesytdpast()
+    {
         return $this->belongsTo(ViewLeavesYtdPastData::class, 'id');
     }
 
-    public function leavesadjustmenttotal() {
+    public function leavesadjustmenttotal()
+    {
         return $this->belongsTo(ViewLeavesAdjustmentsData::class, 'id');
     }
 
-    public function leavesadjustmenttotalpast() {
+    public function leavesadjustmenttotalpast()
+    {
         return $this->belongsTo(ViewLeavesAdjustmentsPastData::class, 'id');
     }
 
-    public function transactionlimit() {
+    public function transactionlimit()
+    {
         return $this->hasMany(UserTransactionLimit::class);
     }
 
-    public function user_attribute() {
+    public function user_attribute()
+    {
         return $this->hasMany(UsersUserAttribute::class);
+    }
+
+    public function hierarchy()
+    {
+        return $this->hasOne(Hierarchy::class, 'user_id');
     }
 }

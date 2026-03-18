@@ -108,7 +108,7 @@
                                     </li>
                                     <li class="nav-item {{ $ua['lea_dept'] == $non ? 'd-none' : '' }}">
                                         <a href="/leaves-department" class="nav-link {{ Route::currentRouteName() == 'leavesdepartment' ? 'active' : '' }}">
-                                            <i class="nav-icon material-icons icon--list">account_tree</i><p>User Department</p>
+                                            <i class="nav-icon material-icons icon--list">list_alt</i><p>User Department</p>
                                         </a>
                                     </li>                                                                               
                                     <li class="nav-item {{ $ua['peo_ua_route'] == $non ? 'd-none' : '' }}">
@@ -126,6 +126,11 @@
                                             <i class="nav-icon material-icons icon--list">rule</i><p>User Level Route</p>
                                         </a>
                                     </li> 
+                                    <li class="nav-item {{ $ua['peo_hierarchy'] == $non ? 'd-none' : '' }} {{ $ua['peo_hierarchy_manage'] == $non ? 'd-none' : '' }}">
+                                        <a href="/people-hierarchy" class="nav-link {{ in_array(Route::currentRouteName(), ['people-hierarchy', 'people-hierarchy-manage']) ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">account_tree</i><p>Hierarchy</p>
+                                        </a>
+                                    </li>
                                     <li class="nav-item {{ $ua['peo_announcement'] == $non ? 'd-none' : '' }}">
                                         <a href="/people-announcement" class="nav-link {{ Route::currentRouteName() == 'people-announcement' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">announcement</i><p>Announcement</p>
