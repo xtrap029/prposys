@@ -21,6 +21,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
+        'approver_id',
         'ua_level_id',
         'ua_levels',
         'travel_roles',
@@ -81,6 +82,7 @@ class User extends Authenticatable
     protected static $logAttributes = [
         'name',
         'email',
+        'approver_id',
         'ua_levels',
         'travel_roles',
         'avatar',
@@ -196,5 +198,10 @@ class User extends Authenticatable
     public function hierarchy()
     {
         return $this->hasOne(Hierarchy::class, 'user_id');
+    }
+
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approver_id');
     }
 }

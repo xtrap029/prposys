@@ -17,19 +17,23 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
-class UsersController extends Controller {
+class UsersController extends Controller
+{
 
-    public function index() {
+    public function index()
+    {
         $users = User::orderBy('name', 'asc');
 
-        if (!empty($_GET['s'])
+        if (
+            !empty($_GET['s'])
             || !empty($_GET['department'])
             || !empty($_GET['status'])
             || !empty($_GET['level'])
-            || !empty($_GET['is_accounting'])) {
+            || !empty($_GET['is_accounting'])
+        ) {
 
             $key = isset($_GET['s']) ? $_GET['s'] : '';
-            
+
             $users = $users->where(static function ($query) use ($key) {
                 $query->where('name', 'like', "%{$key}%")
                     ->orWhere('email', 'like', "%{$key}%")
@@ -71,7 +75,7 @@ class UsersController extends Controller {
         }
 
         if (isset($_GET['csv'])) {
-            $fileName = 'USERS-REPORT_'.Carbon::now().'.csv';
+            $fileName = 'USERS-REPORT_' . Carbon::now() . '.csv';
             $headers = array(
                 "Content-type"        => "text/csv",
                 "Content-Disposition" => "attachment;   filename=$fileName",
@@ -81,10 +85,10 @@ class UsersController extends Controller {
             );
 
             $file = fopen('php://output', 'w');
-            
-            $callback = function() use($users_report) {
+
+            $callback = function () use ($users_report) {
                 $file = fopen('php://output', 'w');
-                
+
                 fputcsv($file, array('Name', 'Position', 'Email'));
 
                 foreach ($users_report as $item) {
@@ -107,7 +111,7 @@ class UsersController extends Controller {
         $departments = Department::orderBy('name', 'asc')->get();
         // $users = User::whereNotNull('role_id')->orderBy('name', 'asc')->get();
         // $users_inactive = User::whereNull('role_id')->orderBy('name', 'asc')->get();
-        
+
         return view('pages.people.users.index')->with([
             'users' => $users,
             'levels' => $levels,
@@ -117,12 +121,14 @@ class UsersController extends Controller {
         ]);
     }
 
-    public function create() {
+    public function create()
+    {
         $companies = Company::orderBy('name', 'asc')->get();
         $roles = Role::orderBy('id', 'desc')->get();
         $levels = UaLevel::orderBy('order', 'asc')->get();
         $travel_roles = TravelRole::orderBy('id', 'asc')->get();
         $user_attributes = UserAttribute::orderBy('order', 'asc')->get();
+        $users = User::orderBy('name', 'asc')->get();
 
         return view('pages.people.users.create')->with([
             'companies' => $companies,
@@ -130,10 +136,12 @@ class UsersController extends Controller {
             'levels' => $levels,
             'travel_roles' => $travel_roles,
             'user_attributes' => $user_attributes,
+            'users' => $users,
         ]);
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'role_id' => ['nullable', 'exists:roles,id'],
@@ -248,10 +256,11 @@ class UsersController extends Controller {
             ]);
         }
 
-        return redirect('/user')->with('success', 'User'.__('messages.create_success'));
+        return redirect('/user')->with('success', 'User' . __('messages.create_success'));
     }
 
-    public function show(User $user) {
+    public function show(User $user)
+    {
         $allowed_companies = explode(',', $user->companies);
         $companies = Company::whereIn('id', $allowed_companies)->orderBy('name', 'asc')->get();
         $roles = Role::orderBy('id', 'desc')->get();
@@ -274,12 +283,14 @@ class UsersController extends Controller {
         ]);
     }
 
-    public function edit(User $user) {
+    public function edit(User $user)
+    {
         $roles = Role::orderBy('id', 'desc')->get();
         $companies = Company::orderBy('name', 'asc')->get();
         $levels = UaLevel::orderBy('order', 'asc')->get();
         $travel_roles = TravelRole::orderBy('id', 'asc')->get();
         $user_attributes = UserAttribute::orderBy('order', 'asc')->get();
+        $users = User::orderBy('name', 'asc')->get();
 
         $attributes = [];
 
@@ -295,10 +306,12 @@ class UsersController extends Controller {
             'travel_roles' => $travel_roles,
             'user_attributes' => $user_attributes,
             'attributes' => $attributes,
+            'users' => $users,
         ]);
     }
 
-    public function update(Request $request, User $user) {
+    public function update(Request $request, User $user)
+    {
         $validation_rules = [
             'role_id' => ['nullable', 'exists:roles,id'],
             'ua_level_id' => ['nullable', 'exists:ua_levels,id'],
@@ -335,6 +348,7 @@ class UsersController extends Controller {
             'is_accounting' => ['boolean'],
             'is_accounting_head' => ['boolean'],
             'is_external' => ['boolean'],
+            'approver_id' => ['nullable', 'exists:users,id'],
 
             'LIMIT_UNLIQUIDATEDPR_COMPANY_ID.*' => ['required', 'exists:companies,id'],
             'LIMIT_UNLIQUIDATEDPR_AMOUNT.*' => ['nullable', 'numeric'],
@@ -353,7 +367,7 @@ class UsersController extends Controller {
             Storage::delete('public/images/companies/' . $user->avatar);
             $data['avatar'] = basename($request->file('avatar')->store('public/images/users'));
         }
-        
+
         if ($request->password) {
             $data['password'] = Hash::make($data['password']);
         }
@@ -382,7 +396,7 @@ class UsersController extends Controller {
                 'updated_id' => auth()->id(),
             ]);
         }
-        
+
         foreach ($data['user_attr'] as $key => $value) {
             $user_attribute_found = UsersUserAttribute::where('user_attribute_id', $key)->where('user_id', $user->id);
 
@@ -401,6 +415,6 @@ class UsersController extends Controller {
             }
         }
 
-        return redirect('/user')->with('success', 'User'.__('messages.edit_success'));
+        return redirect('/user')->with('success', 'User' . __('messages.edit_success'));
     }
 }

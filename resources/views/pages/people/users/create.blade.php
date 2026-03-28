@@ -261,7 +261,7 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group col-md-4 mb-3">
+                            <div class="form-group col-md-3 mb-3">
                                 <label class="d-block">Is Accounting?</label>
                                 <select name="is_accounting" class="form-control @error('is_accounting') is-invalid @enderror">
                                     <option value="0">No</option>  
@@ -269,7 +269,7 @@
                                 </select>
                                 @include('errors.inline', ['message' => $errors->first('is_accounting')])
                             </div>
-                            <div class="form-group col-md-4 mb-3">
+                            <div class="form-group col-md-3 mb-3">
                                 <label class="d-block">Can Follow Up?</label>
                                 <select name="is_accounting_head" class="form-control @error('is_accounting_head') is-invalid @enderror">
                                     <option value="0">No</option>  
@@ -277,13 +277,23 @@
                                 </select>
                                 @include('errors.inline', ['message' => $errors->first('is_accounting_head')])
                             </div>
-                            <div class="form-group col-md-4 mb-3">
+                            <div class="form-group col-md-3 mb-3">
                                 <label class="d-block">Is External?</label>
                                 <select name="is_external" class="form-control @error('is_external') is-invalid @enderror">
                                     <option value="0">No</option>  
                                     <option value="1">Yes</option>  
                                 </select>
                                 @include('errors.inline', ['message' => $errors->first('is_external')])
+                            </div>
+                            <div class="form-group col-md-3 mb-3">
+                                <label class="d-block">Approver</label>
+                                <select name="approver_id" class="form-control @error('approver_id') is-invalid @enderror">
+                                    <option value="">Refer to Hierarchy</option>
+                                    @foreach ($users as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+                                @include('errors.inline', ['message' => $errors->first('approver_id')])
                             </div>
                         </div>
                         <div class="card col-md-12 mt-4">
