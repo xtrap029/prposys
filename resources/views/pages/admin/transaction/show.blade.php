@@ -427,7 +427,7 @@
                                 </table>
                                 @if ($config_confidential)
                                 @else
-                                    <a class="btn btn-app p-2 {{ $transaction->soa ? '' : 'd-none' }}" href="/storage/public/attachments/soa/{{ $transaction->soa }}" target="_blank">
+                                    <a class="btn btn-app p-2 {{ $transaction->soa ? '' : 'd-none' }}" href="/attachments/soa/{{ $transaction->soa }}" target="_blank">
                                         <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
                                         <p class="text-dark">SOA</p>
                                     </a>

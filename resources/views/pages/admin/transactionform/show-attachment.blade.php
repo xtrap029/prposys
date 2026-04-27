@@ -11,7 +11,7 @@
             <div class="modal-body pt-0">
                 @foreach ($transaction->attachments as $item)
                     <p class="border-top pt-3">
-                        <a href="/storage/public/attachments/liquidation/{{ $item->file }}" target="_blank" style="vertical-align: sub">
+                        <a href="/attachments/liquidation/{{ $item->file }}" target="_blank" style="vertical-align: sub">
                             @if (pathinfo($item->file, PATHINFO_EXTENSION) == 'pdf')
                                 <i class="material-icons mr-2 align-bottom" style="font-size: 40px">picture_as_pdf</i>
                             @else

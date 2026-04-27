@@ -128,7 +128,7 @@
                                                                 <td>Attachments</td>
                                                                 <td>
                                                                     @forelse ($item->attachments as $item2)
-                                                                        <a class="btn btn-block text-left border p-3" href="/storage/public/attachments/travel_attachment/{{ $item2->file }}" target="_blank">
+                                                                        <a class="btn btn-block text-left border p-3" href="/attachments/travel_attachment/{{ $item2->file }}" target="_blank">
                                                                             <i class="align-middle font-weight-bolder material-icons text-orange">
                                                                                 @if (pathinfo($item2->file, PATHINFO_EXTENSION) == 'pdf')
                                                                                     picture_as_pdf
@@ -241,7 +241,7 @@
                                                                 <td>Attachments</td>
                                                                 <td>
                                                                     @forelse ($item->attachments as $item2)
-                                                                        <a class="btn btn-block text-left border p-3" href="/storage/public/attachments/travel_attachment/{{ $item2->file }}" target="_blank">
+                                                                        <a class="btn btn-block text-left border p-3" href="/attachments/travel_attachment/{{ $item2->file }}" target="_blank">
                                                                             <i class="align-middle font-weight-bolder material-icons text-orange">
                                                                                 @if (pathinfo($item2->file, PATHINFO_EXTENSION) == 'pdf')
                                                                                     picture_as_pdf

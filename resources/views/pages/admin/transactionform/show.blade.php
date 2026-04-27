@@ -651,7 +651,7 @@
                                 </table>
                                 @if ($config_confidential)
                                 @else
-                                    <a class="btn btn-app p-2 {{ $transaction->soa ? '' : 'd-none' }}" href="/storage/public/attachments/soa/{{ $transaction->soa }}" target="_blank">
+                                    <a class="btn btn-app p-2 {{ $transaction->soa ? '' : 'd-none' }}" href="/attachments/soa/{{ $transaction->soa }}" target="_blank">
                                         <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
                                         <p class="text-dark">SOA</p>
                                     </a>
@@ -847,13 +847,13 @@
                                 @if ($config_confidential)
                                 @else
                                     @if ($transaction->is_bank && $transaction->depo_slip)
-                                        <a class="btn btn-app p-2" href="/storage/public/attachments/deposit_slip/{{ $transaction->depo_slip }}" target="_blank">
+                                        <a class="btn btn-app p-2" href="/attachments/deposit_slip/{{ $transaction->depo_slip }}" target="_blank">
                                             <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
                                             <p class="text-dark">Attachment</p>
                                         </a>
                                     @endif
                                     @if ($transaction->issue_slip)
-                                        <a class="btn btn-app p-2" href="/storage/public/attachments/issue_slip/{{ $transaction->issue_slip }}" target="_blank">
+                                        <a class="btn btn-app p-2" href="/attachments/issue_slip/{{ $transaction->issue_slip }}" target="_blank">
                                             <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
                                             <p class="text-dark">Attachment</p>
                                         </a>

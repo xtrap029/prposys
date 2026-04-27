@@ -35,6 +35,10 @@ Route::get('/mail',  function () {
 
 Auth::routes();
 
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('/attachments/{type}/{filename}', 'AttachmentsController@show')->name('attachments.show');
+});
+
 Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfidential']], function () {
 
     Route::get('/', 'Main\ChooseAppController@index')->name('chooseapp');

@@ -382,7 +382,7 @@
                                             @foreach ($travel->attachments as $item)
                                                 <tr>
                                                     <td>
-                                                        <a class="btn" href="/storage/public/attachments/travel_attachment/{{ $item->file }}" target="_blank">
+                                                        <a class="btn" href="/attachments/travel_attachment/{{ $item->file }}" target="_blank">
                                                             <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
                                                             <span class="vlign--middle ml-2">{{ $item->description }}</span>
                                                         </a>

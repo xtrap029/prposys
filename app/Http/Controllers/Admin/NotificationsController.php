@@ -100,7 +100,7 @@ class NotificationsController extends Controller {
                     'purpose' => $transaction->purpose,
                     'requestor_email' => $transaction->requested->email,
                     'requestor_name' => $transaction->requested->name,
-                    'url' => env('APP_URL').'/storage/public/attachments/issue_slip/'.$transaction->issue_slip,
+                    'url' => env('APP_URL').'/attachments/issue_slip/'.$transaction->issue_slip,
                     'cc' => array_filter(explode(';', $cc)),
                 ]));
             }

@@ -245,7 +245,7 @@
                                     @if (isset($transaction->transaction_soa[0]))
                                         <tr class="jsReplicate_template_item">
                                             <td>
-                                                <a href="/storage/public/attachments/soa/{{ $transaction->transaction_soa[0]->file }}" target="_blank">
+                                                <a href="/attachments/soa/{{ $transaction->transaction_soa[0]->file }}" target="_blank">
                                                     <i class="material-icons mr-2 align-bottom">attachment</i>
                                                 </a>
                                                 <input type="file" name="file_old[]" class="form-control w-75 d-inline-block overflow-hidden">
@@ -259,7 +259,7 @@
                                         @if ($key > 0)
                                             <tr class="jsReplicate_template_item">
                                                 <td>
-                                                    <a href="/storage/public/attachments/soa/{{ $item->file }}" target="_blank">
+                                                    <a href="/attachments/soa/{{ $item->file }}" target="_blank">
                                                         <i class="material-icons mr-2 align-bottom">attachment</i>
                                                     </a>
                                                     <input type="file" name="file_old[]" class="form-control w-75 d-inline-block overflow-hidden">

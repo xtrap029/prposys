@@ -226,7 +226,7 @@
                                 @if (isset($transaction->attachments[0]))
                                     <tr class="jsReplicate_template_item">
                                         <td class="text-nowrap">
-                                            <a href="/storage/public/attachments/liquidation/{{ $transaction->attachments[0]->file }}" target="_blank">
+                                            <a href="/attachments/liquidation/{{ $transaction->attachments[0]->file }}" target="_blank">
                                             <i class="material-icons mr-2 align-bottom align-text-bottom">attachment</i>
                                         </a>
                                         <input type="file" name="file_old[]" class="form-control w-75 d-inline-block overflow-hidden">
@@ -240,7 +240,7 @@
                                     @if ($key > 0)
                                         <tr class="jsReplicate_template_item">
                                             <td>
-                                                <a href="/storage/public/attachments/liquidation/{{ $item->file }}" target="_blank">
+                                                <a href="/attachments/liquidation/{{ $item->file }}" target="_blank">
                                                     <i class="material-icons mr-2 align-bottom align-text-bottom">attachment</i>
                                                 </a>
                                                 <input type="file" name="file_old[]" class="form-control w-75 d-inline-block overflow-hidden">

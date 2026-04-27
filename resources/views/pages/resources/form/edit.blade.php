@@ -43,7 +43,7 @@
                 </div>
                 <div class="form-group">
                     <label for="">Form Attachment <small>(Accepts .jpg, .png, .docx, and .pdf file types, not more than 10mb.)</small></label>
-                    <a href="/storage/public/attachments/form/{{ $form->attachment }}" alt="" target="_blank" class="ml-3">view current</a>
+                    <a href="/attachments/form/{{ $form->attachment }}" alt="" target="_blank" class="ml-3">view current</a>
                     <input type="file" class="form-control @error('attachment') is-invalid @enderror" name="attachment">
                     @include('errors.inline', ['message' => $errors->first('attachment')])
                 </div>

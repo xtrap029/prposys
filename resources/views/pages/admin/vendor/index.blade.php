@@ -40,7 +40,7 @@
                                                 Product: {{ $item->product }}<br>
                                                 Description: {{ $item->description }}<br>
                                                 @if ($item->file)
-                                                    File: <a href="/storage/public/attachments/2303/{{ $item->file }}" class="text-info" target="_blank">2303</a>
+                                                    File: <a href="/attachments/2303/{{ $item->file }}" class="text-info" target="_blank">2303</a>
                                                 @endif
                                             </div>
                                             <div class="col-md-4">

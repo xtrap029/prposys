@@ -80,7 +80,7 @@
                         @include('errors.inline', ['message' => $errors->first('description')])
                     </div>
                     <div class="form-group col-md-4">
-                        <label for=""><a href="/storage/public/attachments/2303/{{ $vendor->file }}" target="_blank">2303</a></label>
+                        <label for=""><a href="/attachments/2303/{{ $vendor->file }}" target="_blank">2303</a></label>
                         <input type="file" name="file" class="form-control-file @error('file') is-invalid @enderror">
                         @include('errors.inline', ['message' => $errors->first('file')])
                     </div>

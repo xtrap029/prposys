@@ -67,7 +67,7 @@
                                     <div class="modal-body">
                                         {!! $item->description !!}
 
-                                        <a class="btn btn-default d-block mt-3" href="/storage/public/attachments/form/{{ $item->attachment }}" target="_blank">
+                                        <a class="btn btn-default d-block mt-3" href="/attachments/form/{{ $item->attachment }}" target="_blank">
                                             <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
                                             <span class="text-dark">Download Attachment</span>
                                         </a>
