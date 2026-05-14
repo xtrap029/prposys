@@ -1152,6 +1152,28 @@ class TransactionsFormsController extends Controller {
             $data['status_id'] = 6;
             $data['updated_id'] = auth()->id();
             $transaction->update($data);
+
+            $requestor = $transaction->requested;
+            $approver = null;
+            if ($requestor->approver_id) {
+                $approver = User::where('id', $requestor->approver_id)->first();
+            } elseif ($requestor->hierarchy && $requestor->hierarchy->parent_id) {
+                $approver = User::where('id', $requestor->hierarchy->parent_id)->first();
+            }
+
+            if ($approver) {
+                Mail::queue(new \App\Mail\NotificationsForApprovalMail([
+                    'to' => $approver->email,
+                    'name' => $approver->name,
+                    'url' => env('APP_URL').'/transaction-form/view/'.$transaction->id,
+                    'project' => $transaction->project->project,
+                    'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
+                    'purpose' => $transaction->purpose,
+                    'amount' => $transaction->amount,
+                    'requestor' => $requestor->name,
+                ]));
+            }
+
             return back()->with('success', 'Transaction Form'.__('messages.approval_success'));
         } else {
             return back()->with('error', __('messages.cant_edit'));
