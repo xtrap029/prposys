@@ -82,6 +82,7 @@ class Transaction extends Model {
                                         'is_aff_advances',
                                         'is_confidential',
                                         'is_confidential_own',
+                                        'hierarchy_approver_id',
                                         'cost_control_no',
                                         'bill_statement_no',
                                         'bill_series_no',
@@ -157,6 +158,10 @@ class Transaction extends Model {
 
     public function formapprover() {
         return $this->belongsTo(User::class, 'form_approver_id');
+    }
+
+    public function hierarchyapprover() {
+        return $this->belongsTo(User::class, 'hierarchy_approver_id');
     }
 
     public function liquidationapprover() {

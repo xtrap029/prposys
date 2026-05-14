@@ -553,6 +553,12 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
         });
     });
 
+    Route::prefix('transaction-form')->group(function () {
+        $url = 'Admin\TransactionsFormsController';
+
+        Route::get('/hierarchy-approve/{transaction}', $url . '@hierarchy_approve')->where('transaction', '[0-9]+');
+    });
+
     // Seq Transaction Form Issue
     Route::middleware('CheckUserAccess:form_issue')->group(function () {
         Route::prefix('transaction-form')->group(function () {

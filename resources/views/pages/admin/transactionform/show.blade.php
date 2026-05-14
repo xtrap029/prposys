@@ -47,6 +47,9 @@
                             @endif
                         </span>
                         <span class="badge badge-pill bg-purple p-2">{{ $transaction->status->name }}</span>
+                        @if ($transaction->status->id === config('global.form_approval')[0])
+                            <span class="badge badge-pill bg-{{ $transaction->hierarchy_approver_id ? 'light' : 'secondary' }} p-2">{{ $transaction->hierarchy_approver_id ? "APPROVED" : "PENDING APPROVAL" }}</span>
+                        @endif
                         <a href="#_" class="badge badge-pill bg-secondary p-2 d-lg-none" data-toggle="modal" data-target="#modal-notes">
                             <i class="align-middle material-icons text-xs">speaker_notes</i> Notes
                             <span class="badge badge-danger {{ $transaction->notes->count() > 0 ? '' : 'd-none' }}">{{$transaction->notes->count()}}</span>
@@ -85,6 +88,9 @@
                         <div class="col-4 px-1 {{ $perms['can_print'] ? '' : 'd-none' }}">
                             <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print</a>
                         </div>
+                        <div class="col-4 px-1 {{ $perms['can_hierarchy_approve'] ? '' : 'd-none' }}">
+                            <a href="/transaction-form/hierarchy-approve/{{ $transaction->id }}" class="btn mb-2 btn-sm btn-flat btn-light col-12 col-lg-auto" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Approve</a>
+                        </div>
                         <div class="col-4 px-1 {{ $perms['can_issue'] ? '' : 'd-none' }}">
                             <a href="#" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto px-4" data-toggle="modal" data-target="#modal-issue"><i class="align-middle font-weight-bolder material-icons text-md">check</i> {{ $transaction->is_deposit ? 'Deposit Notes' : 'Issue' }}</a>
                         </div>
@@ -117,6 +123,7 @@
                         <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto {{ $perms['can_cancel'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-cancel"><i class="align-middle font-weight-bolder material-icons text-md">delete</i> Cancel</a>
                         
                         <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print</a>
+                        <a href="/transaction-form/hierarchy-approve/{{ $transaction->id }}" class="btn mb-2 btn-sm btn-flat btn-light col-12 col-lg-auto {{ $perms['can_hierarchy_approve'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Approve</a>
                         <a href="#" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto {{ $perms['can_issue'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-issue"><i class="align-middle font-weight-bolder material-icons text-md">check</i> {{ $transaction->is_deposit ? 'Deposit Notes' : 'Issue' }}</a>
                     </div>
                 </div>
@@ -392,6 +399,15 @@
                                             {{ $transaction->owner->name }}
                                         </td>
                                     </tr>
+                                    @if ($transaction->hierarchy_approver_id)
+                                        <tr>
+                                            <td class="font-weight-bold text-gray">Approved By</td>
+                                            <td class="font-weight-bold">
+                                                <img src="/storage/public/images/users/{{ $transaction->hierarchyapprover->avatar }}" class="img-circle img-size-32 mr-2">
+                                                {{ $transaction->hierarchy_approver_id ? $transaction->hierarchyapprover->name : '' }}
+                                            </td>
+                                        </tr>
+                                    @endif
                                     @if ($transaction->form_approver_id)
                                         <tr>
                                             <td class="font-weight-bold text-gray">Auth. Approver</td>

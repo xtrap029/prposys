@@ -29,6 +29,7 @@ use ZanySoft\Zip\Zip;
 use Illuminate\Http\Request;
 use \DB;
 use \File;
+use \Mail;
 
 class TransactionsFormsController extends Controller {
 
@@ -476,6 +477,7 @@ class TransactionsFormsController extends Controller {
         $perms['can_reset'] = $this->check_can_reset($transaction->id);
         $perms['can_approval'] = $this->check_can_approval($transaction->id);
         $perms['can_print'] = $this->check_can_print($transaction->id);
+        $perms['can_hierarchy_approve'] = $this->check_can_hierarchy_approve($transaction->id);
         $perms['can_issue'] = $this->check_can_issue($transaction->id);
         $perms['can_create'] = app('App\Http\Controllers\Admin\TransactionsLiquidationController')->check_can_create(
             $transaction->trans_type."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
@@ -826,6 +828,7 @@ class TransactionsFormsController extends Controller {
             $data['status_id'] = 5;
         }
         
+        $data['hierarchy_approver_id'] = null;
         $data['updated_id'] = auth()->id();
 
         $transaction->update($data);
@@ -988,6 +991,7 @@ class TransactionsFormsController extends Controller {
             $data['status_id'] = 5;
         }
         
+        $data['hierarchy_approver_id'] = null;
         $data['updated_id'] = auth()->id();
 
         $transaction->update($data);
@@ -1119,13 +1123,8 @@ class TransactionsFormsController extends Controller {
         }
     }
 
-    // public function approval(Request $request, Transaction $transaction) {
     public function approval(Transaction $transaction) {
         if ($this->check_can_approval($transaction->id)) {
-            // $data = $request->validate([
-            //     'form_approver_id' => ['required', 'exists:users,id']
-            // ]);
-
             $custom_vat = $transaction->amount * (abs($transaction->vattype->vat) * 0.01);
             $custom_wht = $transaction->amount * ($transaction->vattype->wht * 0.01);
             $custom_subtotal = $transaction->amount;
@@ -1154,6 +1153,30 @@ class TransactionsFormsController extends Controller {
             $data['updated_id'] = auth()->id();
             $transaction->update($data);
             return back()->with('success', 'Transaction Form'.__('messages.approval_success'));
+        } else {
+            return back()->with('error', __('messages.cant_edit'));
+        }
+    }
+
+    public function hierarchy_approve(Transaction $transaction) {
+        if ($this->check_can_hierarchy_approve($transaction->id)) {
+            $data = [];
+            $data['hierarchy_approver_id'] = auth()->id();
+            $data['updated_id'] = auth()->id();
+            $transaction->update($data);
+
+            Mail::queue(new \App\Mail\NotificationsApprovedMail([
+                'to' => $transaction->requested->email,
+                'name' => $transaction->requested->name,
+                'url' => env('APP_URL').'/transaction-form/view/'.$transaction->id,
+                'project' => $transaction->project->project,
+                'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
+                'purpose' => $transaction->purpose,
+                'amount' => $transaction->amount,
+                'approver' => auth()->user()->name,
+            ]));
+
+            return back()->with('success', 'Transaction Form Approval'.__('messages.approval_success'));
         } else {
             return back()->with('error', __('messages.cant_edit'));
         }
@@ -1778,34 +1801,49 @@ class TransactionsFormsController extends Controller {
         return $admin_subadmin;
     }
 
-    private function check_can_issue($transaction, $user = '') {
+    private function check_can_hierarchy_approve($transaction, $user = '') {
         $transaction = Transaction::where('id', $transaction)->first();
         if (in_array($transaction->status_id, config('global.cancelled'))) {
-            $can_issue = false;
+            $can_hierarchy_approve = false;
         } else {
-            $can_issue = true;
+            $can_hierarchy_approve = true;
         }
-
+        
+        if (!in_array($transaction->status_id, config('global.form_approval'))
+            || $transaction->hierarchy_approver_id) {
+            $can_hierarchy_approve = false;
+        }
+        
         if (!$user) {
             $user = auth()->id();
         }
         $user = User::where('id', $user)->first();
+        $requestor = $transaction->requested;
 
-        // check if not unliquidated and not designated approver
-        if (!in_array($transaction->status_id, config('global.form_approval'))) {
-            $can_issue = false;
+        if ($requestor->approver_id) {
+            if ($requestor->approver_id != $user->id) {
+                $can_hierarchy_approve = false;
+            }
+        } else if ($requestor->hierarchy && ($requestor->hierarchy->parent_id == $user->id || $requestor->hierarchy->parent_id == null)) {
+        } else {
+            $can_hierarchy_approve = false;
         }
+
+        return $can_hierarchy_approve;
+    }
+
+    private function check_can_issue($transaction) {
+        $transaction = Transaction::where('id', $transaction)->first();
 
         if (
-            // (UAHelper::get()['form_issue'] == config('global.ua_own') && $user->id != $transaction->owner_id && $user->id != $transaction->requested_id)
-            // || UAHelper::get()['form_issue'] == config('global.ua_none')
-            UAHelper::get()['form_issue'] == config('global.ua_none')
+            in_array($transaction->status_id, config('global.cancelled'))
+            || !in_array($transaction->status_id, config('global.form_approval'))
+            || !$transaction->hierarchy_approver_id
+            || UAHelper::get()['form_issue'] == config('global.ua_none')
         ) {
-            $can_issue = false;
-        // } else {
-        //     if ($user->ualevel->code < $transaction->owner->ualevel->code && $user->id != $transaction->owner->id) $can_issue = false;
+            return false;
+        } else {
+            return true;
         }
-        
-        return $can_issue;
     }
 }

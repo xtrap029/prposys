@@ -51,7 +51,7 @@
                                         <td>{{ Carbon::parse($transaction->created_at)->format('Y-m-d') }}</td>
                                         <td>{{ $transaction->project->project }}</td>
                                         <td>{{ $transaction->coatagging->name }}</td>
-                                        <td>{{ $transaction->status->name }}</td>
+                                        <td>{{ $transaction->status->name }} ({{ $transaction->hierarchy_approver_id ? "APPROVED" : "PENDING APPROVAL" }})</td>
                                     </tr>
                                 </tbody>
                             </table>

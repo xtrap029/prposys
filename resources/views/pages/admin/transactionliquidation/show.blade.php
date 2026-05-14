@@ -456,6 +456,15 @@
                                             {{ $transaction->owner->name }}
                                         </td>
                                     </tr>
+                                    @if ($transaction->hierarchy_approver_id)
+                                        <tr>
+                                            <td class="font-weight-bold text-gray">Approved By</td>
+                                            <td class="font-weight-bold">
+                                                <img src="/storage/public/images/users/{{ $transaction->hierarchyapprover->avatar }}" class="img-circle img-size-32 mr-2">
+                                                {{ $transaction->hierarchy_approver_id ? $transaction->hierarchyapprover->name : '' }}
+                                            </td>
+                                        </tr>
+                                    @endif
                                     @if ($transaction->liquidation_approver_id && !$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
                                         <tr>
                                             <td class="font-weight-bold text-gray">Auth. Approver</td>
