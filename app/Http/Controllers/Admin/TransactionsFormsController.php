@@ -1198,7 +1198,7 @@ class TransactionsFormsController extends Controller {
                 'approver' => auth()->user()->name,
             ]));
 
-            return back()->with('success', 'Transaction Form Approval'.__('messages.approval_success'));
+            return back()->with('success', 'Transaction Form Approval'.__('messages.approved_success'));
         } else {
             return back()->with('error', __('messages.cant_edit'));
         }
