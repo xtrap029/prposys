@@ -11,6 +11,7 @@ return [
     'cancel_success' => ' successfully cancelled!',
     'issue_success' => ' successfully issued!',
     'approval_success' => ' successfully sent for approval!',
+    'approved_success' => ' successfully approved!',
     'reassign_success' => ' successfully reassigned!',
     'duplicate_success' => ' successfully duplicated!',
     'clear_success' => ' successfully cleared!',
