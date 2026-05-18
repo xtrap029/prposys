@@ -1180,12 +1180,20 @@ class TransactionsFormsController extends Controller {
         }
     }
 
-    public function hierarchy_approve(Transaction $transaction) {
+    public function hierarchy_approve(Request $request, Transaction $transaction) {
         if ($this->check_can_hierarchy_approve($transaction->id)) {
             $data = [];
             $data['hierarchy_approver_id'] = auth()->id();
             $data['updated_id'] = auth()->id();
             $transaction->update($data);
+
+            if ($request->filled('note')) {
+                TransactionsNote::create([
+                    'transaction_id' => $transaction->id,
+                    'content' => $request->note,
+                    'user_id' => auth()->id(),
+                ]);
+            }
 
             Mail::queue(new \App\Mail\NotificationsApprovedMail([
                 'to' => $transaction->requested->email,

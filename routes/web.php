@@ -556,7 +556,7 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
     Route::prefix('transaction-form')->group(function () {
         $url = 'Admin\TransactionsFormsController';
 
-        Route::get('/hierarchy-approve/{transaction}', $url . '@hierarchy_approve')->where('transaction', '[0-9]+');
+        Route::put('/hierarchy-approve/{transaction}', $url . '@hierarchy_approve')->where('transaction', '[0-9]+');
     });
 
     // Seq Transaction Form Issue

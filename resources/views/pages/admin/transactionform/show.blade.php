@@ -89,7 +89,7 @@
                             <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print</a>
                         </div>
                         <div class="col-4 px-1 {{ $perms['can_hierarchy_approve'] ? '' : 'd-none' }}">
-                            <a href="/transaction-form/hierarchy-approve/{{ $transaction->id }}" class="btn mb-2 btn-sm btn-flat btn-light col-12 col-lg-auto" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Approve</a>
+                            <a href="#_" class="btn mb-2 btn-sm btn-flat btn-light col-12 col-lg-auto" data-toggle="modal" data-target="#modal-hierarchy-approve"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Approve</a>
                         </div>
                         <div class="col-4 px-1 {{ $perms['can_issue'] ? '' : 'd-none' }}">
                             <a href="#" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto px-4" data-toggle="modal" data-target="#modal-issue"><i class="align-middle font-weight-bolder material-icons text-md">check</i> {{ $transaction->is_deposit ? 'Deposit Notes' : 'Issue' }}</a>
@@ -123,7 +123,7 @@
                         <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto {{ $perms['can_cancel'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-cancel"><i class="align-middle font-weight-bolder material-icons text-md">delete</i> Cancel</a>
                         
                         <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print</a>
-                        <a href="/transaction-form/hierarchy-approve/{{ $transaction->id }}" class="btn mb-2 btn-sm btn-flat btn-light col-12 col-lg-auto {{ $perms['can_hierarchy_approve'] ? '' : 'd-none' }}" onclick="return confirm('Are you sure?')"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Approve</a>
+                        <a href="#_" class="btn mb-2 btn-sm btn-flat btn-light col-12 col-lg-auto {{ $perms['can_hierarchy_approve'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-hierarchy-approve"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Approve</a>
                         <a href="#" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto {{ $perms['can_issue'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-issue"><i class="align-middle font-weight-bolder material-icons text-md">check</i> {{ $transaction->is_deposit ? 'Deposit Notes' : 'Issue' }}</a>
                     </div>
                 </div>
@@ -201,6 +201,30 @@
                         </div>
                     @endif
     
+                    @if ($perms['can_hierarchy_approve'])
+                        <div class="modal fade" id="modal-hierarchy-approve" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog modal-md" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header border-0">
+                                        <h5 class="modal-title">Approve Transaction</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <form action="/transaction-form/hierarchy-approve/{{ $transaction->id }}" method="post">
+                                            @csrf
+                                            @method('put')
+                                            <textarea name="note" class="form-control @error('note') is-invalid @enderror" rows="4" placeholder="Add approval notes/comments (optional)"></textarea>
+                                            @include('errors.inline', ['message' => $errors->first('note')])
+                                            <input type="submit" class="btn btn-primary mt-2" value="Approve Now">
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                     @if ($perms['can_issue'])
                         <div class="modal fade" id="modal-issue" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog modal-md" role="document">
