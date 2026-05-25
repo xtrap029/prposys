@@ -174,6 +174,19 @@
 @endif
 
 @if (count(array_intersect($column_codes, [
+    'FORM_APPROVED',
+])) > 0)
+    <div class="col-sm-6 col-md-2 my-1">
+        <label for="">Is Approved?</label>
+        <select name="is_approved" class="form-control form-control-sm">
+            <option value="">All</option>
+            <option value="1" {{ app('request')->input('is_approved') === '1' ? 'selected' : '' }}>Yes</option>
+            <option value="0" {{ app('request')->input('is_approved') === '0' ? 'selected' : '' }}>No</option>
+        </select>
+    </div>
+@endif
+
+@if (count(array_intersect($column_codes, [
     'USER_FORM_APPROVER',
 ])) > 0)
     <div class="col-sm-6 col-md-2 my-1">

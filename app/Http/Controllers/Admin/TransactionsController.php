@@ -1526,6 +1526,13 @@ class TransactionsController extends Controller
             $transactions = $transactions->where('form_approver_id', $_GET['user_approver_form']);
             $trans_appr_form = $_GET['user_approver_form'];
         }
+        if (isset($_GET['is_approved']) && $_GET['is_approved'] !== '') {
+            if ($_GET['is_approved'] == '1') {
+                $transactions = $transactions->whereNotNull('hierarchy_approver_id');
+            } else {
+                $transactions = $transactions->whereNull('hierarchy_approver_id');
+            }
+        }
         if (!empty($_GET['depo_type'])) {
             $transactions = $transactions->where('depo_type', $_GET['depo_type']);
             $trans_appr_form = $_GET['depo_type'];
