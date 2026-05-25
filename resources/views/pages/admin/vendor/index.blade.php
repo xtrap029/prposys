@@ -17,7 +17,13 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th colspan="4">List</th>
+                        <th>
+                            <form class="form-inline">
+                                <input type="text" class="form-control form-control-sm" name="s" value="{{ isset($_GET['s']) ? $_GET['s'] : '' }}" placeholder="Search">
+                                <button type="submit" class="btn btn-primary ml-2 btn-sm">Search</button>
+                                <a href="/vendor" class="btn btn-default ml-2 btn-sm">Clear</a>
+                            </form>
+                        </th>
                         <th class="text-right"><a href="/vendor/create">Create</a></th>
                     </tr>
                 </thead>

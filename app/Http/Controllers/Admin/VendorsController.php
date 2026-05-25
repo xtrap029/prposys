@@ -11,8 +11,15 @@ use Illuminate\Support\Facades\Storage;
 
 class VendorsController extends Controller {
 
-    public function index() {
-        $vendors = Vendor::orderBy('name', 'asc')->paginate(10);
+    public function index(Request $request) {
+        $vendors = Vendor::orderBy('name', 'asc');
+
+        if ($request->has('s')) {
+            $vendors = $vendors->where('name', 'like', '%'.$request->s.'%');
+        }
+
+        $vendors = $vendors->paginate(10);
+
         return view('pages.admin.vendor.index')->with([
             'vendors' => $vendors
         ]);
