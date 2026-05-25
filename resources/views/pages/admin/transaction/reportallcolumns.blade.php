@@ -177,7 +177,7 @@
     'FORM_APPROVED',
 ])) > 0)
     <div class="col-sm-6 col-md-2 my-1">
-        <label for="">Is Approved?</label>
+        <label for="">Is Form Approved?</label>
         <select name="is_approved" class="form-control form-control-sm">
             <option value="">All</option>
             <option value="1" {{ app('request')->input('is_approved') === '1' ? 'selected' : '' }}>Yes</option>
