@@ -92,7 +92,7 @@
                             <div class="col-4 px-1">
                                 <form action="/transaction-form/resend-notif/{{ $transaction->id }}" method="post" class="d-inline-block w-100">
                                     @csrf
-                                    <button type="submit" class="btn mb-2 btn-sm btn-flat btn-warning col-12 col-lg-auto" onclick="return confirm('Resend approval notification?')"><i class="align-middle font-weight-bolder material-icons text-md">notifications</i> Resend Notif</button>
+                                    <button type="submit" class="btn mb-2 btn-sm btn-flat btn-warning col-12 col-lg-auto" onclick="return confirm('Resend approval notification?')"><i class="align-middle font-weight-bolder material-icons text-md">notifications</i> Resend Approver Notification</button>
                                 </form>
                             </div>
                         @endif
@@ -135,7 +135,7 @@
                         @if ($transaction->status->id === config('global.form_approval')[0] && !$transaction->hierarchy_approver_id)
                             <form action="/transaction-form/resend-notif/{{ $transaction->id }}" method="post" class="d-inline-block">
                                 @csrf
-                                <button type="submit" class="btn mb-2 btn-sm btn-flat btn-warning col-12 col-lg-auto" onclick="return confirm('Resend approval notification?')"><i class="align-middle font-weight-bolder material-icons text-md">notifications</i> Resend Notif</button>
+                                <button type="submit" class="btn mb-2 btn-sm btn-flat btn-warning col-12 col-lg-auto" onclick="return confirm('Resend approval notification?')"><i class="align-middle font-weight-bolder material-icons text-md">notifications</i> Resend Approver Notification</button>
                             </form>
                         @endif
                         <a href="#" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto {{ $perms['can_issue'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-issue"><i class="align-middle font-weight-bolder material-icons text-md">check</i> {{ $transaction->is_deposit ? 'Deposit Notes' : 'Issue' }}</a>
