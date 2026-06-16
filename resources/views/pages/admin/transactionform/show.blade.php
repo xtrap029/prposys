@@ -88,6 +88,14 @@
                         <div class="col-4 px-1 {{ $perms['can_print'] ? '' : 'd-none' }}">
                             <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print</a>
                         </div>
+                        @if ($transaction->status->id === config('global.form_approval')[0] && !$transaction->hierarchy_approver_id)
+                            <div class="col-4 px-1">
+                                <form action="/transaction-form/resend-notif/{{ $transaction->id }}" method="post" class="d-inline-block w-100">
+                                    @csrf
+                                    <button type="submit" class="btn mb-2 btn-sm btn-flat btn-warning col-12 col-lg-auto" onclick="return confirm('Resend approval notification?')"><i class="align-middle font-weight-bolder material-icons text-md">notifications</i> Resend Notif</button>
+                                </form>
+                            </div>
+                        @endif
                         <div class="col-4 px-1 {{ $perms['can_hierarchy_approve'] ? '' : 'd-none' }}">
                             <a href="#_" class="btn mb-2 btn-sm btn-flat btn-light col-12 col-lg-auto" data-toggle="modal" data-target="#modal-hierarchy-approve"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Approve</a>
                         </div>
@@ -124,6 +132,12 @@
                         
                         <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print</a>
                         <a href="#_" class="btn mb-2 btn-sm btn-flat btn-light col-12 col-lg-auto {{ $perms['can_hierarchy_approve'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-hierarchy-approve"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Approve</a>
+                        @if ($transaction->status->id === config('global.form_approval')[0] && !$transaction->hierarchy_approver_id)
+                            <form action="/transaction-form/resend-notif/{{ $transaction->id }}" method="post" class="d-inline-block">
+                                @csrf
+                                <button type="submit" class="btn mb-2 btn-sm btn-flat btn-warning col-12 col-lg-auto" onclick="return confirm('Resend approval notification?')"><i class="align-middle font-weight-bolder material-icons text-md">notifications</i> Resend Notif</button>
+                            </form>
+                        @endif
                         <a href="#" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto {{ $perms['can_issue'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-issue"><i class="align-middle font-weight-bolder material-icons text-md">check</i> {{ $transaction->is_deposit ? 'Deposit Notes' : 'Issue' }}</a>
                     </div>
                 </div>

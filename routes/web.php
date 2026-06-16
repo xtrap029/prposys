@@ -551,6 +551,7 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
             $url = 'Admin\TransactionsFormsController';
 
             Route::get('/approval/{transaction}', $url . '@approval')->where('transaction', '[0-9]+');
+            Route::post('/resend-notif/{transaction}', $url . '@resend_notif')->where('transaction', '[0-9]+');
         });
     });
 

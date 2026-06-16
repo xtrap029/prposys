@@ -1123,6 +1123,37 @@ class TransactionsFormsController extends Controller {
         }
     }
 
+    public function resend_notif(Transaction $transaction) {
+        if ($transaction->status->id !== config('global.status_approval')[0] || $transaction->hierarchy_approver_id) {
+            return back()->with('error', __('messages.cant_edit'));
+        }
+
+        $requestor = $transaction->requested;
+        $approver = null;
+        if ($requestor->approver_id) {
+            $approver = User::where('id', $requestor->approver_id)->first();
+        } elseif ($requestor->hierarchy && $requestor->hierarchy->parent_id) {
+            $approver = User::where('id', $requestor->hierarchy->parent_id)->first();
+        }
+
+        if ($approver) {
+            Mail::queue(new \App\Mail\NotificationsForApprovalMail([
+                'to' => $approver->email,
+                'name' => $approver->name,
+                'url' => env('APP_URL').'/transaction-form/view/'.$transaction->id,
+                'project' => $transaction->project->project,
+                'company' => $transaction->project->company->name,
+                'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
+                'purpose' => $transaction->purpose,
+                'amount' => $transaction->amount,
+                'requestor' => $requestor->name,
+            ]));
+            return back()->with('success', 'Notification resent to '.$approver->name);
+        }
+
+        return back()->with('error', 'No approver found for this transaction');
+    }
+
     public function approval(Transaction $transaction) {
         if ($this->check_can_approval($transaction->id)) {
             $custom_vat = $transaction->amount * (abs($transaction->vattype->vat) * 0.01);
@@ -1167,6 +1198,7 @@ class TransactionsFormsController extends Controller {
                     'name' => $approver->name,
                     'url' => env('APP_URL').'/transaction-form/view/'.$transaction->id,
                     'project' => $transaction->project->project,
+                    'company' => $transaction->project->company->name,
                     'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
                     'purpose' => $transaction->purpose,
                     'amount' => $transaction->amount,
