@@ -58,10 +58,22 @@
                     @forelse ($hierarchies as $item)
                         <tr>
                             <td class="text-nowrap">
-                                <img src="/storage/public/images/users/{{ $item->user->avatar }}" class="img-circle img-sm mr-2" alt="User Image">
-                                {{ $item->user->name }}
-                                <br />
-                                <small class="text-muted">{{ $item->user->e_position }}</small>
+                                <form action="/people-hierarchy/manage/{{ $item->id }}/user" method="post" class="d-inline-flex align-items-center">
+                                    @csrf
+                                    @method('put')
+                                    <img src="/storage/public/images/users/{{ $item->user->avatar }}" class="img-circle img-sm mr-2" alt="User Image">
+                                    <div>
+                                        <select name="user_id" class="form-control form-control-sm" style="width:200px" onchange="this.form.submit()">
+                                            @if (!$users->contains('id', $item->user_id))
+                                                <option value="{{ $item->user_id }}" selected>{{ $item->user->name }}</option>
+                                            @endif
+                                            @foreach ($users as $user)
+                                                <option value="{{ $user->id }}" {{ (int)$item->user_id === (int)$user->id ? 'selected' : '' }}>{{ $user->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <small class="text-muted">{{ $item->user->e_position }}</small>
+                                    </div>
+                                </form>
                             </td>
                             <td class="text-right text-nowrap">
                                 <a href="/people-hierarchy/manage/{{ $item->user_id }}" class="btn btn-link btn-sm d-inline-block">Open</a>

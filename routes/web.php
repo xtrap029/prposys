@@ -208,6 +208,7 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
             Route::get('/manage/{parent_id?}', $url . '@manage')->name('people-hierarchy-manage');
             Route::post('/manage/{parent_id?}', $url . '@store')->name('people-hierarchy-manage-store');
             Route::delete('/manage/{hierarchy_id}', $url . '@destroy')->name('people-hierarchy-manage-destroy');
+            Route::put('/manage/{hierarchy_id}/user', $url . '@update')->name('people-hierarchy-manage-update');
         });
     });
 

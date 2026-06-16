@@ -47,7 +47,7 @@ class HierarchyController extends Controller
         }
 
         $top_hierarchy = Hierarchy::whereNull('parent_id')->first();
-        $users = User::where('id', '!=', $top_hierarchy->user_id)->orderBy('name', 'asc')->get();
+        $users = User::where('id', '!=', $top_hierarchy->user_id)->where('ua_level_id', '!=', config('global.ua_inactive'))->orderBy('name', 'asc')->get();
 
         return view('pages.people.hierarchy.manage', compact([
             'hierarchies',
@@ -73,6 +73,23 @@ class HierarchyController extends Controller
         Hierarchy::create($data);
 
         return redirect()->route('people-hierarchy-manage', ['parent_id' => $parent_id])->with('success', 'Hierarchy created successfully');
+    }
+
+    public function update(Request $request, $hierarchy_id)
+    {
+        $data = $request->validate([
+            'user_id' => ['required', 'exists:users,id'],
+        ]);
+
+        $item = Hierarchy::findOrFail($hierarchy_id);
+
+        if (Hierarchy::where('user_id', $data['user_id'])->where('id', '!=', $hierarchy_id)->exists()) {
+            return redirect()->route('people-hierarchy-manage', ['parent_id' => $item->parent_id])->with('error', 'User already in hierarchy');
+        }
+
+        $item->update(['user_id' => $data['user_id']]);
+
+        return redirect()->route('people-hierarchy-manage', ['parent_id' => $item->parent_id])->with('success', 'User updated successfully');
     }
 
     public function destroy($hierarchy_id)
