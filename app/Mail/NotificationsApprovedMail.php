@@ -35,6 +35,7 @@ class NotificationsApprovedMail extends Mailable
                 'name' => $this->data['name'],
                 'url' => $this->data['url'],
                 'project' => $this->data['project'],
+                'company' => $this->data['company'],
                 'no' => $this->data['no'],
                 'purpose' => $this->data['purpose'],
                 'amount' => $this->data['amount'],

@@ -35,11 +35,11 @@ class NotificationsForApprovalMail extends Mailable
                 'name' => $this->data['name'],
                 'url' => $this->data['url'],
                 'project' => $this->data['project'],
+                'company' => $this->data['company'],
                 'no' => $this->data['no'],
                 'purpose' => $this->data['purpose'],
                 'amount' => $this->data['amount'],
                 'requestor' => $this->data['requestor'],
-                'company' => $this->data['company'],
             ])->subject('Transaction Pending Your Approval')
             ->to($this->data['to']);
     }

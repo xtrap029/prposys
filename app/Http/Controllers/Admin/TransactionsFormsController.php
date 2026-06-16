@@ -1232,6 +1232,7 @@ class TransactionsFormsController extends Controller {
                 'name' => $transaction->requested->name,
                 'url' => env('APP_URL').'/transaction-form/view/'.$transaction->id,
                 'project' => $transaction->project->project,
+                'company' => $transaction->project->company->name,
                 'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
                 'purpose' => $transaction->purpose,
                 'amount' => $transaction->amount,
