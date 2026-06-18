@@ -88,14 +88,6 @@
                         <div class="col-4 px-1 {{ $perms['can_print'] ? '' : 'd-none' }}">
                             <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print</a>
                         </div>
-                        @if ($transaction->status->id === config('global.form_approval')[0] && !$transaction->hierarchy_approver_id)
-                            <div class="col-4 px-1">
-                                <form action="/transaction-form/resend-notif/{{ $transaction->id }}" method="post" class="d-inline-block w-100">
-                                    @csrf
-                                    <button type="submit" class="btn mb-2 btn-sm btn-flat btn-warning col-12 col-lg-auto" onclick="return confirm('Resend approval notification?')"><i class="align-middle font-weight-bolder material-icons text-md">notifications</i> Resend Approver Notification</button>
-                                </form>
-                            </div>
-                        @endif
                         <div class="col-4 px-1 {{ $perms['can_hierarchy_approve'] ? '' : 'd-none' }}">
                             <a href="#_" class="btn mb-2 btn-sm btn-flat btn-light col-12 col-lg-auto" data-toggle="modal" data-target="#modal-hierarchy-approve"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Approve</a>
                         </div>
@@ -132,12 +124,6 @@
                         
                         <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto {{ $perms['can_print'] ? '' : 'd-none' }}" onclick="window.open('/transaction-form/print/{{ $transaction->id }}','name','width=800,height=800')"><i class="align-middle font-weight-bolder material-icons text-md">print</i> Print</a>
                         <a href="#_" class="btn mb-2 btn-sm btn-flat btn-light col-12 col-lg-auto {{ $perms['can_hierarchy_approve'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-hierarchy-approve"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Approve</a>
-                        @if ($transaction->status->id === config('global.form_approval')[0] && !$transaction->hierarchy_approver_id)
-                            <form action="/transaction-form/resend-notif/{{ $transaction->id }}" method="post" class="d-inline-block">
-                                @csrf
-                                <button type="submit" class="btn mb-2 btn-sm btn-flat btn-warning col-12 col-lg-auto" onclick="return confirm('Resend approval notification?')"><i class="align-middle font-weight-bolder material-icons text-md">notifications</i> Resend Approver Notification</button>
-                            </form>
-                        @endif
                         <a href="#" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto {{ $perms['can_issue'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-issue"><i class="align-middle font-weight-bolder material-icons text-md">check</i> {{ $transaction->is_deposit ? 'Deposit Notes' : 'Issue' }}</a>
                     </div>
                 </div>
@@ -437,12 +423,34 @@
                                             {{ $transaction->owner->name }}
                                         </td>
                                     </tr>
-                                    @if ($transaction->hierarchy_approver_id)
+                                    @php
+                                        $pendingApprover = null;
+                                        if (!$transaction->hierarchy_approver_id) {
+                                            $requestor = $transaction->requested;
+                                            if ($requestor->approver_id) {
+                                                $pendingApprover = \App\User::find($requestor->approver_id);
+                                            } elseif ($requestor->hierarchy && $requestor->hierarchy->parent_id) {
+                                                $pendingApprover = \App\User::find($requestor->hierarchy->parent_id);
+                                            }
+                                        }
+                                    @endphp
+                                    @if ($transaction->hierarchy_approver_id || $pendingApprover)
                                         <tr>
-                                            <td class="font-weight-bold text-gray">Approved By</td>
+                                            <td class="font-weight-bold text-gray">{{ $transaction->hierarchy_approver_id ? 'Approved By' : 'Approver (Pending)' }}</td>
                                             <td class="font-weight-bold">
-                                                <img src="/storage/public/images/users/{{ $transaction->hierarchyapprover->avatar }}" class="img-circle img-size-32 mr-2">
-                                                {{ $transaction->hierarchy_approver_id ? $transaction->hierarchyapprover->name : '' }}
+                                                @if ($transaction->hierarchy_approver_id)
+                                                    <img src="/storage/public/images/users/{{ $transaction->hierarchyapprover->avatar }}" class="img-circle img-size-32 mr-2">
+                                                    {{ $transaction->hierarchyapprover->name }}
+                                                @else
+                                                    <img src="/storage/public/images/users/{{ $pendingApprover->avatar }}" class="img-circle img-size-32 mr-2">
+                                                    {{ $pendingApprover->name }}
+                                                    @if ($transaction->status->id === config('global.form_approval')[0])
+                                                        <form action="/transaction-form/resend-notif/{{ $transaction->id }}" method="post" class="d-inline-block ml-2">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-xs btn-flat rounded-pill btn-warning" onclick="return confirm('Resend approval notification?')"><i class="align-middle font-weight-bolder material-icons text-md">notifications</i> Resend</button>
+                                                        </form>
+                                                    @endif
+                                                @endif
                                             </td>
                                         </tr>
                                     @endif
