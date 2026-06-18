@@ -478,6 +478,7 @@ class TransactionsFormsController extends Controller {
         $perms['can_approval'] = $this->check_can_approval($transaction->id);
         $perms['can_print'] = $this->check_can_print($transaction->id);
         $perms['can_hierarchy_approve'] = $this->check_can_hierarchy_approve($transaction->id);
+        $perms['can_hierarchy_disapprove'] = $this->check_can_hierarchy_approve($transaction->id);
         $perms['can_issue'] = $this->check_can_issue($transaction->id);
         $perms['can_create'] = app('App\Http\Controllers\Admin\TransactionsLiquidationController')->check_can_create(
             $transaction->trans_type."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
@@ -1222,7 +1223,7 @@ class TransactionsFormsController extends Controller {
             if ($request->filled('note')) {
                 TransactionsNote::create([
                     'transaction_id' => $transaction->id,
-                    'content' => $request->note,
+                    'content' => '[APPROVAL-REMARKS] ' . $request->note,
                     'user_id' => auth()->id(),
                 ]);
             }
@@ -1243,6 +1244,42 @@ class TransactionsFormsController extends Controller {
         } else {
             return back()->with('error', __('messages.cant_edit'));
         }
+    }
+
+    public function hierarchy_disapprove(Request $request, Transaction $transaction) {
+        if (!$this->check_can_hierarchy_approve($transaction->id)) {
+            return back()->with('error', __('messages.cant_edit'));
+        }
+
+        $request->validate(['note' => 'required|string']);
+
+        $data = [];
+        $data['status_updated_at'] = now();
+        $data['status_prev_id'] = $transaction->status_id;
+        $data['status_id'] = 5;
+        $data['updated_id'] = auth()->id();
+        $transaction->update($data);
+
+        TransactionsNote::create([
+            'transaction_id' => $transaction->id,
+            'content' => '[DISAPPROVAL-REMARKS] ' . $request->note,
+            'user_id' => auth()->id(),
+        ]);
+
+        Mail::queue(new \App\Mail\NotificationsDisapprovedMail([
+            'to' => $transaction->requested->email,
+            'name' => $transaction->requested->name,
+            'url' => env('APP_URL').'/transaction-form/view/'.$transaction->id,
+            'project' => $transaction->project->project,
+            'company' => $transaction->project->company->name,
+            'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
+            'purpose' => $transaction->purpose,
+            'amount' => $transaction->amount,
+            'approver' => auth()->user()->name,
+            'remarks' => $request->note,
+        ]));
+
+        return back()->with('success', 'Transaction Form has been disapproved.');
     }
 
     public function print(Transaction $transaction) {

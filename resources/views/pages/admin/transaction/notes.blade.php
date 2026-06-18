@@ -76,6 +76,10 @@
 @section('script2')
 <script type="text/javascript">
     $(function() {
+        $('#modal-notes').on('shown.bs.modal', function() {
+            var $msgs = $(this).find('.direct-chat-messages');
+            $msgs.scrollTop($msgs[0].scrollHeight);
+        });
         $('.editNote').on('click', function() {
             $(this).parents('.direct-chat-text').find('.notes-content-edit').toggleClass('d-none')
             $(this).parents('.notes-content').toggleClass('d-none')
