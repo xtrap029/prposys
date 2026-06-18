@@ -434,9 +434,9 @@
                                             }
                                         }
                                     @endphp
-                                    @if ($transaction->hierarchy_approver_id || $pendingApprover)
+                                    @if ($transaction->hierarchy_approver_id || ($pendingApprover && $transaction->status->id === config('global.form_approval')[0]))
                                         <tr>
-                                            <td class="font-weight-bold text-gray">{{ $transaction->hierarchy_approver_id ? 'Approved By' : 'Approver (Pending)' }}</td>
+                                            <td class="font-weight-bold text-gray">{{ $transaction->hierarchy_approver_id ? 'Approved By' : 'Approver' }}</td>
                                             <td class="font-weight-bold">
                                                 @if ($transaction->hierarchy_approver_id)
                                                     <img src="/storage/public/images/users/{{ $transaction->hierarchyapprover->avatar }}" class="img-circle img-size-32 mr-2">
@@ -447,7 +447,7 @@
                                                     @if ($transaction->status->id === config('global.form_approval')[0])
                                                         <form action="/transaction-form/resend-notif/{{ $transaction->id }}" method="post" class="d-inline-block ml-2">
                                                             @csrf
-                                                            <button type="submit" class="btn btn-xs btn-flat rounded-pill btn-warning" onclick="return confirm('Resend approval notification?')"><i class="align-middle font-weight-bolder material-icons text-md">notifications</i> Resend</button>
+                                                            <button type="submit" class="btn btn-xs rounded-pill btn-warning" onclick="return confirm('Resend approval notification?')" title="Resend Approver Notification"><i class="align-middle material-icons text-md">notifications</i></button>
                                                         </form>
                                                     @endif
                                                 @endif
