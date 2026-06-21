@@ -552,6 +552,8 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
 
             Route::get('/approval/{transaction}', $url . '@approval')->where('transaction', '[0-9]+');
             Route::post('/resend-notif/{transaction}', $url . '@resend_notif')->where('transaction', '[0-9]+');
+            Route::put('/reassign-approver/{transaction}', $url . '@reassign_approver')->where('transaction', '[0-9]+');
+            Route::put('/clear-reassigned-approver/{transaction}', $url . '@clear_reassigned_approver')->where('transaction', '[0-9]+');
         });
     });
 

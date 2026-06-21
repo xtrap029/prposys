@@ -56,6 +56,7 @@ class Transaction extends Model {
                                         'form_amount_wht',
                                         'form_amount_payable',
                                         'formapprover.name',
+                                        'formassignedapprover.name',
                                         'formcompany.name',
                                         'form_service_charge',
                                         'form_service_charge_currency_id',
@@ -158,6 +159,10 @@ class Transaction extends Model {
 
     public function formapprover() {
         return $this->belongsTo(User::class, 'form_approver_id');
+    }
+
+    public function formassignedapprover() {
+        return $this->belongsTo(User::class, 'form_assigned_approver_id');
     }
 
     public function hierarchyapprover() {

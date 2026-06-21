@@ -252,6 +252,46 @@
                         </div>
                     @endif
 
+                    @if ($perms['can_reassign_approver'])
+                        <div class="modal fade" id="modal-reassign-approver" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog modal-md" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header border-0">
+                                        <h5 class="modal-title">Reassign Approver</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label class="font-weight-bold">Select Approver</label>
+                                            <select name="user_id" form="form-reassign-approver" class="form-control" required>
+                                                <option value="">-- Select User --</option>
+                                                @foreach ($users as $approver)
+                                                    <option value="{{ $approver->id }}" {{ $transaction->form_assigned_approver_id == $approver->id ? 'selected' : '' }}>{{ $approver->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <form id="form-reassign-approver" action="/transaction-form/reassign-approver/{{ $transaction->id }}" method="post">
+                                                @csrf
+                                                @method('put')
+                                                <button type="submit" class="btn btn-primary">Reassign</button>
+                                            </form>
+                                            @if ($transaction->form_assigned_approver_id)
+                                                <form action="/transaction-form/clear-reassigned-approver/{{ $transaction->id }}" method="post">
+                                                    @csrf
+                                                    @method('put')
+                                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Clear reassigned approver?')"><i class="align-middle material-icons text-md">clear</i> Clear Reassign</button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                     @if ($perms['can_issue'])
                         <div class="modal fade" id="modal-issue" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog modal-md" role="document">
@@ -465,17 +505,23 @@
                                         <tr>
                                             <td class="font-weight-bold text-gray">{{ $transaction->hierarchy_approver_id ? 'Approved By' : 'Approver' }}</td>
                                             <td class="font-weight-bold">
-                                                @if ($transaction->hierarchy_approver_id)
+                                                @if ($transaction->form_assigned_approver_id)
+                                                    <img src="/storage/public/images/users/{{ $transaction->formassignedapprover->avatar }}" class="img-circle img-size-32 mr-2">
+                                                    {{ $transaction->formassignedapprover->name }}
+                                                @elseif ($transaction->hierarchy_approver_id)
                                                     <img src="/storage/public/images/users/{{ $transaction->hierarchyapprover->avatar }}" class="img-circle img-size-32 mr-2">
                                                     {{ $transaction->hierarchyapprover->name }}
                                                 @else
                                                     <img src="/storage/public/images/users/{{ $pendingApprover->avatar }}" class="img-circle img-size-32 mr-2">
                                                     {{ $pendingApprover->name }}
-                                                    @if ($transaction->status->id === config('global.form_approval')[0])
-                                                        <form action="/transaction-form/resend-notif/{{ $transaction->id }}" method="post" class="d-inline-block ml-2">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-xs rounded-pill btn-warning" onclick="return confirm('Resend approval notification?')" title="Resend Approver Notification"><i class="align-middle material-icons text-md">notifications</i></button>
-                                                        </form>
+                                                @endif
+                                                @if (!$transaction->hierarchy_approver_id && $transaction->status->id === config('global.form_approval')[0])
+                                                    <form action="/transaction-form/resend-notif/{{ $transaction->id }}" method="post" class="d-inline-block ml-2">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-xs rounded-pill btn-warning" onclick="return confirm('Resend approval notification?')" title="Resend Approver Notification"><i class="align-middle material-icons text-md">notifications</i></button>
+                                                    </form>
+                                                    @if ($perms['can_reassign_approver'])
+                                                        <button type="button" class="btn btn-xs rounded-pill btn-secondary ml-1" data-toggle="modal" data-target="#modal-reassign-approver" title="Reassign Approver"><i class="align-middle material-icons text-md">swap_horiz</i></button>
                                                     @endif
                                                 @endif
                                             </td>
