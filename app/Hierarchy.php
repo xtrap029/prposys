@@ -10,9 +10,14 @@ class Hierarchy extends Model
     protected $guarded = [];
 
     use LogsActivity;
-    protected static $logAttributes = ['user_id', 'parent_id'];
+    protected static $logAttributes = ['user_id', 'parent_id', 'company_id'];
     protected static $logName = 'Hierarchy';
     protected static $logOnlyDirty = true;
+
+    public function company()
+    {
+        return $this->belongsTo(\App\Company::class);
+    }
 
     public function user()
     {

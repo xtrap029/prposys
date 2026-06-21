@@ -10,7 +10,7 @@
                     <h1>Manage Hierarchy</h1>
                 </div>
                 <div class="col-sm-4 mt-2 mt-sm-0 text-right">
-                    <a href="/people-hierarchy" class="btn btn-primary">Preview</a>
+                    <a href="/people-hierarchy?company_id={{ $company_id }}" class="btn btn-primary">Preview</a>
                 </div>
             </div>
         </div>
@@ -22,7 +22,7 @@
                     <tr>
                        <th>
                             @if ($hierarchy)
-                                <a href="/people-hierarchy/manage">
+                                <a href="/people-hierarchy/manage?company_id={{ $company_id }}">
                                     <i class="nav-icon material-icons icon--list">home</i>
                                 </a> &gt;
 
@@ -41,7 +41,7 @@
 
                                 @foreach ($layers as $key => $layer)
                                     @if ($key < count($layers) - 1)
-                                        <a href="/people-hierarchy/manage/{{ $layer->user_id }}">
+                                        <a href="/people-hierarchy/manage/{{ $layer->user_id }}?company_id={{ $company_id }}">
                                             {{ $layer->user->name }}
                                         </a>
                                         &gt;
@@ -61,6 +61,7 @@
                                 <form action="/people-hierarchy/manage/{{ $item->id }}/user" method="post" class="d-inline-flex align-items-center">
                                     @csrf
                                     @method('put')
+                                    <input type="hidden" name="company_id" value="{{ $company_id }}">
                                     <img src="/storage/public/images/users/{{ $item->user->avatar }}" class="img-circle img-sm mr-2" alt="User Image">
                                     <div>
                                         <select name="user_id" class="form-control form-control-sm" style="width:200px" onchange="this.form.submit()">
@@ -76,7 +77,7 @@
                                 </form>
                             </td>
                             <td class="text-right text-nowrap">
-                                <a href="/people-hierarchy/manage/{{ $item->user_id }}" class="btn btn-link btn-sm d-inline-block">Open</a>
+                                <a href="/people-hierarchy/manage/{{ $item->user_id }}?company_id={{ $company_id }}" class="btn btn-link btn-sm d-inline-block">Open</a>
                                 @if ($item->parent_id)
                                     <form action="/people-hierarchy/manage/{{ $item->id }}" method="post" class="d-inline-block">
                                         @csrf
@@ -96,6 +97,7 @@
                             @if ($hierarchy)
                                 <form action="/people-hierarchy/manage/{{ $hierarchy->user_id }}" method="post">
                                     @csrf
+                                    <input type="hidden" name="company_id" value="{{ $company_id }}">
                                     <div class="form-row justify-content-end">
                                         <select name="user_id" class="form-control w-auto mr-2">
                                             @foreach ($users as $user)

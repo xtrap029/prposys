@@ -1962,9 +1962,15 @@ class TransactionsFormsController extends Controller {
             if ($requestor->approver_id != $user->id) {
                 $can_hierarchy_approve = false;
             }
-        } else if ($requestor->hierarchy && ($requestor->hierarchy->parent_id == $user->id || $requestor->hierarchy->parent_id == null)) {
         } else {
-            $can_hierarchy_approve = false;
+            $requestorHierarchy = \App\Hierarchy::where('user_id', $requestor->id)
+                ->where('company_id', $transaction->project->company_id)
+                ->first();
+            if (!$requestorHierarchy
+                || ($requestorHierarchy->parent_id != $user->id
+                    && $requestorHierarchy->parent_id !== null)) {
+                $can_hierarchy_approve = false;
+            }
         }
 
         return $can_hierarchy_approve;

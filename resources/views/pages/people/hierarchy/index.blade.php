@@ -10,8 +10,8 @@
                     <h1>Hierarchy</h1>
                 </div>
                 <div class="col-sm-6 mt-2 mt-sm-0 text-right">
-                    @if ($can_manage)
-                        <a href="/people-hierarchy/manage" class="btn btn-primary">Manage</a>
+                    @if ($can_manage && $company_id)
+                        <a href="/people-hierarchy/manage?company_id={{ $company_id }}" class="btn btn-primary">Manage</a>
                     @endif
                 </div>
             </div>
@@ -19,8 +19,24 @@
     </section>
     <section class="content">
         <div class="container-fluid">
-            <input type="text" id="searchBox" class="form-control" placeholder="Search employee...">
-            <div id="tree" style="height:80vh;" class="w-full h-full bg-transparent"></div>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <form method="get" action="/people-hierarchy">
+                        <select name="company_id" class="form-control" onchange="this.form.submit()">
+                            <option value="">-- Select Company --</option>
+                            @foreach ($companies as $company)
+                                <option value="{{ $company->id }}" {{ (string)$company_id === (string)$company->id ? 'selected' : '' }}>{{ $company->name }}</option>
+                            @endforeach
+                        </select>
+                    </form>
+                </div>
+            </div>
+            @if ($company_id)
+                <input type="text" id="searchBox" class="form-control mb-2" placeholder="Search employee...">
+                <div id="tree" style="height:75vh;" class="w-full h-full bg-transparent"></div>
+            @else
+                <p class="text-muted">Select a company to view its hierarchy.</p>
+            @endif
         </div>
     </section>
 @endsection
@@ -30,6 +46,7 @@
 @endsection
 
 @section('script')
+    @if ($company_id)
     <script src="https://cdn.balkan.app/orgchart-community.js"></script>
     <script>
         OrgChart.templates.myIsla = Object.assign({}, OrgChart.templates.isla);
@@ -138,4 +155,5 @@
             }
         });
     </script>
+    @endif
 @endsection

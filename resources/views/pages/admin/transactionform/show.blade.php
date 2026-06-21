@@ -493,33 +493,43 @@
                                     @php
                                         $pendingApprover = null;
                                         if (!$transaction->hierarchy_approver_id) {
-                                            $requestor = $transaction->requested;
-                                            if ($requestor->approver_id) {
-                                                $pendingApprover = \App\User::find($requestor->approver_id);
-                                            } elseif ($requestor->hierarchy && $requestor->hierarchy->parent_id) {
-                                                $pendingApprover = \App\User::find($requestor->hierarchy->parent_id);
+                                            if ($transaction->form_assigned_approver_id) {
+                                                $pendingApprover = $transaction->formassignedapprover;
+                                            } else {
+                                                $requestor = $transaction->requested;
+                                                if ($requestor->approver_id) {
+                                                    $pendingApprover = \App\User::find($requestor->approver_id);
+                                                } else {
+                                                    $requestorHierarchy = \App\Hierarchy::where('user_id', $requestor->id)
+                                                        ->where('company_id', $transaction->project->company_id)
+                                                        ->first();
+                                                    if ($requestorHierarchy && $requestorHierarchy->parent_id) {
+                                                        $pendingApprover = \App\User::find($requestorHierarchy->parent_id);
+                                                    }
+                                                }
                                             }
                                         }
                                     @endphp
-                                    @if ($transaction->hierarchy_approver_id || ($pendingApprover && $transaction->status->id === config('global.form_approval')[0]))
+                                    @if ($transaction->hierarchy_approver_id || $transaction->status->id === config('global.form_approval')[0])
                                         <tr>
                                             <td class="font-weight-bold text-gray">{{ $transaction->hierarchy_approver_id ? 'Approved By' : 'Approver' }}</td>
                                             <td class="font-weight-bold">
-                                                @if ($transaction->form_assigned_approver_id)
-                                                    <img src="/storage/public/images/users/{{ $transaction->formassignedapprover->avatar }}" class="img-circle img-size-32 mr-2">
-                                                    {{ $transaction->formassignedapprover->name }}
-                                                @elseif ($transaction->hierarchy_approver_id)
+                                                @if ($transaction->hierarchy_approver_id)
                                                     <img src="/storage/public/images/users/{{ $transaction->hierarchyapprover->avatar }}" class="img-circle img-size-32 mr-2">
                                                     {{ $transaction->hierarchyapprover->name }}
-                                                @else
+                                                @elseif ($pendingApprover)
                                                     <img src="/storage/public/images/users/{{ $pendingApprover->avatar }}" class="img-circle img-size-32 mr-2">
                                                     {{ $pendingApprover->name }}
+                                                @else
+                                                    <span class="text-muted">—</span>
                                                 @endif
                                                 @if (!$transaction->hierarchy_approver_id && $transaction->status->id === config('global.form_approval')[0])
-                                                    <form action="/transaction-form/resend-notif/{{ $transaction->id }}" method="post" class="d-inline-block ml-2">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-xs rounded-pill btn-warning" onclick="return confirm('Resend approval notification?')" title="Resend Approver Notification"><i class="align-middle material-icons text-md">notifications</i></button>
-                                                    </form>
+                                                    @if ($pendingApprover)
+                                                        <form action="/transaction-form/resend-notif/{{ $transaction->id }}" method="post" class="d-inline-block ml-2">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-xs rounded-pill btn-warning" onclick="return confirm('Resend approval notification?')" title="Resend Approver Notification"><i class="align-middle material-icons text-md">notifications</i></button>
+                                                        </form>
+                                                    @endif
                                                     @if ($perms['can_reassign_approver'])
                                                         <button type="button" class="btn btn-xs rounded-pill btn-secondary ml-1" data-toggle="modal" data-target="#modal-reassign-approver" title="Reassign Approver"><i class="align-middle material-icons text-md">swap_horiz</i></button>
                                                     @endif
