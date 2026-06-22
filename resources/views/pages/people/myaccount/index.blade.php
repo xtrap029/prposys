@@ -172,6 +172,10 @@
                             <label for="" class="text-gray">Is External?</label>
                             <h6>{{ $user->is_external ? 'Yes' : 'No' }}</h6>
                         </div>
+                        <div class="form-group border p-2 mb-0 col-6">
+                            <label for="" class="text-gray">Approver</label>
+                            <h6>{{ $user->approver ? $user->approver->name : 'Refer to Hierarchy' }}</h6>
+                        </div>
                         <div class="form-group border p-2 mb-0 col-lg-6 d-none">
                             <label for="" class="text-gray">Role</label>
                             <h6>{{ $user->role->name }} {{ $user->is_smt ? ' - SMT' : '' }}</h6>
@@ -184,7 +188,7 @@
                             <label for="" class="text-gray">Default Company</label>
                             <h6>{{ $user->company->name }}</h6>
                         </div>
-                        <div class="form-group border p-2 mb-0 col-6">
+                        <div class="form-group border p-2 mb-0 col-12">
                             <label for="" class="text-gray">Accessible Companies</label>
                             <h6>
                                 @foreach ($companies as $item)
