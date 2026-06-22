@@ -1144,7 +1144,7 @@ class TransactionsFormsController extends Controller {
         }
 
         if ($approver) {
-            Mail::queue(new \App\Mail\NotificationsForApprovalMail([
+            $mailable = new \App\Mail\NotificationsForApprovalMail([
                 'to' => $approver->email,
                 'name' => $approver->name,
                 'url' => env('APP_URL').'/transaction-form/view/'.$transaction->id,
@@ -1154,7 +1154,9 @@ class TransactionsFormsController extends Controller {
                 'purpose' => $transaction->purpose,
                 'amount' => $transaction->amount,
                 'requestor' => $requestor->name,
-            ]));
+            ]);
+            $to = $approver->email;
+            app()->terminating(fn() => Mail::to($to)->send($mailable));
             return back()->with('success', 'Notification resent to '.$approver->name);
         }
 
@@ -1203,7 +1205,7 @@ class TransactionsFormsController extends Controller {
             }
 
             if ($approver) {
-                Mail::queue(new \App\Mail\NotificationsForApprovalMail([
+                $mailable = new \App\Mail\NotificationsForApprovalMail([
                     'to' => $approver->email,
                     'name' => $approver->name,
                     'url' => env('APP_URL').'/transaction-form/view/'.$transaction->id,
@@ -1213,7 +1215,9 @@ class TransactionsFormsController extends Controller {
                     'purpose' => $transaction->purpose,
                     'amount' => $transaction->amount,
                     'requestor' => $requestor->name,
-                ]));
+                ]);
+                $to = $approver->email;
+                app()->terminating(fn() => Mail::to($to)->send($mailable));
             }
 
             return back()->with('success', 'Transaction Form'.__('messages.approval_success'));
@@ -1237,7 +1241,7 @@ class TransactionsFormsController extends Controller {
                 ]);
             }
 
-            Mail::queue(new \App\Mail\NotificationsApprovedMail([
+            $mailable = new \App\Mail\NotificationsApprovedMail([
                 'to' => $transaction->requested->email,
                 'name' => $transaction->requested->name,
                 'url' => env('APP_URL').'/transaction-form/view/'.$transaction->id,
@@ -1247,7 +1251,9 @@ class TransactionsFormsController extends Controller {
                 'purpose' => $transaction->purpose,
                 'amount' => $transaction->amount,
                 'approver' => auth()->user()->name,
-            ]));
+            ]);
+            $to = $transaction->requested->email;
+            app()->terminating(fn() => Mail::to($to)->send($mailable));
 
             return back()->with('success', 'Transaction Form Approval'.__('messages.approved_success'));
         } else {
@@ -1275,7 +1281,7 @@ class TransactionsFormsController extends Controller {
             'user_id' => auth()->id(),
         ]);
 
-        Mail::queue(new \App\Mail\NotificationsDisapprovedMail([
+        $mailable = new \App\Mail\NotificationsDisapprovedMail([
             'to' => $transaction->requested->email,
             'name' => $transaction->requested->name,
             'url' => env('APP_URL').'/transaction-form/view/'.$transaction->id,
@@ -1286,7 +1292,9 @@ class TransactionsFormsController extends Controller {
             'amount' => $transaction->amount,
             'approver' => auth()->user()->name,
             'remarks' => $request->note,
-        ]));
+        ]);
+        $to = $transaction->requested->email;
+        app()->terminating(fn() => Mail::to($to)->send($mailable));
 
         return back()->with('success', 'Transaction Form has been disapproved.');
     }

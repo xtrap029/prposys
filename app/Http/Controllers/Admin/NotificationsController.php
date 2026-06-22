@@ -33,7 +33,7 @@ class NotificationsController extends Controller {
             ->get();
             
             foreach ($due as $key => $value) {
-                Mail::queue(new \App\Mail\NotificationsAlmostDueMail([
+                $mailable = new \App\Mail\NotificationsAlmostDueMail([
                     'to' => $value->requested->email,
                     'name' => $value->requested->name,
                     'url' => env('APP_URL').'/transaction-form/view/'.$value->id,
@@ -42,7 +42,9 @@ class NotificationsController extends Controller {
                     'purpose' => $value->purpose,
                     'amount' => $value->amount,
                     'cc' => array_filter(explode(';', $cc)),
-                ]));
+                ]);
+                $to = $value->requested->email;
+                app()->terminating(fn() => Mail::to($to)->send($mailable));
             }
 
             return redirect('/sequence-dashboard')->with('success', 'Notification Sent!');
@@ -71,7 +73,7 @@ class NotificationsController extends Controller {
             ->get();
             
             foreach ($due as $key => $value) {
-                Mail::queue(new \App\Mail\NotificationsPastDueMail([
+                $mailable = new \App\Mail\NotificationsPastDueMail([
                     'to' => $value->requested->email,
                     'name' => $value->requested->name,
                     'url' => env('APP_URL').'/transaction-form/view/'.$value->id,
@@ -80,7 +82,9 @@ class NotificationsController extends Controller {
                     'purpose' => $value->purpose,
                     'amount' => $value->amount,
                     'cc' => array_filter(explode(';', $cc)),
-                ]));
+                ]);
+                $to = $value->requested->email;
+                app()->terminating(fn() => Mail::to($to)->send($mailable));
             }
 
             return redirect('/sequence-dashboard')->with('success', 'Notification Sent!');
@@ -93,8 +97,8 @@ class NotificationsController extends Controller {
         if ($transaction->status_id == config('global.form_issued')[0]) {
             $cc = Settings::where('type', 'SEQUENCE_ISSUED_NOTIFY_CC')->first()->value;
             
-            if ($transaction->vendor_id && !$transaction->is_reimbursement && $transaction->issue_slip) {             
-                Mail::queue(new \App\Mail\NotificationsIssuedVendorMail([
+            if ($transaction->vendor_id && !$transaction->is_reimbursement && $transaction->issue_slip) {
+                $vendorMailable = new \App\Mail\NotificationsIssuedVendorMail([
                     'to' => $transaction->vendor->email,
                     'name' => $transaction->vendor->name,
                     'purpose' => $transaction->purpose,
@@ -102,10 +106,12 @@ class NotificationsController extends Controller {
                     'requestor_name' => $transaction->requested->name,
                     'url' => env('APP_URL').'/attachments/issue_slip/'.$transaction->issue_slip,
                     'cc' => array_filter(explode(';', $cc)),
-                ]));
+                ]);
+                $vendorTo = $transaction->vendor->email;
+                app()->terminating(fn() => Mail::to($vendorTo)->send($vendorMailable));
             }
-            
-            return Mail::queue(new \App\Mail\NotificationsIssuedMail([
+
+            $issuedMailable = new \App\Mail\NotificationsIssuedMail([
                 'to' => $transaction->requested->email,
                 'name' => $transaction->requested->name,
                 'url' => env('APP_URL').'/transaction-form/view/'.$transaction->id,
@@ -114,7 +120,10 @@ class NotificationsController extends Controller {
                 'purpose' => $transaction->purpose,
                 'amount' => $transaction->amount,
                 'cc' => array_filter(explode(';', $cc)),
-            ]));
+            ]);
+            $issuedTo = $transaction->requested->email;
+            app()->terminating(fn() => Mail::to($issuedTo)->send($issuedMailable));
+            return;
         } else {
             return abort(401);
         }
