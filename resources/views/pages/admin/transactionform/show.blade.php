@@ -502,15 +502,20 @@
                                                     $pendingApprovers = \App\ClassTypeCompanyApprover::where('class_type_id', $transaction->class_type_id)
                                                         ->where('company_id', $transaction->project->company_id)
                                                         ->with('user')
-                                                        ->get();
-                                                } else if ($requestor->approver_id) {
-                                                    $pendingApprover = \App\User::find($requestor->approver_id);
-                                                } else {
-                                                    $requestorHierarchy = \App\Hierarchy::where('user_id', $requestor->id)
-                                                        ->where('company_id', $transaction->project->company_id)
-                                                        ->first();
-                                                    if ($requestorHierarchy && $requestorHierarchy->parent_id) {
-                                                        $pendingApprover = \App\User::find($requestorHierarchy->parent_id);
+                                                        ->get()
+                                                        ->pluck('user')
+                                                        ->filter();
+                                                }
+                                                if ($pendingApprovers->isEmpty()) {
+                                                    if ($requestor->approver_id) {
+                                                        $pendingApprover = \App\User::find($requestor->approver_id);
+                                                    } else {
+                                                        $requestorHierarchy = \App\Hierarchy::where('user_id', $requestor->id)
+                                                            ->where('company_id', $transaction->project->company_id)
+                                                            ->first();
+                                                        if ($requestorHierarchy && $requestorHierarchy->parent_id) {
+                                                            $pendingApprover = \App\User::find($requestorHierarchy->parent_id);
+                                                        }
                                                     }
                                                 }
                                             }
@@ -527,8 +532,8 @@
                                                 @elseif ($pendingApprovers->isNotEmpty())
                                                     @foreach ($pendingApprovers as $ca)
                                                         <div class="mb-1">
-                                                            <img src="/storage/public/images/users/{{ $ca->user->avatar }}" class="img-circle img-size-32 mr-1">
-                                                            {{ $ca->user->name }}
+                                                            <img src="/storage/public/images/users/{{ $ca->avatar }}" class="img-circle img-size-32 mr-1">
+                                                            {{ $ca->name }}
                                                         </div>
                                                     @endforeach
                                                 @elseif ($pendingApprover)

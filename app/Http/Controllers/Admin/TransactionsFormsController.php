@@ -1962,12 +1962,15 @@ class TransactionsFormsController extends Controller {
         }
 
         if ($transaction->class_type_id) {
-            return \App\ClassTypeCompanyApprover::where('class_type_id', $transaction->class_type_id)
+            $classApprovers = \App\ClassTypeCompanyApprover::where('class_type_id', $transaction->class_type_id)
                 ->where('company_id', $transaction->project->company_id)
                 ->with('user')
                 ->get()
                 ->pluck('user')
                 ->filter();
+            if ($classApprovers->isNotEmpty()) {
+                return $classApprovers;
+            }
         }
 
         $requestor = $transaction->requested;
