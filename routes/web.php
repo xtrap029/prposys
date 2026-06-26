@@ -77,6 +77,17 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
         Route::get('company/{company}/auto-gen/{type}', 'Admin\CompanyController@auto_gen')->where('company', '[0-9]+')->where('type', 'po|pr')->name('company');
     });
 
+    // Seq Class Type Company Approvers
+    Route::middleware('CheckUserAccess:seq_comp')->group(function () {
+        Route::prefix('company-class-approver')->group(function () {
+            $url = 'Admin\ClassTypeCompanyApproversController';
+
+            Route::get('/{company}', $url . '@index')->where('company', '[0-9]+')->name('company');
+            Route::post('/{company}', $url . '@store')->where('company', '[0-9]+');
+            Route::delete('/{classTypeCompanyApprover}', $url . '@destroy')->where('classTypeCompanyApprover', '[0-9]+');
+        });
+    });
+
     // Seq Company Project
     Route::middleware('CheckUserAccess:seq_comp_proj')->group(function () {
         Route::prefix('company-project')->group(function () {

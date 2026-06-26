@@ -492,12 +492,18 @@
                                     </tr>
                                     @php
                                         $pendingApprover = null;
+                                        $pendingApprovers = collect();
                                         if (!$transaction->hierarchy_approver_id) {
                                             if ($transaction->form_assigned_approver_id) {
                                                 $pendingApprover = $transaction->formassignedapprover;
                                             } else {
                                                 $requestor = $transaction->requested;
-                                                if ($requestor->approver_id) {
+                                                if ($transaction->class_type_id) {
+                                                    $pendingApprovers = \App\ClassTypeCompanyApprover::where('class_type_id', $transaction->class_type_id)
+                                                        ->where('company_id', $transaction->project->company_id)
+                                                        ->with('user')
+                                                        ->get();
+                                                } else if ($requestor->approver_id) {
                                                     $pendingApprover = \App\User::find($requestor->approver_id);
                                                 } else {
                                                     $requestorHierarchy = \App\Hierarchy::where('user_id', $requestor->id)
@@ -509,6 +515,7 @@
                                                 }
                                             }
                                         }
+                                        $hasApprover = $pendingApprover || $pendingApprovers->isNotEmpty();
                                     @endphp
                                     @if ($transaction->hierarchy_approver_id || $transaction->status->id === config('global.form_approval')[0])
                                         <tr>
@@ -517,6 +524,13 @@
                                                 @if ($transaction->hierarchy_approver_id)
                                                     <img src="/storage/public/images/users/{{ $transaction->hierarchyapprover->avatar }}" class="img-circle img-size-32 mr-2">
                                                     {{ $transaction->hierarchyapprover->name }}
+                                                @elseif ($pendingApprovers->isNotEmpty())
+                                                    @foreach ($pendingApprovers as $ca)
+                                                        <div class="mb-1">
+                                                            <img src="/storage/public/images/users/{{ $ca->user->avatar }}" class="img-circle img-size-32 mr-1">
+                                                            {{ $ca->user->name }}
+                                                        </div>
+                                                    @endforeach
                                                 @elseif ($pendingApprover)
                                                     <img src="/storage/public/images/users/{{ $pendingApprover->avatar }}" class="img-circle img-size-32 mr-2">
                                                     {{ $pendingApprover->name }}
@@ -524,7 +538,7 @@
                                                     <span class="text-muted">—</span>
                                                 @endif
                                                 @if (!$transaction->hierarchy_approver_id && $transaction->status->id === config('global.form_approval')[0])
-                                                    @if ($pendingApprover)
+                                                    @if ($hasApprover)
                                                         <form action="/transaction-form/resend-notif/{{ $transaction->id }}" method="post" class="d-inline-block ml-2">
                                                             @csrf
                                                             <button type="submit" class="btn btn-xs rounded-pill btn-warning" onclick="return confirm('Resend approval notification?')" title="Resend Approver Notification"><i class="align-middle material-icons text-md">notifications</i></button>

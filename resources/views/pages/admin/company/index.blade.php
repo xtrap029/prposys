@@ -54,6 +54,7 @@
                                 </a>
                             </td>
                             <td class="align-middle text-right text-nowrap">
+                                <a href="/company-class-approver/{{ $item->id }}" class="btn btn-link btn-sm">Class Approvers</a>
                                 <a href="/company-project/{{ $item->id }}" class="btn btn-link btn-sm">Projects</a>
                                 <a href="/company/{{ $item->id }}/edit" class="btn btn-link btn-sm">Edit</a>
                                 <form action="/company/{{ $item->id }}" method="post" class="d-inline-block">

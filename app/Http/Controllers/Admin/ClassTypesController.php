@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\ClassType;
+use App\ClassTypeCompanyApprover;
 use App\Company;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -61,7 +62,16 @@ class ClassTypesController extends Controller {
             'name' => ['required'],
             'companies.*' => [],
         ]);
-        $data['companies'] = implode(',', $request->companies ? $data['companies'] : []);
+
+        $newCompanies = $request->companies ? array_map('intval', $data['companies']) : [];
+
+        $query = ClassTypeCompanyApprover::where('class_type_id', $class_type->id);
+        if (!empty($newCompanies)) {
+            $query->whereNotIn('company_id', $newCompanies);
+        }
+        $query->delete();
+
+        $data['companies'] = implode(',', $newCompanies);
         $data['updated_id'] = auth()->id();
         $class_type->update($data);
 

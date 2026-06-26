@@ -1133,31 +1133,25 @@ class TransactionsFormsController extends Controller {
         }
 
         $requestor = $transaction->requested;
-        $approver = null;
-        if ($transaction->form_assigned_approver_id) {
-            $approver = User::where('id', $transaction->form_assigned_approver_id)->first();
-        }
-        elseif ($requestor->approver_id) {
-            $approver = User::where('id', $requestor->approver_id)->first();
-        } elseif ($requestor->hierarchy && $requestor->hierarchy->parent_id) {
-            $approver = User::where('id', $requestor->hierarchy->parent_id)->first();
-        }
+        $approvers = $this->resolve_pending_approvers($transaction);
 
-        if ($approver) {
-            $mailable = new \App\Mail\NotificationsForApprovalMail([
-                'to' => $approver->email,
-                'name' => $approver->name,
-                'url' => env('APP_URL').'/transaction-form/view/'.$transaction->id,
-                'project' => $transaction->project->project,
-                'company' => $transaction->project->company->name,
-                'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
-                'purpose' => $transaction->purpose,
-                'amount' => $transaction->amount,
-                'requestor' => $requestor->name,
-            ]);
-            $to = $approver->email;
-            app()->terminating(fn() => Mail::to($to)->send($mailable));
-            return back()->with('success', 'Notification resent to '.$approver->name);
+        if ($approvers->isNotEmpty()) {
+            foreach ($approvers as $approver) {
+                $mailable = new \App\Mail\NotificationsForApprovalMail([
+                    'to' => $approver->email,
+                    'name' => $approver->name,
+                    'url' => env('APP_URL').'/transaction-form/view/'.$transaction->id,
+                    'project' => $transaction->project->project,
+                    'company' => $transaction->project->company->name,
+                    'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
+                    'purpose' => $transaction->purpose,
+                    'amount' => $transaction->amount,
+                    'requestor' => $requestor->name,
+                ]);
+                $to = $approver->email;
+                app()->terminating(fn() => Mail::to($to)->send($mailable));
+            }
+            return back()->with('success', 'Notification resent to '.$approvers->pluck('name')->join(', '));
         }
 
         return back()->with('error', 'No approver found for this transaction');
@@ -1194,17 +1188,9 @@ class TransactionsFormsController extends Controller {
             $transaction->update($data);
 
             $requestor = $transaction->requested;
-            $approver = null;
-            if ($transaction->form_assigned_approver_id) {
-                $approver = User::where('id', $transaction->form_assigned_approver_id)->first();
-            }
-            elseif ($requestor->approver_id) {
-                $approver = User::where('id', $requestor->approver_id)->first();
-            } elseif ($requestor->hierarchy && $requestor->hierarchy->parent_id) {
-                $approver = User::where('id', $requestor->hierarchy->parent_id)->first();
-            }
+            $approvers = $this->resolve_pending_approvers($transaction);
 
-            if ($approver) {
+            foreach ($approvers as $approver) {
                 $mailable = new \App\Mail\NotificationsForApprovalMail([
                     'to' => $approver->email,
                     'name' => $approver->name,
@@ -1959,29 +1945,44 @@ class TransactionsFormsController extends Controller {
             $user = auth()->id();
         }
         $user = User::where('id', $user)->first();
-        $requestor = $transaction->requested;
 
-        if ($transaction->form_assigned_approver_id) {
-            if ($transaction->form_assigned_approver_id != $user->id) {
-                $can_hierarchy_approve = false;
-            }
-        }
-        else if ($requestor->approver_id) {
-            if ($requestor->approver_id != $user->id) {
-                $can_hierarchy_approve = false;
-            }
-        } else {
-            $requestorHierarchy = \App\Hierarchy::where('user_id', $requestor->id)
-                ->where('company_id', $transaction->project->company_id)
-                ->first();
-            if (!$requestorHierarchy
-                || ($requestorHierarchy->parent_id != $user->id
-                    && $requestorHierarchy->parent_id !== null)) {
-                $can_hierarchy_approve = false;
-            }
+        $pendingApproverIds = $this->resolve_pending_approvers($transaction)->pluck('id');
+        if ($pendingApproverIds->isNotEmpty() && !$pendingApproverIds->contains($user->id)) {
+            $can_hierarchy_approve = false;
+        } elseif ($pendingApproverIds->isEmpty()) {
+            $can_hierarchy_approve = false;
         }
 
         return $can_hierarchy_approve;
+    }
+
+    private function resolve_pending_approvers(Transaction $transaction) {
+        if ($transaction->form_assigned_approver_id) {
+            return collect([User::find($transaction->form_assigned_approver_id)])->filter();
+        }
+
+        if ($transaction->class_type_id) {
+            return \App\ClassTypeCompanyApprover::where('class_type_id', $transaction->class_type_id)
+                ->where('company_id', $transaction->project->company_id)
+                ->with('user')
+                ->get()
+                ->pluck('user')
+                ->filter();
+        }
+
+        $requestor = $transaction->requested;
+        if ($requestor->approver_id) {
+            return collect([User::find($requestor->approver_id)])->filter();
+        }
+
+        $requestorHierarchy = \App\Hierarchy::where('user_id', $requestor->id)
+            ->where('company_id', $transaction->project->company_id)
+            ->first();
+        if ($requestorHierarchy && $requestorHierarchy->parent_id) {
+            return collect([User::find($requestorHierarchy->parent_id)])->filter();
+        }
+
+        return collect();
     }
 
     private function check_can_reassign_approver($transaction) {
