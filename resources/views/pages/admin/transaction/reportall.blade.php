@@ -269,19 +269,17 @@
                             </div>
                             <div class="col-sm-6 col-md-3 my-1">
                                 <label for="">Company</label>
-                                <select name="company" class="form-control form-control-sm">
-                                    <option value="">All</option>
+                                <select name="company[]" class="form-control form-control-sm chosen-select" multiple>
                                     @foreach ($companies->whereIn('id', explode(',', Auth::user()->companies)) as $item)
-                                        <option value="{{ $item->id }}" {{ !empty($trans_company) ? $trans_company == $item->id ? 'selected' : '' : '' }}>{{ $item->name }}</option>
+                                        <option value="{{ $item->id }}" {{ !empty($_GET['company']) && in_array($item->id, (array)$_GET['company']) ? 'selected' : '' }}>{{ $item->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-md-3 my-1">
                                 <label for="">Category</label>
-                                <select name="category" class="form-control form-control-sm">
-                                    <option value="">All</option>
+                                <select name="category[]" class="form-control form-control-sm chosen-select" multiple>
                                     @foreach (config('global.trans_category_column_2') as $key => $item)
-                                        <option value="{{ $item }}" {{ !empty($_GET['category']) && $_GET['category'] == $item ? 'selected' : '' }}>{{ config('global.trans_category_label')[$key] }}</option>
+                                        <option value="{{ $item }}" {{ !empty($_GET['category']) && in_array($item, (array)$_GET['category']) ? 'selected' : '' }}>{{ config('global.trans_category_label')[$key] }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -294,8 +292,12 @@
                                 <input type="date" name="to" class="form-control form-control-sm" value="{{ !empty($_GET['to']) ? $_GET['to'] : '' }}">
                             </div>
                             <div class="col-sm-6 col-md-3 my-1">
-                                <label for="">PR/PO # Year</label>
-                                <input type="number" name="series_year" class="form-control form-control-sm" min="1900" max="2100" value="{{ !empty($_GET['series_year']) ? $_GET['series_year'] : '' }}">
+                                <label for="">PR/PO # Year (Min)</label>
+                                <input type="number" name="series_year_min" class="form-control form-control-sm" min="1900" max="2100" value="{{ !empty($_GET['series_year_min']) ? $_GET['series_year_min'] : '' }}">
+                            </div>
+                            <div class="col-sm-6 col-md-3 my-1">
+                                <label for="">PR/PO # Year (Max)</label>
+                                <input type="number" name="series_year_max" class="form-control form-control-sm" min="1900" max="2100" value="{{ !empty($_GET['series_year_max']) ? $_GET['series_year_max'] : '' }}">
                             </div>
                             <div class="col-sm-6 col-md-3 my-1">
                                 <label for="">PR/PO # Series (Min)</label>
@@ -319,10 +321,9 @@
                             </div>
                             <div class="col-12 col-md-3 my-1">
                                 <label for="">Class Type</label>
-                                <select name="class_type" class="form-control form-control-sm">
-                                    <option value="">All</option>
+                                <select name="class_type[]" class="form-control form-control-sm chosen-select" multiple>
                                     @foreach ($class_types as $item)
-                                        <option value="{{ $item->id }}" {{ app('request')->input('class_type') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                        <option value="{{ $item->id }}" {{ !empty($_GET['class_type']) && in_array($item->id, (array)$_GET['class_type']) ? 'selected' : '' }}>{{ $item->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -417,7 +418,6 @@
                             </tr>
                             <tr>
                                 <td class="border-0 pr-3">Status</td>
-                                {{-- <td class="border-0 font-weight-bold">{{ $status_sel != '' ? $status_sel : 'All' }}</td> --}}
                                 <td class="border-0 font-weight-bold">{{ $status_name }}</td>
                             </tr>
                             <tr>
@@ -447,7 +447,7 @@
                         </table>
                     </div>
                 </div>
-                @if ($trans_company != "" && count($transactions) > 0)
+                @if (!empty($trans_company) && count((array)$trans_company) === 1 && count($transactions) > 0)
                     <div class="mb-3 text-center">
                         <img src="/storage/public/images/companies/{{ $transactions[0]->project->company->logo }}" alt="" class="thumb thumb--xs mr-2 vlign--baseline-middle">
                         <span class="mr-3 vlign--baseline-middle">{{ $transactions[0]->project->company->name }}</span>

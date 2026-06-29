@@ -1419,9 +1419,9 @@ class TransactionsController extends Controller
             $transactions = $transactions->where('trans_type', $trans_type);
         }
         if (!empty($_GET['company'])) {
-            $trans_company = $_GET['company'];
-            $transactions = $transactions->whereDoesntHave('project', function ($query) use ($trans_company) {
-                $query->where('company_id', '!=', $trans_company);
+            $trans_company = (array) $_GET['company'];
+            $transactions = $transactions->whereHas('project', function ($query) use ($trans_company) {
+                $query->whereIn('company_id', $trans_company);
             });
         } else {
             $projects = CompanyProject::whereIn('company_id', explode(',', User::where('id', auth()->id())->first()->companies))->pluck('id')->toArray();
@@ -1446,17 +1446,23 @@ class TransactionsController extends Controller
             $trans_tax = $_GET['tax'];
         }
         if (!empty($_GET['category'])) {
-            if ($_GET['category'] == 'is_reg') {
-                foreach (config('global.trans_category_column') as $key => $value) {
-                    if ($value != '') {
-                        $transactions = $transactions->where($value, 0);
+            $selectedCategories = (array) $_GET['category'];
+            $transactions = $transactions->where(function ($query) use ($selectedCategories) {
+                foreach ($selectedCategories as $cat) {
+                    if ($cat == 'is_reg') {
+                        $query->orWhere(function ($q) {
+                            foreach (config('global.trans_category_column') as $value) {
+                                if ($value != '') {
+                                    $q->where($value, 0);
+                                }
+                            }
+                        });
+                    } else {
+                        $query->orWhere($cat, 1);
                     }
                 }
-            } else {
-                $transactions = $transactions->where($_GET['category'], 1);
-                // $status_sel = TransactionStatus::where('id', $_GET['status'])->first()->name;
-            }
-            $trans_category = $_GET['category'];
+            });
+            $trans_category = $selectedCategories;
         }
         if (!empty($_GET['from'])) {
             $transactions = $transactions->whereDate('created_at', '>=', $_GET['from']);
@@ -1490,9 +1496,12 @@ class TransactionsController extends Controller
             $transactions = $transactions->whereDate('released_at', '<=', $_GET['rel_to']);
             $trans_depo_type = $_GET['rel_to'];
         }
-        if (!empty($_GET['series_year'])) {
-            $transactions = $transactions->where('trans_year', $_GET['series_year']);
-            $trans_year = $_GET['series_year'];
+        if (!empty($_GET['series_year_min'])) {
+            $transactions = $transactions->where('trans_year', '>=', $_GET['series_year_min']);
+            $trans_year = $_GET['series_year_min'];
+        }
+        if (!empty($_GET['series_year_max'])) {
+            $transactions = $transactions->where('trans_year', '<=', $_GET['series_year_max']);
         }
         if (!empty($_GET['series_min'])) {
             $transactions = $transactions->where('trans_seq', '>=', $_GET['series_min']);
@@ -1503,15 +1512,15 @@ class TransactionsController extends Controller
             $trans_max = $_GET['series_max'];
         }
         if (!empty($_GET['user_req'])) {
-            $transactions = $transactions->where('requested_id', $_GET['user_req']);
+            $transactions = $transactions->whereIn('requested_id', (array) $_GET['user_req']);
             $trans_req = $_GET['user_req'];
         }
         if (!empty($_GET['user_prep'])) {
-            $transactions = $transactions->where('owner_id', $_GET['user_prep']);
+            $transactions = $transactions->whereIn('owner_id', (array) $_GET['user_prep']);
             $trans_prep = $_GET['user_prep'];
         }
         if (!empty($_GET['user_rel'])) {
-            $transactions = $transactions->where('released_by_id', $_GET['user_rel']);
+            $transactions = $transactions->whereIn('released_by_id', (array) $_GET['user_rel']);
             $trans_updated = $_GET['user_rel'];
         }
         if (!empty($_GET['user_updated'])) {
@@ -1519,11 +1528,11 @@ class TransactionsController extends Controller
             $trans_prep = $_GET['user_updated'];
         }
         if (!empty($_GET['bank'])) {
-            $transactions = $transactions->where('depo_bank_branch_id', $_GET['bank']);
+            $transactions = $transactions->whereIn('depo_bank_branch_id', (array) $_GET['bank']);
             $trans_bank = $_GET['bank'];
         }
         if (!empty($_GET['user_approver_form'])) {
-            $transactions = $transactions->where('form_approver_id', $_GET['user_approver_form']);
+            $transactions = $transactions->whereIn('form_approver_id', (array) $_GET['user_approver_form']);
             $trans_appr_form = $_GET['user_approver_form'];
         }
         if (isset($_GET['is_approved']) && $_GET['is_approved'] !== '') {
@@ -1534,7 +1543,7 @@ class TransactionsController extends Controller
             }
         }
         if (!empty($_GET['depo_type'])) {
-            $transactions = $transactions->where('depo_type', $_GET['depo_type']);
+            $transactions = $transactions->whereIn('depo_type', (array) $_GET['depo_type']);
             $trans_appr_form = $_GET['depo_type'];
         }
         if (!empty($_GET['vat_type'])) {
@@ -1546,7 +1555,7 @@ class TransactionsController extends Controller
             $trans_particulars = $_GET['particulars'];
         }
         if (!empty($_GET['currency'])) {
-            $transactions = $transactions->where('currency', $_GET['currency']);
+            $transactions = $transactions->whereIn('currency', (array) $_GET['currency']);
             $trans_currency = $_GET['currency'];
         }
         if (!empty($_GET['control_no'])) {
@@ -1554,7 +1563,7 @@ class TransactionsController extends Controller
             $trans_control_no = $_GET['control_no'];
         }
         if (!empty($_GET['class_type'])) {
-            $transactions = $transactions->where('class_type_id', $_GET['class_type']);
+            $transactions = $transactions->whereIn('class_type_id', (array) $_GET['class_type']);
             $trans_class_type = $_GET['class_type'];
         }
         if (!empty($_GET['is_confidential']) || (isset($_GET['is_confidential']) && $_GET['is_confidential'] != "")) {
@@ -1587,7 +1596,7 @@ class TransactionsController extends Controller
             $trans_amount = $_GET['amount'];
         }
         if (!empty($_GET['project'])) {
-            $transactions = $transactions->where('project_id', $_GET['project']);
+            $transactions = $transactions->whereIn('project_id', (array) $_GET['project']);
             $trans_project = $_GET['project'];
         }
         if (!empty($_GET['amt_bal'])) {

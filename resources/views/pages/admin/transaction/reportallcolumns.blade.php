@@ -16,10 +16,9 @@
 ])) > 0)
     <div class="col-sm-6 col-md-4 my-1">
         <label for="">Currency</label>
-        <select name="currency" class="form-control form-control-sm">
-            <option value="">All</option>
+        <select name="currency[]" class="form-control form-control-sm chosen-select" multiple>
             @foreach (config('global.currency') as $item)
-                <option value="{{ $item }}" {{ app('request')->input('currency') == $item ? 'selected' : '' }}>{{ $item }}</option>
+                <option value="{{ $item }}" {{ !empty($_GET['currency']) && in_array($item, (array)$_GET['currency']) ? 'selected' : '' }}>{{ $item }}</option>
             @endforeach
         </select>
     </div>
@@ -49,10 +48,9 @@
 ])) > 0)
     <div class="col-sm-6 col-md-2 my-1">
         <label for="">Deposit Type</label>
-        <select name="depo_type" class="form-control form-control-sm">
-            <option value="">All</option>
+        <select name="depo_type[]" class="form-control form-control-sm chosen-select" multiple>
             @foreach (config('global.deposit_type') as $item)
-                <option value="{{ $item }}" {{ app('request')->input('depo_type') == $item ? 'selected' : '' }}>{{ ucfirst(strtolower($item)) }}</option>
+                <option value="{{ $item }}" {{ !empty($_GET['depo_type']) && in_array($item, (array)$_GET['depo_type']) ? 'selected' : '' }}>{{ ucfirst(strtolower($item)) }}</option>
             @endforeach
         </select>
     </div>
@@ -93,10 +91,9 @@
     </div>
     <div class="col-sm-6 col-md-2 my-1">
         <label for="">Released By</label>
-        <select name="user_rel" class="form-control form-control-sm">
-            <option value="">All</option>
+        <select name="user_rel[]" class="form-control form-control-sm chosen-select" multiple>
             @foreach ($releasers as $item)
-                <option value="{{ $item->id }}" {{ app('request')->input('user_rel') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                <option value="{{ $item->id }}" {{ !empty($_GET['user_rel']) && in_array($item->id, (array)$_GET['user_rel']) ? 'selected' : '' }}>{{ $item->name }}</option>
             @endforeach
         </select>
     </div>
@@ -109,12 +106,11 @@
 ])) > 0)
     <div class="col-sm-6 col-md-2 my-1">
         <label for="">Bank</label>
-        <select name="bank" class="form-control form-control-sm">
-            <option value="">All</option>
+        <select name="bank[]" class="form-control form-control-sm chosen-select" multiple>
             @foreach ($banks as $item)
                 <optgroup label="{{ $item->name }}">
                     @foreach ($item->bankbranches as $branch)
-                        <option value="{{ $branch->id }}" {{ app('request')->input('bank') == $branch->id ? 'selected' : '' }}>{{ $branch->name }}</option>
+                        <option value="{{ $branch->id }}" {{ !empty($_GET['bank']) && in_array($branch->id, (array)$_GET['bank']) ? 'selected' : '' }}>{{ $branch->name }}</option>
                     @endforeach
                 </optgroup>
             @endforeach
@@ -131,28 +127,26 @@
 ])) > 0)
     <div class="col-sm-6 col-md-2 my-1">
         <label for="">Requested By</label>
-        <select name="user_req" class="form-control form-control-sm">
-            <option value="">All</option>
+        <select name="user_req[]" class="form-control form-control-sm chosen-select" multiple>
             @foreach ($users as $item)
-                <option value="{{ $item->id }}" {{ app('request')->input('user_req') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                <option value="{{ $item->id }}" {{ !empty($_GET['user_req']) && in_array($item->id, (array)$_GET['user_req']) ? 'selected' : '' }}>{{ $item->name }}</option>
             @endforeach
             <optgroup label="Inactive" class="bg-gray-light">
                 @foreach ($users_inactive as $item)
-                    <option value="{{ $item->id }}" {{ app('request')->input('user_req') == $item->id ? 'selected' : '' }} class="bg-gray-light">{{ $item->name }}</option>
+                    <option value="{{ $item->id }}" {{ !empty($_GET['user_req']) && in_array($item->id, (array)$_GET['user_req']) ? 'selected' : '' }} class="bg-gray-light">{{ $item->name }}</option>
                 @endforeach
             </optgroup>
         </select>
     </div>
     <div class="col-sm-6 col-md-2 my-1">
         <label for="">Prepared By</label>
-        <select name="user_prep" class="form-control form-control-sm">
-            <option value="">All</option>
+        <select name="user_prep[]" class="form-control form-control-sm chosen-select" multiple>
             @foreach ($users as $item)
-                <option value="{{ $item->id }}" {{ app('request')->input('user_prep') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                <option value="{{ $item->id }}" {{ !empty($_GET['user_prep']) && in_array($item->id, (array)$_GET['user_prep']) ? 'selected' : '' }}>{{ $item->name }}</option>
             @endforeach
             <optgroup label="Inactive" class="bg-gray-light">
                 @foreach ($users_inactive as $item)
-                    <option value="{{ $item->id }}" {{ app('request')->input('user_prep') == $item->id ? 'selected' : '' }} class="bg-gray-light">{{ $item->name }}</option>
+                    <option value="{{ $item->id }}" {{ !empty($_GET['user_prep']) && in_array($item->id, (array)$_GET['user_prep']) ? 'selected' : '' }} class="bg-gray-light">{{ $item->name }}</option>
                 @endforeach
             </optgroup>
         </select>
@@ -191,14 +185,13 @@
 ])) > 0)
     <div class="col-sm-6 col-md-2 my-1">
         <label for="">Form Approved By</label>
-        <select name="user_approver_form" class="form-control form-control-sm">
-            <option value="">All</option>
+        <select name="user_approver_form[]" class="form-control form-control-sm chosen-select" multiple>
             @foreach ($users as $item)
-                <option value="{{ $item->id }}" {{ app('request')->input('user_approver_form') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                <option value="{{ $item->id }}" {{ !empty($_GET['user_approver_form']) && in_array($item->id, (array)$_GET['user_approver_form']) ? 'selected' : '' }}>{{ $item->name }}</option>
             @endforeach
             <optgroup label="Inactive" class="bg-gray-light">
                 @foreach ($users_inactive as $item)
-                    <option value="{{ $item->id }}" {{ app('request')->input('user_approver_form') == $item->id ? 'selected' : '' }} class="bg-gray-light">{{ $item->name }}</option>
+                    <option value="{{ $item->id }}" {{ !empty($_GET['user_approver_form']) && in_array($item->id, (array)$_GET['user_approver_form']) ? 'selected' : '' }} class="bg-gray-light">{{ $item->name }}</option>
                 @endforeach
             </optgroup>
         </select>
@@ -245,10 +238,9 @@
 ])) > 0)
     <div class="col-sm-6 col-md-2 my-1">
         <label for="">Projects</label>
-        <select name="project" class="form-control form-control-sm">
-            <option value="">All</option>
+        <select name="project[]" class="form-control form-control-sm chosen-select" multiple>
             @foreach ($projects->sortBy('company.name') as $item)
-                <option value="{{ $item->id }}" {{ app('request')->input('project') == $item->id ? 'selected' : '' }}>{{ strtoupper($item->company->code).' - '.$item->project }}</option>
+                <option value="{{ $item->id }}" {{ !empty($_GET['project']) && in_array($item->id, (array)$_GET['project']) ? 'selected' : '' }}>{{ strtoupper($item->company->code).' - '.$item->project }}</option>
             @endforeach
         </select>
     </div>
