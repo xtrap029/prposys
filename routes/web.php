@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Mail;
 */
 
 Route::get('/',  function () {
-    return redirect('/login');
+    return redirect('/auth-login');
 });
 
 Route::get('/clear-cache', function () {
@@ -33,7 +33,13 @@ Route::get('/mail',  function () {
     ]));
 });
 
-Auth::routes();
+Route::get('/auth-login', 'Auth\LoginController@showLoginForm')->name('login');
+Route::post('/auth-login', 'Auth\LoginController@login');
+Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
+Route::get('/password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+Route::post('/password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+Route::get('/password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+Route::post('/password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/attachments/{type}/{filename}', 'AttachmentsController@show')->name('attachments.show');

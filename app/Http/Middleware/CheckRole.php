@@ -22,7 +22,7 @@ class CheckRole {
                 return abort(401);
             }            
         } else {
-            return redirect('login');
+            abort(404);
         }
 
     }
