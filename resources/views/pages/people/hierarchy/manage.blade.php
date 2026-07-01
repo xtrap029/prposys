@@ -94,8 +94,8 @@
                     @endforelse
                     <tr>
                         <td colspan="2">
-                            @if ($hierarchy)
-                                <form action="/people-hierarchy/manage/{{ $hierarchy->user_id }}" method="post">
+                            @if ($hierarchy || $hierarchies->isEmpty())
+                                <form action="/people-hierarchy/manage{{ $hierarchy ? '/'.$hierarchy->user_id : '' }}" method="post">
                                     @csrf
                                     <input type="hidden" name="company_id" value="{{ $company_id }}">
                                     <div class="form-row justify-content-end">
