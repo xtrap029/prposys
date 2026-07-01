@@ -146,6 +146,11 @@
                                             <i class="nav-icon material-icons icon--list">history</i><p>Activity Log</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a href="/changelog" class="nav-link {{ Route::currentRouteName() == 'changelog' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">new_releases</i><p>Changelog</p>
+                                        </a>
+                                    </li>
                                     <li class="nav-item {{ $ua['peo_db'] == $non ? 'd-none' : '' }}">
                                         <a href="/db-backups" class="nav-link {{ Route::currentRouteName() == 'dbbackups' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">storage</i><p>Database</p>

@@ -48,6 +48,7 @@ Route::group(['middleware' => ['auth']], function () {
 Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfidential']], function () {
 
     Route::get('/', 'Main\ChooseAppController@index')->name('chooseapp');
+    Route::get('/changelog', 'Main\ChangelogController@index')->name('changelog');
 
     Route::get('/sequence-dashboard', 'Admin\DashboardController@index')->name('sequence-dashboard');
     Route::get('/people-dashboard', 'People\DashboardController@index')->name('people-dashboard');
