@@ -10,6 +10,7 @@ use App\ExpenseType;
 use App\Transaction;
 use App\TransactionsAttachment;
 use App\TransactionsLiquidation;
+use App\TransactionsNote;
 use App\TransactionStatus;
 use App\Settings;
 use App\User;
@@ -19,6 +20,7 @@ use ZanySoft\Zip\Zip;
 use Illuminate\Http\Request;
 use \DB;
 use \File;
+use \Mail;
 
 class TransactionsLiquidationController extends Controller {
     
@@ -401,6 +403,8 @@ class TransactionsLiquidationController extends Controller {
         $perms['can_edit_cleared'] = $this->check_can_clear_edit($transaction->id);
         $perms['can_duplicate'] = $this->check_can_duplicate($transaction->id);
         $perms['can_reassign_approver'] = $this->check_can_reassign_approver($transaction->id);
+        $perms['can_hierarchy_approve'] = $this->check_can_hierarchy_approve($transaction->id);
+        $perms['can_hierarchy_disapprove'] = $this->check_can_hierarchy_approve($transaction->id);
 
         switch ($transaction->trans_type) {
             case 'pr':
@@ -636,12 +640,137 @@ class TransactionsLiquidationController extends Controller {
             $data['status_updated_at'] = now();
             $data['status_prev_id'] = $transaction->status_id;
             $data['status_id'] = 8;
+            $data['hierarchy_liq_approver_id'] = null;
             $data['updated_id'] = auth()->id();
             $transaction->update($data);
+
+            $requestor = $transaction->requested;
+            $approvers = $this->resolve_pending_approvers($transaction);
+
+            foreach ($approvers as $approver) {
+                $mailable = new \App\Mail\NotificationsForApprovalMail([
+                    'to' => $approver->email,
+                    'name' => $approver->name,
+                    'url' => env('APP_URL').'/transaction-liquidation/view/'.$transaction->id,
+                    'project' => $transaction->project->project,
+                    'company' => $transaction->project->company->name,
+                    'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
+                    'purpose' => $transaction->purpose,
+                    'amount' => $transaction->amount,
+                    'requestor' => $requestor->name,
+                ]);
+                $to = $approver->email;
+                app()->terminating(fn() => Mail::to($to)->send($mailable));
+            }
+
             return back()->with('success', 'Transaction Liquidation'.__('messages.approval_success'));
         } else {
             return back()->with('error', __('messages.cant_edit'));
         }
+    }
+
+    public function resend_notif(Transaction $transaction) {
+        if (!in_array($transaction->status_id, config('global.liquidation_approval')) || $transaction->hierarchy_liq_approver_id) {
+            return back()->with('error', __('messages.cant_edit'));
+        }
+
+        $requestor = $transaction->requested;
+        $approvers = $this->resolve_pending_approvers($transaction);
+
+        if ($approvers->isNotEmpty()) {
+            foreach ($approvers as $approver) {
+                $mailable = new \App\Mail\NotificationsForApprovalMail([
+                    'to' => $approver->email,
+                    'name' => $approver->name,
+                    'url' => env('APP_URL').'/transaction-liquidation/view/'.$transaction->id,
+                    'project' => $transaction->project->project,
+                    'company' => $transaction->project->company->name,
+                    'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
+                    'purpose' => $transaction->purpose,
+                    'amount' => $transaction->amount,
+                    'requestor' => $requestor->name,
+                ]);
+                $to = $approver->email;
+                app()->terminating(fn() => Mail::to($to)->send($mailable));
+            }
+            return back()->with('success', 'Notification resent to '.$approvers->pluck('name')->join(', '));
+        }
+
+        return back()->with('error', 'No approver found for this transaction');
+    }
+
+    public function hierarchy_approve(Request $request, Transaction $transaction) {
+        if ($this->check_can_hierarchy_approve($transaction->id)) {
+            $data = [];
+            $data['hierarchy_liq_approver_id'] = auth()->id();
+            $data['updated_id'] = auth()->id();
+            $transaction->update($data);
+
+            if ($request->filled('note')) {
+                TransactionsNote::create([
+                    'transaction_id' => $transaction->id,
+                    'content' => '[LIQ-APPROVAL-REMARKS] ' . $request->note,
+                    'user_id' => auth()->id(),
+                ]);
+            }
+
+            $mailable = new \App\Mail\NotificationsApprovedMail([
+                'to' => $transaction->requested->email,
+                'name' => $transaction->requested->name,
+                'url' => env('APP_URL').'/transaction-liquidation/view/'.$transaction->id,
+                'project' => $transaction->project->project,
+                'company' => $transaction->project->company->name,
+                'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
+                'purpose' => $transaction->purpose,
+                'amount' => $transaction->amount,
+                'approver' => auth()->user()->name,
+            ]);
+            $to = $transaction->requested->email;
+            app()->terminating(fn() => Mail::to($to)->send($mailable));
+
+            return back()->with('success', 'Transaction Liquidation'.__('messages.approved_success'));
+        } else {
+            return back()->with('error', __('messages.cant_edit'));
+        }
+    }
+
+    public function hierarchy_disapprove(Request $request, Transaction $transaction) {
+        if (!$this->check_can_hierarchy_approve($transaction->id)) {
+            return back()->with('error', __('messages.cant_edit'));
+        }
+
+        $request->validate(['note' => 'required|string']);
+
+        $data = [];
+        $data['status_updated_at'] = now();
+        $data['status_prev_id'] = $transaction->status_id;
+        $data['status_id'] = config('global.liquidation_generated')[0];
+        $data['hierarchy_liq_approver_id'] = null;
+        $data['updated_id'] = auth()->id();
+        $transaction->update($data);
+
+        TransactionsNote::create([
+            'transaction_id' => $transaction->id,
+            'content' => '[LIQ-DISAPPROVAL-REMARKS] ' . $request->note,
+            'user_id' => auth()->id(),
+        ]);
+
+        $mailable = new \App\Mail\NotificationsDisapprovedMail([
+            'to' => $transaction->requested->email,
+            'name' => $transaction->requested->name,
+            'url' => env('APP_URL').'/transaction-liquidation/view/'.$transaction->id,
+            'project' => $transaction->project->project,
+            'company' => $transaction->project->company->name,
+            'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
+            'purpose' => $transaction->purpose,
+            'amount' => $transaction->amount,
+            'approver' => auth()->user()->name,
+            'remarks' => $request->note,
+        ]);
+        $to = $transaction->requested->email;
+        app()->terminating(fn() => Mail::to($to)->send($mailable));
+
+        return back()->with('success', 'Transaction Liquidation has been disapproved.');
     }
 
     public function print (Transaction $transaction) {
@@ -1272,7 +1401,12 @@ class TransactionsLiquidationController extends Controller {
         if (!in_array($transaction->status_id, config('global.liquidation_approval'))) {
             $can_clear = false;
         }
-        
+
+        // block clearing until the liquidation has been approved
+        if (!$transaction->hierarchy_liq_approver_id) {
+            $can_clear = false;
+        }
+
         return $can_clear;
     }
 
@@ -1346,6 +1480,70 @@ class TransactionsLiquidationController extends Controller {
         }
 
         return true;
+    }
+
+    private function resolve_pending_approvers(Transaction $transaction) {
+        if ($transaction->liq_assigned_approver_id) {
+            return collect([User::find($transaction->liq_assigned_approver_id)])->filter();
+        }
+
+        if ($transaction->class_type_id) {
+            $classApprovers = \App\ClassTypeCompanyApprover::where('class_type_id', $transaction->class_type_id)
+                ->where('company_id', $transaction->project->company_id)
+                ->with('user')
+                ->get()
+                ->pluck('user')
+                ->filter();
+            if ($classApprovers->isNotEmpty()) {
+                return $classApprovers;
+            }
+        }
+
+        $requestor = $transaction->requested;
+        if ($requestor->approver_id) {
+            return collect([User::find($requestor->approver_id)])->filter();
+        }
+
+        $requestorHierarchy = \App\Hierarchy::where('user_id', $requestor->id)
+            ->where('company_id', $transaction->project->company_id)
+            ->first();
+        if ($requestorHierarchy && $requestorHierarchy->parent_id) {
+            return collect([User::find($requestorHierarchy->parent_id)])->filter();
+        }
+
+        return collect();
+    }
+
+    private function check_can_hierarchy_approve($transaction, $user = '') {
+        $transaction = Transaction::where('id', $transaction)->first();
+        if (in_array($transaction->status_id, config('global.cancelled'))) {
+            $can_hierarchy_approve = false;
+        } else {
+            $can_hierarchy_approve = true;
+        }
+
+        if (!in_array($transaction->status_id, config('global.liquidation_approval'))
+            || $transaction->hierarchy_liq_approver_id) {
+            $can_hierarchy_approve = false;
+        }
+
+        if (UAHelper::get()['liq_approval'] == config('global.ua_none')) {
+            $can_hierarchy_approve = false;
+        }
+
+        if (!$user) {
+            $user = auth()->id();
+        }
+        $user = User::where('id', $user)->first();
+
+        $pendingApproverIds = $this->resolve_pending_approvers($transaction)->pluck('id');
+        if ($pendingApproverIds->isNotEmpty() && !$pendingApproverIds->contains($user->id)) {
+            $can_hierarchy_approve = false;
+        } elseif ($pendingApproverIds->isEmpty()) {
+            $can_hierarchy_approve = false;
+        }
+
+        return $can_hierarchy_approve;
     }
 
     private function check_can_duplicate($transaction, $user = '') {

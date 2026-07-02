@@ -101,6 +101,12 @@
                                 @endif
                             </a>
                         </div>
+                        <div class="col-6 px-1 {{ $perms['can_hierarchy_approve'] ? '' : 'd-none' }}">
+                            <a href="#_" class="btn mb-2 btn-sm btn-flat btn-light col-12 col-lg-auto" data-toggle="modal" data-target="#modal-hierarchy-approve"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Approve</a>
+                        </div>
+                        <div class="col-6 px-1 {{ $perms['can_hierarchy_disapprove'] ? '' : 'd-none' }}">
+                            <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto" data-toggle="modal" data-target="#modal-hierarchy-disapprove"><i class="align-middle font-weight-bolder material-icons text-md">close</i> Disapprove</a>
+                        </div>
                         <div class="col-6 px-1 {{ $perms['can_clear'] ? '' : 'd-none' }}">
                             <a href="#_" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto px-4" data-toggle="modal" data-target="#modal-clear"><i class="align-middle font-weight-bolder material-icons text-md">payments</i> Clear / Deposit</a>
                         </div>
@@ -191,6 +197,8 @@
                                 {{ config('global.trans_category_label_liq_print')[0] }}
                             @endif
                         </a>
+                        <a href="#_" class="btn mb-2 btn-sm btn-flat btn-light col-12 col-lg-auto {{ $perms['can_hierarchy_approve'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-hierarchy-approve"><i class="align-middle font-weight-bolder material-icons text-md">check</i> Approve</a>
+                        <a href="#_" class="btn mb-2 btn-sm btn-flat btn-danger col-12 col-lg-auto {{ $perms['can_hierarchy_disapprove'] ? '' : 'd-none' }}" data-toggle="modal" data-target="#modal-hierarchy-disapprove"><i class="align-middle font-weight-bolder material-icons text-md">close</i> Disapprove</a>
                         <a href="#_" class="btn mb-2 btn-sm btn-flat btn-success col-12 col-lg-auto {{ $perms['can_clear'] ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear"><i class="align-middle font-weight-bolder material-icons text-md">payments</i> Clear / Deposit</a>
                         <a href="#_" class="btn mb-2 btn-sm btn-flat btn-primary col-12 col-lg-auto {{ $perms['can_edit_cleared'] && $transaction->liq_balance != 0 ? '' : 'd-none' }} px-4" data-toggle="modal" data-target="#modal-clear-edit"><i class="align-middle font-weight-bolder material-icons text-md">{{ !$transaction->is_bills && !$transaction->is_hr ? 'edit' : 'visibility' }}</i> {{ !$transaction->is_bills && !$transaction->is_hr ? 'Edit' : 'View' }} Deposit Info</a>
                     </div>
@@ -220,6 +228,53 @@
                                         </select>
                                         @include('errors.inline', ['message' => $errors->first('liquidation_approver_id')])
                                         <input type="submit" class="btn btn-success mt-2" value="Confirm">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                @if ($perms['can_hierarchy_approve'])
+                    <div class="modal fade" id="modal-hierarchy-approve" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-md" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title">Approve Liquidation</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <form action="/transaction-liquidation/hierarchy-approve/{{ $transaction->id }}" method="post">
+                                        @csrf
+                                        @method('put')
+                                        <textarea name="note" class="form-control @error('note') is-invalid @enderror" rows="4" placeholder="Add approval notes/comments (optional)"></textarea>
+                                        @include('errors.inline', ['message' => $errors->first('note')])
+                                        <input type="submit" class="btn btn-primary mt-2" value="Approve Now">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                @if ($perms['can_hierarchy_disapprove'])
+                    <div class="modal fade" id="modal-hierarchy-disapprove" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-md" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title">Disapprove Liquidation</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <form action="/transaction-liquidation/hierarchy-disapprove/{{ $transaction->id }}" method="post">
+                                        @csrf
+                                        @method('put')
+                                        <textarea name="note" class="form-control @error('note') is-invalid @enderror" rows="4" placeholder="Remarks are required" required></textarea>
+                                        @include('errors.inline', ['message' => $errors->first('note')])
+                                        <input type="submit" class="btn btn-danger mt-2" value="Disapprove">
                                     </form>
                                 </div>
                             </div>
@@ -496,15 +551,7 @@
                                             {{ $transaction->owner->name }}
                                         </td>
                                     </tr>
-                                    @if ($transaction->hierarchy_approver_id)
-                                        <tr>
-                                            <td class="font-weight-bold text-gray">Approved By</td>
-                                            <td class="font-weight-bold">
-                                                <img src="/storage/public/images/users/{{ $transaction->hierarchyapprover->avatar }}" class="img-circle img-size-32 mr-2">
-                                                {{ $transaction->hierarchy_approver_id ? $transaction->hierarchyapprover->name : '' }}
-                                            </td>
-                                        </tr>
-                                    @endif
+                                    {{-- Form-stage "Approved By" (hierarchy_approver_id) hidden on liquidation view to avoid confusion with Liq. Approved By --}}
                                     @if ($transaction->liquidation_approver_id && !$transaction->is_deposit && !$transaction->is_bills && !$transaction->is_hr)
                                         <tr>
                                             <td class="font-weight-bold text-gray">Auth. Approver</td>
@@ -514,18 +561,68 @@
                                             </td>
                                         </tr>
                                     @endif
-                                    @if ($transaction->liq_assigned_approver_id || $perms['can_reassign_approver'])
+                                    @php
+                                        $liqPendingApprover = null;
+                                        $liqPendingApprovers = collect();
+                                        if (!$transaction->hierarchy_liq_approver_id && in_array($transaction->status_id, config('global.liquidation_approval'))) {
+                                            if ($transaction->liq_assigned_approver_id) {
+                                                $liqPendingApprover = $transaction->liqassignedapprover;
+                                            } else {
+                                                $requestor = $transaction->requested;
+                                                if ($transaction->class_type_id) {
+                                                    $liqPendingApprovers = \App\ClassTypeCompanyApprover::where('class_type_id', $transaction->class_type_id)
+                                                        ->where('company_id', $transaction->project->company_id)
+                                                        ->with('user')
+                                                        ->get()
+                                                        ->pluck('user')
+                                                        ->filter();
+                                                }
+                                                if ($liqPendingApprovers->isEmpty()) {
+                                                    if ($requestor->approver_id) {
+                                                        $liqPendingApprover = \App\User::find($requestor->approver_id);
+                                                    } else {
+                                                        $requestorHierarchy = \App\Hierarchy::where('user_id', $requestor->id)
+                                                            ->where('company_id', $transaction->project->company_id)
+                                                            ->first();
+                                                        if ($requestorHierarchy && $requestorHierarchy->parent_id) {
+                                                            $liqPendingApprover = \App\User::find($requestorHierarchy->parent_id);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        $hasLiqApprover = $liqPendingApprover || $liqPendingApprovers->isNotEmpty();
+                                    @endphp
+                                    @if ($transaction->hierarchy_liq_approver_id || in_array($transaction->status_id, config('global.liquidation_approval')))
                                         <tr>
-                                            <td class="font-weight-bold text-gray">Assigned Approver</td>
+                                            <td class="font-weight-bold text-gray">{{ $transaction->hierarchy_liq_approver_id ? 'Liq. Approved By' : 'Liq. Approver' }}</td>
                                             <td class="font-weight-bold">
-                                                @if ($transaction->liq_assigned_approver_id)
-                                                    <img src="/storage/public/images/users/{{ $transaction->liqassignedapprover->avatar }}" class="img-circle img-size-32 mr-2">
-                                                    {{ $transaction->liqassignedapprover->name }}
+                                                @if ($transaction->hierarchy_liq_approver_id)
+                                                    <img src="/storage/public/images/users/{{ $transaction->hierarchyliqapprover->avatar }}" class="img-circle img-size-32 mr-2">
+                                                    {{ $transaction->hierarchyliqapprover->name }}
+                                                @elseif ($liqPendingApprovers->isNotEmpty())
+                                                    @foreach ($liqPendingApprovers as $ca)
+                                                        <div class="mb-1">
+                                                            <img src="/storage/public/images/users/{{ $ca->avatar }}" class="img-circle img-size-32 mr-1">
+                                                            {{ $ca->name }}
+                                                        </div>
+                                                    @endforeach
+                                                @elseif ($liqPendingApprover)
+                                                    <img src="/storage/public/images/users/{{ $liqPendingApprover->avatar }}" class="img-circle img-size-32 mr-2">
+                                                    {{ $liqPendingApprover->name }}
                                                 @else
                                                     <span class="text-muted">—</span>
                                                 @endif
-                                                @if ($perms['can_reassign_approver'])
-                                                    <button type="button" class="btn btn-xs rounded-pill btn-secondary ml-1" data-toggle="modal" data-target="#modal-reassign-approver" title="Reassign Approver"><i class="align-middle material-icons text-md">swap_horiz</i></button>
+                                                @if (!$transaction->hierarchy_liq_approver_id && in_array($transaction->status_id, config('global.liquidation_approval')))
+                                                    @if ($hasLiqApprover)
+                                                        <form action="/transaction-liquidation/resend-notif/{{ $transaction->id }}" method="post" class="d-inline-block ml-2">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-xs rounded-pill btn-warning" onclick="return confirm('Resend approval notification?')" title="Resend Approver Notification"><i class="align-middle material-icons text-md">notifications</i></button>
+                                                        </form>
+                                                    @endif
+                                                    @if ($perms['can_reassign_approver'])
+                                                        <button type="button" class="btn btn-xs rounded-pill btn-secondary ml-1" data-toggle="modal" data-target="#modal-reassign-approver" title="Reassign Approver"><i class="align-middle material-icons text-md">swap_horiz</i></button>
+                                                    @endif
                                                 @endif
                                             </td>
                                         </tr>

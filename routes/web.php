@@ -652,6 +652,22 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
         });
     });
 
+    // Seq Transaction Liq Approval
+    Route::middleware('CheckUserAccess:liq_approval')->group(function () {
+        Route::prefix('transaction-liquidation')->group(function () {
+            $url = 'Admin\TransactionsLiquidationController';
+
+            Route::post('/resend-notif/{transaction}', $url . '@resend_notif')->where('transaction', '[0-9]+');
+        });
+    });
+
+    Route::prefix('transaction-liquidation')->group(function () {
+        $url = 'Admin\TransactionsLiquidationController';
+
+        Route::put('/hierarchy-approve/{transaction}', $url . '@hierarchy_approve')->where('transaction', '[0-9]+');
+        Route::put('/hierarchy-disapprove/{transaction}', $url . '@hierarchy_disapprove')->where('transaction', '[0-9]+');
+    });
+
     // Seq Transaction Liq Clear
     Route::middleware('CheckUserAccess:liq_clear')->group(function () {
         Route::prefix('transaction-liquidation')->group(function () {
