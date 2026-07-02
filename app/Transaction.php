@@ -61,6 +61,7 @@ class Transaction extends Model {
                                         'form_service_charge',
                                         'form_service_charge_currency_id',
                                         'liquidationapprover.name',
+                                        'liqassignedapprover.name',
                                         'currency_2',
                                         'currency_2_rate',
                                         'depo_type',
@@ -192,6 +193,10 @@ class Transaction extends Model {
 
     public function liquidation_sum() {
         return $this->liquidation()->sum('amount');
+    }
+
+    public function liqassignedapprover() {
+        return $this->belongsTo(User::class, 'liq_assigned_approver_id');
     }
     
     public function attachments() {

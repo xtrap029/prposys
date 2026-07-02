@@ -642,6 +642,16 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
         });
     });
 
+    // Seq Transaction Liq Assign Approver
+    Route::middleware('CheckUserAccess:liq_assign_approver')->group(function () {
+        Route::prefix('transaction-liquidation')->group(function () {
+            $url = 'Admin\TransactionsLiquidationController';
+
+            Route::put('/reassign-approver/{transaction}', $url . '@reassign_approver')->where('transaction', '[0-9]+');
+            Route::put('/clear-reassigned-approver/{transaction}', $url . '@clear_reassigned_approver')->where('transaction', '[0-9]+');
+        });
+    });
+
     // Seq Transaction Liq Clear
     Route::middleware('CheckUserAccess:liq_clear')->group(function () {
         Route::prefix('transaction-liquidation')->group(function () {

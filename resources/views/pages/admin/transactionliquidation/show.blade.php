@@ -227,6 +227,46 @@
                     </div>
                 @endif
 
+                @if ($perms['can_reassign_approver'])
+                    <div class="modal fade" id="modal-reassign-approver" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-md" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title">Reassign Approver</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Select Approver</label>
+                                        <select name="user_id" form="form-reassign-approver" class="form-control" required>
+                                            <option value="">-- Select User --</option>
+                                            @foreach ($users as $approver)
+                                                <option value="{{ $approver->id }}" {{ $transaction->liq_assigned_approver_id == $approver->id ? 'selected' : '' }}>{{ $approver->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <form id="form-reassign-approver" action="/transaction-liquidation/reassign-approver/{{ $transaction->id }}" method="post">
+                                            @csrf
+                                            @method('put')
+                                            <button type="submit" class="btn btn-primary">Reassign</button>
+                                        </form>
+                                        @if ($transaction->liq_assigned_approver_id)
+                                            <form action="/transaction-liquidation/clear-reassigned-approver/{{ $transaction->id }}" method="post">
+                                                @csrf
+                                                @method('put')
+                                                <button type="submit" class="btn btn-danger" onclick="return confirm('Clear reassigned approver?')"><i class="align-middle material-icons text-md">clear</i> Clear Reassign</button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 @if ($perms['can_clear'])
                     <div class="modal fade" id="modal-clear" tabindex="-1" role="dialog" aria-hidden="true">
                         <div class="modal-dialog modal-lg" role="document">
@@ -471,6 +511,22 @@
                                             <td class="font-weight-bold">
                                                 <img src="/storage/public/images/users/{{ $transaction->liquidationapprover->avatar }}" class="img-circle img-size-32 mr-2">
                                                 {{ $transaction->liquidationapprover->name }}
+                                            </td>
+                                        </tr>
+                                    @endif
+                                    @if ($transaction->liq_assigned_approver_id || $perms['can_reassign_approver'])
+                                        <tr>
+                                            <td class="font-weight-bold text-gray">Assigned Approver</td>
+                                            <td class="font-weight-bold">
+                                                @if ($transaction->liq_assigned_approver_id)
+                                                    <img src="/storage/public/images/users/{{ $transaction->liqassignedapprover->avatar }}" class="img-circle img-size-32 mr-2">
+                                                    {{ $transaction->liqassignedapprover->name }}
+                                                @else
+                                                    <span class="text-muted">—</span>
+                                                @endif
+                                                @if ($perms['can_reassign_approver'])
+                                                    <button type="button" class="btn btn-xs rounded-pill btn-secondary ml-1" data-toggle="modal" data-target="#modal-reassign-approver" title="Reassign Approver"><i class="align-middle material-icons text-md">swap_horiz</i></button>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endif
