@@ -288,7 +288,7 @@
                                 @include('errors.inline', ['message' => $errors->first('is_external')])
                             </div>
                             <div class="form-group col-md-3 mb-3">
-                                <label class="d-block">Approver</label>
+                                <label class="d-block">Form/Liquidation Approver</label>
                                 <select name="approver_id" class="form-control @error('approver_id') is-invalid @enderror">
                                     <option value="">Refer to Hierarchy</option>
                                     @foreach ($users as $item)

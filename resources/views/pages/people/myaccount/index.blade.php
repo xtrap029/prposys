@@ -173,7 +173,7 @@
                             <h6>{{ $user->is_external ? 'Yes' : 'No' }}</h6>
                         </div>
                         <div class="form-group border p-2 mb-0 col-6">
-                            <label for="" class="text-gray">Approver</label>
+                            <label for="" class="text-gray">Form/Liquidation Approver</label>
                             <h6>{{ $user->approver ? $user->approver->name : 'Refer to Hierarchy' }}</h6>
                         </div>
                         <div class="form-group border p-2 mb-0 col-lg-6 d-none">
