@@ -41,9 +41,8 @@ Route::post('/password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail
 Route::get('/password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
 Route::post('/password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
 
-Route::group(['middleware' => ['auth']], function () {
-    Route::get('/attachments/{type}/{filename}', 'AttachmentsController@show')->name('attachments.show');
-});
+Route::get('/attachments/{type}/{filename}', 'AttachmentsController@show')->name('attachments.show');
+Route::post('/attachments/{type}/{filename}/verify', 'AttachmentsController@verify')->name('attachments.verify');
 
 Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfidential']], function () {
 
@@ -588,6 +587,8 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
             $url = 'Admin\TransactionsFormsController';
 
             Route::put('/issue/{transaction}', $url . '@issue')->where('transaction', '[0-9]+');
+            Route::post('/reset-issue-slip-key/{transaction}', $url . '@resetIssueSlipKey')->where('transaction', '[0-9]+')->name('transaction-form.reset-issue-slip-key');
+            Route::post('/resend-vendor-mail/{transaction}', $url . '@resendVendorMail')->where('transaction', '[0-9]+')->name('transaction-form.resend-vendor-mail');
         });
     });
 

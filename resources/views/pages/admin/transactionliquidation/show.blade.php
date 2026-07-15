@@ -860,7 +860,14 @@
                                             <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
                                             <p class="text-dark">Slip</p>
                                         </a>
-                                    @endif   
+                                        <form method="POST" action="{{ route('transaction-form.reset-issue-slip-key', ['transaction' => $transaction->id]) }}" class="d-inline" onsubmit="return confirm('Generate a new vendor access key for this attachment? The old key will stop working.');">
+                                            @csrf
+                                            <button type="submit" class="btn btn-app p-2">
+                                                <i class="align-middle font-weight-bolder material-icons text-orange">vpn_key</i>
+                                                <p class="text-dark">Reset Key</p>
+                                            </button>
+                                        </form>
+                                    @endif
                                 @endif
                             </div>
                         </div>

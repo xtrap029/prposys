@@ -34,6 +34,8 @@ class NotificationsIssuedVendorMail extends Mailable
             ->with([
                 'name' => $this->data['name'],
                 'url' => $this->data['url'],
+                'key' => $this->data['key'],
+                'key_expiry_days' => $this->data['key_expiry_days'],
                 'purpose' => $this->data['purpose'],
                 'requestor_email' => $this->data['requestor_email'],
                 'requestor_name' => $this->data['requestor_name'],

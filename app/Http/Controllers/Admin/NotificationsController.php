@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Transaction;
 use App\User;
 use App\Settings;
+use App\Helpers\TransactionHelper;
 
 class NotificationsController extends Controller {
 
@@ -93,23 +94,31 @@ class NotificationsController extends Controller {
         }
     }
 
+    public function sendVendorIssuedMail($transaction) {
+        if ($transaction->vendor_id && !$transaction->is_reimbursement && $transaction->issue_slip) {
+            $cc = Settings::where('type', 'SEQUENCE_ISSUED_NOTIFY_CC')->first()->value;
+            $attachmentKey = TransactionHelper::generateAttachmentKey($transaction);
+            $vendorMailable = new \App\Mail\NotificationsIssuedVendorMail([
+                'to' => $transaction->vendor->email,
+                'name' => $transaction->vendor->name,
+                'purpose' => $transaction->purpose,
+                'requestor_email' => $transaction->requested->email,
+                'requestor_name' => $transaction->requested->name,
+                'url' => env('APP_URL').'/attachments/issue_slip/'.$transaction->issue_slip,
+                'key' => $attachmentKey->key,
+                'key_expiry_days' => now()->diffInDays($attachmentKey->expires_at),
+                'cc' => array_filter(explode(';', $cc)),
+            ]);
+            $vendorTo = $transaction->vendor->email;
+            app()->terminating(fn() => Mail::to($vendorTo)->send($vendorMailable));
+        }
+    }
+
     public function issued($transaction) {
         if ($transaction->status_id == config('global.form_issued')[0]) {
             $cc = Settings::where('type', 'SEQUENCE_ISSUED_NOTIFY_CC')->first()->value;
-            
-            if ($transaction->vendor_id && !$transaction->is_reimbursement && $transaction->issue_slip) {
-                $vendorMailable = new \App\Mail\NotificationsIssuedVendorMail([
-                    'to' => $transaction->vendor->email,
-                    'name' => $transaction->vendor->name,
-                    'purpose' => $transaction->purpose,
-                    'requestor_email' => $transaction->requested->email,
-                    'requestor_name' => $transaction->requested->name,
-                    'url' => env('APP_URL').'/attachments/issue_slip/'.$transaction->issue_slip,
-                    'cc' => array_filter(explode(';', $cc)),
-                ]);
-                $vendorTo = $transaction->vendor->email;
-                app()->terminating(fn() => Mail::to($vendorTo)->send($vendorMailable));
-            }
+
+            $this->sendVendorIssuedMail($transaction);
 
             $issuedMailable = new \App\Mail\NotificationsIssuedMail([
                 'to' => $transaction->requested->email,

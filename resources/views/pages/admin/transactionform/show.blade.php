@@ -1007,6 +1007,32 @@
                                             <td class="font-weight-bold">{{ $transaction->form_service_charge_currency_id.' '.number_format($transaction->form_service_charge, 2, '.', ',') }}</td>
                                         </tr>
                                     @endif
+                                    @if ($transaction->issue_slip && $transaction->issueSlipKey)
+                                        <tr>
+                                            <td class="font-weight-bold text-gray">Attachment Key</td>
+                                            <td class="font-weight-bold">
+                                                <span class="mr-2">{{ $transaction->issueSlipKey->key }}</span>
+                                                <form method="POST" action="{{ route('transaction-form.reset-issue-slip-key', ['transaction' => $transaction->id]) }}" class="d-inline" onsubmit="return confirm('Generate a new vendor access key for this attachment? The old key will stop working.');">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-xs btn-danger rounded-circle mr-1" title="Refresh Key">
+                                                        <i class="align-middle material-icons" style="font-size: 1rem;">refresh</i>
+                                                    </button>
+                                                </form>
+                                                @if ($transaction->vendor_id && !$transaction->is_reimbursement)
+                                                    <form method="POST" action="{{ route('transaction-form.resend-vendor-mail', ['transaction' => $transaction->id]) }}" class="d-inline" onsubmit="return confirm('Resend the attachment to the vendor with a new access key?');">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-xs btn-warning rounded-circle" title="Resend to Vendor">
+                                                            <i class="align-middle material-icons" style="font-size: 1rem;">mail</i>
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                                <br>
+                                                <span class="text-gray font-weight-normal">
+                                                    {{ $transaction->issueSlipKey->isExpired() ? 'expired ' : 'expires ' }}{{ $transaction->issueSlipKey->expires_at->diffForHumans() }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    @endif
                                 </table>
                                 @if ($config_confidential)
                                 @else
@@ -1021,7 +1047,7 @@
                                             <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
                                             <p class="text-dark">Attachment</p>
                                         </a>
-                                    @endif                                
+                                    @endif
                                 @endif
                             </div>
                         </div>

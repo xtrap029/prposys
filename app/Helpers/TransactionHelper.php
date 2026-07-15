@@ -2,14 +2,25 @@
 
 namespace App\Helpers;
 
+use App\AttachmentKey;
 use App\Settings;
 use App\Transaction;
 use App\TransactionsLiquidation;
 use App\TransactionsNote;
 use App\User;
 use App\UserTransactionLimit;
+use Illuminate\Support\Str;
 
 final class TransactionHelper {
+    public static function generateAttachmentKey($transaction, $attachmentType = 'issue_slip') {
+        $expiryDays = Settings::where('type', 'SEQUENCE_ISSUED_ATTACHMENT_KEY_DAYS')->first()->value;
+
+        return AttachmentKey::updateOrCreate(
+            ['transaction_id' => $transaction->id, 'attachment_type' => $attachmentType],
+            ['key' => Str::random(8), 'expires_at' => now()->addDays($expiryDays)]
+        );
+    }
+
     public static function check_liquidated_balance($user, $company = null) {
         $user = User::where('id', $user)->first();
 

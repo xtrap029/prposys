@@ -13,6 +13,10 @@ Please see the attached file for the proof of payment for {{ $purpose }}.
     please get in touch with the undersigned at {{ $requestor_email }}
 </i>
 
+View the attachment using Access Key: <strong>{{ $key }}</strong>
+<br>
+This key is only valid for {{ $key_expiry_days }} {{ \Illuminate\Support\Str::plural('day', $key_expiry_days) }}.
+
 @component('mail::button', ['url' => $url])
 View Attachment
 @endcomponent

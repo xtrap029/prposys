@@ -143,6 +143,10 @@ class Transaction extends Model {
         return $this->belongsTo(Vendor::class, 'vendor_id')->withTrashed();
     }
 
+    public function issueSlipKey() {
+        return $this->hasOne(AttachmentKey::class, 'transaction_id')->where('attachment_type', 'issue_slip');
+    }
+
     public function requested() {
         return $this->belongsTo(User::class);
     }

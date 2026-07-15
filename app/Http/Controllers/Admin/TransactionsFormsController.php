@@ -1408,6 +1408,26 @@ class TransactionsFormsController extends Controller {
         ]);
     }
 
+    public function resetIssueSlipKey(Transaction $transaction) {
+        if (!$transaction->issue_slip) {
+            abort(404);
+        }
+
+        $attachmentKey = TransactionHelper::generateAttachmentKey($transaction);
+
+        return back()->with('success', 'New access key generated: '.$attachmentKey->key);
+    }
+
+    public function resendVendorMail(Transaction $transaction) {
+        if (!$transaction->issue_slip || !$transaction->vendor_id || $transaction->is_reimbursement) {
+            abort(404);
+        }
+
+        (new NotificationsController)->sendVendorIssuedMail($transaction);
+
+        return back()->with('success', 'Attachment resent to '.$transaction->vendor->name.' using a new access key.');
+    }
+
     public function issue(Request $request, Transaction $transaction) {
         if ($this->check_can_issue($transaction->id)) {
             $validation = [

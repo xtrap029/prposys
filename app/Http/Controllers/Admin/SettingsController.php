@@ -36,6 +36,7 @@ class SettingsController extends Controller {
             'SEQUENCE_ISSUED_NOTIFY_DAYS' => ['required', 'integer'],
             'SEQUENCE_ISSUED_NOTIFY_DAYS_2' => ['required', 'integer'],
             'SEQUENCE_ISSUED_NOTIFY_CC' => [],
+            'SEQUENCE_ISSUED_ATTACHMENT_KEY_DAYS' => ['required', 'integer'],
 
             'MAX_T_FILE' => ['required', 'integer'],
             'MAX_TF_REIMBURSEMENT' => ['required', 'integer'],
