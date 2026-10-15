@@ -7,11 +7,49 @@ use App\Settings;
 use App\Transaction;
 use App\TransactionsLiquidation;
 use App\TransactionsNote;
+use App\UaLevelRoute;
 use App\User;
 use App\UserTransactionLimit;
 use Illuminate\Support\Str;
 
 final class TransactionHelper {
+    public static function canViewConfidential($user = null) {
+        $user = $user ?: auth()->user();
+
+        $ua_level_route = UaLevelRoute::select('ua_route_option_id')
+                        ->where('ua_route_id', config('global.ua_trans_view_conf'))
+                        ->where('ua_level_id', $user->ualevel->id)
+                        ->first();
+
+        return $ua_level_route && $ua_level_route->ua_route_option_id == config('global.is_yesno_id')[0];
+    }
+
+    // Whether $transaction's details should be masked for $user.
+    // Pass $canViewConfidential when calling inside a loop to avoid re-querying it per row.
+    public static function isConfidentialFor($transaction, $user = null, $canViewConfidential = null) {
+        $user = $user ?: auth()->user();
+
+        if ($user->id == $transaction->requested_id || $user->id == $transaction->owner_id) {
+            return false;
+        }
+
+        // own confidential: owner and requester only
+        if ($transaction->is_confidential_own) {
+            return true;
+        }
+
+        // parallel confidential: hidden from same or lower levels without view permission
+        if ($transaction->is_confidential) {
+            if ($canViewConfidential === null) {
+                $canViewConfidential = self::canViewConfidential($user);
+            }
+
+            return !$canViewConfidential && $user->ualevel->code <= $transaction->owner->ualevel->code;
+        }
+
+        return false;
+    }
+
     public static function generateAttachmentKey($transaction, $attachmentType = 'issue_slip') {
         $expiryDays = Settings::where('type', 'SEQUENCE_ISSUED_ATTACHMENT_KEY_DAYS')->first()->value;
 

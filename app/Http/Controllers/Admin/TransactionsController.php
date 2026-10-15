@@ -21,7 +21,6 @@ use App\TransactionsNote;
 use App\TransactionsLiquidation;
 use App\User;
 use App\VatType;
-use App\UaLevelRoute;
 use App\Helpers\TransactionHelper;
 use App\Helpers\UserHelper;
 use App\Helpers\UAHelper;
@@ -248,7 +247,7 @@ class TransactionsController extends Controller
             'projects' => $projects,
             'users' => $users,
             'users_inactive' => $users_inactive,
-            'can_view_confidential' => $this->check_can_view_confidential(),
+            'can_view_confidential' => TransactionHelper::canViewConfidential(),
             'transactions' => $transactions
         ]);
     }
@@ -383,21 +382,10 @@ class TransactionsController extends Controller
 
         $transactions = $transactions->orderBy('id', 'desc')->limit(5)->get();
 
-        $can_view_confidential = $this->check_can_view_confidential();
+        $can_view_confidential = TransactionHelper::canViewConfidential();
 
         foreach ($transactions as $key => $value) {
-            $confidential = 0;
-
-            // if req by
-            if (auth()->id() != $value->requested_id) {
-                // check levels
-                // if (User::find(auth()->id())->ualevel->code < $value->owner->ualevel->code) $confidential = 1;
-                // check level parallel confidential
-                // if (User::find(auth()->id())->ualevel->code == $value->owner->ualevel->code && $value->is_confidential && auth()->id() != $value->owner->id) $confidential = 1;
-                if (User::find(auth()->id())->ualevel->code <= $value->owner->ualevel->code && $value->is_confidential && auth()->id() != $value->owner->id && !$can_view_confidential) $confidential = 1;
-                // check level own confidential
-                if ($value->is_confidential_own && auth()->id() != $value->owner->id) $confidential = 1;
-            }
+            $confidential = TransactionHelper::isConfidentialFor($value, null, $can_view_confidential) ? 1 : 0;
 
             $transactions[$key]->trans_seq = sprintf("%05d", $value->trans_seq);
             $transactions[$key]->trans_type = strtoupper($value->trans_type);
@@ -1567,7 +1555,6 @@ class TransactionsController extends Controller
             $trans_class_type = $_GET['class_type'];
         }
         if (!empty($_GET['is_confidential']) || (isset($_GET['is_confidential']) && $_GET['is_confidential'] != "")) {
-            $transactions = $transactions->whereDate('created_at', '>=', $_GET['is_confidential']);
             $trans_is_confidential = $_GET['is_confidential'];
 
             if ($_GET['is_confidential'] != "") {
@@ -1682,7 +1669,8 @@ class TransactionsController extends Controller
             }
 
             $temp_column = $report_template->templatecolumn;
-            $callback = function () use ($transactions, $columns, $columns2, $columns3, $columns4, $temp_column) {
+            $can_view_confidential = TransactionHelper::canViewConfidential();
+            $callback = function () use ($transactions, $columns, $columns2, $columns3, $columns4, $temp_column, $can_view_confidential) {
                 $file = fopen('php://output', 'w');
 
                 fputcsv($file, $columns2);
@@ -1691,20 +1679,10 @@ class TransactionsController extends Controller
                 fputcsv($file, $columns);
 
                 foreach ($transactions as $item) {
-
+                    // referenced by eval'd report template column code
                     $config_confidential = 0;
 
-                    $confidential = 0;
-
-                    // if req by
-                    if (auth()->id() != $item->requested_id) {
-                        // check levels
-                        // if (User::find(auth()->id())->ualevel->code < $item->owner->ualevel->code) $confidential = 1;
-                        // check level parallel confidential
-                        // if (User::find(auth()->id())->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && auth()->id() != $item->owner->id) $confidential = 1;
-                        if (User::find(auth()->id())->ualevel->code <= $item->owner->ualevel->code && $item->is_confidential && auth()->id() != $item->owner->id && !$this->check_can_view_confidential()) $confidential = true;
-                        if ($item->is_confidential_own && auth()->id() != $item->owner->id) $confidential = 1;
-                    }
+                    $confidential = TransactionHelper::isConfidentialFor($item, null, $can_view_confidential);
 
                     if (!$confidential) {
                         $row = [];
@@ -1770,7 +1748,7 @@ class TransactionsController extends Controller
                 'trans_template' => $trans_template,
                 'trans_s' => $trans_s,
                 'status_name' => $status_name,
-                'can_view_confidential' => $this->check_can_view_confidential(),
+                'can_view_confidential' => TransactionHelper::canViewConfidential(),
             ]);
         }
     }
@@ -2057,23 +2035,5 @@ class TransactionsController extends Controller
         }
 
         return $can_reassign;
-    }
-
-    private function check_can_view_confidential($user = '')
-    {
-        $can_view = true;
-
-        if (!$user) {
-            $user = auth()->id();
-        }
-
-        $user = User::where('id', $user)->first();
-
-        $ua_level_route = UaLevelRoute::select('ua_route_option_id')->where('ua_route_id', config('global.ua_trans_view_conf'))->where('ua_level_id', $user->ualevel->id)->first();
-        if ($ua_level_route->ua_route_option_id != config('global.is_yesno_id')[0]) {
-            $can_view = false;
-        }
-
-        return $can_view;
     }
 }

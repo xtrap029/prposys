@@ -181,17 +181,7 @@
                             <tbody style="line-height: 18px">
                                 @forelse ($transactions as $item)
                                     <?php 
-                                        $config_confidential = false;
-                                        // if req by
-                                        if (Auth::user()->id != $item->requested_id) {
-                                            // check levels
-                                            // if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
-                                            // check level parallel confidential
-                                            // if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential = true;
-                                            if (Auth::user()->ualevel->code <= $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id && !$can_view_confidential) $config_confidential = true;
-                                            // check level own confidential
-                                            if ($item->is_confidential_own && Auth::user()->id != $item->owner->id) $config_confidential = true;
-                                        }
+                                        $config_confidential = \App\Helpers\TransactionHelper::isConfidentialFor($item, null, $can_view_confidential);
                                     ?>
                                     <tr class="tr-compact">
                                         <td style="max-width: 150px; min-width: 150px"">
@@ -315,17 +305,7 @@
                             <tbody>
                                 @forelse ($transactions as $item)
                                     <?php 
-                                        $config_confidential = false;
-                                        // if req by
-                                        if (Auth::user()->id != $item->requested_id) {
-                                            // check levels
-                                            // if (Auth::user()->ualevel->code < $item->owner->ualevel->code) $config_confidential = true;
-                                            // check level parallel confidential
-                                            // if (Auth::user()->ualevel->code == $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id) $config_confidential = true;
-                                            if (Auth::user()->ualevel->code <= $item->owner->ualevel->code && $item->is_confidential && Auth::user()->id != $item->owner->id && !$can_view_confidential) $config_confidential = true;
-                                            // check level own confidential
-                                            if ($item->is_confidential_own && Auth::user()->id != $item->owner->id) $config_confidential = true;
-                                        }
+                                        $config_confidential = \App\Helpers\TransactionHelper::isConfidentialFor($item, null, $can_view_confidential);
                                     ?>
                                     @include('pages.admin.transaction.notesmulti')
                                     <tr>

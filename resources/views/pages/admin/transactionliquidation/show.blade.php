@@ -8,7 +8,7 @@
     <?php $non = config('global.ua_none'); ?>
     <?php $own = config('global.ua_own'); ?>
 
-    <?php $config_confidential = 0; ?>
+    <?php $config_confidential = \App\Helpers\TransactionHelper::isConfidentialFor($transaction); ?>
     <section class="content-header bg-dark">
         <div class="container-fluid">
             <div class="row">
