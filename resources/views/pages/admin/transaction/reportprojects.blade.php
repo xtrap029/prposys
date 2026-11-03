@@ -160,6 +160,9 @@
                                                     if (!empty($trans_own)) {
                                                         $project_liquidations = $project_liquidations->where('transaction.requested_id', Auth::user()->id);
                                                     }
+                                                    $project_liquidations = $project_liquidations->reject(function ($liquidation) {
+                                                        return \App\Helpers\TransactionHelper::isConfidentialFor($liquidation->transaction);
+                                                    });
                                                 ?>
                                                 @forelse ($project_liquidations as $liquidation)
                                                     <tr>

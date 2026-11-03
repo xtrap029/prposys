@@ -3,7 +3,7 @@
 @section('title', 'Print Form')
 
 @section('content')
-    <?php $config_confidential = 0; ?>
+    <?php $config_confidential = \App\Helpers\TransactionHelper::isConfidentialFor($transaction); ?>
     <section class="content">
         <div class="container-fluid">
             <div class="float-right">Date Generated: <b>{{ Carbon\Carbon::now() }}</b></div>

@@ -1715,6 +1715,9 @@ class TransactionsFormsController extends Controller {
 
                     // bypass hierarchy check and check if is_accounting
                     if ($user->is_accounting) $can_create = true;
+
+                    // confidential applies to everyone, including accounting
+                    if (TransactionHelper::isConfidentialFor($result->first())) $can_create = false;
                 }
             }
         } else {

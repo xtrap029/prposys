@@ -181,7 +181,7 @@
                             <tbody style="line-height: 18px">
                                 @forelse ($transactions as $item)
                                     <?php 
-                                        $config_confidential = \App\Helpers\TransactionHelper::isConfidentialFor($item, null, $can_view_confidential);
+                                        $config_confidential = \App\Helpers\TransactionHelper::isConfidentialFor($item);
                                     ?>
                                     <tr class="tr-compact">
                                         <td style="max-width: 150px; min-width: 150px"">
@@ -305,7 +305,7 @@
                             <tbody>
                                 @forelse ($transactions as $item)
                                     <?php 
-                                        $config_confidential = \App\Helpers\TransactionHelper::isConfidentialFor($item, null, $can_view_confidential);
+                                        $config_confidential = \App\Helpers\TransactionHelper::isConfidentialFor($item);
                                     ?>
                                     @include('pages.admin.transaction.notesmulti')
                                     <tr>

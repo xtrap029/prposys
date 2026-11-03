@@ -7,26 +7,29 @@ use App\Settings;
 use App\Transaction;
 use App\TransactionsLiquidation;
 use App\TransactionsNote;
-use App\UaLevelRoute;
+use App\UaLevelConfidential;
 use App\User;
 use App\UserTransactionLimit;
 use Illuminate\Support\Str;
 
 final class TransactionHelper {
-    public static function canViewConfidential($user = null) {
-        $user = $user ?: auth()->user();
+    // owner ua_level_id => viewer ua_level_ids, loaded once per request
+    private static $confidentialViewers = null;
 
-        $ua_level_route = UaLevelRoute::select('ua_route_option_id')
-                        ->where('ua_route_id', config('global.ua_trans_view_conf'))
-                        ->where('ua_level_id', $user->ualevel->id)
-                        ->first();
+    public static function confidentialViewerLevels($ownerLevelId) {
+        if (self::$confidentialViewers === null) {
+            self::$confidentialViewers = [];
 
-        return $ua_level_route && $ua_level_route->ua_route_option_id == config('global.is_yesno_id')[0];
+            foreach (UaLevelConfidential::get(['ua_level_id', 'viewer_ua_level_id']) as $row) {
+                self::$confidentialViewers[$row->ua_level_id][] = $row->viewer_ua_level_id;
+            }
+        }
+
+        return self::$confidentialViewers[$ownerLevelId] ?? [];
     }
 
     // Whether $transaction's details should be masked for $user.
-    // Pass $canViewConfidential when calling inside a loop to avoid re-querying it per row.
-    public static function isConfidentialFor($transaction, $user = null, $canViewConfidential = null) {
+    public static function isConfidentialFor($transaction, $user = null) {
         $user = $user ?: auth()->user();
 
         if ($user->id == $transaction->requested_id || $user->id == $transaction->owner_id) {
@@ -38,13 +41,16 @@ final class TransactionHelper {
             return true;
         }
 
-        // parallel confidential: hidden from same or lower levels without view permission
+        // confidential: owner level's mapped viewer levels only, all levels if none mapped
         if ($transaction->is_confidential) {
-            if ($canViewConfidential === null) {
-                $canViewConfidential = self::canViewConfidential($user);
+            // external users never see other users' confidential transactions
+            if ($user->is_external) {
+                return true;
             }
 
-            return !$canViewConfidential && $user->ualevel->code <= $transaction->owner->ualevel->code;
+            $viewers = self::confidentialViewerLevels($transaction->owner->ua_level_id);
+
+            return count($viewers) > 0 && !in_array($user->ua_level_id, $viewers);
         }
 
         return false;

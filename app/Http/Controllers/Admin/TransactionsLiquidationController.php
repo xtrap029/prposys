@@ -16,6 +16,7 @@ use App\Settings;
 use App\User;
 use Spatie\Activitylog\Models\Activity;
 use App\Helpers\UAHelper;
+use App\Helpers\TransactionHelper;
 use ZanySoft\Zip\Zip;
 use Illuminate\Http\Request;
 use \DB;
@@ -1216,6 +1217,10 @@ class TransactionsLiquidationController extends Controller {
         }
 
         $bank_validation = clone $result;
+
+        // confidential applies to everyone, including accounting
+        $confidential_check = (clone $result)->first();
+        if ($confidential_check && TransactionHelper::isConfidentialFor($confidential_check)) $can_create = false;
 
         $result = $result->count();
 

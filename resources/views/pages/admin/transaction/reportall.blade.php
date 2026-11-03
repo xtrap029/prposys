@@ -465,7 +465,7 @@
                             <?php $config_confidential = 0; ?>
 
                             <?php 
-                                $config_confidential2 = \App\Helpers\TransactionHelper::isConfidentialFor($item, null, $can_view_confidential);
+                                $config_confidential2 = \App\Helpers\TransactionHelper::isConfidentialFor($item);
                             ?>
                             @if (!$config_confidential2)
                                 <tr>

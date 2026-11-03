@@ -247,7 +247,6 @@ class TransactionsController extends Controller
             'projects' => $projects,
             'users' => $users,
             'users_inactive' => $users_inactive,
-            'can_view_confidential' => TransactionHelper::canViewConfidential(),
             'transactions' => $transactions
         ]);
     }
@@ -382,10 +381,8 @@ class TransactionsController extends Controller
 
         $transactions = $transactions->orderBy('id', 'desc')->limit(5)->get();
 
-        $can_view_confidential = TransactionHelper::canViewConfidential();
-
         foreach ($transactions as $key => $value) {
-            $confidential = TransactionHelper::isConfidentialFor($value, null, $can_view_confidential) ? 1 : 0;
+            $confidential = TransactionHelper::isConfidentialFor($value) ? 1 : 0;
 
             $transactions[$key]->trans_seq = sprintf("%05d", $value->trans_seq);
             $transactions[$key]->trans_type = strtoupper($value->trans_type);
@@ -1191,8 +1188,10 @@ class TransactionsController extends Controller
         $transaction = Transaction::where('id', $id)->first();
 
         if (
-            (UAHelper::get()['trans_toggle_conf'] == config('global.ua_own') && auth()->id() != $transaction->owner_id && $transaction->requested_id != auth()->id())
+            !$transaction
+            || (UAHelper::get()['trans_toggle_conf'] == config('global.ua_own') && auth()->id() != $transaction->owner_id && $transaction->requested_id != auth()->id())
             || UAHelper::get()['trans_toggle_conf'] == config('global.ua_none')
+            || TransactionHelper::isConfidentialFor($transaction)
         ) {
             return back()->with('error', __('messages.invalid_command'));
         } else {
@@ -1209,8 +1208,10 @@ class TransactionsController extends Controller
         $transaction = Transaction::where('id', $id)->first();
 
         if (
-            (UAHelper::get()['trans_toggle_conf_own'] == config('global.ua_own') && auth()->id() != $transaction->owner_id && $transaction->requested_id != auth()->id())
+            !$transaction
+            || (UAHelper::get()['trans_toggle_conf_own'] == config('global.ua_own') && auth()->id() != $transaction->owner_id && $transaction->requested_id != auth()->id())
             || UAHelper::get()['trans_toggle_conf_own'] == config('global.ua_none')
+            || TransactionHelper::isConfidentialFor($transaction)
         ) {
             return back()->with('error', __('messages.invalid_command'));
         } else {
@@ -1669,8 +1670,7 @@ class TransactionsController extends Controller
             }
 
             $temp_column = $report_template->templatecolumn;
-            $can_view_confidential = TransactionHelper::canViewConfidential();
-            $callback = function () use ($transactions, $columns, $columns2, $columns3, $columns4, $temp_column, $can_view_confidential) {
+            $callback = function () use ($transactions, $columns, $columns2, $columns3, $columns4, $temp_column) {
                 $file = fopen('php://output', 'w');
 
                 fputcsv($file, $columns2);
@@ -1682,7 +1682,7 @@ class TransactionsController extends Controller
                     // referenced by eval'd report template column code
                     $config_confidential = 0;
 
-                    $confidential = TransactionHelper::isConfidentialFor($item, null, $can_view_confidential);
+                    $confidential = TransactionHelper::isConfidentialFor($item);
 
                     if (!$confidential) {
                         $row = [];
@@ -1748,7 +1748,6 @@ class TransactionsController extends Controller
                 'trans_template' => $trans_template,
                 'trans_s' => $trans_s,
                 'status_name' => $status_name,
-                'can_view_confidential' => TransactionHelper::canViewConfidential(),
             ]);
         }
     }
@@ -1866,7 +1865,8 @@ class TransactionsController extends Controller
                                 'transactions_liquidation.location as location',
                                 'transactions_liquidation.receipt as receipt',
                                 'transactions_liquidation.description as description',
-                                'transactions_liquidation.amount as amount'
+                                'transactions_liquidation.amount as amount',
+                                'transactions_liquidation.transaction_id as transaction_id'
                             )
                             ->join('transactions', 'transactions_liquidation.transaction_id', '=', 'transactions.id')
                             ->join('expense_types', 'transactions_liquidation.expense_type_id', '=', 'expense_types.id')
@@ -1890,7 +1890,11 @@ class TransactionsController extends Controller
 
                         $project_liquidations = $project_liquidations->orderBy('transactions_liquidation.transaction_id')->orderBy('transactions_liquidation.date');
 
-                        foreach ($project_liquidations->get() as $liquidation) {
+                        foreach ($project_liquidations->with('transaction.owner')->get() as $liquidation) {
+                            if (TransactionHelper::isConfidentialFor($liquidation->transaction)) {
+                                continue;
+                            }
+
                             $row = [];
                             $row[] = $item->name;
                             $row[] = $project->project;

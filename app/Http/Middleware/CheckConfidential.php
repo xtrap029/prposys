@@ -24,7 +24,8 @@ class CheckConfidential
 
         $transaction = Route::current()->parameter('transaction');
 
-        if ($transaction && in_array($prefix, ['/transaction', '/transaction-form', '/transaction-liquidation'])) {
+        // finder routes bind other models to {transaction}; only check actual transactions
+        if ($transaction instanceof Transaction && in_array($prefix, ['/transaction', '/transaction-form', '/transaction-liquidation'])) {
             
             $confidentials = [
                 'duplicate',
@@ -48,28 +49,6 @@ class CheckConfidential
                 'clear_edit',
             ];
 
-            $confidentials_2 = [
-                'duplicate',
-                // 'edit',
-                // 'edit_reimbursement',
-                // 'update',
-                // 'update_reimbursement',
-                // 'update_issued',
-                // 'update_issued_company',
-                // 'update_issued_clear',
-                'show',
-                'manage',
-                'note',
-                'destroy_note',
-                'reset',
-                'cancel',
-                'approval',
-                // 'print',
-                // 'issue',
-                // 'clear',
-                // 'clear_edit',
-            ];
-
             $user = User::where('id', auth()->id())->first();
             
             // check levels
@@ -85,27 +64,8 @@ class CheckConfidential
                 }
             }
 
-            // check confidential parallel
-            if (
-                in_array(explode('@', Route::getCurrentRoute()->getActionName())[1], $confidentials_2)
-                // && User::find(auth()->id())->ualevel->code == $transaction->owner->ualevel->code
-                && User::find(auth()->id())->ualevel->code <= $transaction->owner->ualevel->code
-                && $transaction->is_confidential
-                && auth()->id() != $transaction->owner->id
-                && auth()->id() != $transaction->requested_id
-            ) {
-                if (!TransactionHelper::canViewConfidential($user) || explode('@', Route::getCurrentRoute()->getActionName())[1] != 'show') {
-                    return abort(401);
-                }
-            }
-
-            // check confidential own
-            if (
-                in_array(explode('@', Route::getCurrentRoute()->getActionName())[1], $confidentials)
-                && $transaction->is_confidential_own
-                && auth()->id() != $transaction->owner->id
-                && auth()->id() != $transaction->requested_id
-            ) {
+            // check confidential: applies to every transaction action, including print and issue
+            if (TransactionHelper::isConfidentialFor($transaction, $user)) {
                 return abort(401);
             }
         }

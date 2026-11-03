@@ -295,6 +295,15 @@ Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfident
         Route::put('/ua-level-route', 'People\UaLevelRoutesController@update');
     });
 
+    // Peo UA Level Confidential
+    Route::middleware('CheckUserAccess:peo_confidential')->group(function () {
+        Route::get('/ua-level-confidential', 'People\UaLevelConfidentialsController@index')->name('ualevelconfidential');
+    });
+
+    Route::middleware('CheckUserAccess:peo_confidential_manage')->group(function () {
+        Route::put('/ua-level-confidential', 'People\UaLevelConfidentialsController@update');
+    });
+
     // Resources FAQ
     Route::get('/faqs', 'Resources\FaqsController@index')->name('faq');
     Route::post('/faqs/api-search', 'Resources\FaqsController@api_search');

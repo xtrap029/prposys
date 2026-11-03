@@ -126,6 +126,11 @@
                                             <i class="nav-icon material-icons icon--list">rule</i><p>User Level Route</p>
                                         </a>
                                     </li> 
+                                    <li class="nav-item {{ $ua['peo_confidential'] == $non ? 'd-none' : '' }}">
+                                        <a href="/ua-level-confidential" class="nav-link {{ Route::currentRouteName() == 'ualevelconfidential' ? 'active' : '' }}">
+                                            <i class="nav-icon material-icons icon--list">visibility_off</i><p>Confidential Visibility</p>
+                                        </a>
+                                    </li>
                                     <li class="nav-item {{ $ua['peo_hierarchy'] == $non ? 'd-none' : '' }} {{ $ua['peo_hierarchy_manage'] == $non ? 'd-none' : '' }}">
                                         <a href="/people-hierarchy" class="nav-link {{ in_array(Route::currentRouteName(), ['people-hierarchy', 'people-hierarchy-manage']) ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">account_tree</i><p>Hierarchy</p>

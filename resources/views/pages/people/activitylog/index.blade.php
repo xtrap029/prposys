@@ -122,6 +122,7 @@
                                                             @case('App\LeaveReason')                    <?php $view_url = '/leaves-reason'; ?> @break
                                                             @case('App\Department')                     <?php $view_url = '/leaves-department'; ?> @break
                                                             @case('App\UaLevelRoute')                   <?php $view_url = '/ua-level-route'; ?> @break
+                                                            @case('App\UaLevelConfidential')            <?php $view_url = '/ua-level-confidential'; ?> @break
                                                             @case('App\UaLevel')                        <?php $view_url = '/ua-level'; ?> @break
                                                             @case('App\UaRoute')                        <?php $view_url = '/ua-route'; ?> @break
                                                             @default                                                        
