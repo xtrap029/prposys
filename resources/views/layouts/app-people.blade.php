@@ -126,7 +126,7 @@
                                             <i class="nav-icon material-icons icon--list">rule</i><p>User Level Route</p>
                                         </a>
                                     </li> 
-                                    <li class="nav-item {{ $ua['peo_confidential'] == $non ? 'd-none' : '' }}">
+                                    <li class="nav-item {{ ($ua['peo_confidential'] ?? $non) == $non ? 'd-none' : '' }}">
                                         <a href="/ua-level-confidential" class="nav-link {{ Route::currentRouteName() == 'ualevelconfidential' ? 'active' : '' }}">
                                             <i class="nav-icon material-icons icon--list">visibility_off</i><p>Confidential Visibility</p>
                                         </a>

@@ -30,11 +30,8 @@ class AddPeoConfidentialUaRoutes extends Migration
         $levels = DB::table('ua_levels')->whereNull('deleted_at')->pluck('id');
 
         foreach ($this->routes as $code => $name) {
-            if (DB::table('ua_routes')->where('code', $code)->exists()) {
-                continue;
-            }
-
-            $route_id = DB::table('ua_routes')->insertGetId([
+            // reuse a route that was already added manually
+            $route_id = DB::table('ua_routes')->where('code', $code)->value('id') ?: DB::table('ua_routes')->insertGetId([
                 'order' => $base_route ? $base_route->order : 0,
                 'code' => $code,
                 'name' => $name,
@@ -43,7 +40,13 @@ class AddPeoConfidentialUaRoutes extends Migration
                 'updated_at' => $now,
             ]);
 
+            $existing_levels = DB::table('ua_level_routes')->where('ua_route_id', $route_id)->pluck('ua_level_id')->all();
+
             foreach ($levels as $level_id) {
+                if (in_array($level_id, $existing_levels)) {
+                    continue;
+                }
+
                 $base = $base_options->get($level_id);
 
                 DB::table('ua_level_routes')->insert([

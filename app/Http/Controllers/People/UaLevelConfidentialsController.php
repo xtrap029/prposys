@@ -17,7 +17,7 @@ class UaLevelConfidentialsController extends Controller {
         return view('pages.people.ualevelconfidential.index')->with([
             'ua_levels' => $ua_levels,
             'ua_level_confidentials' => $ua_level_confidentials,
-            'can_manage' => UAHelper::get()['peo_confidential_manage'] != config('global.ua_none'),
+            'can_manage' => (UAHelper::get()['peo_confidential_manage'] ?? config('global.ua_none')) != config('global.ua_none'),
         ]);
     }
 
