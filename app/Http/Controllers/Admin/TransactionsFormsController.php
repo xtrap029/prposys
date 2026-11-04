@@ -470,7 +470,7 @@ class TransactionsFormsController extends Controller {
         if (in_array($transaction->status_id, config('global.page_liquidation'))) return redirect('/transaction-liquidation/view/'.$transaction->id);
 
         // form stage reached without saving the form (e.g. status changed manually), complete it first
-        if (!$transaction->vat_type_id) return $this->redirect_incomplete_form($transaction);
+        if (!$transaction->vat_type_id || !$transaction->coa_tagging_id) return $this->redirect_incomplete_form($transaction);
 
         $logs = Activity::where('subject_id', $transaction->id)
                 ->where('subject_type', 'App\Transaction')
@@ -1297,7 +1297,7 @@ class TransactionsFormsController extends Controller {
             return back()->with('error', __('messages.cant_print'));
         }
 
-        if (!$transaction->vat_type_id) return $this->redirect_incomplete_form($transaction);
+        if (!$transaction->vat_type_id || !$transaction->coa_tagging_id) return $this->redirect_incomplete_form($transaction);
 
         switch ($transaction->trans_type) {
             case 'pr':
