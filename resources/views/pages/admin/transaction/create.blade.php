@@ -222,7 +222,7 @@
                             <option value="0" selected>No</option>
                             <option value="1">Yes</option>
                         </select>     
-                        <code>Setting to "Yes" will make the transaction visible only to users with level higher than the creator.</code>                
+                        <code>Setting to "Yes" will make the transaction visible to level 5 users only</code>                
                     </div>
                     <div class="col-sm-6 col-lg-4 mb-2">
                         <label for="">Class</label>
