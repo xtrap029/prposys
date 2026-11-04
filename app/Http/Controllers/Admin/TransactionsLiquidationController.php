@@ -400,6 +400,7 @@ class TransactionsLiquidationController extends Controller {
         $perms['can_reset'] = $this->check_can_reset($transaction->id);
         $perms['can_approval'] = $this->check_can_approval($transaction->id);
         $perms['can_print'] = $this->check_can_print($transaction->id);
+        $perms['can_manage_issue_slip'] = app('App\Http\Controllers\Admin\TransactionsFormsController')->check_can_manage_issue_slip($transaction->id);
         $perms['can_clear'] = $this->check_can_clear($transaction->id);
         $perms['can_edit_cleared'] = $this->check_can_clear_edit($transaction->id);
         $perms['can_duplicate'] = $this->check_can_duplicate($transaction->id);

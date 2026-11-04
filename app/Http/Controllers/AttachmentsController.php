@@ -40,15 +40,18 @@ class AttachmentsController extends Controller
     {
         $request->validate(['key' => ['required', 'string']]);
 
-        $transaction = Transaction::where('issue_slip', $filename)->first();
+        // an issue slip can be shared (e.g. auto-generated PO and its source PR), each with its own key
+        $transaction_ids = Transaction::where('issue_slip', $filename)->pluck('id');
 
-        $attachmentKey = $transaction
-            ? AttachmentKey::where('transaction_id', $transaction->id)
-                ->where('attachment_type', $type)
-                ->first()
-            : null;
+        // compare in PHP, the column collation is case-insensitive
+        $attachmentKey = AttachmentKey::whereIn('transaction_id', $transaction_ids)
+            ->where('attachment_type', $type)
+            ->get()
+            ->first(function ($attachmentKey) use ($request) {
+                return hash_equals($attachmentKey->key, $request->key);
+            });
 
-        if (!$attachmentKey || $attachmentKey->key !== $request->key || $attachmentKey->isExpired()) {
+        if (!$attachmentKey || $attachmentKey->isExpired()) {
             return back()->with('error', 'Invalid or expired key.');
         }
 

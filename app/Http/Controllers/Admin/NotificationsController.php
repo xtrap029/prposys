@@ -106,7 +106,7 @@ class NotificationsController extends Controller {
                 'requestor_name' => $transaction->requested->name,
                 'url' => env('APP_URL').'/attachments/issue_slip/'.$transaction->issue_slip,
                 'key' => $attachmentKey->key,
-                'key_expiry_days' => now()->diffInDays($attachmentKey->expires_at),
+                'key_expiry_days' => now()->startOfDay()->diffInDays($attachmentKey->expires_at->copy()->startOfDay()),
                 'cc' => array_filter(explode(';', $cc)),
             ]);
             $vendorTo = $transaction->vendor->email;

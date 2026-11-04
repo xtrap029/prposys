@@ -489,6 +489,7 @@ class TransactionsFormsController extends Controller {
             $transaction->project->company_id
         );
         $perms['can_edit_issued'] = $this->check_can_edit_issued($transaction->id);
+        $perms['can_manage_issue_slip'] = $this->check_can_manage_issue_slip($transaction->id);
 
         $released_by = ReleasedBy::orderBy('name', 'asc')->get();
 
@@ -1420,6 +1421,10 @@ class TransactionsFormsController extends Controller {
             abort(404);
         }
 
+        if (!$this->check_can_manage_issue_slip($transaction->id)) {
+            return back()->with('error', __('messages.cant_edit'));
+        }
+
         $attachmentKey = TransactionHelper::generateAttachmentKey($transaction);
 
         return back()->with('success', 'New access key generated: '.$attachmentKey->key);
@@ -1428,6 +1433,10 @@ class TransactionsFormsController extends Controller {
     public function resendVendorMail(Transaction $transaction) {
         if (!$transaction->issue_slip || !$transaction->vendor_id || $transaction->is_reimbursement) {
             abort(404);
+        }
+
+        if (!$this->check_can_manage_issue_slip($transaction->id)) {
+            return back()->with('error', __('messages.cant_edit'));
         }
 
         (new NotificationsController)->sendVendorIssuedMail($transaction);
@@ -2044,6 +2053,17 @@ class TransactionsFormsController extends Controller {
         }
 
         return true;
+    }
+
+    // reset issue slip key / resend vendor mail
+    public function check_can_manage_issue_slip($transaction) {
+        $transaction = Transaction::where('id', $transaction)->first();
+
+        return $transaction
+            && $transaction->issue_slip
+            && !in_array($transaction->status_id, config('global.cancelled'))
+            && UAHelper::get()['form_issue'] != config('global.ua_none')
+            && in_array($transaction->project->company_id, explode(',', User::where('id', auth()->id())->first()->companies));
     }
 
     private function check_can_issue($transaction) {

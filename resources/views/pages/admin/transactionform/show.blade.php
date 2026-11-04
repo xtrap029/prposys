@@ -1012,19 +1012,21 @@
                                             <td class="font-weight-bold text-gray">Attachment Key</td>
                                             <td class="font-weight-bold">
                                                 <span class="mr-2">{{ $transaction->issueSlipKey->key }}</span>
-                                                <form method="POST" action="{{ route('transaction-form.reset-issue-slip-key', ['transaction' => $transaction->id]) }}" class="d-inline" onsubmit="return confirm('Generate a new vendor access key for this attachment? The old key will stop working.');">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-xs btn-danger rounded-circle mr-1" title="Refresh Key">
-                                                        <i class="align-middle material-icons" style="font-size: 1rem;">refresh</i>
-                                                    </button>
-                                                </form>
-                                                @if ($transaction->vendor_id && !$transaction->is_reimbursement)
-                                                    <form method="POST" action="{{ route('transaction-form.resend-vendor-mail', ['transaction' => $transaction->id]) }}" class="d-inline" onsubmit="return confirm('Resend the attachment to the vendor with a new access key?');">
+                                                @if ($perms['can_manage_issue_slip'])
+                                                    <form method="POST" action="{{ route('transaction-form.reset-issue-slip-key', ['transaction' => $transaction->id]) }}" class="d-inline" onsubmit="return confirm('Generate a new vendor access key for this attachment? The old key will stop working.');">
                                                         @csrf
-                                                        <button type="submit" class="btn btn-xs btn-warning rounded-circle" title="Resend to Vendor">
-                                                            <i class="align-middle material-icons" style="font-size: 1rem;">mail</i>
+                                                        <button type="submit" class="btn btn-xs btn-danger rounded-circle mr-1" title="Refresh Key">
+                                                            <i class="align-middle material-icons" style="font-size: 1rem;">refresh</i>
                                                         </button>
                                                     </form>
+                                                    @if ($transaction->vendor_id && !$transaction->is_reimbursement)
+                                                        <form method="POST" action="{{ route('transaction-form.resend-vendor-mail', ['transaction' => $transaction->id]) }}" class="d-inline" onsubmit="return confirm('Resend the attachment to the vendor with a new access key?');">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-xs btn-warning rounded-circle" title="Resend to Vendor">
+                                                                <i class="align-middle material-icons" style="font-size: 1rem;">mail</i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
                                                 @endif
                                                 <br>
                                                 <span class="text-gray font-weight-normal">
