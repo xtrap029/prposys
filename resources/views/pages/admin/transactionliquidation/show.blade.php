@@ -855,21 +855,7 @@
                                         <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
                                         <p class="text-dark">SOA</p>
                                     </a>
-                                    @if ($transaction->issue_slip)
-                                        <a class="btn btn-app p-2" href="/attachments/issue_slip/{{ $transaction->issue_slip }}" target="_blank">
-                                            <i class="align-middle font-weight-bolder material-icons text-orange">folder</i>
-                                            <p class="text-dark">Slip</p>
-                                        </a>
-                                        @if ($perms['can_manage_issue_slip'])
-                                            <form method="POST" action="{{ route('transaction-form.reset-issue-slip-key', ['transaction' => $transaction->id]) }}" class="d-inline" onsubmit="return confirm('Generate a new vendor access key for this attachment? The old key will stop working.');">
-                                                @csrf
-                                                <button type="submit" class="btn btn-app p-2">
-                                                    <i class="align-middle font-weight-bolder material-icons text-orange">vpn_key</i>
-                                                    <p class="text-dark">Reset Key</p>
-                                                </button>
-                                            </form>
-                                        @endif
-                                    @endif
+                                    @include('pages.admin.transaction.show-issue-slip')
                                 @endif
                             </div>
                         </div>
