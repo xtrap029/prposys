@@ -469,6 +469,9 @@ class TransactionsFormsController extends Controller {
         if (in_array($transaction->status_id, config('global.page_generated'))) return redirect('/transaction/view/'.$transaction->id);
         if (in_array($transaction->status_id, config('global.page_liquidation'))) return redirect('/transaction-liquidation/view/'.$transaction->id);
 
+        // form stage reached without saving the form (e.g. status changed manually), complete it first
+        if (!$transaction->vat_type_id) return $this->redirect_incomplete_form($transaction);
+
         $logs = Activity::where('subject_id', $transaction->id)
                 ->where('subject_type', 'App\Transaction')
                 ->orderBy('id', 'desc')->paginate(15)->onEachSide(1);
@@ -1159,6 +1162,8 @@ class TransactionsFormsController extends Controller {
 
     public function approval(Transaction $transaction) {
         if ($this->check_can_approval($transaction->id)) {
+            if (!$transaction->vat_type_id) return back()->with('error', 'Tax type is required before approval');
+
             $custom_vat = $transaction->amount * (abs($transaction->vattype->vat) * 0.01);
             $custom_wht = $transaction->amount * ($transaction->vattype->wht * 0.01);
             $custom_subtotal = $transaction->amount;
@@ -1291,6 +1296,8 @@ class TransactionsFormsController extends Controller {
         if (!$this->check_can_print($transaction->id)) {
             return back()->with('error', __('messages.cant_print'));
         }
+
+        if (!$transaction->vat_type_id) return $this->redirect_incomplete_form($transaction);
 
         switch ($transaction->trans_type) {
             case 'pr':
@@ -1781,6 +1788,15 @@ class TransactionsFormsController extends Controller {
         }
 
         return $can_cancel;
+    }
+
+    private function redirect_incomplete_form($transaction) {
+        if ($this->check_can_edit($transaction->id) || $this->check_can_issue($transaction->id)) {
+            return redirect('/transaction-form/edit'.($transaction->is_reimbursement ? '-reimbursement' : '').'/'.$transaction->id)
+                ->with('error', 'Form details are incomplete. Please complete the form.');
+        }
+
+        return redirect('/transaction')->with('error', 'Form details are incomplete and can not be edited at this status. Please contact the administrator.');
     }
 
     private function check_can_edit($transaction, $user = '') {
