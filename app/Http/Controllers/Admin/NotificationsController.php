@@ -37,7 +37,7 @@ class NotificationsController extends Controller {
                 $mailable = new \App\Mail\NotificationsAlmostDueMail([
                     'to' => $value->requested->email,
                     'name' => $value->requested->name,
-                    'url' => env('APP_URL').'/transaction-form/view/'.$value->id,
+                    'url' => config('app.url').'/transaction-form/view/'.$value->id,
                     'project' => $value->project->project,
                     'no' => strtoupper($value->trans_type)."-".$value->trans_year."-".sprintf('%05d',$value->trans_seq),
                     'purpose' => $value->purpose,
@@ -77,7 +77,7 @@ class NotificationsController extends Controller {
                 $mailable = new \App\Mail\NotificationsPastDueMail([
                     'to' => $value->requested->email,
                     'name' => $value->requested->name,
-                    'url' => env('APP_URL').'/transaction-form/view/'.$value->id,
+                    'url' => config('app.url').'/transaction-form/view/'.$value->id,
                     'project' => $value->project->project,
                     'no' => strtoupper($value->trans_type)."-".$value->trans_year."-".sprintf('%05d',$value->trans_seq),
                     'purpose' => $value->purpose,
@@ -104,7 +104,7 @@ class NotificationsController extends Controller {
                 'purpose' => $transaction->purpose,
                 'requestor_email' => $transaction->requested->email,
                 'requestor_name' => $transaction->requested->name,
-                'url' => env('APP_URL').'/attachments/issue_slip/'.$transaction->issue_slip,
+                'url' => config('app.url').'/attachments/issue_slip/'.$transaction->issue_slip,
                 'key' => $attachmentKey->key,
                 'key_expiry_days' => now()->startOfDay()->diffInDays($attachmentKey->expires_at->copy()->startOfDay()),
                 'cc' => array_filter(explode(';', $cc)),
@@ -123,7 +123,7 @@ class NotificationsController extends Controller {
             $issuedMailable = new \App\Mail\NotificationsIssuedMail([
                 'to' => $transaction->requested->email,
                 'name' => $transaction->requested->name,
-                'url' => env('APP_URL').'/transaction-form/view/'.$transaction->id,
+                'url' => config('app.url').'/transaction-form/view/'.$transaction->id,
                 'project' => $transaction->project->project,
                 'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
                 'purpose' => $transaction->purpose,

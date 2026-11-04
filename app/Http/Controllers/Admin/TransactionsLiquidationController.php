@@ -653,7 +653,7 @@ class TransactionsLiquidationController extends Controller {
                 $mailable = new \App\Mail\NotificationsForApprovalMail([
                     'to' => $approver->email,
                     'name' => $approver->name,
-                    'url' => env('APP_URL').'/transaction-liquidation/view/'.$transaction->id,
+                    'url' => config('app.url').'/transaction-liquidation/view/'.$transaction->id,
                     'project' => $transaction->project->project,
                     'company' => $transaction->project->company->name,
                     'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
@@ -684,7 +684,7 @@ class TransactionsLiquidationController extends Controller {
                 $mailable = new \App\Mail\NotificationsForApprovalMail([
                     'to' => $approver->email,
                     'name' => $approver->name,
-                    'url' => env('APP_URL').'/transaction-liquidation/view/'.$transaction->id,
+                    'url' => config('app.url').'/transaction-liquidation/view/'.$transaction->id,
                     'project' => $transaction->project->project,
                     'company' => $transaction->project->company->name,
                     'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
@@ -719,7 +719,7 @@ class TransactionsLiquidationController extends Controller {
             $mailable = new \App\Mail\NotificationsApprovedMail([
                 'to' => $transaction->requested->email,
                 'name' => $transaction->requested->name,
-                'url' => env('APP_URL').'/transaction-liquidation/view/'.$transaction->id,
+                'url' => config('app.url').'/transaction-liquidation/view/'.$transaction->id,
                 'project' => $transaction->project->project,
                 'company' => $transaction->project->company->name,
                 'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),
@@ -760,7 +760,7 @@ class TransactionsLiquidationController extends Controller {
         $mailable = new \App\Mail\NotificationsDisapprovedMail([
             'to' => $transaction->requested->email,
             'name' => $transaction->requested->name,
-            'url' => env('APP_URL').'/transaction-liquidation/view/'.$transaction->id,
+            'url' => config('app.url').'/transaction-liquidation/view/'.$transaction->id,
             'project' => $transaction->project->project,
             'company' => $transaction->project->company->name,
             'no' => strtoupper($transaction->trans_type)."-".$transaction->trans_year."-".sprintf('%05d',$transaction->trans_seq),

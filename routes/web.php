@@ -42,7 +42,7 @@ Route::get('/password/reset/{token}', 'Auth\ResetPasswordController@showResetFor
 Route::post('/password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
 
 Route::get('/attachments/{type}/{filename}', 'AttachmentsController@show')->name('attachments.show');
-Route::post('/attachments/{type}/{filename}/verify', 'AttachmentsController@verify')->name('attachments.verify');
+Route::post('/attachments/{type}/{filename}/verify', 'AttachmentsController@verify')->middleware('throttle:10,1')->name('attachments.verify');
 
 Route::group(['middleware' => ['auth', 'CheckUserAccess:active', 'CheckConfidential']], function () {
 
