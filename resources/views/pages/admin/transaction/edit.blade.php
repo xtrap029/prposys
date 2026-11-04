@@ -232,6 +232,15 @@
                     <div class="col-md-12 jsReplicate mt-5 pt-5">
                         <h4 class="text-center">Statement of Account / Billing / Quotation</h4>
                         <div class="text-center mb-3">Attach receipts and documents here. Accepts .jpg, .png and .pdf file types, not more than {{ config('global.max_t_file') }} each.</div>
+                        @if ($errors->has('file.*') || $errors->has('file_old.*'))
+                            <div class="alert alert-danger text-center">
+                                @foreach (array_merge($errors->get('file.*'), $errors->get('file_old.*')) as $messages)
+                                    @foreach ($messages as $message)
+                                        <div>{{ $message }}</div>
+                                    @endforeach
+                                @endforeach
+                            </div>
+                        @endif
                         <div class="table-responsive">
                             <table class="table bg-white" style="min-width: 1000px">
                                 <thead>
@@ -307,6 +316,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js" integrity="sha512-rMGGF4wg1R73ehtnxXBt5mbUfN9JUJwbk21KMlnLZDJh7BkPmeovBuddZCENJddHYYMkCh9hPFnPmS9sspki8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript">
         $('.chosen-select').chosen();
+
+        // reject files over the attachment limit (or the server's upload limit) before submitting
+        var maxFileSize = {{ min(\App\Settings::where('type', 'MAX_T_FILE')->first()->value * 1024, \Symfony\Component\HttpFoundation\File\UploadedFile::getMaxFilesize()) }};
+        $(document).on('change', 'input[type="file"]', function() {
+            for (var i = 0; i < this.files.length; i++) {
+                if (this.files[i].size > maxFileSize) {
+                    alert(this.files[i].name + ' is larger than ' + (Math.floor(maxFileSize / 1024 / 1024 * 100) / 100) + 'mb.');
+                    $(this).val('');
+                    break;
+                }
+            }
+        });
         
         $(function() {
             $('#purposeOption').change(function() {

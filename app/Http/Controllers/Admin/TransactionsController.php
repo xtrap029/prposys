@@ -644,12 +644,13 @@ class TransactionsController extends Controller
         $data['status_updated_at'] = now();
         $data['status_prev_id'] = 1;
 
-        $transaction = Transaction::create($data);
-
+        // validate attachments before creating, so a rejected file doesn't leave a transaction without them
         $data_attach = $request->validate([
             'file.*' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:' . Settings::where('type', 'MAX_T_FILE')->select('value')->first()->value],
             'attachment_description.*' => ['required']
-        ]);
+        ], [], ['file.*' => 'attachment']);
+
+        $transaction = Transaction::create($data);
 
         $attr_file['transaction_id'] = $transaction->id;
         $attr_file['owner_id'] = auth()->id();
@@ -896,10 +897,11 @@ class TransactionsController extends Controller
 
         $attach_liq = $request->validate([
             'file_old.*' => ['mimes:jpeg,png,jpg,pdf', 'max:' . Settings::where('type', 'MAX_T_FILE')->select('value')->first()->value],
+            'file.*' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:' . Settings::where('type', 'MAX_T_FILE')->select('value')->first()->value],
             'attachment_description_old.*' => ['required'],
             'attachment_description.*' => ['sometimes', 'required'],
             'attachment_id_old.*' => ['required']
-        ]);
+        ], [], ['file.*' => 'attachment', 'file_old.*' => 'attachment']);
 
         $desc_key = 0;
         $attach_liq['attachment_id_old'] = isset($attach_liq['attachment_id_old']) ? $attach_liq['attachment_id_old'] : [];
